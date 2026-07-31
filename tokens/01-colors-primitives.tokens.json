@@ -1,4 +1,5 @@
 {
+  "$generated": "GENERATED FILE — DO NOT EDIT. Overwritten by `node build/build.mjs`. Change build/spec.mjs or build/palette.mjs and rebuild. See CLAUDE.md.",
   "$description": "Primitive colour tokens. Every value is computed from the OKLCH spec in build/palette.mjs — no hex is hand-typed. solid/ and opacity-8|15|30|50/ are SIBLING top-level groups, never nested, because a DTCG node cannot be both a token and a group: nesting alpha under a step is what silently dropped 34 base steps and broke 115 alias references in the previous export. opacity-8 is the disabled rung for translucent fills. spectrum-* are Tier-3 artwork and data-viz hues, not UI roles.",
   "solid": {
     "neutral": {

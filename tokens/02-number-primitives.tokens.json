@@ -1,4 +1,5 @@
 {
+  "$generated": "GENERATED FILE — DO NOT EDIT. Overwritten by `node build/build.mjs`. Change build/spec.mjs or build/palette.mjs and rebuild. See CLAUDE.md.",
   "$description": "Raw numbers consumed by every spacing, radius, stroke and sizing alias in Foundations.",
   "number-0": {
     "$type": "number",

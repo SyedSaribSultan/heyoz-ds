@@ -1,4 +1,5 @@
 {
+  "$generated": "GENERATED FILE — DO NOT EDIT. Overwritten by `node build/build.mjs`. Change build/spec.mjs or build/palette.mjs and rebuild. See CLAUDE.md.",
   "$description": "Fifteen size steps across four roles, five weights, five Figma font styles. Bricolage Grotesque carries display and heading; Geist carries body and label. Line heights are unitless ratios so they survive the fluid clamp() on display/heading; on the fixed body and label sizes the ratio still lands on the 4px grid (16 x 1.5 = 24, 14 x 1.4286 = 20, 12 x 1.3333 = 16). Letter spacing is unitless and emitted as em.",
   "font family": {
     "display": {

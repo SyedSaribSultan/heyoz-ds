@@ -1,4 +1,5 @@
 {
+  "$generated": "GENERATED FILE — DO NOT EDIT. Overwritten by `node build/build.mjs`. Change build/spec.mjs or build/palette.mjs and rebuild. See CLAUDE.md.",
   "$description": "Semantic colour + elevation for HeyOz Light. Role names are identical in both modes, so every component is theme-agnostic. All colour aliases resolve to _Colors Primitives. CSS namespace --oz-.",
   "color": {
     "background": {

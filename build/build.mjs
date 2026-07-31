@@ -45,7 +45,18 @@ const out = (p, s) => {
   writeFileSync(join(ROOT, p), s);
   return p;
 };
-const json = (p, o) => out(p, JSON.stringify(o, null, 2) + '\n');
+/**
+ * Every emitted JSON file gets this as its first key, so a human or an assistant
+ * that opens a token file — rather than the README — is told immediately that
+ * editing it is pointless. tokens/*.json and reports/ previously carried no
+ * generated-file marker at all, which makes hand-editing them a silent no-op:
+ * the change looks applied and disappears on the next build.
+ */
+const GENERATED_NOTE =
+  'GENERATED FILE — DO NOT EDIT. Overwritten by `node build/build.mjs`. ' +
+  'Change build/spec.mjs or build/palette.mjs and rebuild. See CLAUDE.md.';
+
+const json = (p, o) => out(p, JSON.stringify({ $generated: GENERATED_NOTE, ...o }, null, 2) + '\n');
 
 const COLLECTION = { colors: '_Colors Primitives', numbers: '_Number Primitives' };
 const errors = [];

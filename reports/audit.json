@@ -1,5 +1,6 @@
 {
-  "generatedAt": "2026-07-31T09:28:49.603Z",
+  "$generated": "GENERATED FILE — DO NOT EDIT. Overwritten by `node build/build.mjs`. Change build/spec.mjs or build/palette.mjs and rebuild. See CLAUDE.md.",
+  "generatedAt": "2026-07-31T09:36:05.342Z",
   "namespace": "oz",
   "counts": {
     "colorPrimitives": 655,
