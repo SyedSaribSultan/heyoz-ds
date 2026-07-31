@@ -155,8 +155,29 @@ the Tailwind preset. Reach for them instead of hardcoding:
 | input placeholder | `--oz-color-content-placeholder` |
 | selected row / tab / segment | `--oz-color-fill-selected`, `-selected-hover`, `-selected-active` |
 | its edge and label | `--oz-color-border-selected`, `--oz-color-content-selected` |
-| focus ring on a brand fill | `--oz-color-border-focus-inverse` |
+| focus ring on a brand fill | `--oz-color-border-focus-inverse` — **inset only**, see below |
 | modal scrim | `--oz-color-elevation-overlay-dimness` |
+
+## The two focus rings
+
+```css
+/* default — anything on a neutral surface. Offset is fine. */
+outline: var(--oz-focus-ring-width) solid var(--oz-color-border-focus);
+outline-offset: var(--oz-focus-ring-offset);
+
+/* on a brand or status FILL — inset, no offset */
+box-shadow: inset 0 0 0 var(--oz-focus-ring-width) var(--oz-color-border-focus-inverse);
+```
+
+`border-focus-inverse` is byte-identical to `color/background` in both modes —
+white on a white page, `neutral/150` on a `neutral/150` page. Drawn with an
+outward offset it fills the offset gap with the page colour and vanishes at
+1.00:1. Drawn inset on the fill it is 3.55:1 and gated.
+
+That is not a flaw in the value. No single colour can be readable both on brand
+orange and on the white page beside it, which is why there are two ring tokens.
+The build can assert their contrast but cannot see which one you reached for, so
+this is the one focus rule that lives in a doc rather than a gate.
 
 ## Variables consumed directly, not via Tailwind
 

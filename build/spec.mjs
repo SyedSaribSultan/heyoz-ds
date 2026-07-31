@@ -524,6 +524,15 @@ const BORDER_SINGLE = {
   //   light brand/75 -> #C22B00, 5.2:1 worst case against the four light surfaces
   //   dark  brand/45 -> #FF7B5C, 7.6:1 against the dark page
   focus: [S('brand/75'), S('brand/45')],
+  // focus-inverse IS AN INSET RING. Draw it inside the element's edge, never with
+  // `--oz-focus-ring-offset`, because it is byte-identical to `color/background` in
+  // both modes (white on a white page; neutral/150 on a neutral/150 page) — an
+  // outward-offset inverse ring puts its own colour in the offset gap and
+  // disappears at 1.00:1. That is not a bug in the value: the token exists to sit
+  // ON a saturated fill, where it measures 3.55:1 and is gated, and there is no
+  // colour that can be both readable on brand orange and readable on the white
+  // page it sits on. The constraint is on how it is used, which a gate cannot
+  // check, so it is stated here and in DEV-GUIDE.
   'focus-inverse': [S('neutral/white'), S('neutral/150')],
   'brand-secondary': [A30('brand/50'), A30('brand/60')],
   // Edge of a selected row / tab / segment. Pairs with fill/selected above.
