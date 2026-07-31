@@ -1,5 +1,2 @@
 node_modules/
 .DS_Store
-
-# The portable copy of the git dir, staged for the rename described in GIT-SETUP.md
-git-history/
