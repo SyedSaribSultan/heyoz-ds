@@ -135,7 +135,7 @@ for (const [path, v] of palette) {
 function emitColorPrimitives() {
   const doc = {
     $description:
-      'Primitive colour tokens. Every value is computed from the OKLCH spec in build/palette.mjs — no hex is hand-typed. solid/ and opacity-15|30|50/ are SIBLING top-level groups, never nested, because a DTCG node cannot be both a token and a group: nesting alpha under a step is what silently dropped 34 base steps and broke 115 alias references in the previous export. spectrum-* are Tier-3 artwork and data-viz hues, not UI roles.',
+      'Primitive colour tokens. Every value is computed from the OKLCH spec in build/palette.mjs — no hex is hand-typed. solid/ and opacity-8|15|30|50/ are SIBLING top-level groups, never nested, because a DTCG node cannot be both a token and a group: nesting alpha under a step is what silently dropped 34 base steps and broke 115 alias references in the previous export. opacity-8 is the disabled rung for translucent fills. spectrum-* are Tier-3 artwork and data-viz hues, not UI roles.',
   };
   for (const [path, v] of PRIM) {
     put(doc, path, colorToken({ components: v.components, hex: v.hex, alpha: v.alpha }));
@@ -360,14 +360,23 @@ function emitSemantic() {
         put(doc, full, scalarToken('number', v, { code: cssRef(full) }));
         resolved[mode][full] = { hex: null, alpha: 1, number: v };
       } else {
-        // Resolved from a primitive path, so elevation carries real aliasData
-        // like every other semantic token. These used to be hand-typed hexes
-        // emitted with no alias, which is what made rule 1 false.
+        // Derived from a primitive path rather than a hand-typed hex, which is what
+        // rule 1 actually requires — see the literal check in validate().
+        //
+        // aliasData is emitted ONLY when the alpha matches too. Figma ignores a
+        // variable's local $value once it is bound to an alias, so aliasing a 0.08
+        // shadow to an opaque primitive would import as a solid slab and the modal
+        // scrim would import as an opaque black rectangle. An alias that lies about
+        // alpha is worse than no alias: dist/ would still be correct and only the
+        // designer's file would be wrong, which is the half of the pipeline nobody
+        // would think to re-check. The alpha-matching invariant is asserted in
+        // validate() so this cannot be reintroduced.
         const prim = PRIM.get(v.target);
         if (!prim) {
           errors.push(`${mode}: ${full} -> missing primitive '${v.target}'`);
           continue;
         }
+        const aliasable = prim.alpha === v.alpha;
         put(
           doc,
           full,
@@ -376,10 +385,10 @@ function emitSemantic() {
             hex: prim.hex,
             alpha: v.alpha,
             code: cssRef(full),
-            alias: { name: v.target, set: COLLECTION.colors },
+            alias: aliasable ? { name: v.target, set: COLLECTION.colors } : undefined,
           })
         );
-        resolved[mode][full] = { hex: prim.hex, alpha: v.alpha, target: v.target };
+        resolved[mode][full] = { hex: prim.hex, alpha: v.alpha, target: v.target, aliased: aliasable };
       }
     }
 
@@ -532,8 +541,9 @@ function emitBridge() {
  *   --accent  -> fill/tertiary-hover  (was identical to --muted: hover state lost)
  *
  * secondary / muted / accent now land on three different ramp steps
- * (neutral 20 / 30 / 40 in light, 120 / 110 / 100 in dark) and the build
- * asserts they stay distinct.
+ * (neutral 20 / 35 / 40 in light, 120 / 110 / 100 in dark) and the build
+ * asserts they stay distinct. Light --muted is the neutral/35 half-step, not 30:
+ * at 30 it was byte-identical to --border.
  *
  * Delete this file once every component reads --${NAMESPACE}-* directly.
  */
@@ -712,6 +722,21 @@ function validate() {
   for (const mode of ['light', 'dark']) {
     for (const [path, r] of Object.entries(resolved[mode])) {
       if (r.hex && !r.target) errors.push(`LITERAL above tier 1: ${mode} ${path} = ${r.hex} names no primitive`);
+    }
+  }
+
+  /* Every aliasData relationship emitted into tokens/ must agree with its target
+   * on ALPHA as well as hue. Figma discards a variable's local value once it is
+   * bound to an alias, so a translucent token aliased to an opaque primitive
+   * imports as opaque — silently, and only on the designer's side, because dist/
+   * carries the correct composed value either way. That is a bug this build
+   * shipped for exactly one commit. */
+  for (const mode of ['light', 'dark']) {
+    for (const [path, r] of Object.entries(resolved[mode])) {
+      if (!r.target || r.aliased === false) continue;
+      const prim = PRIM.get(r.target);
+      if (prim && prim.alpha !== r.alpha)
+        errors.push(`ALIAS ALPHA MISMATCH: ${mode} ${path} is alpha ${r.alpha} but aliases ${r.target} at alpha ${prim.alpha}`);
     }
   }
 

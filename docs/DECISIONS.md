@@ -94,7 +94,7 @@ Adopted its structure; did not adopt its mistakes.
 | D4 | Typos shipped into token names (`haeding` ×4, `sroke width` ×6, `seconday-inverse`, `tertiary-vairant-hover`) | names generated from one spec; no hand-typed duplicates | S |
 | D5 | White on brand 3.52:1, critical 3.35:1, warning 3.33:1 — best-in-class is not the same as accessible | contrast gates in the build | E |
 | D6 | Shadows were the only non-aliased tokens, and the shadow colour was not a primitive | **Now fully aliased.** Targets are primitive paths; `alpha` stays local because it is a property of the shadow, not a colour choice. See I3 | S |
-| D7 | 163 of 253 primitives unused | 492 of 640 unused, and that is fine — the grid is generated, so it costs nothing and guarantees every future semantic token has a target | D |
+| D7 | 163 of 253 primitives unused | 500 of 650 unused, and that is fine — the grid is generated, so it costs nothing and guarantees every future semantic token has a target | D |
 
 > **D6 was adopted, then unadopted.** "Still authored, with the reason stated" is
 > how ten hand-typed hexes stayed in the semantic layer, which made README rule 1
@@ -348,14 +348,55 @@ families, so one failed webfont request took the product to the default serif.
 `color-scheme: dark` was missing from the `.dark` block while `.light` declared it.
 `S`
 
+### I11 — What the fixes themselves broke
+
+The fixes above were then re-audited by a second independent pass, which found
+nine problems in them. That result is more useful than the original audit, so it
+is recorded rather than quietly patched.
+
+| | Introduced by | Problem |
+|---|---|---|
+| a | I3, the literal fix | All ten elevation tokens gained `aliasData` pointing at **opaque** primitives while carrying alpha 0.08–0.90. Figma discards a variable's local value once it is bound to an alias, so every shadow would have imported as a solid slab and the modal scrim as an opaque black rectangle. `dist/` was correct throughout, so this would only have broken the designer's file — the half of the pipeline nobody would re-check. |
+| b | A4, the focus fix | Light `border/focus` moved `brand/60 → brand/70` to clear `--primary`, and landed byte-identical to `border/brand-hover`, `border/selected` and `content/brand`. **The same bug, one layer down**: no visible ring on a selected or hovered brand-bordered control. |
+| c | I2, the ramp fix | `surface/tertiary` moving to the neutral/35 half-step pushed `content/warning` and `content/info` below 4.5:1 on it (4.38, 4.36), and made the other three status text colours worse. All five were gated against `color/background` only — **the identical gap I7 had just fixed for `content/tertiary`**, unfixed for its five siblings because the gate list named one token instead of a category. |
+| d | I5, the disabled fix | The flat neutral disabled fill was `neutral/120` in dark, byte-identical to `surface/elevated` and `surface/secondary`. A disabled button stopped reading as a control and read as a card. |
+| e | I2 | Dark `gradient/mesh-3` == `gradient/onboarding-1`, flattening the mesh. |
+| f–i | various | Three shipped comments made factually wrong claims (the bridge header's "neutral 20 / 30 / 40", the APCA floor's "63–70", `tokens/01`'s `opacity-15|30|50`); `content/placeholder` equals `content/tertiary`; five gates now pass within 8% of their floor. |
+
+**Resolutions.** aliasData is emitted only when the alias agrees on alpha as well
+as hue, and a new invariant asserts it (a). `border/focus` owns a dedicated ramp
+step per mode — `brand/75` light, `brand/45` dark — occupied by nothing else, plus
+five collision assertions, because a ring is the one token that must not equal
+anything it can be drawn against (b). The light status text ramp moved 70/80/90 →
+80/90/100 and all five roles are gated on the surfaces, not just the page (c). Dark
+disabled fill is `neutral/110`, asserted against `surface/elevated` (d). `mesh-3`
+dark is `brand/90`, asserted (e). Comments corrected (f–i). `content/placeholder`
+stays equal to `content/tertiary` deliberately: tertiary already sits on the 4.70:1
+floor, so there is no room to make placeholder lighter without failing 1.4.3. The
+thin margins are documented at the point of definition rather than widened, because
+widening them means moving the brand.
+
+Gates 152 → 172.
+
 ### What this section is really for
 
-Every finding above is the same shape. The values were defensible, the reasoning
-in this file was mostly excellent, and the gates were real. What failed was
-**coverage**: assertion lists shorter than the claims they backed, one state gated
-out of three, one surface out of four, a metric applied where it cannot see.
+Every finding here is the same shape, including the ones in I11. The values were
+defensible, the reasoning in this file was mostly excellent, and the gates were
+real. What failed was **coverage**: assertion lists shorter than the claims they
+backed, one state gated out of three, one surface out of four, one token named
+where a category was meant, a metric applied where it cannot see.
 
-So the rule going forward is narrower than "add gates":
+I11 is the sharper lesson. Three of those nine were caused by a fix — moving a
+value to satisfy a new gate pushed a different, ungated pair over its own edge.
+I11c is the clearest case: the fix for `content/tertiary` was written as one
+token's problem when it was every quiet-text token's problem, so it recurred
+within the same commit that "solved" it.
+
+So there are two rules, not one:
 
 > A claim in this file is a liability until a gate names the specific pair.
 > If you write `E`, point at the assertion. If you cannot, write `D`.
+
+> When you move a value to satisfy a gate, sweep the family it belongs to. A fix
+> that names one token where a category was meant will recur, usually immediately,
+> and usually somewhere nobody is measuring.

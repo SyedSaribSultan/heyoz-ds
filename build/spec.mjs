@@ -514,10 +514,16 @@ const BORDER = {
  * cannot express both, which is why that token exists and is separately gated.
  */
 const BORDER_SINGLE = {
-  // Dark moved brand/50 -> brand/40 so it clears chart series 1, which now needs
-  // brand/50 to hold its rung on the lightness ladder. brand/40 is L 76 against
-  // an L 12 page: 8.8:1, the most visible ring in either mode.
-  focus: [S('brand/70'), S('brand/40')],
+  // focus gets its OWN ramp step in each mode — brand/75 light, brand/45 dark —
+  // occupied by nothing else in the system. First attempt at fixing A4 moved light
+  // focus from brand/60 to brand/70, which cleared `--primary` but landed it
+  // byte-identical to border/brand-hover, border/selected and content/brand. That
+  // is the same bug one layer down: no visible ring on a selected or hovered
+  // brand-bordered control. A ring is the one token that must not share a value
+  // with anything it can be drawn against, so it gets a dedicated rung.
+  //   light brand/75 -> #C22B00, 5.2:1 worst case against the four light surfaces
+  //   dark  brand/45 -> #FF7B5C, 7.6:1 against the dark page
+  focus: [S('brand/75'), S('brand/45')],
   'focus-inverse': [S('neutral/white'), S('neutral/150')],
   'brand-secondary': [A30('brand/50'), A30('brand/60')],
   // Edge of a selected row / tab / segment. Pairs with fill/selected above.
@@ -564,26 +570,39 @@ const CONTENT_SINGLE = {
   'fixed-inverse-disabled': [A50('neutral/white'), A50('neutral/white')],
 };
 
-/** Coloured text. [base, hover, active] per mode; disabled generated. */
+/**
+ * Coloured text. [base, hover, active] per mode; disabled generated.
+ *
+ * LIGHT MOVED 70/80/90 -> 80/90/100. At step 70 these measured 3.53-4.38:1 on
+ * `surface/tertiary` — all five failed 4.5:1 on a muted panel, and two of them
+ * (warning, info) only crossed below when `surface/tertiary` moved to the
+ * neutral/35 half-step to clear `--border`. They were gated against
+ * `color/background` alone, so nothing noticed either before or after.
+ *
+ * This is the same mistake as `content/tertiary`, made in the same file, and the
+ * fix for that one did not generalise because the gate list named one token
+ * instead of a category. All five now clear 4.5:1 on all four light surfaces
+ * (5.11-6.03:1 worst case) and are gated on the two that bind.
+ */
 const CONTENT_ROLE = {
   brand: [
-    ['brand/70', 'brand/80', 'brand/90'],
+    ['brand/80', 'brand/90', 'brand/100'],
     ['brand/50', 'brand/40', 'brand/30'],
   ],
   success: [
-    ['success/70', 'success/80', 'success/90'],
+    ['success/80', 'success/90', 'success/100'],
     ['success/50', 'success/40', 'success/30'],
   ],
   warning: [
-    ['warning/70', 'warning/80', 'warning/90'],
+    ['warning/80', 'warning/90', 'warning/100'],
     ['warning/50', 'warning/40', 'warning/30'],
   ],
   critical: [
-    ['error/70', 'error/80', 'error/90'],
+    ['error/80', 'error/90', 'error/100'],
     ['error/50', 'error/40', 'error/30'],
   ],
   info: [
-    ['info/70', 'info/80', 'info/90'],
+    ['info/80', 'info/90', 'info/100'],
     ['info/50', 'info/40', 'info/30'],
   ],
 };
@@ -656,12 +675,17 @@ const CONTENT_ON = {
  * status tracks, where it fades a saturated fill toward the page at the same time
  * as its white label fades toward the fill. See CONTENT_ON above.
  */
+// Dark is neutral/110, not neutral/120. At 120 a disabled status button was
+// byte-identical to surface/elevated AND surface/secondary, so it stopped reading
+// as a control at all and read as a card. 110 clears both; it does share a value
+// with surface/tertiary, which is fine — a dead control looking like a flat muted
+// panel is the intent. Asserted against surface/elevated below.
 export const FILL_DISABLED_OVERRIDE = {
-  brand: [S('neutral/30'), S('neutral/120')],
-  success: [S('neutral/30'), S('neutral/120')],
-  warning: [S('neutral/30'), S('neutral/120')],
-  critical: [S('neutral/30'), S('neutral/120')],
-  info: [S('neutral/30'), S('neutral/120')],
+  brand: [S('neutral/30'), S('neutral/110')],
+  success: [S('neutral/30'), S('neutral/110')],
+  warning: [S('neutral/30'), S('neutral/110')],
+  critical: [S('neutral/30'), S('neutral/110')],
+  info: [S('neutral/30'), S('neutral/110')],
 };
 
 /** Tier 3 — data visualisation. Per-mode, unlike the shipped --chart-* which
@@ -725,7 +749,8 @@ const SIDEBAR = {
 const GRADIENT = {
   'mesh-1': [S('brand/40'), S('brand/70')],
   'mesh-2': [S('spectrum-purple/30'), S('spectrum-purple/70')],
-  'mesh-3': [S('brand/20'), S('brand/80')],
+  // dark was brand/80, byte-identical to onboarding-1, which flattened the mesh.
+  'mesh-3': [S('brand/20'), S('brand/90')],
   'mesh-4': [S('brand/30'), S('brand/60')],
   'mesh-base': [S('neutral/white'), S('neutral/130')],
   'onboarding-1': [S('brand/60'), S('brand/80')],
@@ -894,8 +919,22 @@ export const CONTRAST_ASSERTIONS = [
   ['color/content/secondary', 'color/surface/primary', 4.5],
   ['color/content/primary', 'color/surface/secondary', 4.5],
   ['color/content/primary', 'color/surface/tertiary', 4.5],
+  // All five status text roles, on the page AND on the two surfaces that bind.
+  // These were gated against the page only, and all five failed 4.5:1 on
+  // surface/tertiary. Enumerated rather than looped so the failure message names
+  // the pair, but if you add a sixth role, add its three lines.
   ['color/content/brand', 'color/background', 4.5],
+  ['color/content/brand', 'color/surface/secondary', 4.5],
+  ['color/content/brand', 'color/surface/tertiary', 4.5],
   ['color/content/critical', 'color/background', 4.5],
+  ['color/content/critical', 'color/surface/secondary', 4.5],
+  ['color/content/critical', 'color/surface/tertiary', 4.5],
+  ['color/content/success', 'color/background', 4.5],
+  ['color/content/success', 'color/surface/tertiary', 4.5],
+  ['color/content/warning', 'color/background', 4.5],
+  ['color/content/warning', 'color/surface/tertiary', 4.5],
+  ['color/content/info', 'color/background', 4.5],
+  ['color/content/info', 'color/surface/tertiary', 4.5],
   ['color/sidebar/content', 'color/sidebar/background', 4.5],
   ['color/content/primary', 'color/surface/brand-flat', 4.5],
   ['color/content/primary', 'color/surface/critical-flat', 4.5],
@@ -953,7 +992,12 @@ export const CONTRAST_ASSERTIONS = [
  * Text on saturated fills, gated on APCA Lc instead of WCAG 2.x ratio.
  *
  * Lc 60 is the body-text threshold. Button labels ship at 14–16px semibold, so
- * 60 is the right floor; the white-on-fill pairs land 63–70, with headroom.
+ * 60 is the right floor. Across all thirty gated pairs the white-on-fill values
+ * land Lc 60.4–93.3. The tightest are the dark ACTIVE fills at 60.4 (brand) and
+ * 60.4 (success) — deliberately close, because those two are the lightest fills
+ * white has to sit on anywhere in the system, and moving them further would
+ * flatten the dark press state. If you nudge the brand ramp, these are the two
+ * that break first.
  *
  * These pairs will be flagged by axe, Lighthouse and any other WCAG-2-based
  * checker, because white on a vivid mid-lightness fill measures 3.5–4.4:1 by
@@ -1039,6 +1083,21 @@ export const COLLISION_ASSERTIONS = [
   // A hovered row must not erase its own divider (the dark --accent === --border
   // failure). fill/tertiary-hover is the bridge's --accent.
   ['color/border/primary', 'color/fill/tertiary-hover'],
+  // The focus ring must not equal anything it can be drawn against. The first
+  // attempt at A4 cleared fill/brand and immediately collided with these three
+  // instead, which is why focus now owns a dedicated ramp step per mode.
+  ['color/border/focus', 'color/border/selected'],
+  ['color/border/focus', 'color/border/brand-hover'],
+  ['color/border/focus', 'color/fill/brand-hover'],
+  ['color/border/focus', 'color/fill/brand-active'],
+  ['color/border/focus', 'color/content/brand'],
+  // A disabled control must not read as a card. fill/*-disabled was neutral/120 in
+  // dark, byte-identical to surface/elevated and surface/secondary.
+  ['color/fill/brand-disabled', 'color/surface/elevated'],
+  ['color/fill/critical-disabled', 'color/surface/elevated'],
+  ['color/fill/brand-disabled', 'color/surface/primary'],
+  // Decorative, but two gradient stops resolving to one colour flattens the mesh.
+  ['color/gradient/mesh-3', 'color/gradient/onboarding-1'],
 ];
 
 /**

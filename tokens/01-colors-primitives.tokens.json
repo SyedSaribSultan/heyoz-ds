@@ -1,5 +1,5 @@
 {
-  "$description": "Primitive colour tokens. Every value is computed from the OKLCH spec in build/palette.mjs — no hex is hand-typed. solid/ and opacity-15|30|50/ are SIBLING top-level groups, never nested, because a DTCG node cannot be both a token and a group: nesting alpha under a step is what silently dropped 34 base steps and broke 115 alias references in the previous export. spectrum-* are Tier-3 artwork and data-viz hues, not UI roles.",
+  "$description": "Primitive colour tokens. Every value is computed from the OKLCH spec in build/palette.mjs — no hex is hand-typed. solid/ and opacity-8|15|30|50/ are SIBLING top-level groups, never nested, because a DTCG node cannot be both a token and a group: nesting alpha under a step is what silently dropped 34 base steps and broke 115 alias references in the previous export. opacity-8 is the disabled rung for translucent fills. spectrum-* are Tier-3 artwork and data-viz hues, not UI roles.",
   "solid": {
     "neutral": {
       "10": {
@@ -382,6 +382,20 @@
         },
         "$extensions": {}
       },
+      "45": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.996051,
+            0.470832,
+            0.353167
+          ],
+          "alpha": 1,
+          "hex": "#FE785A"
+        },
+        "$extensions": {}
+      },
       "50": {
         "$type": "color",
         "$value": {
@@ -435,6 +449,20 @@
           ],
           "alpha": 1,
           "hex": "#D53100"
+        },
+        "$extensions": {}
+      },
+      "75": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.747935,
+            0.167557,
+            0
+          ],
+          "alpha": 1,
+          "hex": "#BF2B00"
         },
         "$extensions": {}
       },
@@ -2198,6 +2226,20 @@
         },
         "$extensions": {}
       },
+      "45": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.996051,
+            0.470832,
+            0.353167
+          ],
+          "alpha": 0.08,
+          "hex": "#FE785A"
+        },
+        "$extensions": {}
+      },
       "50": {
         "$type": "color",
         "$value": {
@@ -2251,6 +2293,20 @@
           ],
           "alpha": 0.08,
           "hex": "#D53100"
+        },
+        "$extensions": {}
+      },
+      "75": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.747935,
+            0.167557,
+            0
+          ],
+          "alpha": 0.08,
+          "hex": "#BF2B00"
         },
         "$extensions": {}
       },
@@ -4014,6 +4070,20 @@
         },
         "$extensions": {}
       },
+      "45": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.996051,
+            0.470832,
+            0.353167
+          ],
+          "alpha": 0.15,
+          "hex": "#FE785A"
+        },
+        "$extensions": {}
+      },
       "50": {
         "$type": "color",
         "$value": {
@@ -4067,6 +4137,20 @@
           ],
           "alpha": 0.15,
           "hex": "#D53100"
+        },
+        "$extensions": {}
+      },
+      "75": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.747935,
+            0.167557,
+            0
+          ],
+          "alpha": 0.15,
+          "hex": "#BF2B00"
         },
         "$extensions": {}
       },
@@ -5830,6 +5914,20 @@
         },
         "$extensions": {}
       },
+      "45": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.996051,
+            0.470832,
+            0.353167
+          ],
+          "alpha": 0.3,
+          "hex": "#FE785A"
+        },
+        "$extensions": {}
+      },
       "50": {
         "$type": "color",
         "$value": {
@@ -5883,6 +5981,20 @@
           ],
           "alpha": 0.3,
           "hex": "#D53100"
+        },
+        "$extensions": {}
+      },
+      "75": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.747935,
+            0.167557,
+            0
+          ],
+          "alpha": 0.3,
+          "hex": "#BF2B00"
         },
         "$extensions": {}
       },
@@ -7646,6 +7758,20 @@
         },
         "$extensions": {}
       },
+      "45": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.996051,
+            0.470832,
+            0.353167
+          ],
+          "alpha": 0.5,
+          "hex": "#FE785A"
+        },
+        "$extensions": {}
+      },
       "50": {
         "$type": "color",
         "$value": {
@@ -7699,6 +7825,20 @@
           ],
           "alpha": 0.5,
           "hex": "#D53100"
+        },
+        "$extensions": {}
+      },
+      "75": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.747935,
+            0.167557,
+            0
+          ],
+          "alpha": 0.5,
+          "hex": "#BF2B00"
         },
         "$extensions": {}
       },

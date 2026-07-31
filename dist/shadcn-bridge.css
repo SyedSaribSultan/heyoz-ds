@@ -9,8 +9,9 @@
  *   --accent  -> fill/tertiary-hover  (was identical to --muted: hover state lost)
  *
  * secondary / muted / accent now land on three different ramp steps
- * (neutral 20 / 30 / 40 in light, 120 / 110 / 100 in dark) and the build
- * asserts they stay distinct.
+ * (neutral 20 / 35 / 40 in light, 120 / 110 / 100 in dark) and the build
+ * asserts they stay distinct. Light --muted is the neutral/35 half-step, not 30:
+ * at 30 it was byte-identical to --border.
  *
  * Delete this file once every component reads --oz-* directly.
  */
@@ -45,7 +46,7 @@
     --info-soft: 217.5 100% 95.29%;
     --border: 20 5.08% 88.43%;
     --input: 15 3.77% 79.22%;
-    --ring: 13.8 100% 41.76%;
+    --ring: 13.51 100% 37.45%;
     --chart-1: 11.2 99.05% 58.63%;
     --chart-2: 202.7 100% 29.02%;
     --chart-3: 180 100% 24.9%;
@@ -58,7 +59,7 @@
     --sidebar-accent: 20 6.38% 90.78%;
     --sidebar-accent-foreground: 30 16.67% 2.35%;
     --sidebar-border: 20 5.08% 88.43%;
-    --sidebar-ring: 13.8 100% 41.76%;
+    --sidebar-ring: 13.51 100% 37.45%;
     --radius: var(--oz-radius-5);
   }
 
@@ -92,7 +93,7 @@
     --info-soft: 217.78 87.1% 18.24%;
     --border: 20 1.89% 31.18%;
     --input: 20 1.6% 36.67%;
-    --ring: 11.25 100% 71.76%;
+    --ring: 10.98 98.8% 67.45%;
     --chart-1: 10.82 96.83% 62.94%;
     --chart-2: 202.22 96.43% 43.92%;
     --chart-3: 180 55.75% 55.69%;
@@ -105,7 +106,7 @@
     --sidebar-accent: 20 9.68% 6.08%;
     --sidebar-accent-foreground: 20 8.57% 93.14%;
     --sidebar-border: 30 6.45% 12.16%;
-    --sidebar-ring: 11.25 100% 71.76%;
+    --sidebar-ring: 10.98 98.8% 67.45%;
   }
 
   .light,
@@ -138,7 +139,7 @@
     --info-soft: 217.5 100% 95.29%;
     --border: 20 5.08% 88.43%;
     --input: 15 3.77% 79.22%;
-    --ring: 13.8 100% 41.76%;
+    --ring: 13.51 100% 37.45%;
     --chart-1: 11.2 99.05% 58.63%;
     --chart-2: 202.7 100% 29.02%;
     --chart-3: 180 100% 24.9%;
@@ -151,6 +152,6 @@
     --sidebar-accent: 20 6.38% 90.78%;
     --sidebar-accent-foreground: 30 16.67% 2.35%;
     --sidebar-border: 20 5.08% 88.43%;
-    --sidebar-ring: 13.8 100% 41.76%;
+    --sidebar-ring: 13.51 100% 37.45%;
   }
 }

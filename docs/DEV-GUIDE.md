@@ -202,7 +202,7 @@ CI-friendly: exits non-zero on any gate regression, unresolvable alias, token
 collision, or literal above tier 1. Worth wiring into the pipeline so a colour
 change cannot ship a contrast failure.
 
-152 gates across five families — contrast 82, APCA 30, visibility 12, elevation 8,
+172 gates across five families — contrast 102, APCA 30, visibility 12, elevation 8,
 greyscale 20. `reports/audit.json` carries every individual result with its
 computed value, so CI can diff them rather than just checking the exit code.
 

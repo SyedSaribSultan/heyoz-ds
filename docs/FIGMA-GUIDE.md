@@ -28,7 +28,7 @@ that imported cleanly before.
 
 | Collection | Modes | Tokens |
 |---|---|---|
-| _Colors Primitives | Value | 640 |
+| _Colors Primitives | Value | 650 |
 | _Number Primitives | Value | 29 |
 | Foundations | Value | 64 |
 | Motion | Value | 10 |

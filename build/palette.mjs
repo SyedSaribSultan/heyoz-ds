@@ -260,10 +260,17 @@ const FAMILIES = {
       // 50 was L 0.7050 (-> #FF6A49). Lowered to 0.6950 because it is now the
       // DARK ACTIVE fill and white on it measured Lc 58.8 — under the Lc 60
       // floor this system sets for itself. ΔL 0.010 is imperceptible.
+      // 45 and 75 exist ONLY for border/focus, one per mode. The focus ring is the
+      // one token that must not share a value with any fill or border it can be
+      // drawn against, and 60/70/80 are all occupied by fill and border states —
+      // which is how `--ring` === `--primary` shipped in the first place. Giving
+      // focus its own rung is cheaper than arguing about which neighbour to move.
+      45: [0.7250, 0.1700], // -> #FF7B5C  DARK FOCUS ONLY
       50: [0.6950, 0.1900], // -> #FC6645  dark active,  white Lc 60.4
       55: [0.6743, 0.2124], // -> #FE542D  NEW - dark hover, white Lc 63.6
       60: [0.6535, 0.2348], // -> #FF3D01  the brand,    white Lc 66.7
       70: [0.5700, 0.2150], // -> #D53100  light hover,  white Lc 77.8
+      75: [0.5250, 0.1980], // -> #C22B00  LIGHT FOCUS ONLY
       80: [0.4800, 0.1780], // -> #A92500  light active, white Lc 88.1
       90: [0.3900, 0.1400],
       100: [0.3000, 0.1050],
