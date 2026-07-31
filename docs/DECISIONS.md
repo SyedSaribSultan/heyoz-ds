@@ -22,7 +22,7 @@ Section I is the full account.
 | A1 | Dark `--card`, `--border`, `--input` all `20 7.69% 7.65%` — card and input edges invisible | `border/primary` = `neutral/95`, 2.27:1 against its own card | `spec.mjs` BORDER + `VISIBILITY_ASSERTIONS` | E |
 | A2 | Light `--sidebar-border` (96.27%) brighter than `--sidebar` (93.14%) | sidebar rebuilt off the shared ramp | `spec.mjs` SIDEBAR + visibility gate | E |
 | A3 | `.force-light` a hand-maintained third copy, already drifted, missing status/shadow/radius/font tokens | deleted; `.light` block generated from the same map as `:root` | `build.mjs` `emitTokensCss` | S |
-| A4 | `--ring` identical to `--primary` — focus ring invisible on brand buttons | `border/focus` = `brand/70` light, `brand/40` dark; `border/focus-inverse` for rings on filled brand surfaces; width and offset tokenised | `spec.mjs` BORDER_SINGLE, FOUNDATIONS.focus | E |
+| A4 | `--ring` identical to `--primary` — focus ring invisible on brand buttons | `border/focus` = `brand/75` light, `brand/45` dark, rungs nothing else occupies; `border/focus-inverse` for rings on filled brand surfaces; width and offset tokenised | `spec.mjs` BORDER_SINGLE, FOUNDATIONS.focus | E |
 | A5 | ~~White on `#FF3D00` = 3.55:1, fails AA~~ **Withdrawn — this was not a bug.** See H1 | `content/on-*` is white on all five fills, both modes | `spec.mjs` CONTENT_ON + `APCA_ASSERTIONS` | E |
 | A6 | `--accent` identical to `--muted` — hover indistinguishable from muted surface | bridge maps secondary/muted/accent to three different ramp steps | `spec.mjs` SHADCN_BRIDGE + `BRIDGE_COLLISIONS` | E |
 
@@ -77,7 +77,7 @@ Section I is the full account.
 | C6 | Status alpha families built on different base hexes than their own `/500` (`#00A161`, `#EBAB00`, `#5781E3`, `#E63C65`) | one ramp per family; alpha groups are that ramp at 8/15/30/50 | `palette.mjs` | S |
 | C7 | Two alpha ladders (15/30/50 and 12/24/38/50) plus an `opacity` scale matching neither | one ladder: 8/15/30/50 — the 8 rung added so a translucent fill can have a disabled state, see I4 | `palette.mjs` ALPHA_GROUPS | S |
 | C8 | `spacing.N = N × 2px`, colliding with Tailwind's `N × 4px` | 4→120 ramp, ordinal names, `--oz-` namespace, emitted as `space-*` utilities so `p-space-5` is unambiguous | `spec.mjs` FOUNDATIONS + `emitTailwind` | D |
-| C9 | `content/tertiary` mode-invariant | per-mode: `neutral/80` light, `neutral/70` dark | `spec.mjs` | E |
+| C9 | `content/tertiary` mode-invariant | per-mode: `neutral/90` light, `neutral/60` dark — moved from 80/70 by I7, which found it failing 4.5:1 on all three card surfaces | `spec.mjs` | E |
 | C10 | `font.family.primary` = Bricolage, but Bricolage is the display face and Geist (the body face) had no token | `display`/`heading` = Bricolage, `body`/`label` = Geist, `mono` = Geist Mono | `spec.mjs` TYPOGRAPHY | S |
 | C11 | `z-index` and `breakpoint` as Figma float variables scoped `EFFECT_FLOAT` — inert in Figma | kept as tokens because code needs them, authored as literals not aliases, with the reason recorded | `spec.mjs` LITERAL_GROUPS | D |
 | C12 | Float32 noise (`0.03999999910593033`) | all values rounded at emit | `build.mjs` `round6` | S |
@@ -93,8 +93,8 @@ Adopted its structure; did not adopt its mistakes.
 | D3 | Labels ran to 20px, colliding with `heading xs` and `body xl` at identical size *and* line height | labels cap at 14px | D |
 | D4 | Typos shipped into token names (`haeding` ×4, `sroke width` ×6, `seconday-inverse`, `tertiary-vairant-hover`) | names generated from one spec; no hand-typed duplicates | S |
 | D5 | White on brand 3.52:1, critical 3.35:1, warning 3.33:1 — best-in-class is not the same as accessible | contrast gates in the build | E |
-| D6 | Shadows were the only non-aliased tokens, and the shadow colour was not a primitive | **Now fully aliased.** Targets are primitive paths; `alpha` stays local because it is a property of the shadow, not a colour choice. See I3 | S |
-| D7 | 163 of 253 primitives unused | 500 of 650 unused, and that is fine — the grid is generated, so it costs nothing and guarantees every future semantic token has a target | D |
+| D6 | Shadows were the only non-aliased tokens, and the shadow colour was not a primitive | **Derived from primitives, deliberately not aliased.** Targets are primitive paths, so no hex is hand-authored and rule 1 holds as enforced. The emitted Figma tokens carry no `aliasData`, because Figma discards a variable's local value once bound and these carry alpha 0.08–0.90 — an alias would import them opaque. See I3 and I11a | S |
+| D7 | 163 of 253 primitives unused | 504 of 655 unused, and that is fine — the grid is generated, so it costs nothing and guarantees every future semantic token has a target | D |
 
 > **D6 was adopted, then unadopted.** "Still authored, with the reason stated" is
 > how ten hand-typed hexes stayed in the semantic layer, which made README rule 1
@@ -287,7 +287,7 @@ what those tokens were reaching for.
 
 Disabled controls are exempt from 1.4.3, so this was never a conformance failure —
 it was simply unusable, and ungated. Now an opaque neutral label on an opaque
-neutral fill: 3.28:1 light, 3.84:1 dark, identical across all five roles, because a
+neutral fill: 3.47:1 light, 3.82:1 dark, identical across all five roles, because a
 control you cannot act on has no reason to keep its role colour. `E`
 
 ### I6 — Ten roles had no token at all
@@ -377,6 +377,38 @@ thin margins are documented at the point of definition rather than widened, beca
 widening them means moving the brand.
 
 Gates 152 → 172.
+
+### I12 — Third pass: what I11 broke, and the one place the lesson stuck
+
+I11 was re-audited in turn. **No third generation of value regressions** — all 172
+gates reproduced independently, alias integrity and mode parity were exact, and the
+round removed 39 collision pairs while adding only lateral or benign ones. But it
+reproduced the *documentation* failure at the exact site it edited, and its new
+gate named two members where a category was meant. Both are the rules at the end of
+I11, written and then not applied.
+
+| | Problem |
+|---|---|
+| a | `spec.mjs` and I5 both still claimed the disabled label measured "3.84:1 dark". That was the figure for a fill replaced two edits earlier; actual was 3.25:1. A wrong `E`-marked number, eight lines above the object that changed it. |
+| b | Dark `fill/*-disabled` = `neutral/110` cleared the two surfaces the new assertion named and collided with `surface/tertiary` plus **six enabled interactive fills**. A dead control reading as a *live* control — worse than the card collision I5 set out to fix. The light side had the same problem (`neutral/30` == `fill/tertiary`) and went unreported because only dark had been examined. |
+| c | Light `content/{role}` moving 70 → 80 to clear `surface/tertiary` dropped all five roles from 3.3–4.1:1 to 2.4–2.9:1 against `surface/inverse`, taking brand **below** the 3:1 floor it used to clear. Ungated. The real gap: no `content/{role}-inverse` existed, so a status label on an inverted panel had nothing correct to reach for. |
+| d–f | `A4` still named `brand/70`/`brand/40`; `C9` still named the pre-I7 `content/tertiary`; `D6` claimed "now fully aliased" when I11a had deliberately un-aliased ten tokens. |
+| g | Pre-existing, not caused by any round: the test rig iterated chart series **1–6** while five exist, so `flat('color/chart/6')` returned the `#FF00FF` fallback and §10 rendered a phantom magenta bar whose L\* polluted the reported greyscale gap. Present in the baseline. |
+
+**Resolutions.** `neutral/105` added; disabled fills are `neutral/25` light and
+`neutral/105` dark, the two rungs nothing else occupies, and the constraint is now
+**generated** — every disabled fill is asserted against every enabled surface and
+every enabled fill, 46 pairs per role, because a hand-written list has now failed
+this three times (b). `CONTENT_ROLE_INVERSE` adds five tokens with the modes
+deliberately swapped, gated on both inverted surfaces (c). Disabled label is
+`neutral/80` light and `neutral/70` dark with recomputed figures (a). Contrast
+gates gained the same mode-scoping the collision gates had — which immediately paid
+for itself: the new `focus-inverse` on `surface/fixed` assertion failed on its first
+run at 1.00:1, because `surface/fixed` is white in *both* modes and the inverse ring
+is white in light. The ordinary brand ring is correct there, and both are now
+asserted per mode. The rig's phantom series is gone (g).
+
+Gates 172 → 188.
 
 ### What this section is really for
 

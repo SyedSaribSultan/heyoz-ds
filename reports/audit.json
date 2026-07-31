@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-31T08:49:08.623Z",
+  "generatedAt": "2026-07-31T09:09:13.805Z",
   "namespace": "oz",
   "counts": {
-    "colorPrimitives": 650,
+    "colorPrimitives": 655,
     "numberPrimitives": 29,
-    "semanticPerMode": 205,
+    "semanticPerMode": 210,
     "typeSteps": 15,
-    "unusedPrimitives": 500
+    "unusedPrimitives": 504
   },
   "contrast": [
     {
@@ -475,7 +475,7 @@
       "mode": "light",
       "fg": "color/content/on-brand-disabled",
       "bg": "color/fill/brand-disabled",
-      "ratio": 3.28,
+      "ratio": 3.47,
       "min": 3,
       "pass": true
     },
@@ -485,7 +485,7 @@
       "mode": "light",
       "fg": "color/content/on-critical-disabled",
       "bg": "color/fill/critical-disabled",
-      "ratio": 3.28,
+      "ratio": 3.47,
       "min": 3,
       "pass": true
     },
@@ -495,7 +495,7 @@
       "mode": "light",
       "fg": "color/content/on-success-disabled",
       "bg": "color/fill/success-disabled",
-      "ratio": 3.28,
+      "ratio": 3.47,
       "min": 3,
       "pass": true
     },
@@ -505,7 +505,7 @@
       "mode": "light",
       "fg": "color/content/on-warning-disabled",
       "bg": "color/fill/warning-disabled",
-      "ratio": 3.28,
+      "ratio": 3.47,
       "min": 3,
       "pass": true
     },
@@ -515,7 +515,87 @@
       "mode": "light",
       "fg": "color/content/on-info-disabled",
       "bg": "color/fill/info-disabled",
-      "ratio": 3.28,
+      "ratio": 3.47,
+      "min": 3,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/content/brand-inverse",
+      "bg": "color/surface/inverse",
+      "ratio": 6.87,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/content/success-inverse",
+      "bg": "color/surface/inverse",
+      "ratio": 6.97,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/content/warning-inverse",
+      "bg": "color/surface/inverse",
+      "ratio": 6.72,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/content/critical-inverse",
+      "bg": "color/surface/inverse",
+      "ratio": 6.64,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/content/info-inverse",
+      "bg": "color/surface/inverse",
+      "ratio": 6.64,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/content/inverse-primary",
+      "bg": "color/surface/inverse",
+      "ratio": 17.35,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/border/focus-inverse",
+      "bg": "color/surface/inverse",
+      "ratio": 20.25,
+      "min": 3,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/border/focus",
+      "bg": "color/surface/fixed",
+      "ratio": 5.9,
       "min": 3,
       "pass": true
     },
@@ -985,7 +1065,7 @@
       "mode": "dark",
       "fg": "color/content/on-brand-disabled",
       "bg": "color/fill/brand-disabled",
-      "ratio": 3.25,
+      "ratio": 3.82,
       "min": 3,
       "pass": true
     },
@@ -995,7 +1075,7 @@
       "mode": "dark",
       "fg": "color/content/on-critical-disabled",
       "bg": "color/fill/critical-disabled",
-      "ratio": 3.25,
+      "ratio": 3.82,
       "min": 3,
       "pass": true
     },
@@ -1005,7 +1085,7 @@
       "mode": "dark",
       "fg": "color/content/on-success-disabled",
       "bg": "color/fill/success-disabled",
-      "ratio": 3.25,
+      "ratio": 3.82,
       "min": 3,
       "pass": true
     },
@@ -1015,7 +1095,7 @@
       "mode": "dark",
       "fg": "color/content/on-warning-disabled",
       "bg": "color/fill/warning-disabled",
-      "ratio": 3.25,
+      "ratio": 3.82,
       "min": 3,
       "pass": true
     },
@@ -1025,7 +1105,87 @@
       "mode": "dark",
       "fg": "color/content/on-info-disabled",
       "bg": "color/fill/info-disabled",
-      "ratio": 3.25,
+      "ratio": 3.82,
+      "min": 3,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/content/brand-inverse",
+      "bg": "color/surface/inverse",
+      "ratio": 6.55,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/content/success-inverse",
+      "bg": "color/surface/inverse",
+      "ratio": 7.09,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/content/warning-inverse",
+      "bg": "color/surface/inverse",
+      "ratio": 7.73,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/content/critical-inverse",
+      "bg": "color/surface/inverse",
+      "ratio": 7.34,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/content/info-inverse",
+      "bg": "color/surface/inverse",
+      "ratio": 7.69,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/content/inverse-primary",
+      "bg": "color/surface/inverse",
+      "ratio": 18.63,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/border/focus-inverse",
+      "bg": "color/surface/inverse",
+      "ratio": 18.63,
+      "min": 3,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/border/focus-inverse",
+      "bg": "color/surface/fixed",
+      "ratio": 20.25,
       "min": 3,
       "pass": true
     },
@@ -2012,9 +2172,9 @@
       "target": "solid/brand/80"
     },
     "color/fill/brand-disabled": {
-      "hex": "#E3E1E0",
+      "hex": "#E9E7E6",
       "alpha": 1,
-      "target": "solid/neutral/30"
+      "target": "solid/neutral/25"
     },
     "color/fill/success": {
       "hex": "#1D9156",
@@ -2032,9 +2192,9 @@
       "target": "solid/success/80"
     },
     "color/fill/success-disabled": {
-      "hex": "#E3E1E0",
+      "hex": "#E9E7E6",
       "alpha": 1,
-      "target": "solid/neutral/30"
+      "target": "solid/neutral/25"
     },
     "color/fill/warning": {
       "hex": "#A36E07",
@@ -2052,9 +2212,9 @@
       "target": "solid/warning/80"
     },
     "color/fill/warning-disabled": {
-      "hex": "#E3E1E0",
+      "hex": "#E9E7E6",
       "alpha": 1,
-      "target": "solid/neutral/30"
+      "target": "solid/neutral/25"
     },
     "color/fill/critical": {
       "hex": "#E63C65",
@@ -2072,9 +2232,9 @@
       "target": "solid/error/80"
     },
     "color/fill/critical-disabled": {
-      "hex": "#E3E1E0",
+      "hex": "#E9E7E6",
       "alpha": 1,
-      "target": "solid/neutral/30"
+      "target": "solid/neutral/25"
     },
     "color/fill/info": {
       "hex": "#2C74EA",
@@ -2092,9 +2252,9 @@
       "target": "solid/info/80"
     },
     "color/fill/info-disabled": {
-      "hex": "#E3E1E0",
+      "hex": "#E9E7E6",
       "alpha": 1,
-      "target": "solid/neutral/30"
+      "target": "solid/neutral/25"
     },
     "color/fill/brand-secondary": {
       "hex": "#FC6645",
@@ -2591,6 +2751,31 @@
       "alpha": 0.5,
       "target": "opacity-50/info/80"
     },
+    "color/content/brand-inverse": {
+      "hex": "#FC6645",
+      "alpha": 1,
+      "target": "solid/brand/50"
+    },
+    "color/content/success-inverse": {
+      "hex": "#4DA972",
+      "alpha": 1,
+      "target": "solid/success/50"
+    },
+    "color/content/warning-inverse": {
+      "hex": "#BF8B39",
+      "alpha": 1,
+      "target": "solid/warning/50"
+    },
+    "color/content/critical-inverse": {
+      "hex": "#F5617D",
+      "alpha": 1,
+      "target": "solid/error/50"
+    },
+    "color/content/info-inverse": {
+      "hex": "#5292FD",
+      "alpha": 1,
+      "target": "solid/info/50"
+    },
     "color/content/on-brand": {
       "hex": "#FFFFFF",
       "alpha": 1,
@@ -3074,9 +3259,9 @@
       "target": "solid/brand/50"
     },
     "color/fill/brand-disabled": {
-      "hex": "#2E2C2B",
+      "hex": "#393735",
       "alpha": 1,
-      "target": "solid/neutral/110"
+      "target": "solid/neutral/105"
     },
     "color/fill/success": {
       "hex": "#1D9156",
@@ -3094,9 +3279,9 @@
       "target": "solid/success/50"
     },
     "color/fill/success-disabled": {
-      "hex": "#2E2C2B",
+      "hex": "#393735",
       "alpha": 1,
-      "target": "solid/neutral/110"
+      "target": "solid/neutral/105"
     },
     "color/fill/warning": {
       "hex": "#A36E07",
@@ -3114,9 +3299,9 @@
       "target": "solid/warning/50"
     },
     "color/fill/warning-disabled": {
-      "hex": "#2E2C2B",
+      "hex": "#393735",
       "alpha": 1,
-      "target": "solid/neutral/110"
+      "target": "solid/neutral/105"
     },
     "color/fill/critical": {
       "hex": "#E63C65",
@@ -3134,9 +3319,9 @@
       "target": "solid/error/50"
     },
     "color/fill/critical-disabled": {
-      "hex": "#2E2C2B",
+      "hex": "#393735",
       "alpha": 1,
-      "target": "solid/neutral/110"
+      "target": "solid/neutral/105"
     },
     "color/fill/info": {
       "hex": "#2C74EA",
@@ -3154,9 +3339,9 @@
       "target": "solid/info/50"
     },
     "color/fill/info-disabled": {
-      "hex": "#2E2C2B",
+      "hex": "#393735",
       "alpha": 1,
-      "target": "solid/neutral/110"
+      "target": "solid/neutral/105"
     },
     "color/fill/brand-secondary": {
       "hex": "#FF3D01",
@@ -3653,6 +3838,31 @@
       "alpha": 0.5,
       "target": "opacity-50/info/50"
     },
+    "color/content/brand-inverse": {
+      "hex": "#A92500",
+      "alpha": 1,
+      "target": "solid/brand/80"
+    },
+    "color/content/success-inverse": {
+      "hex": "#006035",
+      "alpha": 1,
+      "target": "solid/success/80"
+    },
+    "color/content/warning-inverse": {
+      "hex": "#6B4600",
+      "alpha": 1,
+      "target": "solid/warning/80"
+    },
+    "color/content/critical-inverse": {
+      "hex": "#9D183E",
+      "alpha": 1,
+      "target": "solid/error/80"
+    },
+    "color/content/info-inverse": {
+      "hex": "#1049A4",
+      "alpha": 1,
+      "target": "solid/info/80"
+    },
     "color/content/on-brand": {
       "hex": "#FFFFFF",
       "alpha": 1,
@@ -3684,29 +3894,29 @@
       "target": "solid/neutral/150"
     },
     "color/content/on-brand-disabled": {
-      "hex": "#7C7A78",
+      "hex": "#949290",
       "alpha": 1,
-      "target": "solid/neutral/80"
+      "target": "solid/neutral/70"
     },
     "color/content/on-success-disabled": {
-      "hex": "#7C7A78",
+      "hex": "#949290",
       "alpha": 1,
-      "target": "solid/neutral/80"
+      "target": "solid/neutral/70"
     },
     "color/content/on-warning-disabled": {
-      "hex": "#7C7A78",
+      "hex": "#949290",
       "alpha": 1,
-      "target": "solid/neutral/80"
+      "target": "solid/neutral/70"
     },
     "color/content/on-critical-disabled": {
-      "hex": "#7C7A78",
+      "hex": "#949290",
       "alpha": 1,
-      "target": "solid/neutral/80"
+      "target": "solid/neutral/70"
     },
     "color/content/on-info-disabled": {
-      "hex": "#7C7A78",
+      "hex": "#949290",
       "alpha": 1,
-      "target": "solid/neutral/80"
+      "target": "solid/neutral/70"
     },
     "color/chart/1": {
       "hex": "#FC6645",

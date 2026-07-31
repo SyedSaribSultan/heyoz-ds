@@ -39,17 +39,17 @@ cannot quietly rot.
 Current state:
 
 ```
-colour primitives   650   (OKLCH-computed, solid + 4 alpha groups)
-semantic tokens     205 × 2 modes  (211 including elevation)
+colour primitives   655   (OKLCH-computed, solid + 4 alpha groups)
+semantic tokens     210 × 2 modes  (216 including elevation)
 type steps          15 × 5 weights
 
-contrast gates     102/102 pass   WCAG 2.x ratio
+contrast gates     118/118 pass   WCAG 2.x ratio
 APCA gates          30/30 pass    text on saturated fill, Lc 60 floor
 visibility gates    12/12 pass    decorative edges
 elevation gates      8/8  pass    shadow ΔL floor
 greyscale gates     20/20 pass    chart series separated without hue
                    ─────────
-total              172/172 pass
+total              188/188 pass
 ```
 
 ## The rules

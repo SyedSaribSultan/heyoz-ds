@@ -311,6 +311,7 @@ function flattenSemantic() {
     states.forEach((s, i) => add(`color/content/${k}${s}`, `solid/${L[i]}`, `solid/${D[i]}`));
     add(`color/content/${k}-disabled`, `opacity-50/${L[0]}`, `opacity-50/${D[0]}`);
   }
+  for (const [k, [l, d]] of Object.entries(SEMANTIC.CONTENT_ROLE_INVERSE)) add(`color/content/${k}`, l, d);
   for (const [k, [l, d]] of Object.entries(SEMANTIC.CONTENT_ON)) add(`color/content/${k}`, l, d);
 
   for (const [k, [l, d]] of Object.entries(SEMANTIC.CHART)) add(`color/chart/${k}`, l, d);
@@ -664,7 +665,11 @@ function validate() {
     const measure = metric === 'apca' ? apca : contrast;
     const unit = metric === 'apca' ? (v) => `Lc ${v.toFixed(1)}` : (v) => `${v.toFixed(2)}:1`;
     for (const mode of ['light', 'dark']) {
-      for (const [fgPath, bgPath, min] of list) {
+      // A pair may carry an optional fourth element restricting it to one mode,
+      // for roles that only exist meaningfully in one polarity. Same rationale as
+      // the mode-scoped collision pairs: an exemption written down beats a hole.
+      for (const [fgPath, bgPath, min, onlyMode] of list) {
+        if (onlyMode && onlyMode !== mode) continue;
         const fgHex = resolveOver(mode, fgPath, bgPath);
         const bgHex = resolveOver(mode, bgPath, null);
         if (!fgHex || !bgHex) { errors.push(`${kind} check references unknown token: ${fgPath} / ${bgPath}`); continue; }
@@ -687,6 +692,23 @@ function validate() {
     mustDiffer.push([`color/fill/${t}-hover`, `color/fill/${t}-active`]);
   }
   for (const t of Object.keys(SEMANTIC.BORDER)) mustDiffer.push([`color/border/${t}`, `color/border/${t}-hover`]);
+
+  /* A disabled fill must not equal ANY enabled surface or ANY enabled fill.
+   * Generated rather than enumerated, because this constraint has now been got
+   * wrong three times by listing the two or three members someone happened to
+   * think of: neutral/120 cleared the surfaces it was checked against and matched
+   * surface/elevated; neutral/110 cleared those and matched surface/tertiary plus
+   * six enabled interactive fills; neutral/30 did the same in light and went
+   * unreported because only dark had been looked at.
+   *
+   * A dead control that looks like a live control is worse than one that looks
+   * like a card, and no hand-written list reliably covers 40+ fills. */
+  const enabledSurfaces = ['color/background', ...Object.keys(SEMANTIC.SURFACE).map((k) => `color/surface/${k}`)];
+  const enabledFills = [];
+  for (const k of Object.keys(SEMANTIC.FILL)) for (const s of ['', '-hover', '-active']) enabledFills.push(`color/fill/${k}${s}`);
+  for (const role of Object.keys(FILL_DISABLED_OVERRIDE)) {
+    for (const other of [...enabledSurfaces, ...enabledFills]) mustDiffer.push([`color/fill/${role}-disabled`, other]);
+  }
   // A pair may carry an optional third element restricting it to one mode, for
   // the cases where two roles legitimately share a value in one mode only. The
   // restriction has to be written down rather than left as a silent omission —

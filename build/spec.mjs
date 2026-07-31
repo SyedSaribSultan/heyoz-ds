@@ -608,6 +608,32 @@ const CONTENT_ROLE = {
 };
 
 /**
+ * Status text on an INVERTED surface — `surface/inverse` and `surface/fixed`.
+ *
+ * These are the one place each mode carries a panel of the opposite polarity: in
+ * light mode `surface/inverse` is `neutral/150`, a near-black card on a white page.
+ * A dark status label on it cannot work, and there was no token that could: moving
+ * the light `CONTENT_ROLE` ramp from 70 to 80 to clear `surface/tertiary` dropped
+ * all five roles from 3.3–4.1:1 to 2.4–2.9:1 against `surface/inverse`, taking
+ * brand below the 1.4.11 3:1 floor it had previously cleared. Ungated, so silent.
+ *
+ * The fix is a token rather than a compromise on the main ramp, because the two
+ * requirements genuinely conflict — one wants darker, the other lighter. Modes are
+ * deliberately INVERTED here relative to CONTENT_ROLE: light mode reaches for the
+ * step dark mode uses, and vice versa. That is what "inverse" means, and it is why
+ * this cannot be derived by a rule.
+ *
+ * 6.64–6.97:1 in light, 6.55–7.73:1 in dark. Gated on both inverted surfaces.
+ */
+const CONTENT_ROLE_INVERSE = {
+  'brand-inverse': [S('brand/50'), S('brand/80')],
+  'success-inverse': [S('success/50'), S('success/80')],
+  'warning-inverse': [S('warning/50'), S('warning/80')],
+  'critical-inverse': [S('error/50'), S('error/80')],
+  'info-inverse': [S('info/50'), S('info/80')],
+};
+
+/**
  * content/on-* — text that sits ON a coloured fill.
  *
  * WHITE. Always, on every filled colour, in both modes. This is not a close
@@ -657,14 +683,20 @@ const CONTENT_ON = {
   //
   // A disabled control is exempt from 1.4.3, so this was never a violation — it
   // was simply unusable, and nothing gated it. Now an opaque neutral label on an
-  // opaque neutral fill (see FILL_DISABLED_OVERRIDE): 3.28:1 light, 3.84:1 dark.
+  // opaque neutral fill (see FILL_DISABLED_OVERRIDE): 3.47:1 light, 3.82:1 dark.
   // Legible, unmistakably inactive, identical across all five roles because a
   // control you cannot act on has no reason to keep its role colour.
-  'on-brand-disabled': [S('neutral/80'), S('neutral/80')],
-  'on-success-disabled': [S('neutral/80'), S('neutral/80')],
-  'on-warning-disabled': [S('neutral/80'), S('neutral/80')],
-  'on-critical-disabled': [S('neutral/80'), S('neutral/80')],
-  'on-info-disabled': [S('neutral/80'), S('neutral/80')],
+  //
+  // The label is neutral/80 in light and neutral/70 in dark — not the same step in
+  // both, because the disabled fills are not mirror images of each other on the
+  // ramp. An earlier revision used neutral/80 for both and this comment claimed
+  // "3.84:1 dark", which was the measurement for a fill that had already been
+  // replaced two edits earlier. Recompute the number when you move the fill.
+  'on-brand-disabled': [S('neutral/80'), S('neutral/70')],
+  'on-success-disabled': [S('neutral/80'), S('neutral/70')],
+  'on-warning-disabled': [S('neutral/80'), S('neutral/70')],
+  'on-critical-disabled': [S('neutral/80'), S('neutral/70')],
+  'on-info-disabled': [S('neutral/80'), S('neutral/70')],
 };
 
 /**
@@ -675,17 +707,29 @@ const CONTENT_ON = {
  * status tracks, where it fades a saturated fill toward the page at the same time
  * as its white label fades toward the fill. See CONTENT_ON above.
  */
-// Dark is neutral/110, not neutral/120. At 120 a disabled status button was
-// byte-identical to surface/elevated AND surface/secondary, so it stopped reading
-// as a control at all and read as a card. 110 clears both; it does share a value
-// with surface/tertiary, which is fine — a dead control looking like a flat muted
-// panel is the intent. Asserted against surface/elevated below.
+// A disabled fill must equal NO enabled surface and NO enabled fill, in either
+// mode. It took three attempts to get that right, so the reasoning is worth
+// keeping:
+//   neutral/120 dark  == surface/elevated and surface/secondary. A dead control
+//                        read as a card.
+//   neutral/110 dark  == surface/tertiary AND six enabled interactive fills
+//                        (fill/tertiary, fill/primary-active, fill/secondary-hover
+//                        and three -variant states). A dead control read as a LIVE
+//                        control, which is worse than reading as a card, and the
+//                        comment here excused it by naming only surface/tertiary —
+//                        a token list where a category was meant, which is the
+//                        exact failure I11c describes.
+//   neutral/30 light  == fill/tertiary. Same problem, other mode, unnoticed
+//                        because only the dark collision was reported.
+// neutral/25 and the new neutral/105 are the two rungs nothing else occupies.
+// Verified against every surface and fill value in both modes by the assertions
+// below, which now enumerate the whole surface family rather than two members.
 export const FILL_DISABLED_OVERRIDE = {
-  brand: [S('neutral/30'), S('neutral/110')],
-  success: [S('neutral/30'), S('neutral/110')],
-  warning: [S('neutral/30'), S('neutral/110')],
-  critical: [S('neutral/30'), S('neutral/110')],
-  info: [S('neutral/30'), S('neutral/110')],
+  brand: [S('neutral/25'), S('neutral/105')],
+  success: [S('neutral/25'), S('neutral/105')],
+  warning: [S('neutral/25'), S('neutral/105')],
+  critical: [S('neutral/25'), S('neutral/105')],
+  info: [S('neutral/25'), S('neutral/105')],
 };
 
 /** Tier 3 — data visualisation. Per-mode, unlike the shipped --chart-* which
@@ -823,6 +867,7 @@ export const SEMANTIC = {
   BORDER_SINGLE,
   CONTENT_SINGLE,
   CONTENT_ROLE,
+  CONTENT_ROLE_INVERSE,
   CONTENT_ON,
   CHART,
   SIDEBAR,
@@ -906,6 +951,16 @@ export const SHADCN_BRIDGE = {
 /**
  * Contrast gates. The build FAILS if any of these regress, in either mode.
  * That is the guarantee: nobody can quietly reintroduce the white-on-orange bug.
+ *
+ * Entries are `[foreground, background, minRatio]`, or
+ * `[foreground, background, minRatio, 'light'|'dark']` to restrict a pair to one
+ * mode — needed where a role only exists in one polarity.
+ *
+ * WRITE THESE BY FAMILY, NOT BY TOKEN. Every contrast bug this repo has had came
+ * from gating one member of a group: content/tertiary against the page but not the
+ * three surfaces, on-brand against the base fill but not hover and active,
+ * content/brand against the page while its four status siblings went unchecked.
+ * If you add a gate for one token, ask what else is in its family.
  */
 export const CONTRAST_ASSERTIONS = [
   // AA 4.5:1 — normal-size text.
@@ -986,6 +1041,29 @@ export const CONTRAST_ASSERTIONS = [
   ['color/content/on-success-disabled', 'color/fill/success-disabled', 3],
   ['color/content/on-warning-disabled', 'color/fill/warning-disabled', 3],
   ['color/content/on-info-disabled', 'color/fill/info-disabled', 3],
+
+  // Status text on the INVERTED surfaces. Each mode has exactly one panel of the
+  // opposite polarity, and until content/*-inverse existed there was no token that
+  // could sit on it — the main ramp measured 2.4-2.9:1 there after being darkened
+  // to clear surface/tertiary, with brand below the 3:1 floor it used to clear.
+  ['color/content/brand-inverse', 'color/surface/inverse', 4.5],
+  ['color/content/success-inverse', 'color/surface/inverse', 4.5],
+  ['color/content/warning-inverse', 'color/surface/inverse', 4.5],
+  ['color/content/critical-inverse', 'color/surface/inverse', 4.5],
+  ['color/content/info-inverse', 'color/surface/inverse', 4.5],
+  ['color/content/inverse-primary', 'color/surface/inverse', 4.5],
+  // The inverse focus ring is what belongs on an inverted panel. Gating it here
+  // makes the intended pairing explicit rather than leaving it to be inferred:
+  // border/focus itself measures 2.4-2.6:1 on these two surfaces and must not be
+  // used on them.
+  ['color/border/focus-inverse', 'color/surface/inverse', 3],
+  // surface/fixed is white in BOTH modes — that is what "fixed" means. So the
+  // inverse ring belongs on it only in dark, where focus-inverse is near-black
+  // (20.25:1). In light, focus-inverse is white and would be invisible on it at
+  // 1.00:1; the ordinary brand ring is the correct one there, asserted on the next
+  // line. This gate caught that the moment it was added.
+  ['color/border/focus-inverse', 'color/surface/fixed', 3, 'dark'],
+  ['color/border/focus', 'color/surface/fixed', 3, 'light'],
 ];
 
 /**
@@ -1091,11 +1169,17 @@ export const COLLISION_ASSERTIONS = [
   ['color/border/focus', 'color/fill/brand-hover'],
   ['color/border/focus', 'color/fill/brand-active'],
   ['color/border/focus', 'color/content/brand'],
-  // A disabled control must not read as a card. fill/*-disabled was neutral/120 in
-  // dark, byte-identical to surface/elevated and surface/secondary.
+  // A disabled control must not read as a card, and must not read as a LIVE
+  // control. Naming two surfaces here is what let neutral/110 through — it cleared
+  // surface/elevated and surface/primary and collided with surface/tertiary plus
+  // six enabled fills instead. The whole family is enumerated below, and
+  // DISABLED_MUST_DIFFER_FAMILIES generates the rest.
   ['color/fill/brand-disabled', 'color/surface/elevated'],
-  ['color/fill/critical-disabled', 'color/surface/elevated'],
   ['color/fill/brand-disabled', 'color/surface/primary'],
+  ['color/fill/brand-disabled', 'color/surface/secondary'],
+  ['color/fill/brand-disabled', 'color/surface/tertiary'],
+  ['color/fill/brand-disabled', 'color/surface/overlay'],
+  ['color/fill/brand-disabled', 'color/background'],
   // Decorative, but two gradient stops resolving to one colour flattens the mesh.
   ['color/gradient/mesh-3', 'color/gradient/onboarding-1'],
 ];

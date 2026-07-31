@@ -28,16 +28,16 @@ that imported cleanly before.
 
 | Collection | Modes | Tokens |
 |---|---|---|
-| _Colors Primitives | Value | 650 |
+| _Colors Primitives | Value | 655 |
 | _Number Primitives | Value | 29 |
 | Foundations | Value | 64 |
 | Motion | Value | 10 |
 | Typography | Value | 64 |
-| HeyOz Semantic | Light, Dark | 211 each |
+| HeyOz Semantic | Light, Dark | 216 each |
 
 Counted from the emitted files, not from intent. This table previously read
 468 / 66 / 69 / 195; the first was correct at the time and the other three never
-were. `HeyOz Semantic` is 205 colour tokens plus 6 elevation tokens.
+were. `HeyOz Semantic` is 210 colour tokens plus 6 elevation tokens.
 
 ## Design with the semantic layer only
 

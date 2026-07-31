@@ -198,6 +198,20 @@
         },
         "$extensions": {}
       },
+      "105": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.223442,
+            0.21451,
+            0.209796
+          ],
+          "alpha": 1,
+          "hex": "#393735"
+        },
+        "$extensions": {}
+      },
       "110": {
         "$type": "color",
         "$value": {
@@ -2039,6 +2053,20 @@
           ],
           "alpha": 0.08,
           "hex": "#444241"
+        },
+        "$extensions": {}
+      },
+      "105": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.223442,
+            0.21451,
+            0.209796
+          ],
+          "alpha": 0.08,
+          "hex": "#393735"
         },
         "$extensions": {}
       },
@@ -3886,6 +3914,20 @@
         },
         "$extensions": {}
       },
+      "105": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.223442,
+            0.21451,
+            0.209796
+          ],
+          "alpha": 0.15,
+          "hex": "#393735"
+        },
+        "$extensions": {}
+      },
       "110": {
         "$type": "color",
         "$value": {
@@ -5730,6 +5772,20 @@
         },
         "$extensions": {}
       },
+      "105": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.223442,
+            0.21451,
+            0.209796
+          ],
+          "alpha": 0.3,
+          "hex": "#393735"
+        },
+        "$extensions": {}
+      },
       "110": {
         "$type": "color",
         "$value": {
@@ -7571,6 +7627,20 @@
           ],
           "alpha": 0.5,
           "hex": "#444241"
+        },
+        "$extensions": {}
+      },
+      "105": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.223442,
+            0.21451,
+            0.209796
+          ],
+          "alpha": 0.5,
+          "hex": "#393735"
         },
         "$extensions": {}
       },

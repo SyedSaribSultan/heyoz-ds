@@ -226,6 +226,7 @@ const NEUTRAL_STEPS = [
   ['90', 0.4800], // -> #5F5D5C  NEW - real dark hover/active headroom
   ['95', 0.4300], // -> #515050  NEW half-step - dark --border, clears --accent
   ['100', 0.3800], // -> #444241 NEW
+  ['105', 0.3375], // -> #393735 NEW half-step - dark disabled fill, see below
   ['110', 0.2949], // -> #2E2C2B (shipped: light --muted-fg, dark --muted)
   ['115', 0.2673], // -> #272524 NEW half-step - dark --popover, clears --secondary
   ['120', 0.2396], // -> #211F1D (shipped #201F1D: dark --popover / --secondary)
