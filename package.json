@@ -1,0 +1,34 @@
+{
+  "name": "@heyoz/design-system",
+  "version": "1.0.0",
+  "description": "HeyOz design tokens. OKLCH source of truth; emits DTCG JSON for Figma and CSS plus a Tailwind preset for the app. No runtime dependencies.",
+  "private": true,
+  "license": "UNLICENSED",
+  "//type": "Deliberately NOT \"module\". The build files are .mjs, which is already unconditionally ESM, so the field would buy nothing — and it would reclassify dist/tailwind.tokens.js as ESM, breaking the require() that DEV-GUIDE tells devs to put in tailwind.config.js. Verified: with type:module set, require() of that file fails.",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node build/build.mjs",
+    "test": "node build/build.mjs",
+    "verify": "node build/build.mjs"
+  },
+  "files": [
+    "build",
+    "tokens",
+    "dist",
+    "docs",
+    "test",
+    "reports",
+    "README.md"
+  ],
+  "exports": {
+    "./tokens.css": "./dist/tokens.css",
+    "./shadcn-bridge.css": "./dist/shadcn-bridge.css",
+    "./tailwind": "./dist/tailwind.tokens.js",
+    "./audit": "./reports/audit.json"
+  },
+  "sideEffects": [
+    "dist/*.css"
+  ]
+}

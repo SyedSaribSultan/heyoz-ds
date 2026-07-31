@@ -19,6 +19,14 @@ Open `test/index.html` by double-clicking it. Twelve sections, a light/dark
 toggle, and two stress switches. It renders the real generated CSS, so what you
 see is what ships.
 
+**It needs the network for the fonts, and only for the fonts.** Bricolage Grotesque
+and Geist come from Google Fonts; everything else — every colour, every gate
+result, the whole audit payload — is inlined and works offline. If the fonts fail
+to load the rig now says so in a red banner at the top, because otherwise you would
+be reviewing the fallback stack and would have no way to know. That matters
+specifically for section 06 and for the "does Bricolage hold at 18px" question
+below: colour and spacing stay trustworthy offline, type does not.
+
 The two stress toggles are the ones that find real problems:
 
 - **No borders** strips every border and shadow. If the layout falls apart, the
