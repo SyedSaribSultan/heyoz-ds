@@ -964,9 +964,11 @@ export const CONTRAST_ASSERTIONS = [
  * number, the lever is the FILL, not the text: brand → #D62D00 puts white at
  * 4.96:1 and Lc 78. Never solve it by darkening the label.
  *
- * The flagged range was stated as 3.1–3.7:1. Measured across the ten gated pairs
- * it is 3.55–4.38:1; nothing in this system is at 3.1. The competitor figures are
- * correct and all five reproduce to 2 dp.
+ * The flagged range was stated as 3.1–3.7:1. Measured on the five resting fills it
+ * is 3.55–4.38:1; nothing in this system is at 3.1. Across all fifteen gated states
+ * the WCAG formula spans 2.90–8.40:1 while APCA holds them in a Lc 60.4–93.3 band —
+ * that spread is the clearest statement of why one of the two instruments is
+ * measuring the wrong thing. The competitor figures are correct to 2 dp.
  */
 export const APCA_ASSERTIONS = [
   // EVERY state, not just the base. Gating only the base is how white-on-brand

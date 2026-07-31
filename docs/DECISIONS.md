@@ -7,34 +7,56 @@ two parts of the system ever appear to disagree, this file is the tie-breaker.
 `S` = structural, the shape of the files makes it impossible.
 `D` = a decision, held by convention and documented.
 
+**`E` is a claim about the assertion list, not about the value.** Three entries in
+§A were marked `E` and were nonetheless byte-identical in the emitted CSS on
+2026-07-31, because the gate asserted a neighbouring pair and not the one the
+entry describes. If you mark something `E`, name the assertion that backs it.
+Section I is the full account.
+
 ---
 
 ## A. Bugs that were live in production
 
 | # | Problem | Resolution | Where | |
 |---|---|---|---|---|
-| A1 | Dark `--card`, `--border`, `--input` all `20 7.69% 7.65%` — card and input edges invisible | `border/primary` = `neutral/100`, 1.85:1 against its own card | `spec.mjs` BORDER + `VISIBILITY_ASSERTIONS` | E |
-| A2 | Light `--sidebar-border` (96.27%) brighter than `--sidebar` (93.14%) | sidebar rebuilt off the shared ramp; border always darker than its surface | `spec.mjs` SIDEBAR + visibility gate | E |
+| A1 | Dark `--card`, `--border`, `--input` all `20 7.69% 7.65%` — card and input edges invisible | `border/primary` = `neutral/95`, 2.27:1 against its own card | `spec.mjs` BORDER + `VISIBILITY_ASSERTIONS` | E |
+| A2 | Light `--sidebar-border` (96.27%) brighter than `--sidebar` (93.14%) | sidebar rebuilt off the shared ramp | `spec.mjs` SIDEBAR + visibility gate | E |
 | A3 | `.force-light` a hand-maintained third copy, already drifted, missing status/shadow/radius/font tokens | deleted; `.light` block generated from the same map as `:root` | `build.mjs` `emitTokensCss` | S |
-| A4 | `--ring` identical to `--primary` — focus ring invisible on brand buttons | `border/focus` is its own token; `border/focus-inverse` added for rings on filled brand surfaces; ring width and offset tokenised | `spec.mjs` BORDER_SINGLE, FOUNDATIONS.focus | E |
+| A4 | `--ring` identical to `--primary` — focus ring invisible on brand buttons | `border/focus` = `brand/70` light, `brand/40` dark; `border/focus-inverse` for rings on filled brand surfaces; width and offset tokenised | `spec.mjs` BORDER_SINGLE, FOUNDATIONS.focus | E |
 | A5 | ~~White on `#FF3D00` = 3.55:1, fails AA~~ **Withdrawn — this was not a bug.** See H1 | `content/on-*` is white on all five fills, both modes | `spec.mjs` CONTENT_ON + `APCA_ASSERTIONS` | E |
 | A6 | `--accent` identical to `--muted` — hover indistinguishable from muted surface | bridge maps secondary/muted/accent to three different ramp steps | `spec.mjs` SHADCN_BRIDGE + `BRIDGE_COLLISIONS` | E |
+
+> **A2 correction.** The resolution above used to end "border always darker than
+> its surface." That is true in light (`neutral/30` on `neutral/20`) and false in
+> dark, where `sidebar/border` is `neutral/120` on a `neutral/140` background —
+> deliberately *lighter*, because the dark surface steps are compressed and a
+> darker border disappears into them. The gate is a visibility floor, not a
+> direction. Only the wording was wrong.
+>
+> **A1, A4 and A6 were still live on 2026-07-31.** All three are marked `E`,
+> mechanically enforced, and all three were byte-identical in the emitted CSS:
+> `--ring` === `--primary` at 1.00:1 in light, `--accent` === `--border` in dark,
+> `--border` === `--muted` in light. They were not regressions in the values so
+> much as gaps in the assertions — `BRIDGE_COLLISIONS` asserted `ring`-vs-`border`
+> and never `ring`-vs-`primary`, so the values were free to collide again one ramp
+> step later. See section I. **`E` means the build checks it. It has never meant
+> the build checks the right thing.**
 
 ## B. Structural problems in globals.css
 
 | # | Problem | Resolution | Where | |
 |---|---|---|---|---|
-| B1 | No primitive layer — every semantic held a raw literal. `20 8.57% 93.14%` appeared 8 times | four tiers, one-way. 195 semantic tokens, zero literals | `spec.mjs` SEMANTIC | S |
+| B1 | No primitive layer — every semantic held a raw literal. `20 8.57% 93.14%` appeared 8 times | four tiers, one-way. 205 semantic tokens, zero literals, enforced | `spec.mjs` SEMANTIC | S |
 | B2 | Neutral ramp used four hues (0 / 20 / 30 / 40) | one hue (50), one chroma taper, computed | `palette.mjs` | S |
 | B3 | Hex-to-HSL precision artifacts (`30 16.67% 2.35%`) | authored in OKLCH, hex computed | `palette.mjs` | S |
-| B4 | Ramp jumped L 80.9 → 58.0 → 29.5 with nothing between | `neutral/60,70,90,100` added — 15 steps | `palette.mjs` NEUTRAL_STEPS | S |
+| B4 | Ramp jumped L 80.9 → 58.0 → 29.5 with nothing between | `neutral/60,70,90,100` added, then the 25/35/45/95/115/135 half-steps for the bridge ladder — 21 steps | `palette.mjs` NEUTRAL_STEPS | S |
 | B5 | Comments contradicted values ("no yellow tint" over hue 40, "cool-toned" over hues 20–40) | comments describe the computation, not a vibe | `palette.mjs` | D |
 | B6 | Shadow scale: `2xs` === `xs`, all eight shared one layer, `2xl` flatter than `sm`, no dark override | 4 steps + scrim, per mode, warm-tinted in light and black in dark, with ready-made `box-shadow` composites | `spec.mjs` ELEVATION | S |
 | B7 | Two naming conventions: `X`/`X-foreground` vs `X`/`X-soft`. No `--success-foreground`. `--destructive` had no `-soft` | one convention. `content/on-{role}` for text-on-fill, `fill/{role}-secondary` for translucent, `surface/{role}-flat` for opaque. All five roles symmetric | `spec.mjs` | S |
 | B8 | Brand palette hardcoded as `rgb()` in `.onboarding-gradient`, `.brand-mesh-*`, `vtr-halo-pulse` — the last using a fifth undocumented orange | 9 gradient tokens; the mesh colours are now `brand/20,30,40` and `spectrum-purple/30` | `spec.mjs` GRADIENT | S |
 | B9 | Tailwind v3 directives with v4 conventions; `--spacing` and `--tracking-normal` inert | v3 preset generated; v4 path noted in DEV-GUIDE | `build.mjs` `emitTailwind` | D |
 | B10 | Unlayered CSS at file bottom outranked every Tailwind utility; `.text-2xs` in `@layer base` was outranked by utilities | all generated CSS in `@layer base`; type steps in `@layer utilities` | `build.mjs` `emitTokensCss` | S |
-| B11 | `--chart-1..5` byte-identical in both modes; four of five in one lightness band; `chart-4` glared on dark | 5 series, per mode, spread ~32 L*, greyscale-tested | `spec.mjs` CHART + greyscale check | E |
+| B11 | `--chart-1..5` byte-identical in both modes; four of five in one lightness band; `chart-4` glared on dark | 5 series, per mode, spread 29 L* light and 31 dark, greyscale gated at ΔL 0.05 | `spec.mjs` CHART + greyscale check | E |
 | B12 | Sidebar was the only surface with component tokens, and its border was inverted | 8 sidebar tokens off the shared ramp | `spec.mjs` SIDEBAR | S |
 | B13 | No type scale at all — one token, `.text-2xs` | 15 steps × 5 weights. `.text-2xs` survives exactly as `label xs` (10px) | `spec.mjs` TYPOGRAPHY | S |
 | B14 | No motion tokens despite the spring curve appearing twice and 5 hardcoded durations | 6 durations + 4 easings. `ease/entrance` is byte-identical to the inline curve, so no motion changes | `spec.mjs` MOTION | S |
@@ -47,13 +69,13 @@ two parts of the system ever appear to disagree, this file is the tie-breaker.
 
 | # | Problem | Resolution | Where | |
 |---|---|---|---|---|
-| C1 | 34 base steps dropped from the export; 115 alias references unresolvable, because alpha was nested under the step it modified and a DTCG node cannot be both a token and a group | `solid/` and `opacity-15|30|50/` are sibling top-level groups | `build.mjs` `emitColorPrimitives` | E |
+| C1 | 34 base steps dropped from the export; 115 alias references unresolvable, because alpha was nested under the step it modified and a DTCG node cannot be both a token and a group | `solid/` and `opacity-8|15|30|50/` are sibling top-level groups | `build.mjs` `emitColorPrimitives` | E |
 | C2 | `surface.*` and `fill.*` value-identical for primary/secondary/tertiary in both modes | `surface` = static, `fill` = interactive with its own hover/active/disabled | `spec.mjs` | S |
-| C3 | Dark `secondary-hover` === `secondary-active`, and `tertiary` === `tertiary-hover` — out of ramp | steps 90 and 100 added; every state pair asserted distinct | `palette.mjs` + collision checks | E |
+| C3 | Dark `secondary-hover` === `secondary-active`, and `tertiary` === `tertiary-hover` — out of ramp | steps 90 and 100 added; base↔hover, hover↔active **and** base↔disabled asserted distinct | `palette.mjs` + collision checks | E |
 | C4 | Light had a 9-way collision on `#FFFFFF` | `bg` family dropped; one `color/background`, and `surface/*` carries the rest | `spec.mjs` | S |
 | C5 | `fill.fixed-disable` typo in both modes | `fill/fixed-disabled` | `spec.mjs` | S |
-| C6 | Status alpha families built on different base hexes than their own `/500` (`#00A161`, `#EBAB00`, `#5781E3`, `#E63C65`) | one ramp per family; alpha groups are that ramp at 15/30/50 | `palette.mjs` | S |
-| C7 | Two alpha ladders (15/30/50 and 12/24/38/50) plus an `opacity` scale matching neither | one ladder: 15/30/50 | `palette.mjs` ALPHA_GROUPS | S |
+| C6 | Status alpha families built on different base hexes than their own `/500` (`#00A161`, `#EBAB00`, `#5781E3`, `#E63C65`) | one ramp per family; alpha groups are that ramp at 8/15/30/50 | `palette.mjs` | S |
+| C7 | Two alpha ladders (15/30/50 and 12/24/38/50) plus an `opacity` scale matching neither | one ladder: 8/15/30/50 — the 8 rung added so a translucent fill can have a disabled state, see I4 | `palette.mjs` ALPHA_GROUPS | S |
 | C8 | `spacing.N = N × 2px`, colliding with Tailwind's `N × 4px` | 4→120 ramp, ordinal names, `--oz-` namespace, emitted as `space-*` utilities so `p-space-5` is unambiguous | `spec.mjs` FOUNDATIONS + `emitTailwind` | D |
 | C9 | `content/tertiary` mode-invariant | per-mode: `neutral/80` light, `neutral/70` dark | `spec.mjs` | E |
 | C10 | `font.family.primary` = Bricolage, but Bricolage is the display face and Geist (the body face) had no token | `display`/`heading` = Bricolage, `body`/`label` = Geist, `mono` = Geist Mono | `spec.mjs` TYPOGRAPHY | S |
@@ -71,8 +93,16 @@ Adopted its structure; did not adopt its mistakes.
 | D3 | Labels ran to 20px, colliding with `heading xs` and `body xl` at identical size *and* line height | labels cap at 14px | D |
 | D4 | Typos shipped into token names (`haeding` ×4, `sroke width` ×6, `seconday-inverse`, `tertiary-vairant-hover`) | names generated from one spec; no hand-typed duplicates | S |
 | D5 | White on brand 3.52:1, critical 3.35:1, warning 3.33:1 — best-in-class is not the same as accessible | contrast gates in the build | E |
-| D6 | Shadows were the only non-aliased tokens, and the shadow colour was not a primitive | still authored, but per-mode and with the reason stated | D |
-| D7 | 163 of 253 primitives unused | 344 of 468 unused, and that is fine — the grid is generated, so it costs nothing and guarantees every future semantic token has a target | D |
+| D6 | Shadows were the only non-aliased tokens, and the shadow colour was not a primitive | **Now fully aliased.** Targets are primitive paths; `alpha` stays local because it is a property of the shadow, not a colour choice. See I3 | S |
+| D7 | 163 of 253 primitives unused | 492 of 640 unused, and that is fine — the grid is generated, so it costs nothing and guarantees every future semantic token has a target | D |
+
+> **D6 was adopted, then unadopted.** "Still authored, with the reason stated" is
+> how ten hand-typed hexes stayed in the semantic layer, which made README rule 1
+> false and left 6 of 211 tokens per mode with no Figma alias. Two of the three
+> hexes were primitives spelled longhand (`#070605` is `neutral/150`, `#000000` is
+> `neutral/black`). The third, `#9F9E9C`, was hue 84.6 against a `NEUTRAL_HUE` of
+> 50 — the only colour in the entire system outside the OKLCH engine, sitting in a
+> group named `neutral`. Documenting an exception is not the same as earning it.
 
 ## E. Decisions made in conversation
 
@@ -107,6 +137,8 @@ Adopted its structure; did not adopt its mistakes.
 | Does Bricolage hold at `heading xs` (18px)? If not, move `heading sm`/`xs` to Geist semibold — two lines in `spec.mjs` | `test/index.html` §06 |
 | Is the `-variant` surface track earning its ~24 tokens? | after a week in Figma |
 | Does `extrabold` earn its place on display? | `test/index.html` §06 |
+| The light chart series are now noticeably darker (L\* 38–68 rather than 46–78), because 1.4.11 does not allow a pale series on a white page. Is that acceptable, or should charts get a tinted plot background so the series can go lighter again? | `test/index.html` §10 |
+| Six of 22 tier-3 tokens resolve to the same primitive pair as a tier-2 token (e.g. `sidebar/content` and `content/primary`). Architecturally they should alias the tier-2 token, but this system has every semantic token alias tier 1 directly. Worth a tier-2→tier-3 chain, or is the flat model fine at this size? | design review |
 
 *Resolved and moved out of this section: `primary-foreground`. See H1.*
 
@@ -135,8 +167,16 @@ and cyans. APCA — the model going into WCAG 3, added as `apca()` in `palette.m
 | pair | WCAG 2.x | APCA | |
 |---|---|---|---|
 | white on `#FF3D01` (brand) | 3.55:1 fail | **Lc 66.7** | readable |
-| near-black on `#FF3D01` | 4.91:1 pass | Lc 42.7 | below the floor for any text size |
+| near-black on `#FF3D01` | 5.71:1 pass | Lc 42.7 | below the floor for any text size |
 | near-black on `#A36E07` (warning) | 4.62:1 pass | **Lc 33.9** | what the old gate shipped |
+
+> The near-black row read **4.91:1** here, in `spec.mjs` and in `palette.mjs`
+> until 2026-07-31. Recomputed independently: `#070605` on the brand fill is
+> **5.71:1** and pure `#000000` is **5.92:1**. 4.91 appears to be
+> white-on-`#D53100` — the light hover fill, 4.92:1 — transcribed into the wrong
+> row. The argument is unaffected and in fact *stronger* on the WCAG side, which
+> is exactly why the error mattered: 4.91 is the figure a procurement reviewer
+> would have been handed out of this file.
 
 The near-black set scored Lc 33.9–42.7, all beneath the Lc 45 minimum for even
 large bold text — while the build reported "40/40 contrast gates pass." Saturated
@@ -149,14 +189,173 @@ Ubuntu `#E95420` 3.65:1, Home Depot `#F96302` 3.08:1, Etsy `#F1641E` 3.19:1.
 A rule that indicts all of them is measuring the wrong thing.
 
 **Resolution.** `content/on-*` = `solid/neutral/white`, both modes, all five fills.
-The five pairs moved out of `CONTRAST_ASSERTIONS` into `APCA_ASSERTIONS` at Lc 60
-(the body-text threshold); they land 66.7–75.6. Brand stays `#FF3D00`.
+The pairs moved out of `CONTRAST_ASSERTIONS` into `APCA_ASSERTIONS` at Lc 60 (the
+body-text threshold). Brand is `#FF3D01` — see the note below.
+
+**All fifteen fill states are gated, not the five bases.** The original fix gated
+`content/on-brand` against `fill/brand` and stopped there. Because the label never
+changes and the fill does, that told us nothing about hover or active: the dark
+ladder ran `60 → 50 → 40` and white measured **Lc 58.8** on brand hover and
+**Lc 49.9** on brand active — under this system's own floor, on the state a user
+looks at most. The ladder is now `60 → 55 → 50` and white holds Lc 60.4–66.7 across
+all three dark states, 66.7–88.1 across all three light states. Fixing the metric
+and then applying it to one state out of three is half a fix.
 
 **Accepted consequence.** axe, Lighthouse and any WCAG-2-based checker will flag
-these five pairs. That is a known divergence, taken deliberately. If a procurement
-VPAT ever forces the WCAG-2 number, **the lever is the fill, not the label** —
-`brand` → `#D62D00` puts white at 4.96:1 and Lc 78. Never darken the text again.
+these pairs. On the five resting fills they measure **3.55–4.38:1**; across all
+fifteen gated states the WCAG range is 2.90–8.40:1, with dark active lowest at 2.90
+and light active highest at 8.40. That spread is itself the argument — by APCA the
+same fifteen pairs sit in a tight Lc 60.4–93.3 band, because APCA accounts for
+polarity and WCAG 2.x does not. A known divergence, taken deliberately. If a
+procurement VPAT ever forces the WCAG-2 number, **the lever is the fill, not the
+label** — `brand` → `#D62D00` puts white at 4.96:1 and Lc 78. Never darken the text.
+
+**On `#FF3D00`.** This section used to close "Brand stays `#FF3D00`" while the
+table three rows above it said `#FF3D01`. The emitted value is and always has been
+`#FF3D01`: `brand/60` is authored as OKLCH `L 0.6535 / C 0.2348 / h 34.0` and the
+round trip to sRGB lands one 8-bit unit off the brand-guide hex. `#FF3D00` appears
+in zero artifacts. The difference is 3.547:1 versus 3.548:1 — imperceptible, and
+not worth hand-typing a hex to erase, because that would put brand outside the
+OKLCH engine and re-create exactly the problem D6 describes.
 
 **Rule going forward.** Text on a saturated brand or status fill is white, in both
 modes, and is never re-derived by a contrast maximiser. A gate may veto a colour;
 it may never choose one.
+
+---
+
+## I. The 2026-07-31 audit
+
+The repo was audited end to end: the build re-run, every claim in these docs
+recomputed from the emitted artifacts by an independent implementation. The
+engineering held up — all 52 gates that existed genuinely passed, mode parity was
+exact at 211/211, every one of 390 aliases resolved, and the APCA implementation
+matched APCA-W3 0.1.9 constant for constant.
+
+Seventeen findings. What they had in common is the thing worth remembering: **the
+gates that existed all passed. Every bug was in a pair nobody had named.**
+
+### I1 — The build did not run
+
+`build.mjs` imported `./harness.mjs` and `./shipped.mjs`; neither existed.
+`node build/build.mjs` died at module resolution, so nothing in `tokens/` or
+`dist/` was reproducible and `tokens/02`–`05` and `reports/` were absent entirely
+— while FIGMA-GUIDE instructed designers to import seven files in numeric order
+and warned that importing `06` before `01` silently produces broken variables.
+
+Recovered from the payload and template inlined in the previously generated
+`test/index.html`, which was the only surviving copy of either. Verified by
+round-tripping that file byte-for-byte, then by confirming all six pre-existing
+artifacts regenerate byte-identical. `E`
+
+### I2 — Six token pairs collided at 1.00:1, three of them documented as fixed
+
+`--ring` === `--primary` (light), `--accent` === `--border` (dark), `--border` ===
+`--muted` (light), `--input` === `--accent` (light), `--popover` === `--secondary`
+(dark), `sidebar-accent` === `sidebar-border` (both). See the note under §A.
+
+Root cause was ramp crowding: the bridge seats ten structurally distinct roles and
+light mode had only `white/10/20/30/40` to seat them in. Six neutral half-steps
+added (25, 35, 45, 95, 115, 135) at the midpoints of their neighbours — the same
+move as 60/70/90/100 for dark hover headroom, and no existing step shifts.
+`BRIDGE_COLLISIONS` 7 → 18 entries, one per claim the bridge comment makes.
+`COLLISION_ASSERTIONS` 4 → 13. Collision pairs may now be scoped to a single mode,
+so a legitimate shared value is recorded as an exemption instead of left as a hole.
+`E`
+
+### I3 — Ten literals above tier 1, and rule 1 was unenforced
+
+See D6. Rule 1 is now a build failure rather than a sentence in the README: any
+colour-valued semantic token naming no primitive fails. It was false for the entire
+life of the repo and nothing detected it, because nothing looked. `E`
+
+### I4 — The soft-fill disabled state was a no-op
+
+`build.mjs` derived it by rewriting the alpha prefix to `opacity-15` on tokens that
+were already `opacity-15`. Ten tokens shipped a disabled state byte-identical to
+their enabled one, in both modes. `ALPHA_GROUPS` gained an `8` rung — half of 15,
+matching how solid fills use `opacity-50` of an opaque base — and `base↔disabled`
+joined the collision assertions. `E`
+
+### I5 — Disabled labels were illegible
+
+`content/on-*-disabled` was `opacity-50` white over an `opacity-50` fill, so both
+layers faded toward the same page and the label converged on its own background:
+**1.43:1** in light. Fading two stacked layers independently does not behave like
+fading the composited element, which is what `opacity: .5` on a button does and
+what those tokens were reaching for.
+
+Disabled controls are exempt from 1.4.3, so this was never a conformance failure —
+it was simply unusable, and ungated. Now an opaque neutral label on an opaque
+neutral fill: 3.28:1 light, 3.84:1 dark, identical across all five roles, because a
+control you cannot act on has no reason to keep its role colour. `E`
+
+### I6 — Ten roles had no token at all
+
+`content/link`, `-hover`, `-visited`, `content/placeholder`, `content/selected`,
+`fill/selected` + `-hover`/`-active`/`-disabled`, `border/selected`. Links are the
+most-used interactive text role in any product UI; selection existed only as
+`sidebar/item-selected`, so a selected table row, tab, list item or combobox option
+had to reach into the sidebar's tier-3 namespace or hardcode. `S`
+
+### I7 — Quiet text and chart series failed contrast where nobody was looking
+
+`content/tertiary` was gated at 3:1 against the page **only**, and measured
+3.93 / 3.66 / 3.07:1 on the three card surfaces in light — failing 4.5:1 everywhere
+an app actually draws text, while its single gate passed. Now gated against all
+four surfaces.
+
+Chart series were ungated against their own background. Series 3 measured 2.54:1
+and series 5 measured 2.01:1 in light; a series is a graphical object under 1.4.11.
+No hue in this palette clears 3:1 above step 60 on a white page, so the light band
+came down to L\* 38–68. `E`
+
+### I8 — Dark shadows were about a third the strength of light
+
+ΔL 0.009–0.024 against their page where light moved it 0.027–0.066 — the dark
+`large` shadow was weaker than the light `x-small`, and elevation had no gate.
+
+Measured by WCAG ratio they scored 1.007–1.017, which reads as "inert" and
+overstates it: near black, that formula's `+0.05` flare term swamps the signal, the
+same way its missing polarity term misjudges white-on-orange in H1. **ΔL is the
+honest instrument at that end of the ramp**, so the new gate uses ΔL. Same for the
+chart greyscale gate, which replaced a warning conditioned on `ΔL < 0.03 AND
+contrast < 1.08` — two thresholds ANDed so tightly that the pairs which were
+genuinely too close could not trip it. `E`
+
+### I9 — Documented arithmetic and counts were wrong
+
+The near-black-on-brand figures (H1), the axe-flag range (3.1–3.7 → 3.55–4.38),
+nine of twenty anchor comments in `palette.mjs` (off by one 8-bit unit), the
+FIGMA-GUIDE collection counts (66/69/195 → 64/64/211), `numberName`'s doc example,
+A2's "always darker", C3's "every state pair", and a DEV-GUIDE table asserting the
+bridge lifted `--primary-foreground` to 5.71:1 and `--destructive-foreground` to
+5.01:1 — both invented, and both contradicting A5/H1, which withdrew that as a bug.
+
+Anchor comments now state the **computed** value, with the brand-guide hex
+alongside where they differ. `D`
+
+### I10 — Dead and invalid output
+
+`FOUNDATIONS.layer` declared all eight layers as `1000` and was never read —
+`build.mjs` discards it for `LAYER_LITERALS` — so the file stated eight values it
+did not ship while the eight it did ship lived elsewhere. Now one object,
+referenced. `--oz-style-*` (five vars, values like `Regular`) and
+`--oz-default-weight-*` (`extrabold`) were emitted as CSS despite being illegal in
+any CSS property; the first is Figma-only and no longer reaches CSS, the second
+emits `800/600/400/500`. `--oz-font-*` had no fallback stack on any of the five
+families, so one failed webfont request took the product to the default serif.
+`color-scheme: dark` was missing from the `.dark` block while `.light` declared it.
+`S`
+
+### What this section is really for
+
+Every finding above is the same shape. The values were defensible, the reasoning
+in this file was mostly excellent, and the gates were real. What failed was
+**coverage**: assertion lists shorter than the claims they backed, one state gated
+out of three, one surface out of four, a metric applied where it cannot see.
+
+So the rule going forward is narrower than "add gates":
+
+> A claim in this file is a liability until a gate names the specific pair.
+> If you write `E`, point at the assertion. If you cannot, write `D`.

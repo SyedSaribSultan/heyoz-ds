@@ -15,7 +15,7 @@ exact ratio. Fix it in `build/spec.mjs` and re-run. Never edit `tokens/` or
 
 ## Step 2 — open the rig
 
-Open `test/index.html` by double-clicking it. Thirteen sections, a light/dark
+Open `test/index.html` by double-clicking it. Twelve sections, a light/dark
 toggle, and two stress switches. It renders the real generated CSS, so what you
 see is what ships.
 
@@ -26,13 +26,21 @@ The two stress toggles are the ones that find real problems:
   finding on the current dark theme — page, sidebar and card sat within 4.4 L*
   of each other and a single 1px line was carrying the whole layout.
 - **Greyscale** removes hue. Any two chart series that become indistinguishable
-  are inaccessible to a chunk of your users.
+  are inaccessible to a chunk of your users. This is now also a build gate — a
+  ΔL floor of 0.05 between every pair of series, in both modes, 20 pairs. It used
+  to be a warning conditioned on `ΔL < 0.03 AND contrast < 1.08`, two thresholds
+  ANDed so tightly that the pairs which were genuinely too close could not trip
+  it. Trust the toggle, but the build should catch it first now.
 
 ## Step 3 — the four sections that decide it
 
-**05 Text on coloured fill.** The one change your CTO will notice. Shipped white
-on the left, `content/on-*` on the right, at 14px on the real fill. This is
-where you either accept dark-on-orange or send me back to darken the brand.
+**05 Text on coloured fill.** The one change your CTO will notice — or rather, the
+one they will be told about by a scanner. Shipped white on the left, `content/on-*`
+on the right, at 14px on the real fill. Both are white; the change is that these
+pairs are now gated on APCA Lc 60 rather than WCAG 4.5:1, and that all fifteen
+fill states are gated rather than just the five bases. Read H1 in DECISIONS.md
+before this meeting, because the question you will be asked is "why does axe flag
+our buttons" and the answer is a paragraph, not a number.
 
 **02 What actually changes in production.** Every shadcn variable, shipped hex
 next to generated hex, with OKLab ΔE. Anything under ~2.0 is invisible to the
@@ -93,11 +101,14 @@ Better to raise these yourself than have them raised at you.
 
 | Trade-off | Why |
 |---|---|
-| `primary-foreground` white → near-black | Only way to pass AA without moving the brand orange |
-| Chart palette replaced entirely | Shipped charts were identical in both modes and clustered in one lightness band |
+| `primary-foreground` stays **white**, and axe will flag it | WCAG 2.x has no polarity term, so it prefers black on every fill lighter than `#767676`. APCA reverses the verdict and is right. Gated at Lc 60 instead — DECISIONS.md H1 |
+| Chart palette replaced entirely, and the light series are darker than you might expect | Shipped charts were identical in both modes and clustered in one lightness band. The light series then had to come down the ramp again because a series is a graphical object under 1.4.11 and two of them measured 2.0–2.5:1 on white |
+| Disabled status buttons are grey, not faded orange | Fading fill and label independently left the label at 1.43:1. DECISIONS.md I5 |
 | `warning` and `info` shift | CSS and Figma disagreed; the Figma set was chosen because all three status hues sit at one lightness |
 | Dark borders get noticeably lighter | They were invisible — `--border` and `--card` were the same value |
-| 344 of 468 primitives unused | The alpha grid is generated, not curated. Costs nothing and means every future token already has a target |
+| 492 of 640 primitives unused | The alpha grid is generated, not curated. Costs nothing and means every future token already has a target |
+| Dark shadows are much stronger than before | They moved the page by ΔL 0.009–0.024 where light moved it 0.027–0.066, so the dark `large` shadow was weaker than the light `x-small` |
+| `content/tertiary` is darker | It was gated against the page only, and failed 4.5:1 on all three card surfaces — 3.07:1 at worst |
 | Ordinal spacing (`space-5` = 16px) | Matches both reference systems; the `--oz-` namespace prevents any Tailwind collision |
 
 ## If a gate fails

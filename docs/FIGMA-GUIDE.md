@@ -28,12 +28,16 @@ that imported cleanly before.
 
 | Collection | Modes | Tokens |
 |---|---|---|
-| _Colors Primitives | Value | 468 |
+| _Colors Primitives | Value | 640 |
 | _Number Primitives | Value | 29 |
-| Foundations | Value | 66 |
+| Foundations | Value | 64 |
 | Motion | Value | 10 |
-| Typography | Value | 69 |
-| HeyOz Semantic | Light, Dark | 195 each |
+| Typography | Value | 64 |
+| HeyOz Semantic | Light, Dark | 211 each |
+
+Counted from the emitted files, not from intent. This table previously read
+468 / 66 / 69 / 195; the first was correct at the time and the other three never
+were. `HeyOz Semantic` is 205 colour tokens plus 6 elevation tokens.
 
 ## Design with the semantic layer only
 
@@ -52,6 +56,9 @@ Which family to reach for:
 | a stroke, divider, ring | `color/border/*` |
 | text or an icon | `color/content/*` |
 | text sitting **on** a coloured fill | `color/content/on-*` |
+| a hyperlink | `color/content/link`, `-hover`, `-visited` |
+| input placeholder text | `color/content/placeholder` |
+| a selected row, tab, segment, option | `color/fill/selected`, `color/border/selected`, `color/content/selected` |
 
 `surface` and `fill` deliberately share ramp steps. The distinction is not the
 value, it is whether the thing reacts to a pointer. Static → `surface`.
@@ -75,6 +82,12 @@ what the CSS consumes. `font style` is a string (`SemiBold`) and is what Figma's
 weight field actually binds to. Same five weights, two representations, because
 neither end can use the other's.
 
+`font style` is **Figma-only** and is deliberately not emitted to CSS — it was, and
+produced five variables like `--oz-style-regular: Regular`, which is not a legal
+value for any CSS property. `font family` is also Figma-only in this exact form:
+Figma binds a bare family name, while CSS gets the full fallback stack from
+`FONT_STACKS` in `spec.mjs`. If you need the stack, read `dist/tokens.css`.
+
 Default pairing — guidance, not a lock:
 `display → extrabold`, `heading → semibold`, `body → regular`, `label → medium`.
 
@@ -88,8 +101,14 @@ token as the spec for the dev.
 {family}/{role}[-variant][-state]
 ```
 
-States are only ever `hover`, `active`, `disabled`, `focus`. If you need a fifth
-state, it goes in `spec.mjs` — not invented on a layer.
+States are only ever `hover`, `active`, `disabled`, `focus`, `selected`. If you
+need a sixth, it goes in `spec.mjs` — not invented on a layer.
+
+Note that `disabled` on the five status fills is **not** a faded version of the
+fill. It is an opaque neutral, in both modes, identical across all five roles. A
+control you cannot act on has no reason to keep its role colour, and fading the
+fill and its label independently is what previously left a disabled primary button
+label at 1.43:1. See DECISIONS.md I5.
 
 ## When you need a new token
 

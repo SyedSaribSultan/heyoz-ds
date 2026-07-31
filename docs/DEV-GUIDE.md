@@ -43,13 +43,28 @@ No code change required for any of these:
 | `--border` | same value as `--card` in dark — invisible edges | `border/primary` |
 | `--ring` | same value as `--primary` — invisible focus ring | `border/focus` |
 | `--accent` | same value as `--muted` — hover state lost | `fill/tertiary-hover` |
-| `--primary-foreground` | white on orange, 3.55:1, fails AA | `content/on-brand`, 5.71:1 |
-| `--destructive-foreground` | white, 3.35:1 | `content/on-critical`, 5.01:1 |
+| `--popover` | same value as `--secondary` in dark — no popover edge | `surface/overlay` |
+| `--input` | same value as `--accent` in light | `border/secondary` |
 
 Four variables are new: `--destructive-soft`, `--success-foreground`,
 `--warning-foreground`, `--info-foreground`. The last three fill a real gap — the
 old file had `--success` with no matching text colour, so components hardcoded
 `text-white`.
+
+**`--primary-foreground` is not on that list, and was never a bug.** This table
+used to claim the bridge lifted it from "white on orange, 3.55:1, fails AA" to
+`content/on-brand` at 5.71:1, and `--destructive-foreground` from 3.35:1 to
+5.01:1. Both numbers were invented: `content/on-brand` *is* `#FFFFFF`, so it
+measures exactly the same 3.55:1 it always did (destructive 4.04:1). The claim also
+contradicted `DECISIONS.md` A5/H1, which formally **withdrew** white-on-orange as a
+bug and records why the WCAG-2 number is the wrong instrument for those pairs.
+Nothing about those five variables changed; only the reasoning did. See
+DECISIONS.md H1 before you "improve" them.
+
+**These fixes are only real because the build asserts them.** Three of the five
+rows above were byte-identical again in `dist/` as of 2026-07-31 — the values had
+drifted back onto the same ramp step and `BRIDGE_COLLISIONS` did not name the pair.
+Every row now has a corresponding entry in that list.
 
 ## Writing new code
 
@@ -129,6 +144,37 @@ so this can never be ambiguous.
 Migrate a file at a time. When no component reads a bridged variable any more,
 delete `shadcn-bridge.css`.
 
+## Tokens with no shadcn equivalent
+
+These have no bridged variable, so they are only reachable as `--oz-*` or through
+the Tailwind preset. Reach for them instead of hardcoding:
+
+| Role | Token |
+|---|---|
+| hyperlink | `--oz-color-content-link`, `-link-hover`, `-link-visited` |
+| input placeholder | `--oz-color-content-placeholder` |
+| selected row / tab / segment | `--oz-color-fill-selected`, `-selected-hover`, `-selected-active` |
+| its edge and label | `--oz-color-border-selected`, `--oz-color-content-selected` |
+| focus ring on a brand fill | `--oz-color-border-focus-inverse` |
+| modal scrim | `--oz-color-elevation-overlay-dimness` |
+
+## Variables consumed directly, not via Tailwind
+
+Thirty `--oz-*` variables are intentionally absent from the Tailwind preset
+because Tailwind has no matching theme key. They are not dead — read them in CSS:
+
+`--oz-icon-{sm,md,lg,xl}`, `--oz-icon-stroke`, `--oz-container-{sm,md,lg,xl}`,
+`--oz-container-gutter`, `--oz-container-measure`, `--oz-weight-*`,
+`--oz-default-weight-*`, `--oz-overlay-{dimness,blur}`, `--oz-shadow-*`.
+
+Two caveats:
+
+- `--oz-bp-{sm,md,lg,xl}` exist for JS (`matchMedia`) and for documentation. A CSS
+  custom property **cannot** be used in a `@media` query — use the Tailwind
+  `screens` keys, which are emitted as plain px.
+- `--oz-shadow-*` are the shadow *colours*. For `box-shadow` you almost always
+  want the ready-made composites, `--oz-elevation-{x-small,small,medium,large}`.
+
 ## Still to migrate out of globals.css
 
 Not urgent, but these are now tokenised and the hardcoded versions can go:
@@ -152,6 +198,15 @@ Not urgent, but these are now tokenised and the hardcoded versions can go:
 node build/build.mjs
 ```
 
-CI-friendly: exits non-zero on any contrast regression, unresolvable alias, or
-token collision. Worth wiring into the pipeline so a colour change cannot ship a
-WCAG failure.
+CI-friendly: exits non-zero on any gate regression, unresolvable alias, token
+collision, or literal above tier 1. Worth wiring into the pipeline so a colour
+change cannot ship a contrast failure.
+
+152 gates across five families — contrast 82, APCA 30, visibility 12, elevation 8,
+greyscale 20. `reports/audit.json` carries every individual result with its
+computed value, so CI can diff them rather than just checking the exit code.
+
+The one thing the build cannot check is whether a role that *should* have a gate
+has one. Every bug found in the 2026-07-31 audit was of that shape: the gates that
+existed all passed, and the pairs nobody had named were the broken ones. When you
+add a token, add its assertion in the same commit.
