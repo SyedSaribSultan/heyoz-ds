@@ -1,0 +1,784 @@
+{
+  "$description": "Spacing, roundness, stroke width, focus ring, touch target, icon sizing, z-index layers, breakpoints and containers. Every value aliases _Number Primitives. Spacing and roundness are ordinal (spacing-5 = 16px); the --oz- namespace means the ordinal names cannot collide with Tailwind's own spacing scale.",
+  "spacing": {
+    "spacing-1": {
+      "$type": "number",
+      "$value": 4,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-1)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-4",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-2": {
+      "$type": "number",
+      "$value": 6,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-2)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-6",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-3": {
+      "$type": "number",
+      "$value": 8,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-3)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-8",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-4": {
+      "$type": "number",
+      "$value": 12,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-4)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-12",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-5": {
+      "$type": "number",
+      "$value": 16,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-5)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-16",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-6": {
+      "$type": "number",
+      "$value": 20,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-6)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-20",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-7": {
+      "$type": "number",
+      "$value": 24,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-7)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-24",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-8": {
+      "$type": "number",
+      "$value": 28,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-8)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-28",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-9": {
+      "$type": "number",
+      "$value": 32,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-9)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-32",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-10": {
+      "$type": "number",
+      "$value": 36,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-10)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-36",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-11": {
+      "$type": "number",
+      "$value": 40,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-11)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-40",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-12": {
+      "$type": "number",
+      "$value": 48,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-12)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-48",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-13": {
+      "$type": "number",
+      "$value": 56,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-13)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-56",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-14": {
+      "$type": "number",
+      "$value": 64,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-14)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-64",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-15": {
+      "$type": "number",
+      "$value": 72,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-15)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-72",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-16": {
+      "$type": "number",
+      "$value": 80,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-16)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-80",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-17": {
+      "$type": "number",
+      "$value": 96,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-17)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-96",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "spacing-18": {
+      "$type": "number",
+      "$value": 120,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-space-18)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-120",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    }
+  },
+  "roundness": {
+    "radius-1": {
+      "$type": "number",
+      "$value": 2,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-radius-1)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-2",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "radius-2": {
+      "$type": "number",
+      "$value": 4,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-radius-2)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-4",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "radius-3": {
+      "$type": "number",
+      "$value": 6,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-radius-3)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-6",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "radius-4": {
+      "$type": "number",
+      "$value": 8,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-radius-4)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-8",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "radius-5": {
+      "$type": "number",
+      "$value": 10,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-radius-5)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-10",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "radius-6": {
+      "$type": "number",
+      "$value": 12,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-radius-6)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-12",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "radius-7": {
+      "$type": "number",
+      "$value": 14,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-radius-7)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-14",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "radius-8": {
+      "$type": "number",
+      "$value": 16,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-radius-8)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-16",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "radius-9": {
+      "$type": "number",
+      "$value": 20,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-radius-9)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-20",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "radius-10": {
+      "$type": "number",
+      "$value": 24,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-radius-10)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-24",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "radius-11": {
+      "$type": "number",
+      "$value": 32,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-radius-11)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-32",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "radius-12": {
+      "$type": "number",
+      "$value": 40,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-radius-12)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-40",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "radius-full": {
+      "$type": "number",
+      "$value": 1000,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-radius-full)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-1000",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    }
+  },
+  "stroke width": {
+    "width-1": {
+      "$type": "number",
+      "$value": 0.5,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-stroke-1)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-005",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "width-2": {
+      "$type": "number",
+      "$value": 1,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-stroke-2)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-1",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "width-3": {
+      "$type": "number",
+      "$value": 1.5,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-stroke-3)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-105",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "width-4": {
+      "$type": "number",
+      "$value": 2,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-stroke-4)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-2",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "width-5": {
+      "$type": "number",
+      "$value": 2.5,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-stroke-5)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-205",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "width-6": {
+      "$type": "number",
+      "$value": 4,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-stroke-6)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-4",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    }
+  },
+  "focus": {
+    "ring-width": {
+      "$type": "number",
+      "$value": 2,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-focus-ring-width)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-2",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "ring-offset": {
+      "$type": "number",
+      "$value": 2,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-focus-ring-offset)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-2",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    }
+  },
+  "size": {
+    "target-min": {
+      "$type": "number",
+      "$value": 44,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-target-min)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-44",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "target-comfortable": {
+      "$type": "number",
+      "$value": 48,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-target-comfortable)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-48",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    }
+  },
+  "icon": {
+    "size-sm": {
+      "$type": "number",
+      "$value": 16,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-icon-sm)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-16",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "size-md": {
+      "$type": "number",
+      "$value": 20,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-icon-md)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-20",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "size-lg": {
+      "$type": "number",
+      "$value": 24,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-icon-lg)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-24",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "size-xl": {
+      "$type": "number",
+      "$value": 32,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-icon-xl)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-32",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    },
+    "stroke": {
+      "$type": "number",
+      "$value": 2,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-icon-stroke)"
+        },
+        "com.figma.aliasData": {
+          "targetVariableName": "number-2",
+          "targetVariableSetName": "_Number Primitives"
+        }
+      }
+    }
+  },
+  "layer": {
+    "base": {
+      "$type": "number",
+      "$value": 0,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-layer-base)"
+        }
+      }
+    },
+    "dropdown": {
+      "$type": "number",
+      "$value": 1000,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-layer-dropdown)"
+        }
+      }
+    },
+    "sticky": {
+      "$type": "number",
+      "$value": 1100,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-layer-sticky)"
+        }
+      }
+    },
+    "overlay": {
+      "$type": "number",
+      "$value": 1200,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-layer-overlay)"
+        }
+      }
+    },
+    "modal": {
+      "$type": "number",
+      "$value": 1300,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-layer-modal)"
+        }
+      }
+    },
+    "popover": {
+      "$type": "number",
+      "$value": 1400,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-layer-popover)"
+        }
+      }
+    },
+    "toast": {
+      "$type": "number",
+      "$value": 1500,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-layer-toast)"
+        }
+      }
+    },
+    "tooltip": {
+      "$type": "number",
+      "$value": 1600,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-layer-tooltip)"
+        }
+      }
+    }
+  },
+  "breakpoint": {
+    "sm": {
+      "$type": "number",
+      "$value": 480,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-bp-sm)"
+        }
+      }
+    },
+    "md": {
+      "$type": "number",
+      "$value": 768,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-bp-md)"
+        }
+      }
+    },
+    "lg": {
+      "$type": "number",
+      "$value": 1024,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-bp-lg)"
+        }
+      }
+    },
+    "xl": {
+      "$type": "number",
+      "$value": 1280,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-bp-xl)"
+        }
+      }
+    }
+  },
+  "container": {
+    "sm": {
+      "$type": "number",
+      "$value": 640,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-container-sm)"
+        }
+      }
+    },
+    "md": {
+      "$type": "number",
+      "$value": 768,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-container-md)"
+        }
+      }
+    },
+    "lg": {
+      "$type": "number",
+      "$value": 1024,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-container-lg)"
+        }
+      }
+    },
+    "xl": {
+      "$type": "number",
+      "$value": 1280,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-container-xl)"
+        }
+      }
+    },
+    "gutter": {
+      "$type": "number",
+      "$value": 24,
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-container-gutter)"
+        }
+      }
+    },
+    "measure": {
+      "$type": "string",
+      "$value": "65ch",
+      "$extensions": {
+        "com.figma.codeSyntax": {
+          "WEB": "var(--oz-container-measure)"
+        }
+      }
+    }
+  },
+  "$extensions": {
+    "com.figma.modeName": "Value"
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "$description": "Raw numbers consumed by every spacing, radius, stroke and sizing alias in Foundations.",
+  "number-0": {
+    "$type": "number",
+    "$value": 0,
+    "$extensions": {}
+  },
+  "number-005": {
+    "$type": "number",
+    "$value": 0.5,
+    "$extensions": {}
+  },
+  "number-1": {
+    "$type": "number",
+    "$value": 1,
+    "$extensions": {}
+  },
+  "number-105": {
+    "$type": "number",
+    "$value": 1.5,
+    "$extensions": {}
+  },
+  "number-2": {
+    "$type": "number",
+    "$value": 2,
+    "$extensions": {}
+  },
+  "number-205": {
+    "$type": "number",
+    "$value": 2.5,
+    "$extensions": {}
+  },
+  "number-4": {
+    "$type": "number",
+    "$value": 4,
+    "$extensions": {}
+  },
+  "number-6": {
+    "$type": "number",
+    "$value": 6,
+    "$extensions": {}
+  },
+  "number-8": {
+    "$type": "number",
+    "$value": 8,
+    "$extensions": {}
+  },
+  "number-10": {
+    "$type": "number",
+    "$value": 10,
+    "$extensions": {}
+  },
+  "number-12": {
+    "$type": "number",
+    "$value": 12,
+    "$extensions": {}
+  },
+  "number-14": {
+    "$type": "number",
+    "$value": 14,
+    "$extensions": {}
+  },
+  "number-16": {
+    "$type": "number",
+    "$value": 16,
+    "$extensions": {}
+  },
+  "number-18": {
+    "$type": "number",
+    "$value": 18,
+    "$extensions": {}
+  },
+  "number-20": {
+    "$type": "number",
+    "$value": 20,
+    "$extensions": {}
+  },
+  "number-24": {
+    "$type": "number",
+    "$value": 24,
+    "$extensions": {}
+  },
+  "number-28": {
+    "$type": "number",
+    "$value": 28,
+    "$extensions": {}
+  },
+  "number-32": {
+    "$type": "number",
+    "$value": 32,
+    "$extensions": {}
+  },
+  "number-36": {
+    "$type": "number",
+    "$value": 36,
+    "$extensions": {}
+  },
+  "number-40": {
+    "$type": "number",
+    "$value": 40,
+    "$extensions": {}
+  },
+  "number-44": {
+    "$type": "number",
+    "$value": 44,
+    "$extensions": {}
+  },
+  "number-48": {
+    "$type": "number",
+    "$value": 48,
+    "$extensions": {}
+  },
+  "number-56": {
+    "$type": "number",
+    "$value": 56,
+    "$extensions": {}
+  },
+  "number-64": {
+    "$type": "number",
+    "$value": 64,
+    "$extensions": {}
+  },
+  "number-72": {
+    "$type": "number",
+    "$value": 72,
+    "$extensions": {}
+  },
+  "number-80": {
+    "$type": "number",
+    "$value": 80,
+    "$extensions": {}
+  },
+  "number-96": {
+    "$type": "number",
+    "$value": 96,
+    "$extensions": {}
+  },
+  "number-120": {
+    "$type": "number",
+    "$value": 120,
+    "$extensions": {}
+  },
+  "number-1000": {
+    "$type": "number",
+    "$value": 1000,
+    "$extensions": {}
+  },
+  "$extensions": {
+    "com.figma.modeName": "Value"
+  }
+}
