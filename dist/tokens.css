@@ -343,16 +343,16 @@
     --oz-color-gradient-halo: #FF3D014D;
     --oz-overlay-dimness: #07060566;
     --oz-overlay-blur: 4px;
-    --oz-shadow-x-small: #9F9E9C14;
-    --oz-shadow-small: #9F9E9C1F;
-    --oz-shadow-medium: #9F9E9C29;
-    --oz-shadow-large: #9F9E9C33;
+    --oz-shadow-x-small: #A9A7A614;
+    --oz-shadow-small: #A9A7A61F;
+    --oz-shadow-medium: #A9A7A629;
+    --oz-shadow-large: #A9A7A633;
 
     /* ready-to-use box-shadow composites */
-    --oz-elevation-x-small: 0 1px 2px 0 #9F9E9C14;
-    --oz-elevation-small: 0 1px 3px 0 #9F9E9C1F, 0 1px 2px -1px #9F9E9C1F;
-    --oz-elevation-medium: 0 4px 6px -1px #9F9E9C29, 0 2px 4px -2px #9F9E9C29;
-    --oz-elevation-large: 0 10px 15px -3px #9F9E9C33, 0 4px 6px -4px #9F9E9C33;
+    --oz-elevation-x-small: 0 1px 2px 0 #A9A7A614;
+    --oz-elevation-small: 0 1px 3px 0 #A9A7A61F, 0 1px 2px -1px #A9A7A61F;
+    --oz-elevation-medium: 0 4px 6px -1px #A9A7A629, 0 2px 4px -2px #A9A7A629;
+    --oz-elevation-large: 0 10px 15px -3px #A9A7A633, 0 4px 6px -4px #A9A7A633;
   }
 
   .dark,
@@ -554,16 +554,16 @@
     --oz-color-gradient-halo: #FC66454D;
     --oz-overlay-dimness: #00000099;
     --oz-overlay-blur: 4px;
-    --oz-shadow-x-small: #0000003D;
-    --oz-shadow-small: #00000052;
-    --oz-shadow-medium: #00000066;
-    --oz-shadow-large: #0000007A;
+    --oz-shadow-x-small: #00000073;
+    --oz-shadow-small: #00000099;
+    --oz-shadow-medium: #000000BF;
+    --oz-shadow-large: #000000E6;
 
     /* ready-to-use box-shadow composites */
-    --oz-elevation-x-small: 0 1px 2px 0 #0000003D;
-    --oz-elevation-small: 0 1px 3px 0 #00000052, 0 1px 2px -1px #00000052;
-    --oz-elevation-medium: 0 4px 6px -1px #00000066, 0 2px 4px -2px #00000066;
-    --oz-elevation-large: 0 10px 15px -3px #0000007A, 0 4px 6px -4px #0000007A;
+    --oz-elevation-x-small: 0 1px 2px 0 #00000073;
+    --oz-elevation-small: 0 1px 3px 0 #00000099, 0 1px 2px -1px #00000099;
+    --oz-elevation-medium: 0 4px 6px -1px #000000BF, 0 2px 4px -2px #000000BF;
+    --oz-elevation-large: 0 10px 15px -3px #000000E6, 0 4px 6px -4px #000000E6;
   }
 
   /* Scoped light island inside a dark app. Replaces .force-light, which was a
@@ -768,16 +768,16 @@
     --oz-color-gradient-halo: #FF3D014D;
     --oz-overlay-dimness: #07060566;
     --oz-overlay-blur: 4px;
-    --oz-shadow-x-small: #9F9E9C14;
-    --oz-shadow-small: #9F9E9C1F;
-    --oz-shadow-medium: #9F9E9C29;
-    --oz-shadow-large: #9F9E9C33;
+    --oz-shadow-x-small: #A9A7A614;
+    --oz-shadow-small: #A9A7A61F;
+    --oz-shadow-medium: #A9A7A629;
+    --oz-shadow-large: #A9A7A633;
 
     /* ready-to-use box-shadow composites */
-    --oz-elevation-x-small: 0 1px 2px 0 #9F9E9C14;
-    --oz-elevation-small: 0 1px 3px 0 #9F9E9C1F, 0 1px 2px -1px #9F9E9C1F;
-    --oz-elevation-medium: 0 4px 6px -1px #9F9E9C29, 0 2px 4px -2px #9F9E9C29;
-    --oz-elevation-large: 0 10px 15px -3px #9F9E9C33, 0 4px 6px -4px #9F9E9C33;
+    --oz-elevation-x-small: 0 1px 2px 0 #A9A7A614;
+    --oz-elevation-small: 0 1px 3px 0 #A9A7A61F, 0 1px 2px -1px #A9A7A61F;
+    --oz-elevation-medium: 0 4px 6px -1px #A9A7A629, 0 2px 4px -2px #A9A7A629;
+    --oz-elevation-large: 0 10px 15px -3px #A9A7A633, 0 4px 6px -4px #A9A7A633;
   }
 }
 

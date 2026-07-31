@@ -4323,6 +4323,10 @@
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-overlay-dimness)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "solid/neutral/black",
+            "targetVariableSetName": "_Colors Primitives"
           }
         }
       },
@@ -4346,12 +4350,16 @@
             0,
             0
           ],
-          "alpha": 0.24,
+          "alpha": 0.45,
           "hex": "#000000"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-shadow-x-small)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "solid/neutral/black",
+            "targetVariableSetName": "_Colors Primitives"
           }
         }
       },
@@ -4364,12 +4372,16 @@
             0,
             0
           ],
-          "alpha": 0.32,
+          "alpha": 0.6,
           "hex": "#000000"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-shadow-small)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "solid/neutral/black",
+            "targetVariableSetName": "_Colors Primitives"
           }
         }
       },
@@ -4382,12 +4394,16 @@
             0,
             0
           ],
-          "alpha": 0.4,
+          "alpha": 0.75,
           "hex": "#000000"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-shadow-medium)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "solid/neutral/black",
+            "targetVariableSetName": "_Colors Primitives"
           }
         }
       },
@@ -4400,12 +4416,16 @@
             0,
             0
           ],
-          "alpha": 0.48,
+          "alpha": 0.9,
           "hex": "#000000"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-shadow-large)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "solid/neutral/black",
+            "targetVariableSetName": "_Colors Primitives"
           }
         }
       }

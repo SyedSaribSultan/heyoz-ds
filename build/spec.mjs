@@ -523,8 +523,18 @@ const CONTENT_ROLE = {
  * WHITE. Always, on every filled colour, in both modes. This is not a close
  * call and it is not up for renegotiation by a validator:
  *
- *   white on #FF3D00   WCAG 3.55:1 (fail)   APCA Lc 66.7  ← readable
- *   black on #FF3D00   WCAG 4.91:1 (pass)   APCA Lc 41.0  ← below any text floor
+ *   white on #FF3D01        WCAG 3.55:1 (fail)   APCA Lc 66.7  ← readable
+ *   near-black on #FF3D01   WCAG 5.71:1 (pass)   APCA Lc 42.7  ← below any floor
+ *
+ * Those two numbers read 4.91:1 and Lc 41.0 until this revision, here and in
+ * palette.mjs and DECISIONS.md H1. Both wrong: 4.91 appears to be white-on-
+ * #D53100 (the light hover fill, 4.92:1) transcribed into the near-black row.
+ * Recomputed independently, near-black #070605 on the brand is 5.71:1 / Lc 42.74
+ * and pure #000000 is 5.92:1 / Lc 42.80. The argument is unchanged and in fact
+ * stronger on the WCAG side, which is exactly why the error mattered — 4.91 is
+ * the figure a procurement reviewer would have been handed. The fill is also
+ * #FF3D01, not #FF3D00; the brand guide value has never been what this system
+ * emits. See palette.mjs FAMILIES.
  *
  * An earlier revision of this file asserted WCAG 4.5:1 here and let the build
  * fail if it regressed. Since fill/brand is fixed by the brand, the only free
@@ -615,31 +625,59 @@ const GRADIENT = {
   'halo': [A30('brand/60'), A30('brand/50')],
 };
 
-/** Elevation. Light shadows are a tinted warm grey rather than pure black, so
- *  they read as shadow instead of dirt. Dark shadows go black AND dark mode
- *  leans on surface + border for elevation, because a black shadow on a
- *  neutral/150 page has nowhere to darken to. */
+/**
+ * Elevation. Light shadows are a tinted warm grey rather than pure black, so
+ * they read as shadow instead of dirt. Dark shadows go black AND dark mode leans
+ * on surface + border for elevation as well, because a shadow cast on a
+ * neutral/150 page has only L 0.123 of room to darken into.
+ *
+ * TARGETS ARE PRIMITIVE PATHS, NOT HEXES. These were the last literals above
+ * tier 1 — ten of them — which made README rule 1 ("zero literals above tier 1")
+ * false and left 6 of 201 semantic tokens with no alias metadata for Figma. Two
+ * of the three hexes were already primitives spelled out longhand (#070605 is
+ * neutral/150, #000000 is neutral/black). The third, #9F9E9C, was the only
+ * colour in the entire system outside the OKLCH engine: hue 84.6 against a
+ * NEUTRAL_HUE of 50, so it was not even on the neutral ramp it appeared to
+ * belong to. It is now neutral/60, the nearest ramp step at ΔL 0.030 — a
+ * difference no one can see through an 8-20% alpha.
+ *
+ * `alpha` stays a local property. It is a property of the shadow, not a colour
+ * choice, and the 8/15/30/50 ladder is for fills.
+ *
+ * DARK ALPHAS RAISED from 0.24/0.32/0.40/0.48 to 0.45/0.60/0.75/0.90. The old
+ * set moved the page by ΔL 0.009-0.024 where light moved it 0.027-0.066, so dark
+ * elevation was roughly a third of the strength of light and the large shadow was
+ * weaker than the light x-small. Now 0.024-0.058 on the page and 0.041-0.104 on a
+ * card, which is parity or better.
+ *
+ * A note on how that went unnoticed: measured by WCAG ratio the dark shadows
+ * scored 1.007-1.017, which reads as "inert" and overstates it — that formula's
+ * +0.05 flare term swamps everything near black, exactly the way its missing
+ * polarity term misjudges white-on-orange in H1. ΔL is the honest instrument at
+ * this end of the ramp. The shadows were genuinely too weak; they were never
+ * doing literally nothing.
+ */
 const ELEVATION = {
   'overlay/dimness': [
-    { hex: '#070605', alpha: 0.4 },
-    { hex: '#000000', alpha: 0.6 },
+    { target: 'solid/neutral/150', alpha: 0.4 },
+    { target: 'solid/neutral/black', alpha: 0.6 },
   ],
   'overlay/blur': [4, 4],
   'drop shadow/x-small': [
-    { hex: '#9F9E9C', alpha: 0.08 },
-    { hex: '#000000', alpha: 0.24 },
+    { target: 'solid/neutral/60', alpha: 0.08 },
+    { target: 'solid/neutral/black', alpha: 0.45 },
   ],
   'drop shadow/small': [
-    { hex: '#9F9E9C', alpha: 0.12 },
-    { hex: '#000000', alpha: 0.32 },
+    { target: 'solid/neutral/60', alpha: 0.12 },
+    { target: 'solid/neutral/black', alpha: 0.6 },
   ],
   'drop shadow/medium': [
-    { hex: '#9F9E9C', alpha: 0.16 },
-    { hex: '#000000', alpha: 0.4 },
+    { target: 'solid/neutral/60', alpha: 0.16 },
+    { target: 'solid/neutral/black', alpha: 0.75 },
   ],
   'drop shadow/large': [
-    { hex: '#9F9E9C', alpha: 0.2 },
-    { hex: '#000000', alpha: 0.48 },
+    { target: 'solid/neutral/60', alpha: 0.2 },
+    { target: 'solid/neutral/black', alpha: 0.9 },
   ],
 };
 
@@ -769,13 +807,17 @@ export const CONTRAST_ASSERTIONS = [
  * 60 is the right floor; the white-on-fill pairs land 63–70, with headroom.
  *
  * These pairs will be flagged by axe, Lighthouse and any other WCAG-2-based
- * checker, because white on a vivid mid-lightness fill measures 3.1–3.7:1 by
+ * checker, because white on a vivid mid-lightness fill measures 3.5–4.4:1 by
  * that formula. So does every brand shipping this hue — Reddit #FF4500 (3.44),
  * SoundCloud #FF5500 (3.21), Home Depot #F96302 (3.08), Etsy #F1641E (3.19),
  * Ubuntu #E95420 (3.65). This is a known, accepted divergence, not an oversight;
  * docs/DECISIONS.md records it. If a procurement VPAT ever forces the WCAG-2
  * number, the lever is the FILL, not the text: brand → #D62D00 puts white at
  * 4.96:1 and Lc 78. Never solve it by darkening the label.
+ *
+ * The flagged range was stated as 3.1–3.7:1. Measured across the ten gated pairs
+ * it is 3.55–4.38:1; nothing in this system is at 3.1. The competitor figures are
+ * correct and all five reproduce to 2 dp.
  */
 export const APCA_ASSERTIONS = [
   // EVERY state, not just the base. Gating only the base is how white-on-brand

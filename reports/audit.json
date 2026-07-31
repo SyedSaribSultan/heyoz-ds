@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-31T08:11:54.924Z",
+  "generatedAt": "2026-07-31T08:15:21.320Z",
   "namespace": "oz",
   "counts": {
     "colorPrimitives": 640,
@@ -727,6 +727,86 @@
       "bg": "color/fill/info-active",
       "ratio": 62.35,
       "min": 60,
+      "pass": true
+    },
+    {
+      "kind": "elevation",
+      "metric": "dL",
+      "mode": "light",
+      "fg": "elevation/drop shadow/x-small",
+      "bg": "color/background",
+      "ratio": 0.0209,
+      "min": 0.02,
+      "pass": true
+    },
+    {
+      "kind": "elevation",
+      "metric": "dL",
+      "mode": "light",
+      "fg": "elevation/drop shadow/small",
+      "bg": "color/background",
+      "ratio": 0.0321,
+      "min": 0.02,
+      "pass": true
+    },
+    {
+      "kind": "elevation",
+      "metric": "dL",
+      "mode": "light",
+      "fg": "elevation/drop shadow/medium",
+      "bg": "color/background",
+      "ratio": 0.0419,
+      "min": 0.02,
+      "pass": true
+    },
+    {
+      "kind": "elevation",
+      "metric": "dL",
+      "mode": "light",
+      "fg": "elevation/drop shadow/large",
+      "bg": "color/background",
+      "ratio": 0.0531,
+      "min": 0.02,
+      "pass": true
+    },
+    {
+      "kind": "elevation",
+      "metric": "dL",
+      "mode": "dark",
+      "fg": "elevation/drop shadow/x-small",
+      "bg": "color/background",
+      "ratio": 0.0236,
+      "min": 0.02,
+      "pass": true
+    },
+    {
+      "kind": "elevation",
+      "metric": "dL",
+      "mode": "dark",
+      "fg": "elevation/drop shadow/small",
+      "bg": "color/background",
+      "ratio": 0.0351,
+      "min": 0.02,
+      "pass": true
+    },
+    {
+      "kind": "elevation",
+      "metric": "dL",
+      "mode": "dark",
+      "fg": "elevation/drop shadow/medium",
+      "bg": "color/background",
+      "ratio": 0.0399,
+      "min": 0.02,
+      "pass": true
+    },
+    {
+      "kind": "elevation",
+      "metric": "dL",
+      "mode": "dark",
+      "fg": "elevation/drop shadow/large",
+      "bg": "color/background",
+      "ratio": 0.0581,
+      "min": 0.02,
       "pass": true
     }
   ],
@@ -1708,7 +1788,8 @@
     },
     "elevation/overlay/dimness": {
       "hex": "#070605",
-      "alpha": 0.4
+      "alpha": 0.4,
+      "target": "solid/neutral/150"
     },
     "elevation/overlay/blur": {
       "hex": null,
@@ -1716,20 +1797,24 @@
       "number": 4
     },
     "elevation/drop shadow/x-small": {
-      "hex": "#9F9E9C",
-      "alpha": 0.08
+      "hex": "#A9A7A6",
+      "alpha": 0.08,
+      "target": "solid/neutral/60"
     },
     "elevation/drop shadow/small": {
-      "hex": "#9F9E9C",
-      "alpha": 0.12
+      "hex": "#A9A7A6",
+      "alpha": 0.12,
+      "target": "solid/neutral/60"
     },
     "elevation/drop shadow/medium": {
-      "hex": "#9F9E9C",
-      "alpha": 0.16
+      "hex": "#A9A7A6",
+      "alpha": 0.16,
+      "target": "solid/neutral/60"
     },
     "elevation/drop shadow/large": {
-      "hex": "#9F9E9C",
-      "alpha": 0.2
+      "hex": "#A9A7A6",
+      "alpha": 0.2,
+      "target": "solid/neutral/60"
     }
   },
   "dark": {
@@ -2710,7 +2795,8 @@
     },
     "elevation/overlay/dimness": {
       "hex": "#000000",
-      "alpha": 0.6
+      "alpha": 0.6,
+      "target": "solid/neutral/black"
     },
     "elevation/overlay/blur": {
       "hex": null,
@@ -2719,19 +2805,23 @@
     },
     "elevation/drop shadow/x-small": {
       "hex": "#000000",
-      "alpha": 0.24
+      "alpha": 0.45,
+      "target": "solid/neutral/black"
     },
     "elevation/drop shadow/small": {
       "hex": "#000000",
-      "alpha": 0.32
+      "alpha": 0.6,
+      "target": "solid/neutral/black"
     },
     "elevation/drop shadow/medium": {
       "hex": "#000000",
-      "alpha": 0.4
+      "alpha": 0.75,
+      "target": "solid/neutral/black"
     },
     "elevation/drop shadow/large": {
       "hex": "#000000",
-      "alpha": 0.48
+      "alpha": 0.9,
+      "target": "solid/neutral/black"
     }
   },
   "bridge": {

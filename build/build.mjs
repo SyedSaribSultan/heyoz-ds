@@ -348,9 +348,26 @@ function emitSemantic() {
         put(doc, full, scalarToken('number', v, { code: cssRef(full) }));
         resolved[mode][full] = { hex: null, alpha: 1, number: v };
       } else {
-        const { components } = oklch(...Object.values(hexToOklch(v.hex)));
-        put(doc, full, colorToken({ components, hex: v.hex, alpha: v.alpha, code: cssRef(full) }));
-        resolved[mode][full] = { hex: v.hex, alpha: v.alpha };
+        // Resolved from a primitive path, so elevation carries real aliasData
+        // like every other semantic token. These used to be hand-typed hexes
+        // emitted with no alias, which is what made rule 1 false.
+        const prim = PRIM.get(v.target);
+        if (!prim) {
+          errors.push(`${mode}: ${full} -> missing primitive '${v.target}'`);
+          continue;
+        }
+        put(
+          doc,
+          full,
+          colorToken({
+            components: prim.components,
+            hex: prim.hex,
+            alpha: v.alpha,
+            code: cssRef(full),
+            alias: { name: v.target, set: COLLECTION.colors },
+          })
+        );
+        resolved[mode][full] = { hex: prim.hex, alpha: v.alpha, target: v.target };
       }
     }
 
@@ -667,6 +684,35 @@ function validate() {
     for (const t of targets) if (!PRIM.has(t)) errors.push(`unresolvable alias: ${path} -> ${t}`);
   }
 
+  /* README rule 1, "zero literals above tier 1", is now ENFORCED rather than
+   * asserted in prose. Every colour-valued semantic token must name a primitive.
+   * The rule was false for the whole life of the repo — ten elevation literals,
+   * six tokens per mode with no alias — and nothing detected it because nothing
+   * looked. A rule the build cannot check is a comment. */
+  for (const mode of ['light', 'dark']) {
+    for (const [path, r] of Object.entries(resolved[mode])) {
+      if (r.hex && !r.target) errors.push(`LITERAL above tier 1: ${mode} ${path} = ${r.hex} names no primitive`);
+    }
+  }
+
+  /* Elevation has to be perceptible. The dark drop shadows shipped at ΔL
+   * 0.009-0.024 against their own page — the large shadow was weaker than the
+   * light x-small — and no gate covered elevation at all. ΔL, not WCAG ratio:
+   * near black the ratio's flare term swamps the signal and reports 1.01 for
+   * everything, which is why this went unseen. */
+  const SHADOW_MIN_DL = 0.02;
+  for (const mode of ['light', 'dark']) {
+    const pageL = hexToOklch(resolved[mode]['color/background'].hex).L;
+    for (const k of Object.keys(SHADOW_GEOMETRY)) {
+      const r = resolved[mode][`elevation/drop shadow/${k}`];
+      if (!r) continue;
+      const cast = composite(r.hex, r.alpha, resolved[mode]['color/background'].hex);
+      const dL = Math.abs(pageL - hexToOklch(cast).L);
+      results.push({ kind: 'elevation', metric: 'dL', mode, fg: `elevation/drop shadow/${k}`, bg: 'color/background', ratio: +dL.toFixed(4), min: SHADOW_MIN_DL, pass: dL >= SHADOW_MIN_DL });
+      if (dL < SHADOW_MIN_DL) errors.push(`ELEVATION ${mode}: drop shadow/${k} moves the page only ΔL ${dL.toFixed(4)}, need ${SHADOW_MIN_DL}`);
+    }
+  }
+
   const used = new Set();
   for (const [, t] of semantic) { used.add(t[0]); used.add(t[1]); }
   const unused = [...PRIM.keys()].filter((k) => !used.has(k));
@@ -761,7 +807,11 @@ console.log(`  contrast gates      ${ct.filter((r) => r.pass).length}/${ct.lengt
 // under-reported the gate count and the one metric carrying the white-on-fill
 // decision was invisible unless it failed.
 console.log(`  APCA gates          ${at.filter((r) => r.pass).length}/${at.length} pass   Lc 60 floor`);
+const et = v.results.filter((r) => r.kind === 'elevation');
 console.log(`  visibility gates    ${vt.filter((r) => r.pass).length}/${vt.length} pass`);
+console.log(`  elevation gates     ${et.filter((r) => r.pass).length}/${et.length} pass   ΔL floor`);
+console.log(`  ${'-'.repeat(50)}`);
+console.log(`  total               ${v.results.filter((r) => r.pass).length}/${v.results.length} pass`);
 
 if (warnings.length) {
   console.log('\n  warnings:');
