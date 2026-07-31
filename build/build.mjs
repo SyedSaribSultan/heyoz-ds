@@ -278,7 +278,12 @@ function flattenSemantic() {
   }
   for (const [k, [L, D]] of Object.entries(SEMANTIC.FILL_SOFT)) {
     states.forEach((s, i) => add(`color/fill/${k}${s}`, L[i], D[i]));
-    add(`color/fill/${k}-disabled`, L[0].replace(/^opacity-\d+/, 'opacity-15'), D[0].replace(/^opacity-\d+/, 'opacity-15'));
+    // opacity-8, NOT opacity-15. The soft-fill bases are already opacity-15, so
+    // rewriting the prefix to opacity-15 — which is what this line used to do —
+    // was a no-op, and all ten soft disabled tokens shipped byte-identical to
+    // their enabled state in both modes. 8 is half of 15, matching the solid
+    // fills, which derive disabled as opacity-50 of an opaque base.
+    add(`color/fill/${k}-disabled`, L[0].replace(/^opacity-\d+/, 'opacity-8'), D[0].replace(/^opacity-\d+/, 'opacity-8'));
   }
   add('color/fill/fixed', 'solid/neutral/white', 'solid/neutral/white');
   add('color/fill/fixed-disabled', 'opacity-50/neutral/white', 'opacity-50/neutral/white');
@@ -635,8 +640,13 @@ function validate() {
     mustDiffer.push([`color/fill/${t}-hover`, `color/fill/${t}-active`]);
   }
   for (const t of Object.keys(SEMANTIC.BORDER)) mustDiffer.push([`color/border/${t}`, `color/border/${t}-hover`]);
+  // A pair may carry an optional third element restricting it to one mode, for
+  // the cases where two roles legitimately share a value in one mode only. The
+  // restriction has to be written down rather than left as a silent omission —
+  // that is the difference between an exemption and a hole.
   for (const mode of ['light', 'dark']) {
-    for (const [a, b] of mustDiffer) {
+    for (const [a, b, onlyMode] of mustDiffer) {
+      if (onlyMode && onlyMode !== mode) continue;
       const ra = resolved[mode][a], rb = resolved[mode][b];
       if (!ra || !rb) continue;
       if (colorCss(ra) === colorCss(rb)) errors.push(`COLLISION ${mode}: ${a} === ${b} (${colorCss(ra)})`);
@@ -745,7 +755,12 @@ console.log(`  semantic per mode   ${v.semanticCount}  x2 modes`);
 console.log(`  type steps          ${TYPE_STEPS.length}  x ${Object.keys(TYPOGRAPHY['font weight']).length} weights`);
 const ct = v.results.filter((r) => r.kind === 'contrast');
 const vt = v.results.filter((r) => r.kind === 'visibility');
-console.log(`  contrast gates      ${ct.filter((r) => r.pass).length}/${ct.length} pass`);
+const at = v.results.filter((r) => r.kind === 'apca');
+console.log(`  contrast gates      ${ct.filter((r) => r.pass).length}/${ct.length} pass   WCAG 2.x ratio`);
+// APCA was previously computed and enforced but never printed, so the summary
+// under-reported the gate count and the one metric carrying the white-on-fill
+// decision was invisible unless it failed.
+console.log(`  APCA gates          ${at.filter((r) => r.pass).length}/${at.length} pass   Lc 60 floor`);
 console.log(`  visibility gates    ${vt.filter((r) => r.pass).length}/${vt.length} pass`);
 
 if (warnings.length) {

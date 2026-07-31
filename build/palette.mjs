@@ -102,7 +102,11 @@ export function hexToOklch(hex) {
 export function relLuminance(hex) {
   const [r, g, b] = [1, 3, 5].map((i) => {
     const c = parseInt(hex.slice(i, i + 2), 16) / 255;
-    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    // 0.04045 is the corrected WCAG 2.1 breakpoint. This read 0.03928 (the
+    // WCAG 2.0 erratum value) and disagreed with hexToOklch above, which used
+    // 0.04045. Provably zero-impact at 8-bit depth — no k/255 falls between the
+    // two — but the file should not contain two different sRGB curves.
+    return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
   });
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
@@ -119,11 +123,19 @@ export function contrast(a, b) {
  * WCAG 2.x is polarity-blind: it is a pure luminance ratio, so its black/white
  * crossover sits at Y = 0.179 (the grey #767676). EVERY brand fill lighter than
  * that mid-grey scores higher with black text — which is why a WCAG-2 maximiser
- * puts black on every orange, yellow, green and cyan in existence. On #FF3D00
- * (Y = 0.246) it scores black 4.91:1 and white 3.55:1, and it is wrong: APCA
- * scores white Lc 66.7 and black Lc 41.0, i.e. black is below the floor for text
- * of any size. Saturated warm hues read brighter than their measured luminance
- * (Helmholtz–Kohlrausch), so near-black on them goes muddy.
+ * puts black on every orange, yellow, green and cyan in existence. On the brand
+ * fill #FF3D01 (Y = 0.246) it scores near-black 5.71:1 and white 3.55:1, and it
+ * is wrong: APCA scores white Lc 66.7 and near-black Lc 42.7, i.e. the near-black
+ * is below the floor for text of any size. Saturated warm hues read brighter than
+ * their measured luminance (Helmholtz–Kohlrausch), so near-black goes muddy.
+ *
+ * The 5.71 and 42.7 figures above were previously stated as 4.91 and 41.0, in
+ * this file, in spec.mjs and in DECISIONS.md H1. Both were wrong — 4.91 looks
+ * like white-on-#D53100 (the hover fill, 4.92:1) transcribed into the near-black
+ * row. Recomputed: near-black #070605 on #FF3D01 = 5.71:1 / Lc 42.74, and pure
+ * #000000 = 5.92:1 / Lc 42.80. The conclusion is unchanged and in fact stronger
+ * on the WCAG side, which is precisely why the wrong number mattered: it was the
+ * figure a procurement VPAT reviewer would have read.
  *
  * Returned Lc is unsigned. Rough thresholds: 45 = large/bold text minimum,
  * 60 = body text, 75 = thin or small text.
@@ -175,42 +187,84 @@ export function composite(fgHex, alpha, bgHex) {
 const NEUTRAL_HUE = 50;
 const neutralChroma = (L) => 0.0045 - 0.002 * L;
 
+/**
+ * HALF-STEPS (25, 35, 45, 95, 115, 135) exist for the same reason 60/70/90/100
+ * did: a ladder ran out of room.
+ *
+ * The shadcn bridge has to seat ten structurally distinct roles — background,
+ * card, popover, secondary, muted, accent, border, input, sidebar, sidebar-border
+ * — and in light mode it only had white/10/20/30/40 to seat them in. Six pairs
+ * collided at exactly 1.00:1, including `--accent` === `--border` in dark, which
+ * is the same class of bug as A6 and made a hovered row erase its own divider.
+ *
+ * Adding steps rather than compressing roles is the cheap direction: the grid is
+ * generated, so six steps cost six lines here and nothing to maintain (see D7).
+ * L values are the midpoints of their neighbours, so the ramp stays perceptually
+ * even and no existing step moves.
+ */
+/**
+ * ANCHOR NOTATION. `-> #HEX` is the value this L actually COMPUTES to, verified
+ * against the emitted palette. Where the anchor colour that motivated the step
+ * differs, it is given as `(shipped #HEX)`. Nine of these comments previously
+ * stated the shipped hex as though it were the computed one and were wrong by
+ * one 8-bit unit; the round-trip through OKLCH and back is not bit-exact, and
+ * pretending otherwise is how `#FF3D00` ended up asserted four times in a
+ * system that has never emitted it.
+ */
 const NEUTRAL_STEPS = [
-  ['10', 0.9714], // = #F7F5F4  (shipped: light --card)
-  ['20', 0.9474], // = #EFEDEC  (shipped: light --secondary / --sidebar)
-  ['30', 0.9100], // = #E2E1DF  (shipped: light --muted / --accent)
-  ['40', 0.8679], // = #D5D3D1  (shipped: Figma neutral/350)
-  ['50', 0.8091], // = #C2C0BF  (shipped: dark --muted-foreground)
-  ['60', 0.7300], //   NEW - fills the light/mid gap
-  ['70', 0.6600], //   NEW
-  ['80', 0.5798], // = #7B7A78  (shipped: Figma neutral/500)
-  ['90', 0.4800], //   NEW - gives dark mode real hover/active headroom
-  ['100', 0.3800], //  NEW
-  ['110', 0.2949], // = #2E2C2B (shipped: light --muted-foreground, dark --muted)
-  ['120', 0.2396], // = #201F1D (shipped: dark --popover / --secondary)
-  ['130', 0.1887], // = #151312 (shipped: dark --card)
-  ['140', 0.1547], // = #0D0C0A (shipped: dark --sidebar)
-  ['150', 0.1232], // = #070605 (shipped: light --foreground, dark --background)
+  ['10', 0.9714], // -> #F7F5F4  (shipped: light --card)
+  ['20', 0.9474], // -> #EFEDEC  (shipped: light --secondary / --sidebar)
+  ['25', 0.9287], // -> #E9E7E6  NEW half-step - light sidebar item hover
+  ['30', 0.9100], // -> #E3E1E0  (shipped #E2E1DF: light --muted / --accent)
+  ['35', 0.8890], // -> #DCDAD9  NEW half-step - light --muted, clears --border
+  ['40', 0.8679], // -> #D5D3D2  (shipped #D5D3D1: Figma neutral/350)
+  ['45', 0.8385], // -> #CBC9C8  NEW half-step - light --input, clears --accent
+  ['50', 0.8091], // -> #C2C0BF  (shipped: dark --muted-foreground)
+  ['60', 0.7300], // -> #A9A7A6  NEW - fills the light/mid gap
+  ['70', 0.6600], // -> #939190  NEW
+  ['80', 0.5798], // -> #7C7A78  (shipped #7B7A78: Figma neutral/500)
+  ['90', 0.4800], // -> #5F5D5C  NEW - real dark hover/active headroom
+  ['95', 0.4300], // -> #515050  NEW half-step - dark --border, clears --accent
+  ['100', 0.3800], // -> #444241 NEW
+  ['110', 0.2949], // -> #2E2C2B (shipped: light --muted-fg, dark --muted)
+  ['115', 0.2673], // -> #272524 NEW half-step - dark --popover, clears --secondary
+  ['120', 0.2396], // -> #211F1D (shipped #201F1D: dark --popover / --secondary)
+  ['130', 0.1887], // -> #151312 (shipped: dark --card)
+  ['135', 0.1717], // -> #121110 NEW half-step - dark sidebar item hover
+  ['140', 0.1547], // -> #0E0C0B (shipped #0D0C0A: dark --sidebar)
+  ['150', 0.1232], // -> #070605 (shipped: light --foreground, dark --background)
 ];
 
 /**
  * Chromatic families. `mid` is the step that carries the canonical brand or
  * status colour; L is pinned to the shipped value so production does not shift.
+ *
+ * As with the neutrals, `-> #HEX` is what the L/C pair actually computes to.
+ * The brand mid is `#FF3D01`, one unit off the `#FF3D00` in the brand guide.
+ * That is a round-trip artifact and is imperceptible (white-on-brand moves from
+ * 3.547:1 to 3.548:1), but it is the emitted value and every doc now says so.
+ * Do NOT "fix" it by hand-typing the hex — that would make brand the only
+ * colour in the system outside the OKLCH engine, which is the mistake D6 is
+ * about. If the exact byte ever matters, move L, don't override the output.
  */
 const FAMILIES = {
   brand: {
     hue: 34.0, // measured from #FF3D00
     peak: 0.2348, // measured max chroma
-    mid: '60', // = #FF3D00  (shipped --primary)
+    mid: '60', // -> #FF3D01  (shipped --primary #FF3D00)
     steps: {
       10: [0.9560, 0.028],
-      20: [0.9122, 0.0463], // = #FFD8CD (shipped .brand-mesh)
-      30: [0.8336, 0.0941], // = #FFB39E (shipped .brand-mesh)
-      40: [0.7556, 0.1491], // = #FF8A6B (shipped .brand-mesh)
-      50: [0.7050, 0.1900],
-      60: [0.6535, 0.2348], // = #FF3D00
-      70: [0.5700, 0.2150],
-      80: [0.4800, 0.1780],
+      20: [0.9122, 0.0463], // -> #FFD8CE (shipped #FFD8CD, .brand-mesh)
+      30: [0.8336, 0.0941], // -> #FFB3A0 (shipped #FFB39E, .brand-mesh)
+      40: [0.7556, 0.1491], // -> #FF8A6F (shipped #FF8A6B, .brand-mesh)
+      // 50 was L 0.7050 (-> #FF6A49). Lowered to 0.6950 because it is now the
+      // DARK ACTIVE fill and white on it measured Lc 58.8 — under the Lc 60
+      // floor this system sets for itself. ΔL 0.010 is imperceptible.
+      50: [0.6950, 0.1900], // -> #FC6645  dark active,  white Lc 60.4
+      55: [0.6743, 0.2124], // -> #FE542D  NEW - dark hover, white Lc 63.6
+      60: [0.6535, 0.2348], // -> #FF3D01  the brand,    white Lc 66.7
+      70: [0.5700, 0.2150], // -> #D53100  light hover,  white Lc 77.8
+      80: [0.4800, 0.1780], // -> #A92500  light active, white Lc 88.1
       90: [0.3900, 0.1400],
       100: [0.3000, 0.1050],
     },
@@ -230,10 +284,11 @@ const FAMILIES = {
       20: [0.9080, 0.0520],
       30: [0.8350, 0.1000],
       40: [0.7550, 0.1480],
-      50: [0.6880, 0.1820],
-      60: [0.6206, 0.2056], // = #E63C65 (shipped --destructive)
-      70: [0.5400, 0.1940],
-      80: [0.4550, 0.1660],
+      50: [0.6880, 0.1820], // -> #F5617D  dark active,  white Lc 61.9
+      55: [0.6543, 0.1938], // -> #EE5071  NEW - dark hover, white Lc 66.9
+      60: [0.6206, 0.2056], // -> #E63C65 (shipped --destructive), white Lc 71.8
+      70: [0.5400, 0.1940], // -> #C52450  light hover
+      80: [0.4550, 0.1660], // -> #9D183E  light active
       90: [0.3700, 0.1330],
       100: [0.2900, 0.1000],
     },
@@ -248,10 +303,13 @@ const FAMILIES = {
       20: [0.9100, 0.0400],
       30: [0.8380, 0.0720],
       40: [0.7560, 0.1000],
-      50: [0.6700, 0.1210],
-      60: [0.5807, 0.1340], // = #1D9156 (HeyOz Figma success/500)
-      70: [0.5050, 0.1240],
-      80: [0.4300, 0.1070],
+      // 50 was L 0.6700 (-> #4FAB74). Lowered to 0.6640 for the same reason as
+      // brand/50: it is now the dark active fill and white measured Lc 59.4.
+      50: [0.6640, 0.1210], // -> #4DA972  dark active,  white Lc 60.4
+      55: [0.6223, 0.1275], // -> #389D64  NEW - dark hover, white Lc 66.6
+      60: [0.5807, 0.1340], // -> #1D9156 (HeyOz Figma success/500), white Lc 72.4
+      70: [0.5050, 0.1240], // -> #037944  light hover
+      80: [0.4300, 0.1070], // -> #006035  light active
       90: [0.3500, 0.0870],
       100: [0.2750, 0.0670],
     },
@@ -266,10 +324,11 @@ const FAMILIES = {
       20: [0.9180, 0.0530],
       30: [0.8450, 0.0900],
       40: [0.7600, 0.1080],
-      50: [0.6720, 0.1160],
-      60: [0.5795, 0.1203], // = #A36E07 (HeyOz Figma warning/500)
-      70: [0.5000, 0.1080],
-      80: [0.4250, 0.0920],
+      50: [0.6720, 0.1160], // -> #BF8B39  dark active,  white Lc 62.0
+      55: [0.6258, 0.1182], // -> #B17C25  NEW - dark hover, white Lc 69.2
+      60: [0.5795, 0.1203], // -> #A36E07 (HeyOz Figma warning/500), white Lc 75.6
+      70: [0.5000, 0.1080], // -> #865900  light hover
+      80: [0.4250, 0.0920], // -> #6B4600  light active
       90: [0.3450, 0.0740],
       100: [0.2700, 0.0570],
     },
@@ -284,10 +343,11 @@ const FAMILIES = {
       20: [0.9060, 0.0500],
       30: [0.8320, 0.0950],
       40: [0.7500, 0.1400],
-      50: [0.6700, 0.1720],
-      60: [0.5812, 0.1925], // = #2C74EA (HeyOz Figma info/500)
-      70: [0.5050, 0.1820],
-      80: [0.4300, 0.1580],
+      50: [0.6700, 0.1720], // -> #5292FD  dark active,  white Lc 62.4
+      55: [0.6256, 0.1822], // -> #4083F4  NEW - dark hover, white Lc 69.0
+      60: [0.5812, 0.1925], // -> #2C74EA (HeyOz Figma info/500), white Lc 75.3
+      70: [0.5050, 0.1820], // -> #195DCA  light hover
+      80: [0.4300, 0.1580], // -> #1049A4  light active
       90: [0.3500, 0.1280],
       100: [0.2750, 0.0980],
     },
@@ -324,8 +384,17 @@ const SPECTRUM_STEPS = {
   100: [0.3000, 0.0850],
 };
 
-/** Alpha groups. One ladder for the whole system — 15 / 30 / 50. */
-export const ALPHA_GROUPS = [15, 30, 50];
+/**
+ * Alpha groups. One ladder for the whole system — 8 / 15 / 30 / 50.
+ *
+ * 8 exists so a translucent fill has a disabled state. A solid fill derives
+ * disabled as opacity-50 of its base — half the presence. The soft fills are
+ * already opacity-15, so the same rule wants 7.5%, and the build previously
+ * tried to express that by rewriting the alpha prefix to `opacity-15` — which,
+ * on a token that was already opacity-15, was a no-op. Ten tokens shipped a
+ * disabled state byte-identical to their enabled one. 8 is that missing rung.
+ */
+export const ALPHA_GROUPS = [8, 15, 30, 50];
 
 /* ------------------------------------------------------------------ *
  * 3. Build the flat primitive table

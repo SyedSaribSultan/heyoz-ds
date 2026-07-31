@@ -258,10 +258,20 @@ const SURFACE = {
   'primary-variant': [S('neutral/white'), S('neutral/140')],
   secondary: [S('neutral/20'), S('neutral/120')],
   'secondary-variant': [S('neutral/10'), S('neutral/130')],
-  tertiary: [S('neutral/30'), S('neutral/110')],
+  // tertiary is the shadcn --muted target. Light moved 30 -> 35 so it clears
+  // --border (border/primary, neutral/30); at 30 they were byte-identical and a
+  // Separator or bordered input inside a muted panel had no edge at all.
+  tertiary: [S('neutral/35'), S('neutral/110')],
   'tertiary-variant': [S('neutral/20'), S('neutral/120')],
+  // elevated and overlay were BOTH neutral/120 in dark and both white in light,
+  // so a popover sitting on a card had no boundary in either mode. Dark overlay
+  // moves to the 115 half-step; it is also the shadcn --popover target, which at
+  // 120 collided with --secondary as well. Light keeps both at white: white is
+  // the top of the ramp and a popover on an off-white page separates by shadow,
+  // not by hue — so only the light pair is exempt, and the collision gate below
+  // asserts the dark pair.
   elevated: [S('neutral/white'), S('neutral/120')],
-  overlay: [S('neutral/white'), S('neutral/120')],
+  overlay: [S('neutral/white'), S('neutral/115')],
   inverse: [S('neutral/150'), S('neutral/10')],
   fixed: [S('neutral/white'), S('neutral/white')],
   brand: [S('brand/10'), A15('brand/60')],
@@ -287,6 +297,20 @@ const SURFACE = {
  * The dark ladder only works because neutral 90 and 100 exist — the shipped
  * ramp had nothing between L 58 and L 29, which is why dark hover and active
  * were byte-identical in the current Figma file.
+ *
+ * THE FIVE STATUS TRACKS CARRY A WHITE LABEL, so on those the dark ladder is
+ * bounded: every step it climbs costs contrast against `content/on-*`. It used
+ * to run 60 -> 50 -> 40, which put white at Lc 58.8 on brand hover and Lc 49.9
+ * on brand active — beneath the Lc 60 floor this system sets for itself, on the
+ * single most-observed state in the product. Only the base fill was gated, so
+ * nothing caught it.
+ *
+ * Now it runs 60 -> 55 -> 50, with step 55 added and 50 nudged down where it
+ * overshot. White holds Lc 60.4-66.7 across all three dark states and 66.7-88.1
+ * across all three light states, and APCA_ASSERTIONS gates all thirty pairs
+ * rather than the five bases. The direction is unchanged and deliberate: a
+ * surface a user is pressing should move away from the page, which means darker
+ * on a light page and lighter on a dark one.
  */
 const FILL = {
   primary: [
@@ -321,25 +345,26 @@ const FILL = {
     ['neutral/150', 'neutral/140', 'neutral/130'],
     ['neutral/10', 'neutral/20', 'neutral/30'],
   ],
+  // Dark stops at 50, not 40. 40 is ~L 0.755 and white dies there (Lc 45-50).
   brand: [
     ['brand/60', 'brand/70', 'brand/80'],
-    ['brand/60', 'brand/50', 'brand/40'],
+    ['brand/60', 'brand/55', 'brand/50'],
   ],
   success: [
     ['success/60', 'success/70', 'success/80'],
-    ['success/60', 'success/50', 'success/40'],
+    ['success/60', 'success/55', 'success/50'],
   ],
   warning: [
     ['warning/60', 'warning/70', 'warning/80'],
-    ['warning/60', 'warning/50', 'warning/40'],
+    ['warning/60', 'warning/55', 'warning/50'],
   ],
   critical: [
     ['error/60', 'error/70', 'error/80'],
-    ['error/60', 'error/50', 'error/40'],
+    ['error/60', 'error/55', 'error/50'],
   ],
   info: [
     ['info/60', 'info/70', 'info/80'],
-    ['info/60', 'info/50', 'info/40'],
+    ['info/60', 'info/55', 'info/50'],
   ],
 };
 
@@ -377,12 +402,21 @@ const BORDER = {
   // That asymmetry is deliberate: the dark surface steps are compressed, so a
   // light-weight border disappears. neutral/100 (#444241) is the value that
   // earlier dark-mode testing landed on after neutral/80 overshot at 4.32:1.
+  // Dark primary moved 100 -> 95. At 100 it was byte-identical to
+  // fill/tertiary-hover, which the bridge maps to --accent, so a hovered table
+  // row or dropdown item erased its own divider. That is the same failure as A6
+  // and it was live. 95 keeps the border heavier than every dark surface while
+  // clearing the hover fill.
   primary: [
     ['neutral/30', 'neutral/40'],
-    ['neutral/100', 'neutral/90'],
+    ['neutral/95', 'neutral/90'],
   ],
+  // Light secondary moved 40 -> 45, clearing --accent (fill/tertiary-hover,
+  // neutral/40). secondary is the shadcn --input target, so at 40 an input
+  // border vanished against a hovered row. 45 also lifts the input edge from
+  // 1.37:1 to 1.58:1 against a card, which is the direction 1.4.11 wants.
   secondary: [
-    ['neutral/40', 'neutral/50'],
+    ['neutral/45', 'neutral/50'],
     ['neutral/90', 'neutral/80'],
   ],
   tertiary: [
@@ -419,10 +453,24 @@ const BORDER = {
   ],
 };
 
-/** Focus is its own token, distinct from brand fill. Dark uses brand/50 so the
- *  ring stays visible against a brand-filled button on a dark page. */
+/**
+ * Focus is its own token, distinct from brand fill. Dark uses brand/50 so the
+ * ring stays visible against a brand-filled button on a dark page.
+ *
+ * LIGHT MOVED brand/60 -> brand/70. At brand/60 `border/focus` was byte-identical
+ * to `fill/brand`, so the bridge emitted `--ring` and `--primary` as the same
+ * value and the focus ring on a brand button was invisible. That is bug A4,
+ * which DECISIONS.md records as mechanically enforced — it was not: the gate list
+ * asserted ring-vs-border and never ring-vs-primary. brand/70 is the next step
+ * down, so the ring reads as a deeper edge of the same hue, and its contrast
+ * against the page improves (3.26:1 -> 5.13:1 on surface/primary) rather than
+ * regressing. Dark already differed (brand/50 vs brand/60) and is unchanged.
+ *
+ * A ring drawn ON a brand fill still uses `focus-inverse`; one CSS variable
+ * cannot express both, which is why that token exists and is separately gated.
+ */
 const BORDER_SINGLE = {
-  focus: [S('brand/60'), S('brand/50')],
+  focus: [S('brand/70'), S('brand/50')],
   'focus-inverse': [S('neutral/white'), S('neutral/150')],
   'brand-secondary': [A30('brand/50'), A30('brand/60')],
 };
@@ -520,7 +568,11 @@ const CHART = {
   // set still spans ~32 L* points so the greyscale test passes. Forcing yellow
   // down to L 46 to even out the ladder just makes it look like mud.
   //          light (L*)            dark (L*)
-  '1': [S('brand/60'), S('brand/50')], //                      65 / 71
+  // Dark moved brand/50 -> brand/55. At brand/50 series 1 was byte-identical to
+  // border/focus in dark, so a focus ring drawn on that series was invisible.
+  // 55 keeps series 1 mode-distinct (which is the whole point of B11) and clears
+  // both the focus ring and the brand fill.
+  '1': [S('brand/60'), S('brand/55')], //                      65 / 70
   '2': [S('spectrum-blue/70'), S('spectrum-blue/60')], //       54 / 62
   '3': [S('spectrum-teal/50'), S('spectrum-teal/40')], //       70 / 78
   '4': [S('spectrum-purple/80'), S('spectrum-purple/70')], //   46 / 54
@@ -533,12 +585,19 @@ const CHART = {
 const SIDEBAR = {
   background: [S('neutral/20'), S('neutral/140')],
   border: [S('neutral/30'), S('neutral/120')],
-  'item-hover': [S('neutral/30'), S('neutral/120')],
+  // item-hover used to equal border exactly, in BOTH modes (30 / 120), so
+  // hovering an item erased the sidebar's own divider across that item's height.
+  // The half-steps give it its own rung one notch off the background: 25 in
+  // light, 135 in dark. Both now clear border and background.
+  'item-hover': [S('neutral/25'), S('neutral/135')],
   'item-active': [S('neutral/40'), S('neutral/110')],
   'item-selected': [A15('brand/50'), A15('brand/60')],
   content: [S('neutral/150'), S('neutral/20')],
   'content-muted': [S('neutral/110'), S('neutral/50')],
-  'content-selected': [S('brand/70'), S('brand/50')],
+  // content-selected is a selected nav LABEL, so it needs 4.5:1 on both the
+  // sidebar background and the selected item tint. brand/70 measured 4.22:1 on
+  // both in light — ungated and failing. brand/80 clears it at 6.09:1.
+  'content-selected': [S('brand/80'), S('brand/50')],
 };
 
 /** Tier 3 — gradient and mesh stops. Replaces the hardcoded rgb() literals in
@@ -612,7 +671,17 @@ export const SEMANTIC = {
  * dropping the bridge in fixes the bug without a code change:
  *   --border  now resolves to border/primary, not the card colour
  *   --ring    now resolves to border/focus, not --primary
- *   --accent  now resolves to fill/secondary-hover, not --muted
+ *   --accent  now resolves to fill/tertiary-hover, not --muted
+ *
+ * That third line said `fill/secondary-hover` while the map below has always
+ * said `fill/tertiary-hover`. The map was right.
+ *
+ * A WARNING FROM THIS FILE'S OWN HISTORY. Claiming a bug is fixed here is not
+ * the same as fixing it. Three of the bugs this comment block advertises as
+ * resolved were still byte-identical in the emitted CSS, because the values
+ * happened to collide again one ramp step later and BRIDGE_COLLISIONS did not
+ * name the pair. Every claim above is now backed by an entry in that list; if
+ * you add a mapping here, add its collision constraint too.
  */
 export const SHADCN_BRIDGE = {
   background: 'color/background',
@@ -709,11 +778,25 @@ export const CONTRAST_ASSERTIONS = [
  * 4.96:1 and Lc 78. Never solve it by darkening the label.
  */
 export const APCA_ASSERTIONS = [
+  // EVERY state, not just the base. Gating only the base is how white-on-brand
+  // shipped at Lc 58.8 on hover and Lc 49.9 on active in dark mode: the label
+  // never changes, the fill does, so the base passing tells you nothing about
+  // the state a user actually spends time looking at.
   ['color/content/on-brand', 'color/fill/brand', 60],
+  ['color/content/on-brand', 'color/fill/brand-hover', 60],
+  ['color/content/on-brand', 'color/fill/brand-active', 60],
   ['color/content/on-success', 'color/fill/success', 60],
+  ['color/content/on-success', 'color/fill/success-hover', 60],
+  ['color/content/on-success', 'color/fill/success-active', 60],
   ['color/content/on-warning', 'color/fill/warning', 60],
+  ['color/content/on-warning', 'color/fill/warning-hover', 60],
+  ['color/content/on-warning', 'color/fill/warning-active', 60],
   ['color/content/on-critical', 'color/fill/critical', 60],
+  ['color/content/on-critical', 'color/fill/critical-hover', 60],
+  ['color/content/on-critical', 'color/fill/critical-active', 60],
   ['color/content/on-info', 'color/fill/info', 60],
+  ['color/content/on-info', 'color/fill/info-hover', 60],
+  ['color/content/on-info', 'color/fill/info-active', 60],
 ];
 
 /**
@@ -731,15 +814,49 @@ export const VISIBILITY_ASSERTIONS = [
   ['color/surface/primary', 'color/background', 1.02],
 ];
 
-/** Token pairs that must never resolve to the same value. */
+/**
+ * Token pairs that must never resolve to the same value.
+ *
+ * `[a, b]` asserts in both modes. `[a, b, 'dark']` asserts in that mode only,
+ * for pairs that legitimately share a value in the other one.
+ */
 export const COLLISION_ASSERTIONS = [
   ['color/border/primary', 'color/surface/primary'],
   ['color/border/primary', 'color/background'],
   ['color/sidebar/border', 'color/sidebar/background'],
   ['color/surface/primary', 'color/background'],
+  // A popover on a card needs an edge. Both were neutral/120 in dark, so there
+  // was no boundary at all. DARK ONLY: in light both are correctly neutral/white,
+  // because white is the top of the ramp and the page itself is white — a popover
+  // there separates by shadow and border, not by fill. Asserting light would
+  // force a grey popover onto a white page to satisfy a gate, which is the exact
+  // failure mode H1 is about: a gate may veto a colour, it may never choose one.
+  ['color/surface/elevated', 'color/surface/overlay', 'dark'],
+  // A hovered sidebar item must not erase the sidebar's divider. Both 30 / 120.
+  ['color/sidebar/item-hover', 'color/sidebar/border'],
+  ['color/sidebar/item-hover', 'color/sidebar/background'],
+  // A border must not vanish against the muted surface it is drawn on.
+  ['color/border/primary', 'color/surface/tertiary'],
+  ['color/border/secondary', 'color/fill/tertiary-hover'],
+  // The focus ring must differ from the fill it rings. This is bug A4, and its
+  // absence from this list for the whole life of the repo is why A4 was still
+  // live while DECISIONS.md recorded it as mechanically enforced.
+  ['color/border/focus', 'color/fill/brand'],
+  ['color/border/focus', 'color/chart/1'],
+  // A hovered row must not erase its own divider (the dark --accent === --border
+  // failure). fill/tertiary-hover is the bridge's --accent.
+  ['color/border/primary', 'color/fill/tertiary-hover'],
 ];
 
-/** shadcn variables that must stay distinct from each other. */
+/**
+ * shadcn variables that must stay distinct from each other.
+ *
+ * Every entry added below corresponds to a collision that was LIVE in dist/ and
+ * that this list was too short to catch. The lesson is in the shape of the list,
+ * not the values: three of the six bugs DECISIONS.md §A claims are mechanically
+ * enforced were sitting in the emitted CSS, because a gate only guards the pairs
+ * you remember to name.
+ */
 export const BRIDGE_COLLISIONS = [
   ['secondary', 'muted'],
   ['muted', 'accent'],
@@ -748,4 +865,15 @@ export const BRIDGE_COLLISIONS = [
   ['input', 'card'],
   ['ring', 'border'],
   ['sidebar', 'sidebar-border'],
+  ['ring', 'primary'],              // was 1.00:1 in light — the A4 bug, live
+  ['ring', 'sidebar-primary'],
+  ['border', 'muted'],              // was 1.00:1 in light
+  ['border', 'accent'],             // was 1.00:1 in dark
+  ['border', 'input'],
+  ['border', 'secondary'],
+  ['input', 'accent'],              // was 1.00:1 in light
+  ['popover', 'secondary'],         // was 1.00:1 in dark
+  ['popover', 'card'],
+  ['sidebar-accent', 'sidebar-border'], // was 1.00:1 in both modes
+  ['sidebar-accent', 'sidebar'],
 ];
