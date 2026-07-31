@@ -1,5 +1,5 @@
 {
-  "$description": "Spacing, roundness, stroke width, focus ring, touch target, icon sizing, z-index layers, breakpoints and containers. Every value aliases _Number Primitives. Spacing and roundness are ordinal (spacing-5 = 16px); the --oz- namespace means the ordinal names cannot collide with Tailwind's own spacing scale.",
+  "$description": "Spacing, roundness, stroke width, focus ring, touch target, icon sizing, z-index layers, breakpoints and containers. Spacing, roundness, stroke, focus, size and icon alias _Number Primitives; layer, breakpoint and container are authored as literals (see LITERAL_GROUPS) because viewport and stacking values are not members of the spacing scale. Spacing and roundness are ordinal (spacing-5 = 16px); the --oz- namespace means the ordinal names cannot collide with Tailwind's own spacing scale.",
   "spacing": {
     "spacing-1": {
       "$type": "number",

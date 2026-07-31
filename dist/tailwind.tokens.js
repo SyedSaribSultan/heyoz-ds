@@ -110,6 +110,10 @@ module.exports = {
           "info-secondary-hover": "var(--oz-color-fill-info-secondary-hover)",
           "info-secondary-active": "var(--oz-color-fill-info-secondary-active)",
           "info-secondary-disabled": "var(--oz-color-fill-info-secondary-disabled)",
+          "selected": "var(--oz-color-fill-selected)",
+          "selected-hover": "var(--oz-color-fill-selected-hover)",
+          "selected-active": "var(--oz-color-fill-selected-active)",
+          "selected-disabled": "var(--oz-color-fill-selected-disabled)",
           "fixed": "var(--oz-color-fill-fixed)",
           "fixed-disabled": "var(--oz-color-fill-fixed-disabled)"
         },
@@ -146,15 +150,21 @@ module.exports = {
           "info-disabled": "var(--oz-color-border-info-disabled)",
           "focus": "var(--oz-color-border-focus)",
           "focus-inverse": "var(--oz-color-border-focus-inverse)",
-          "brand-secondary": "var(--oz-color-border-brand-secondary)"
+          "brand-secondary": "var(--oz-color-border-brand-secondary)",
+          "selected": "var(--oz-color-border-selected)"
         },
         "content": {
           "primary": "var(--oz-color-content-primary)",
           "secondary": "var(--oz-color-content-secondary)",
           "tertiary": "var(--oz-color-content-tertiary)",
+          "placeholder": "var(--oz-color-content-placeholder)",
           "primary-disabled": "var(--oz-color-content-primary-disabled)",
           "secondary-disabled": "var(--oz-color-content-secondary-disabled)",
           "tertiary-disabled": "var(--oz-color-content-tertiary-disabled)",
+          "link": "var(--oz-color-content-link)",
+          "link-hover": "var(--oz-color-content-link-hover)",
+          "link-visited": "var(--oz-color-content-link-visited)",
+          "selected": "var(--oz-color-content-selected)",
           "inverse-primary": "var(--oz-color-content-inverse-primary)",
           "inverse-secondary": "var(--oz-color-content-inverse-secondary)",
           "inverse-primary-disabled": "var(--oz-color-content-inverse-primary-disabled)",

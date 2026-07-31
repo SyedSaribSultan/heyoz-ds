@@ -1241,19 +1241,19 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            1,
-            0.239011,
-            0.002057
+            0.889068,
+            0.881013,
+            0.876779
           ],
-          "alpha": 0.5,
-          "hex": "#FF3D01"
+          "alpha": 1,
+          "hex": "#E3E1E0"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-fill-brand-disabled)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "opacity-50/brand/60",
+            "targetVariableName": "solid/neutral/30",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -1329,19 +1329,19 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            0.114074,
-            0.56856,
-            0.336906
+            0.889068,
+            0.881013,
+            0.876779
           ],
-          "alpha": 0.5,
-          "hex": "#1D9156"
+          "alpha": 1,
+          "hex": "#E3E1E0"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-fill-success-disabled)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "opacity-50/success/60",
+            "targetVariableName": "solid/neutral/30",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -1417,19 +1417,19 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            0.639358,
-            0.431367,
-            0.028212
+            0.889068,
+            0.881013,
+            0.876779
           ],
-          "alpha": 0.5,
-          "hex": "#A36E07"
+          "alpha": 1,
+          "hex": "#E3E1E0"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-fill-warning-disabled)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "opacity-50/warning/60",
+            "targetVariableName": "solid/neutral/30",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -1505,19 +1505,19 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            0.901976,
-            0.235363,
-            0.395688
+            0.889068,
+            0.881013,
+            0.876779
           ],
-          "alpha": 0.5,
-          "hex": "#E63C65"
+          "alpha": 1,
+          "hex": "#E3E1E0"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-fill-critical-disabled)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "opacity-50/error/60",
+            "targetVariableName": "solid/neutral/30",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -1593,19 +1593,19 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            0.17263,
-            0.454917,
-            0.917652
+            0.889068,
+            0.881013,
+            0.876779
           ],
-          "alpha": 0.5,
-          "hex": "#2C74EA"
+          "alpha": 1,
+          "hex": "#E3E1E0"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-fill-info-disabled)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "opacity-50/info/60",
+            "targetVariableName": "solid/neutral/30",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -2046,6 +2046,94 @@
           },
           "com.figma.aliasData": {
             "targetVariableName": "opacity-8/info/50",
+            "targetVariableSetName": "_Colors Primitives"
+          }
+        }
+      },
+      "selected": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.987807,
+            0.400029,
+            0.27027
+          ],
+          "alpha": 0.15,
+          "hex": "#FC6645"
+        },
+        "$extensions": {
+          "com.figma.codeSyntax": {
+            "WEB": "var(--oz-color-fill-selected)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "opacity-15/brand/50",
+            "targetVariableSetName": "_Colors Primitives"
+          }
+        }
+      },
+      "selected-hover": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.987807,
+            0.400029,
+            0.27027
+          ],
+          "alpha": 0.3,
+          "hex": "#FC6645"
+        },
+        "$extensions": {
+          "com.figma.codeSyntax": {
+            "WEB": "var(--oz-color-fill-selected-hover)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "opacity-30/brand/50",
+            "targetVariableSetName": "_Colors Primitives"
+          }
+        }
+      },
+      "selected-active": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            1,
+            0.239011,
+            0.002057
+          ],
+          "alpha": 0.3,
+          "hex": "#FF3D01"
+        },
+        "$extensions": {
+          "com.figma.codeSyntax": {
+            "WEB": "var(--oz-color-fill-selected-active)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "opacity-30/brand/60",
+            "targetVariableSetName": "_Colors Primitives"
+          }
+        }
+      },
+      "selected-disabled": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.987807,
+            0.400029,
+            0.27027
+          ],
+          "alpha": 0.08,
+          "hex": "#FC6645"
+        },
+        "$extensions": {
+          "com.figma.codeSyntax": {
+            "WEB": "var(--oz-color-fill-selected-disabled)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "opacity-8/brand/50",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -2821,6 +2909,28 @@
             "targetVariableSetName": "_Colors Primitives"
           }
         }
+      },
+      "selected": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.834797,
+            0.191794,
+            0
+          ],
+          "alpha": 1,
+          "hex": "#D53100"
+        },
+        "$extensions": {
+          "com.figma.codeSyntax": {
+            "WEB": "var(--oz-color-border-selected)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "solid/brand/70",
+            "targetVariableSetName": "_Colors Primitives"
+          }
+        }
       }
     },
     "content": {
@@ -2873,19 +2983,41 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            0.485858,
-            0.476902,
-            0.472187
+            0.373663,
+            0.364618,
+            0.359852
           ],
           "alpha": 1,
-          "hex": "#7C7A78"
+          "hex": "#5F5D5C"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-content-tertiary)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "solid/neutral/80",
+            "targetVariableName": "solid/neutral/90",
+            "targetVariableSetName": "_Colors Primitives"
+          }
+        }
+      },
+      "placeholder": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.373663,
+            0.364618,
+            0.359852
+          ],
+          "alpha": 1,
+          "hex": "#5F5D5C"
+        },
+        "$extensions": {
+          "com.figma.codeSyntax": {
+            "WEB": "var(--oz-color-content-placeholder)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "solid/neutral/90",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -2939,19 +3071,107 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            0.485858,
-            0.476902,
-            0.472187
+            0.373663,
+            0.364618,
+            0.359852
           ],
           "alpha": 0.5,
-          "hex": "#7C7A78"
+          "hex": "#5F5D5C"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-content-tertiary-disabled)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "opacity-50/neutral/80",
+            "targetVariableName": "opacity-50/neutral/90",
+            "targetVariableSetName": "_Colors Primitives"
+          }
+        }
+      },
+      "link": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.662928,
+            0.143812,
+            0
+          ],
+          "alpha": 1,
+          "hex": "#A92500"
+        },
+        "$extensions": {
+          "com.figma.codeSyntax": {
+            "WEB": "var(--oz-color-content-link)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "solid/brand/80",
+            "targetVariableSetName": "_Colors Primitives"
+          }
+        }
+      },
+      "link-hover": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.498215,
+            0.099561,
+            0.000893
+          ],
+          "alpha": 1,
+          "hex": "#7F1900"
+        },
+        "$extensions": {
+          "com.figma.codeSyntax": {
+            "WEB": "var(--oz-color-content-link-hover)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "solid/brand/90",
+            "targetVariableSetName": "_Colors Primitives"
+          }
+        }
+      },
+      "link-visited": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.37254,
+            0.268688,
+            0.600305
+          ],
+          "alpha": 1,
+          "hex": "#5F4599"
+        },
+        "$extensions": {
+          "com.figma.codeSyntax": {
+            "WEB": "var(--oz-color-content-link-visited)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "solid/spectrum-purple/80",
+            "targetVariableSetName": "_Colors Primitives"
+          }
+        }
+      },
+      "selected": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.662928,
+            0.143812,
+            0
+          ],
+          "alpha": 1,
+          "hex": "#A92500"
+        },
+        "$extensions": {
+          "com.figma.codeSyntax": {
+            "WEB": "var(--oz-color-content-selected)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "solid/brand/80",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -3709,19 +3929,19 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            1,
-            1,
-            1
+            0.485858,
+            0.476902,
+            0.472187
           ],
-          "alpha": 0.5,
-          "hex": "#FFFFFF"
+          "alpha": 1,
+          "hex": "#7C7A78"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-content-on-brand-disabled)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "opacity-50/neutral/white",
+            "targetVariableName": "solid/neutral/80",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -3731,19 +3951,19 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            1,
-            1,
-            1
+            0.485858,
+            0.476902,
+            0.472187
           ],
-          "alpha": 0.5,
-          "hex": "#FFFFFF"
+          "alpha": 1,
+          "hex": "#7C7A78"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-content-on-success-disabled)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "opacity-50/neutral/white",
+            "targetVariableName": "solid/neutral/80",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -3753,19 +3973,19 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            1,
-            1,
-            1
+            0.485858,
+            0.476902,
+            0.472187
           ],
-          "alpha": 0.5,
-          "hex": "#FFFFFF"
+          "alpha": 1,
+          "hex": "#7C7A78"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-content-on-warning-disabled)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "opacity-50/neutral/white",
+            "targetVariableName": "solid/neutral/80",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -3775,19 +3995,19 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            1,
-            1,
-            1
+            0.485858,
+            0.476902,
+            0.472187
           ],
-          "alpha": 0.5,
-          "hex": "#FFFFFF"
+          "alpha": 1,
+          "hex": "#7C7A78"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-content-on-critical-disabled)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "opacity-50/neutral/white",
+            "targetVariableName": "solid/neutral/80",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -3797,19 +4017,19 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            1,
-            1,
-            1
+            0.485858,
+            0.476902,
+            0.472187
           ],
-          "alpha": 0.5,
-          "hex": "#FFFFFF"
+          "alpha": 1,
+          "hex": "#7C7A78"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-content-on-info-disabled)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "opacity-50/neutral/white",
+            "targetVariableName": "solid/neutral/80",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -3821,19 +4041,19 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            1,
-            0.239011,
-            0.002057
+            0.99487,
+            0.328364,
+            0.178112
           ],
           "alpha": 1,
-          "hex": "#FF3D01"
+          "hex": "#FE542D"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-chart-1)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "solid/brand/60",
+            "targetVariableName": "solid/brand/55",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -3844,18 +4064,18 @@
           "colorSpace": "srgb",
           "components": [
             0,
-            0.454764,
-            0.719774
+            0.362179,
+            0.579166
           ],
           "alpha": 1,
-          "hex": "#0074B8"
+          "hex": "#005C94"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-chart-2)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "solid/spectrum-blue/70",
+            "targetVariableName": "solid/spectrum-blue/80",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -3866,18 +4086,18 @@
           "colorSpace": "srgb",
           "components": [
             0,
-            0.709711,
-            0.711002
+            0.497883,
+            0.498819
           ],
           "alpha": 1,
-          "hex": "#00B5B5"
+          "hex": "#007F7F"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-chart-3)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "solid/spectrum-teal/50",
+            "targetVariableName": "solid/spectrum-teal/70",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -3887,19 +4107,19 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            0.37254,
-            0.268688,
-            0.600305
+            0.28175,
+            0.199812,
+            0.46132
           ],
           "alpha": 1,
-          "hex": "#5F4599"
+          "hex": "#483376"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-chart-4)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "solid/spectrum-purple/80",
+            "targetVariableName": "solid/spectrum-purple/90",
             "targetVariableSetName": "_Colors Primitives"
           }
         }
@@ -3909,19 +4129,19 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            0.845689,
-            0.697529,
-            0.376245
+            0.662779,
+            0.496878,
+            0
           ],
           "alpha": 1,
-          "hex": "#D8B260"
+          "hex": "#A97F00"
         },
         "$extensions": {
           "com.figma.codeSyntax": {
             "WEB": "var(--oz-color-chart-5)"
           },
           "com.figma.aliasData": {
-            "targetVariableName": "solid/spectrum-yellow/40",
+            "targetVariableName": "solid/spectrum-yellow/60",
             "targetVariableSetName": "_Colors Primitives"
           }
         }

@@ -25,7 +25,10 @@ import {
   LITERAL_GROUPS,
   MOTION,
   TYPOGRAPHY,
+  FONT_STACKS,
+  CSS_EXCLUDED_TYPE_GROUPS,
   SEMANTIC,
+  FILL_DISABLED_OVERRIDE,
   SHADCN_BRIDGE,
   CONTRAST_ASSERTIONS,
   APCA_ASSERTIONS,
@@ -236,10 +239,17 @@ function emitTypography() {
       const type = typeof val === 'number' ? 'number' : 'string';
       put(doc, path, scalarToken(type, val, { code: cssRef(path) }));
 
+      // 'font style' is Figma-only ('Regular', 'SemiBold'...). Emitting it as CSS
+      // produced five variables whose values are not legal in any CSS property.
+      if (CSS_EXCLUDED_TYPE_GROUPS.has(group)) continue;
+
       let css = val;
       if (group === 'font size' && typeof val === 'number') css = `${val}px`;
       if (group === 'letter spacing') css = `${val}em`;
-      if (group === 'font family') css = `'${val}'`;
+      // Full stack with fallbacks, not the bare Figma family name.
+      if (group === 'font family') css = FONT_STACKS[key];
+      // 'extrabold' is not a font-weight; 800 is.
+      if (group === 'default weight') css = TYPOGRAPHY['font weight'][val];
       declare('root', path, String(css));
     }
   }
@@ -274,7 +284,9 @@ function flattenSemantic() {
   const states = ['', '-hover', '-active'];
   for (const [k, [L, D]] of Object.entries(SEMANTIC.FILL)) {
     states.forEach((s, i) => add(`color/fill/${k}${s}`, `solid/${L[i]}`, `solid/${D[i]}`));
-    add(`color/fill/${k}-disabled`, `opacity-50/${L[0]}`, `opacity-50/${D[0]}`);
+    // The five status tracks override this; see FILL_DISABLED_OVERRIDE.
+    const ov = FILL_DISABLED_OVERRIDE[k];
+    add(`color/fill/${k}-disabled`, ov ? ov[0] : `opacity-50/${L[0]}`, ov ? ov[1] : `opacity-50/${D[0]}`);
   }
   for (const [k, [L, D]] of Object.entries(SEMANTIC.FILL_SOFT)) {
     states.forEach((s, i) => add(`color/fill/${k}${s}`, L[i], D[i]));
@@ -455,6 +467,8 @@ function emitTokensCss() {
 
 @layer base {
   :root {
+    color-scheme: light;
+
     /* ---- foundations, motion, typography (mode-independent) ---- */
 ${rootLines}
 
@@ -462,8 +476,14 @@ ${rootLines}
 ${modeBlock('light', '    ')}
   }
 
+  /* color-scheme is what tells the browser to render its OWN chrome dark:
+     scrollbars, <input type="date"> pickers, form control defaults, spellcheck
+     underlines, the canvas behind an overscroll. The .light block declared it
+     and this one did not, so a dark-themed app kept light scrollbars and a
+     blinding white date picker. */
   .dark,
   [data-theme='dark'] {
+    color-scheme: dark;
 ${modeBlock('dark', '    ')}
   }
 
@@ -717,16 +737,26 @@ function validate() {
   for (const [, t] of semantic) { used.add(t[0]); used.add(t[1]); }
   const unused = [...PRIM.keys()].filter((k) => !used.has(k));
 
-  // chart series must be mutually distinguishable
+  /* Chart series must be mutually distinguishable WITHOUT colour — greyscale
+   * printing, and the ~8% of men with a red-green deficiency.
+   *
+   * This was a warning gated on `ΔL < 0.03 AND contrast < 1.08`, which is two
+   * thresholds ANDed so tightly that nothing could trip it: the pairs that were
+   * actually too close (light 3-vs-5 at 1.26:1, dark 1-vs-2 at 1.28:1) failed the
+   * first condition and so were never reported. Greyscale separation is a pure
+   * lightness question, so it is now one threshold on ΔL, and it is an error
+   * rather than a warning. */
+  const CHART_MIN_DL = 0.05;
   for (const mode of ['light', 'dark']) {
     const keys = Object.keys(SEMANTIC.CHART).map((k) => `color/chart/${k}`);
     for (let i = 0; i < keys.length; i++)
       for (let j = i + 1; j < keys.length; j++) {
         const a = resolved[mode][keys[i]].hex, b = resolved[mode][keys[j]].hex;
-        const { L: la } = hexToOklch(a), { L: lb } = hexToOklch(b);
-        if (a === b) errors.push(`chart collision ${mode}: ${keys[i]} === ${keys[j]}`);
-        else if (Math.abs(la - lb) < 0.03 && contrast(a, b) < 1.08)
-          warnings.push(`${mode}: ${keys[i]} and ${keys[j]} are hard to tell apart in greyscale`);
+        if (a === b) { errors.push(`chart collision ${mode}: ${keys[i]} === ${keys[j]}`); continue; }
+        const dL = Math.abs(hexToOklch(a).L - hexToOklch(b).L);
+        results.push({ kind: 'greyscale', metric: 'dL', mode, fg: keys[i], bg: keys[j], ratio: +dL.toFixed(4), min: CHART_MIN_DL, pass: dL >= CHART_MIN_DL });
+        if (dL < CHART_MIN_DL)
+          errors.push(`GREYSCALE ${mode}: ${keys[i]} vs ${keys[j]} differ by only ΔL ${dL.toFixed(4)}, need ${CHART_MIN_DL} — indistinguishable without colour`);
       }
   }
 
@@ -808,8 +838,10 @@ console.log(`  contrast gates      ${ct.filter((r) => r.pass).length}/${ct.lengt
 // decision was invisible unless it failed.
 console.log(`  APCA gates          ${at.filter((r) => r.pass).length}/${at.length} pass   Lc 60 floor`);
 const et = v.results.filter((r) => r.kind === 'elevation');
+const gt = v.results.filter((r) => r.kind === 'greyscale');
 console.log(`  visibility gates    ${vt.filter((r) => r.pass).length}/${vt.length} pass`);
 console.log(`  elevation gates     ${et.filter((r) => r.pass).length}/${et.length} pass   ΔL floor`);
+console.log(`  greyscale gates     ${gt.filter((r) => r.pass).length}/${gt.length} pass   chart series ΔL`);
 console.log(`  ${'-'.repeat(50)}`);
 console.log(`  total               ${v.results.filter((r) => r.pass).length}/${v.results.length} pass`);
 

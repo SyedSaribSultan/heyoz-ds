@@ -5,6 +5,8 @@
 
 @layer base {
   :root {
+    color-scheme: light;
+
     /* ---- foundations, motion, typography (mode-independent) ---- */
     --oz-space-1: 4px;
     --oz-space-2: 6px;
@@ -80,21 +82,16 @@
     --oz-ease-exit: cubic-bezier(0.4, 0, 1, 1);
     --oz-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
     --oz-ease-linear: linear;
-    --oz-font-display: 'Bricolage Grotesque';
-    --oz-font-heading: 'Bricolage Grotesque';
-    --oz-font-body: 'Geist';
-    --oz-font-label: 'Geist';
-    --oz-font-mono: 'Geist Mono';
+    --oz-font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --oz-font-heading: 'Bricolage Grotesque', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --oz-font-body: 'Geist', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --oz-font-label: 'Geist', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --oz-font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
     --oz-weight-regular: 400;
     --oz-weight-medium: 500;
     --oz-weight-semibold: 600;
     --oz-weight-bold: 700;
     --oz-weight-extrabold: 800;
-    --oz-style-regular: Regular;
-    --oz-style-medium: Medium;
-    --oz-style-semibold: SemiBold;
-    --oz-style-bold: Bold;
-    --oz-style-extrabold: ExtraBold;
     --oz-text-display-lg: clamp(40px, calc(40px + (64 - 40) * (100vw - 360px) / 880), 64px);
     --oz-text-display-md: clamp(34px, calc(34px + (52 - 34) * (100vw - 360px) / 880), 52px);
     --oz-text-display-sm: clamp(28px, calc(28px + (40 - 28) * (100vw - 360px) / 880), 40px);
@@ -140,10 +137,10 @@
     --oz-tracking-label-md: 0.005em;
     --oz-tracking-label-sm: 0.01em;
     --oz-tracking-label-xs: 0.02em;
-    --oz-default-weight-display: extrabold;
-    --oz-default-weight-heading: semibold;
-    --oz-default-weight-body: regular;
-    --oz-default-weight-label: medium;
+    --oz-default-weight-display: 800;
+    --oz-default-weight-heading: 600;
+    --oz-default-weight-body: 400;
+    --oz-default-weight-label: 500;
 
     /* ---- semantic: light ---- */
     --oz-color-background: #FFFFFF;
@@ -202,23 +199,23 @@
     --oz-color-fill-brand: #FF3D01;
     --oz-color-fill-brand-hover: #D53100;
     --oz-color-fill-brand-active: #A92500;
-    --oz-color-fill-brand-disabled: #FF3D0180;
+    --oz-color-fill-brand-disabled: #E3E1E0;
     --oz-color-fill-success: #1D9156;
     --oz-color-fill-success-hover: #037944;
     --oz-color-fill-success-active: #006035;
-    --oz-color-fill-success-disabled: #1D915680;
+    --oz-color-fill-success-disabled: #E3E1E0;
     --oz-color-fill-warning: #A36E07;
     --oz-color-fill-warning-hover: #865900;
     --oz-color-fill-warning-active: #6B4600;
-    --oz-color-fill-warning-disabled: #A36E0780;
+    --oz-color-fill-warning-disabled: #E3E1E0;
     --oz-color-fill-critical: #E63C65;
     --oz-color-fill-critical-hover: #C52450;
     --oz-color-fill-critical-active: #9D183E;
-    --oz-color-fill-critical-disabled: #E63C6580;
+    --oz-color-fill-critical-disabled: #E3E1E0;
     --oz-color-fill-info: #2C74EA;
     --oz-color-fill-info-hover: #195DCA;
     --oz-color-fill-info-active: #1049A4;
-    --oz-color-fill-info-disabled: #2C74EA80;
+    --oz-color-fill-info-disabled: #E3E1E0;
     --oz-color-fill-brand-secondary: #FC664526;
     --oz-color-fill-brand-secondary-hover: #FC66454D;
     --oz-color-fill-brand-secondary-active: #FF3D014D;
@@ -239,6 +236,10 @@
     --oz-color-fill-info-secondary-hover: #5292FD4D;
     --oz-color-fill-info-secondary-active: #2C74EA4D;
     --oz-color-fill-info-secondary-disabled: #5292FD14;
+    --oz-color-fill-selected: #FC664526;
+    --oz-color-fill-selected-hover: #FC66454D;
+    --oz-color-fill-selected-active: #FF3D014D;
+    --oz-color-fill-selected-disabled: #FC664514;
     --oz-color-fill-fixed: #FFFFFF;
     --oz-color-fill-fixed-disabled: #FFFFFF80;
     --oz-color-border-primary: #E3E1E0;
@@ -274,12 +275,18 @@
     --oz-color-border-focus: #D53100;
     --oz-color-border-focus-inverse: #FFFFFF;
     --oz-color-border-brand-secondary: #FC66454D;
+    --oz-color-border-selected: #D53100;
     --oz-color-content-primary: #070605;
     --oz-color-content-secondary: #2E2C2B;
-    --oz-color-content-tertiary: #7C7A78;
+    --oz-color-content-tertiary: #5F5D5C;
+    --oz-color-content-placeholder: #5F5D5C;
     --oz-color-content-primary-disabled: #07060580;
     --oz-color-content-secondary-disabled: #2E2C2B80;
-    --oz-color-content-tertiary-disabled: #7C7A7880;
+    --oz-color-content-tertiary-disabled: #5F5D5C80;
+    --oz-color-content-link: #A92500;
+    --oz-color-content-link-hover: #7F1900;
+    --oz-color-content-link-visited: #5F4599;
+    --oz-color-content-selected: #A92500;
     --oz-color-content-inverse-primary: #EFEDEC;
     --oz-color-content-inverse-secondary: #C2C0BF;
     --oz-color-content-inverse-primary-disabled: #EFEDEC80;
@@ -314,16 +321,16 @@
     --oz-color-content-on-critical: #FFFFFF;
     --oz-color-content-on-info: #FFFFFF;
     --oz-color-content-on-inverse: #F7F5F4;
-    --oz-color-content-on-brand-disabled: #FFFFFF80;
-    --oz-color-content-on-success-disabled: #FFFFFF80;
-    --oz-color-content-on-warning-disabled: #FFFFFF80;
-    --oz-color-content-on-critical-disabled: #FFFFFF80;
-    --oz-color-content-on-info-disabled: #FFFFFF80;
-    --oz-color-chart-1: #FF3D01;
-    --oz-color-chart-2: #0074B8;
-    --oz-color-chart-3: #00B5B5;
-    --oz-color-chart-4: #5F4599;
-    --oz-color-chart-5: #D8B260;
+    --oz-color-content-on-brand-disabled: #7C7A78;
+    --oz-color-content-on-success-disabled: #7C7A78;
+    --oz-color-content-on-warning-disabled: #7C7A78;
+    --oz-color-content-on-critical-disabled: #7C7A78;
+    --oz-color-content-on-info-disabled: #7C7A78;
+    --oz-color-chart-1: #FE542D;
+    --oz-color-chart-2: #005C94;
+    --oz-color-chart-3: #007F7F;
+    --oz-color-chart-4: #483376;
+    --oz-color-chart-5: #A97F00;
     --oz-color-sidebar-background: #EFEDEC;
     --oz-color-sidebar-border: #E3E1E0;
     --oz-color-sidebar-item-hover: #E9E7E6;
@@ -355,8 +362,14 @@
     --oz-elevation-large: 0 10px 15px -3px #A9A7A633, 0 4px 6px -4px #A9A7A633;
   }
 
+  /* color-scheme is what tells the browser to render its OWN chrome dark:
+     scrollbars, <input type="date"> pickers, form control defaults, spellcheck
+     underlines, the canvas behind an overscroll. The .light block declared it
+     and this one did not, so a dark-themed app kept light scrollbars and a
+     blinding white date picker. */
   .dark,
   [data-theme='dark'] {
+    color-scheme: dark;
     --oz-color-background: #070605;
     --oz-color-surface-primary: #151312;
     --oz-color-surface-primary-variant: #0E0C0B;
@@ -413,23 +426,23 @@
     --oz-color-fill-brand: #FF3D01;
     --oz-color-fill-brand-hover: #FE542D;
     --oz-color-fill-brand-active: #FC6645;
-    --oz-color-fill-brand-disabled: #FF3D0180;
+    --oz-color-fill-brand-disabled: #211F1D;
     --oz-color-fill-success: #1D9156;
     --oz-color-fill-success-hover: #389D64;
     --oz-color-fill-success-active: #4DA972;
-    --oz-color-fill-success-disabled: #1D915680;
+    --oz-color-fill-success-disabled: #211F1D;
     --oz-color-fill-warning: #A36E07;
     --oz-color-fill-warning-hover: #B17C25;
     --oz-color-fill-warning-active: #BF8B39;
-    --oz-color-fill-warning-disabled: #A36E0780;
+    --oz-color-fill-warning-disabled: #211F1D;
     --oz-color-fill-critical: #E63C65;
     --oz-color-fill-critical-hover: #EE5071;
     --oz-color-fill-critical-active: #F5617D;
-    --oz-color-fill-critical-disabled: #E63C6580;
+    --oz-color-fill-critical-disabled: #211F1D;
     --oz-color-fill-info: #2C74EA;
     --oz-color-fill-info-hover: #4083F4;
     --oz-color-fill-info-active: #5292FD;
-    --oz-color-fill-info-disabled: #2C74EA80;
+    --oz-color-fill-info-disabled: #211F1D;
     --oz-color-fill-brand-secondary: #FF3D0126;
     --oz-color-fill-brand-secondary-hover: #FF3D014D;
     --oz-color-fill-brand-secondary-active: #FC66454D;
@@ -450,6 +463,10 @@
     --oz-color-fill-info-secondary-hover: #2C74EA4D;
     --oz-color-fill-info-secondary-active: #5292FD4D;
     --oz-color-fill-info-secondary-disabled: #2C74EA14;
+    --oz-color-fill-selected: #FF3D0126;
+    --oz-color-fill-selected-hover: #FF3D014D;
+    --oz-color-fill-selected-active: #FC66454D;
+    --oz-color-fill-selected-disabled: #FF3D0114;
     --oz-color-fill-fixed: #FFFFFF;
     --oz-color-fill-fixed-disabled: #FFFFFF80;
     --oz-color-border-primary: #514F4E;
@@ -482,15 +499,21 @@
     --oz-color-border-info: #2C74EA;
     --oz-color-border-info-hover: #5292FD;
     --oz-color-border-info-disabled: #2C74EA80;
-    --oz-color-border-focus: #FC6645;
+    --oz-color-border-focus: #FF8A6F;
     --oz-color-border-focus-inverse: #070605;
     --oz-color-border-brand-secondary: #FF3D014D;
+    --oz-color-border-selected: #FC6645;
     --oz-color-content-primary: #EFEDEC;
     --oz-color-content-secondary: #C2C0BF;
-    --oz-color-content-tertiary: #949290;
+    --oz-color-content-tertiary: #A9A7A6;
+    --oz-color-content-placeholder: #A9A7A6;
     --oz-color-content-primary-disabled: #EFEDEC80;
     --oz-color-content-secondary-disabled: #C2C0BF80;
-    --oz-color-content-tertiary-disabled: #94929080;
+    --oz-color-content-tertiary-disabled: #A9A7A680;
+    --oz-color-content-link: #FC6645;
+    --oz-color-content-link-hover: #FF8A6F;
+    --oz-color-content-link-visited: #A58CE9;
+    --oz-color-content-selected: #FC6645;
     --oz-color-content-inverse-primary: #070605;
     --oz-color-content-inverse-secondary: #2E2C2B;
     --oz-color-content-inverse-primary-disabled: #07060580;
@@ -525,12 +548,12 @@
     --oz-color-content-on-critical: #FFFFFF;
     --oz-color-content-on-info: #FFFFFF;
     --oz-color-content-on-inverse: #070605;
-    --oz-color-content-on-brand-disabled: #FFFFFF80;
-    --oz-color-content-on-success-disabled: #FFFFFF80;
-    --oz-color-content-on-warning-disabled: #FFFFFF80;
-    --oz-color-content-on-critical-disabled: #FFFFFF80;
-    --oz-color-content-on-info-disabled: #FFFFFF80;
-    --oz-color-chart-1: #FE542D;
+    --oz-color-content-on-brand-disabled: #7C7A78;
+    --oz-color-content-on-success-disabled: #7C7A78;
+    --oz-color-content-on-warning-disabled: #7C7A78;
+    --oz-color-content-on-critical-disabled: #7C7A78;
+    --oz-color-content-on-info-disabled: #7C7A78;
+    --oz-color-chart-1: #FC6645;
     --oz-color-chart-2: #048CDC;
     --oz-color-chart-3: #4FCDCD;
     --oz-color-chart-4: #7758BB;
@@ -627,23 +650,23 @@
     --oz-color-fill-brand: #FF3D01;
     --oz-color-fill-brand-hover: #D53100;
     --oz-color-fill-brand-active: #A92500;
-    --oz-color-fill-brand-disabled: #FF3D0180;
+    --oz-color-fill-brand-disabled: #E3E1E0;
     --oz-color-fill-success: #1D9156;
     --oz-color-fill-success-hover: #037944;
     --oz-color-fill-success-active: #006035;
-    --oz-color-fill-success-disabled: #1D915680;
+    --oz-color-fill-success-disabled: #E3E1E0;
     --oz-color-fill-warning: #A36E07;
     --oz-color-fill-warning-hover: #865900;
     --oz-color-fill-warning-active: #6B4600;
-    --oz-color-fill-warning-disabled: #A36E0780;
+    --oz-color-fill-warning-disabled: #E3E1E0;
     --oz-color-fill-critical: #E63C65;
     --oz-color-fill-critical-hover: #C52450;
     --oz-color-fill-critical-active: #9D183E;
-    --oz-color-fill-critical-disabled: #E63C6580;
+    --oz-color-fill-critical-disabled: #E3E1E0;
     --oz-color-fill-info: #2C74EA;
     --oz-color-fill-info-hover: #195DCA;
     --oz-color-fill-info-active: #1049A4;
-    --oz-color-fill-info-disabled: #2C74EA80;
+    --oz-color-fill-info-disabled: #E3E1E0;
     --oz-color-fill-brand-secondary: #FC664526;
     --oz-color-fill-brand-secondary-hover: #FC66454D;
     --oz-color-fill-brand-secondary-active: #FF3D014D;
@@ -664,6 +687,10 @@
     --oz-color-fill-info-secondary-hover: #5292FD4D;
     --oz-color-fill-info-secondary-active: #2C74EA4D;
     --oz-color-fill-info-secondary-disabled: #5292FD14;
+    --oz-color-fill-selected: #FC664526;
+    --oz-color-fill-selected-hover: #FC66454D;
+    --oz-color-fill-selected-active: #FF3D014D;
+    --oz-color-fill-selected-disabled: #FC664514;
     --oz-color-fill-fixed: #FFFFFF;
     --oz-color-fill-fixed-disabled: #FFFFFF80;
     --oz-color-border-primary: #E3E1E0;
@@ -699,12 +726,18 @@
     --oz-color-border-focus: #D53100;
     --oz-color-border-focus-inverse: #FFFFFF;
     --oz-color-border-brand-secondary: #FC66454D;
+    --oz-color-border-selected: #D53100;
     --oz-color-content-primary: #070605;
     --oz-color-content-secondary: #2E2C2B;
-    --oz-color-content-tertiary: #7C7A78;
+    --oz-color-content-tertiary: #5F5D5C;
+    --oz-color-content-placeholder: #5F5D5C;
     --oz-color-content-primary-disabled: #07060580;
     --oz-color-content-secondary-disabled: #2E2C2B80;
-    --oz-color-content-tertiary-disabled: #7C7A7880;
+    --oz-color-content-tertiary-disabled: #5F5D5C80;
+    --oz-color-content-link: #A92500;
+    --oz-color-content-link-hover: #7F1900;
+    --oz-color-content-link-visited: #5F4599;
+    --oz-color-content-selected: #A92500;
     --oz-color-content-inverse-primary: #EFEDEC;
     --oz-color-content-inverse-secondary: #C2C0BF;
     --oz-color-content-inverse-primary-disabled: #EFEDEC80;
@@ -739,16 +772,16 @@
     --oz-color-content-on-critical: #FFFFFF;
     --oz-color-content-on-info: #FFFFFF;
     --oz-color-content-on-inverse: #F7F5F4;
-    --oz-color-content-on-brand-disabled: #FFFFFF80;
-    --oz-color-content-on-success-disabled: #FFFFFF80;
-    --oz-color-content-on-warning-disabled: #FFFFFF80;
-    --oz-color-content-on-critical-disabled: #FFFFFF80;
-    --oz-color-content-on-info-disabled: #FFFFFF80;
-    --oz-color-chart-1: #FF3D01;
-    --oz-color-chart-2: #0074B8;
-    --oz-color-chart-3: #00B5B5;
-    --oz-color-chart-4: #5F4599;
-    --oz-color-chart-5: #D8B260;
+    --oz-color-content-on-brand-disabled: #7C7A78;
+    --oz-color-content-on-success-disabled: #7C7A78;
+    --oz-color-content-on-warning-disabled: #7C7A78;
+    --oz-color-content-on-critical-disabled: #7C7A78;
+    --oz-color-content-on-info-disabled: #7C7A78;
+    --oz-color-chart-1: #FE542D;
+    --oz-color-chart-2: #005C94;
+    --oz-color-chart-3: #007F7F;
+    --oz-color-chart-4: #483376;
+    --oz-color-chart-5: #A97F00;
     --oz-color-sidebar-background: #EFEDEC;
     --oz-color-sidebar-border: #E3E1E0;
     --oz-color-sidebar-item-hover: #E9E7E6;

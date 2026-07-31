@@ -19,16 +19,30 @@ export const NAMESPACE = 'oz';
 
 export const NUMBERS = [0, 0.5, 1, 1.5, 2, 2.5, 4, 6, 8, 10, 12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 44, 48, 56, 64, 72, 80, 96, 120, 1000];
 
-/** 0.5 -> "number-05", 1.5 -> "number-105" (matches the proven import format) */
+/** 0.5 -> "number-005", 1.5 -> "number-105" (matches the proven import format) */
 export const numberName = (n) => `number-${String(n).replace('.', '0')}`;
 
 /* ================================================================== *
  * FOUNDATIONS
  * ================================================================== */
 
+/** Layers need distinct values but only number-1000 exists as a primitive, so
+ *  they are authored as literals rather than aliases. Declared before
+ *  FOUNDATIONS because FOUNDATIONS.layer references this object directly. */
+export const LAYER_LITERALS = {
+  base: 0,
+  dropdown: 1000,
+  sticky: 1100,
+  overlay: 1200,
+  modal: 1300,
+  popover: 1400,
+  toast: 1500,
+  tooltip: 1600,
+};
+
 export const FOUNDATIONS = {
   $description:
-    'Spacing, roundness, stroke width, focus ring, touch target, icon sizing, z-index layers, breakpoints and containers. Every value aliases _Number Primitives. Spacing and roundness are ordinal (spacing-5 = 16px); the --oz- namespace means the ordinal names cannot collide with Tailwind\'s own spacing scale.',
+    'Spacing, roundness, stroke width, focus ring, touch target, icon sizing, z-index layers, breakpoints and containers. Spacing, roundness, stroke, focus, size and icon alias _Number Primitives; layer, breakpoint and container are authored as literals (see LITERAL_GROUPS) because viewport and stacking values are not members of the spacing scale. Spacing and roundness are ordinal (spacing-5 = 16px); the --oz- namespace means the ordinal names cannot collide with Tailwind\'s own spacing scale.',
 
   spacing: {
     'spacing-1': 4,
@@ -85,33 +99,16 @@ export const FOUNDATIONS = {
 
   icon: { 'size-sm': 16, 'size-md': 20, 'size-lg': 24, 'size-xl': 32, stroke: 2 },
 
-  layer: {
-    base: 0,
-    dropdown: 1000,
-    sticky: 1000,
-    overlay: 1000,
-    modal: 1000,
-    popover: 1000,
-    toast: 1000,
-    tooltip: 1000,
-  },
+  // Not a copy of LAYER_LITERALS — it IS LAYER_LITERALS. This block used to
+  // declare all eight layers as 1000, which was never read: build.mjs discards
+  // it for `group === 'layer'` and emits LAYER_LITERALS instead. So the file
+  // stated eight values it did not ship, and the eight it did ship lived
+  // somewhere else. One source, referenced.
+  layer: LAYER_LITERALS,
 
   breakpoint: { sm: 480, md: 768, lg: 1024, xl: 1280 },
 
   container: { sm: 640, md: 768, lg: 1024, xl: 1280, gutter: 24 },
-};
-
-/** Layers need distinct values but only number-1000 exists as a primitive, so
- *  they are authored as literals rather than aliases. Kept separate for clarity. */
-export const LAYER_LITERALS = {
-  base: 0,
-  dropdown: 1000,
-  sticky: 1100,
-  overlay: 1200,
-  modal: 1300,
-  popover: 1400,
-  toast: 1500,
-  tooltip: 1600,
 };
 
 export const FOUNDATION_STRINGS = { 'container/measure': '65ch' };
@@ -155,6 +152,9 @@ export const TYPOGRAPHY = {
   $description:
     'Fifteen size steps across four roles, five weights, five Figma font styles. Bricolage Grotesque carries display and heading; Geist carries body and label. Line heights are unitless ratios so they survive the fluid clamp() on display/heading; on the fixed body and label sizes the ratio still lands on the 4px grid (16 x 1.5 = 24, 14 x 1.4286 = 20, 12 x 1.3333 = 16). Letter spacing is unitless and emitted as em.',
 
+  // The bare family name is what Figma binds to. FONT_STACKS below is what CSS
+  // gets, because a CSS font-family with no fallback means one failed webfont
+  // request drops the whole product to Times New Roman.
   'font family': {
     display: 'Bricolage Grotesque',
     heading: 'Bricolage Grotesque',
@@ -169,6 +169,10 @@ export const TYPOGRAPHY = {
   // String styles: what Figma actually binds to a text layer's weight field.
   // Both sets exist so a weight is usable on BOTH ends. Numbers alone import
   // fine but cannot be applied to a Figma text layer.
+  //
+  // FIGMA ONLY — see CSS_EXCLUDED_TYPE_GROUPS. These were also being emitted as
+  // CSS custom properties, producing `--oz-style-regular: Regular`, which is not
+  // a legal value for any CSS property. Five dead, invalid variables.
   'font style': {
     regular: 'Regular',
     medium: 'Medium',
@@ -235,6 +239,10 @@ export const TYPOGRAPHY = {
 
   // Documented default pairing. Guidance, not a lock — every size accepts
   // every weight, which was the explicit requirement.
+  //
+  // Emitted to CSS as the NUMERIC weight, not this key. `--oz-default-weight-
+  // display: extrabold` is not a legal font-weight value; `800` is. See
+  // TYPE_STRING_TO_WEIGHT in build.mjs.
   'default weight': {
     display: 'extrabold',
     heading: 'semibold',
@@ -242,6 +250,33 @@ export const TYPOGRAPHY = {
     label: 'medium',
   },
 };
+
+/**
+ * CSS font stacks. `font family` above carries the bare family name because that
+ * is what Figma binds a text layer to; CSS needs the fallbacks.
+ *
+ * dist/tokens.css shipped `--oz-font-display: 'Bricolage Grotesque';` with no
+ * fallback at all, on all five families, and the generated type utilities
+ * consume those variables directly — so a single failed webfont request took the
+ * whole product to the browser default serif.
+ *
+ * Bricolage is a grotesque with tall x-height, so the display fallbacks lead with
+ * the system UI stack rather than Arial. Geist is close to Inter metrically.
+ */
+export const FONT_STACKS = {
+  display:
+    "'Bricolage Grotesque', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+  heading:
+    "'Bricolage Grotesque', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+  body:
+    "'Geist', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+  label:
+    "'Geist', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+  mono: "'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace",
+};
+
+/** Typography groups that exist for Figma and must NOT reach CSS. */
+export const CSS_EXCLUDED_TYPE_GROUPS = new Set(['font style']);
 
 /* ================================================================== *
  * SEMANTIC MAP  —  [light, dark]
@@ -391,6 +426,15 @@ const FILL_SOFT = {
     [A15('info/50'), A30('info/50'), A30('info/60')],
     [A15('info/60'), A30('info/60'), A30('info/50')],
   ],
+  // SELECTED is a tier-2 role now. It only existed as sidebar/item-selected, so a
+  // selected table row, tab, list item, calendar day, segmented-control segment or
+  // combobox option had no token and had to reach into the sidebar's tier-3
+  // namespace or hardcode. Same brand tint the sidebar uses, so nothing changes
+  // visually there; it simply stops being a sidebar-only idea.
+  selected: [
+    [A15('brand/50'), A30('brand/50'), A30('brand/60')],
+    [A15('brand/60'), A30('brand/60'), A30('brand/50')],
+  ],
 };
 
 /** Borders. [base, hover] per mode; `disabled` generated as opacity-50 of base.
@@ -470,19 +514,46 @@ const BORDER = {
  * cannot express both, which is why that token exists and is separately gated.
  */
 const BORDER_SINGLE = {
-  focus: [S('brand/70'), S('brand/50')],
+  // Dark moved brand/50 -> brand/40 so it clears chart series 1, which now needs
+  // brand/50 to hold its rung on the lightness ladder. brand/40 is L 76 against
+  // an L 12 page: 8.8:1, the most visible ring in either mode.
+  focus: [S('brand/70'), S('brand/40')],
   'focus-inverse': [S('neutral/white'), S('neutral/150')],
   'brand-secondary': [A30('brand/50'), A30('brand/60')],
+  // Edge of a selected row / tab / segment. Pairs with fill/selected above.
+  selected: [S('brand/70'), S('brand/50')],
 };
 
 /** Text and icons. */
 const CONTENT_SINGLE = {
   primary: [S('neutral/150'), S('neutral/20')],
   secondary: [S('neutral/110'), S('neutral/50')],
-  tertiary: [S('neutral/80'), S('neutral/70')],
+  // tertiary moved 80 -> 90 light and 70 -> 60 dark. It was gated at 3:1 against
+  // the PAGE only, and measured 3.93:1 on a card, 3.66:1 on surface/secondary and
+  // 3.07:1 on surface/tertiary in light — i.e. it failed 4.5:1 on every surface an
+  // app actually puts text on, while the one gate it had passed. It is the token a
+  // timestamp, caption or helper string lands on, so it is body text under 1.4.3.
+  // Now 4.70:1 worst case in light and 5.80:1 in dark, on all four surfaces, and
+  // gated against each of them rather than against the page.
+  tertiary: [S('neutral/90'), S('neutral/60')],
+  // No placeholder token existed, so placeholders had to borrow content/tertiary
+  // — which at the time failed 4.5:1. Placeholder text is text under 1.4.3, so it
+  // gets its own role at a value that passes. Same target as tertiary today; it
+  // exists so a component author reaching for "placeholder" does not have to know
+  // that, and so the two can diverge without a refactor.
+  placeholder: [S('neutral/90'), S('neutral/60')],
   'primary-disabled': [A50('neutral/150'), A50('neutral/20')],
   'secondary-disabled': [A50('neutral/110'), A50('neutral/50')],
-  'tertiary-disabled': [A50('neutral/80'), A50('neutral/70')],
+  'tertiary-disabled': [A50('neutral/90'), A50('neutral/60')],
+  // Links. The most-used interactive text role in any product UI had no token at
+  // all, so every link in the app was either hardcoded or borrowed content/brand
+  // (which at brand/70 measures 3.53:1 on surface/tertiary and fails AA). All
+  // three states clear 4.5:1 on all four surfaces and on the selected tint.
+  link: [S('brand/80'), S('brand/50')],
+  'link-hover': [S('brand/90'), S('brand/40')],
+  'link-visited': [S('spectrum-purple/80'), S('spectrum-purple/50')],
+  // Label of a selected row / tab / segment, readable on fill/selected.
+  selected: [S('brand/80'), S('brand/50')],
   'inverse-primary': [S('neutral/20'), S('neutral/150')],
   'inverse-secondary': [S('neutral/50'), S('neutral/110')],
   'inverse-primary-disabled': [A50('neutral/20'), A50('neutral/150')],
@@ -558,11 +629,39 @@ const CONTENT_ON = {
   'on-critical': [S('neutral/white'), S('neutral/white')],
   'on-info': [S('neutral/white'), S('neutral/white')],
   'on-inverse': [S('neutral/10'), S('neutral/150')],
-  'on-brand-disabled': [A50('neutral/white'), A50('neutral/white')],
-  'on-success-disabled': [A50('neutral/white'), A50('neutral/white')],
-  'on-warning-disabled': [A50('neutral/white'), A50('neutral/white')],
-  'on-critical-disabled': [A50('neutral/white'), A50('neutral/white')],
-  'on-info-disabled': [A50('neutral/white'), A50('neutral/white')],
+  // DISABLED IS NEUTRAL, NOT A FADED BRAND. These were opacity-50 white, paired
+  // with an opacity-50 fill, so BOTH layers faded toward the same page and the
+  // label converged on its own background: white-on-brand-disabled measured
+  // 1.43:1 in light. Fading two stacked layers independently does not behave like
+  // fading the composited element, which is what `opacity: .5` on a button does
+  // and what the author of those tokens was reaching for.
+  //
+  // A disabled control is exempt from 1.4.3, so this was never a violation — it
+  // was simply unusable, and nothing gated it. Now an opaque neutral label on an
+  // opaque neutral fill (see FILL_DISABLED_OVERRIDE): 3.28:1 light, 3.84:1 dark.
+  // Legible, unmistakably inactive, identical across all five roles because a
+  // control you cannot act on has no reason to keep its role colour.
+  'on-brand-disabled': [S('neutral/80'), S('neutral/80')],
+  'on-success-disabled': [S('neutral/80'), S('neutral/80')],
+  'on-warning-disabled': [S('neutral/80'), S('neutral/80')],
+  'on-critical-disabled': [S('neutral/80'), S('neutral/80')],
+  'on-info-disabled': [S('neutral/80'), S('neutral/80')],
+};
+
+/**
+ * Fill tracks whose disabled state is NOT opacity-50 of their own base.
+ *
+ * The generic rule (opacity-50 of the base) is right for the neutral tracks: a
+ * faded grey on the page still reads as a recessed grey. It is wrong for the five
+ * status tracks, where it fades a saturated fill toward the page at the same time
+ * as its white label fades toward the fill. See CONTENT_ON above.
+ */
+export const FILL_DISABLED_OVERRIDE = {
+  brand: [S('neutral/30'), S('neutral/120')],
+  success: [S('neutral/30'), S('neutral/120')],
+  warning: [S('neutral/30'), S('neutral/120')],
+  critical: [S('neutral/30'), S('neutral/120')],
+  info: [S('neutral/30'), S('neutral/120')],
 };
 
 /** Tier 3 — data visualisation. Per-mode, unlike the shipped --chart-* which
@@ -577,16 +676,26 @@ const CHART = {
   // that hue actually reads well — yellow high, purple and blue low — while the
   // set still spans ~32 L* points so the greyscale test passes. Forcing yellow
   // down to L 46 to even out the ladder just makes it look like mud.
+  //
+  // LIGHT SERIES ALL MOVED DOWN THE RAMP. A chart series is a graphical object
+  // under WCAG 1.4.11 and needs 3:1 against the page it is drawn on. Series 3
+  // measured 2.54:1 and series 5 measured 2.01:1 on the white page — the two
+  // lightest, and neither was gated. On a white page NO hue in this palette
+  // clears 3:1 above step 60, so the light band is necessarily L 38-68 rather
+  // than the L 46-78 it used to claim.
+  //
+  // Hue-to-series mapping is unchanged; only the steps move. Each hue still sits
+  // as light as it can while clearing the gate, so yellow stays at 60 and purple
+  // takes the darkest rung — forcing yellow down to L 38 is exactly the mud the
+  // original note warned about. The set still spans 30 L* in light and 31 in
+  // dark, in even ~8-point rungs, so the greyscale separation improves.
+  //
   //          light (L*)            dark (L*)
-  // Dark moved brand/50 -> brand/55. At brand/50 series 1 was byte-identical to
-  // border/focus in dark, so a focus ring drawn on that series was invisible.
-  // 55 keeps series 1 mode-distinct (which is the whole point of B11) and clears
-  // both the focus ring and the brand fill.
-  '1': [S('brand/60'), S('brand/55')], //                      65 / 70
-  '2': [S('spectrum-blue/70'), S('spectrum-blue/60')], //       54 / 62
-  '3': [S('spectrum-teal/50'), S('spectrum-teal/40')], //       70 / 78
-  '4': [S('spectrum-purple/80'), S('spectrum-purple/70')], //   46 / 54
-  '5': [S('spectrum-yellow/40'), S('spectrum-yellow/30')], //   78 / 85
+  '1': [S('brand/55'), S('brand/50')], //                      68 / 70
+  '2': [S('spectrum-blue/80'), S('spectrum-blue/60')], //       46 / 62
+  '3': [S('spectrum-teal/70'), S('spectrum-teal/40')], //       54 / 78
+  '4': [S('spectrum-purple/90'), S('spectrum-purple/70')], //   38 / 54
+  '5': [S('spectrum-yellow/60'), S('spectrum-yellow/30')], //   62 / 85
 };
 
 /** Tier 3 — sidebar. The shipped file gave the sidebar nine component tokens
@@ -791,13 +900,53 @@ export const CONTRAST_ASSERTIONS = [
   ['color/content/primary', 'color/surface/brand-flat', 4.5],
   ['color/content/primary', 'color/surface/critical-flat', 4.5],
 
+  // Quiet text, on EVERY surface it can land on rather than only the page.
+  // content/tertiary was gated at 3:1 against the page alone and measured
+  // 3.93 / 3.66 / 3.07:1 on the three surfaces in light — it failed 4.5:1
+  // everywhere an app actually draws text, while its single gate passed.
+  ['color/content/tertiary', 'color/background', 4.5],
+  ['color/content/tertiary', 'color/surface/primary', 4.5],
+  ['color/content/tertiary', 'color/surface/secondary', 4.5],
+  ['color/content/tertiary', 'color/surface/tertiary', 4.5],
+  ['color/content/placeholder', 'color/surface/primary', 4.5],
+  ['color/content/placeholder', 'color/surface/tertiary', 4.5],
+  // Links, on the page and on a card.
+  ['color/content/link', 'color/background', 4.5],
+  ['color/content/link', 'color/surface/primary', 4.5],
+  ['color/content/link', 'color/surface/tertiary', 4.5],
+  ['color/content/link-hover', 'color/surface/primary', 4.5],
+  ['color/content/link-visited', 'color/surface/primary', 4.5],
+  ['color/content/link-visited', 'color/surface/tertiary', 4.5],
+  // Selected row / tab label on its own tint, tier 2 and tier 3.
+  ['color/content/selected', 'color/fill/selected', 4.5],
+  ['color/sidebar/content-selected', 'color/sidebar/background', 4.5],
+  ['color/sidebar/content-selected', 'color/sidebar/item-selected', 4.5],
+  // Secondary text on the surfaces, not just the page.
+  ['color/content/secondary', 'color/surface/secondary', 4.5],
+  ['color/content/secondary', 'color/surface/tertiary', 4.5],
+
   // AA 3:1 — large text and meaningful non-text boundaries (WCAG 1.4.11)
-  ['color/content/tertiary', 'color/background', 3],
   ['color/border/focus', 'color/background', 3],
   ['color/border/focus', 'color/surface/primary', 3],
   // A focus ring ON a brand-filled button must use focus-inverse, not focus.
   // This is why border/focus-inverse exists.
   ['color/border/focus-inverse', 'color/fill/brand', 3],
+  // Chart series are graphical objects under 1.4.11 and were entirely ungated
+  // against the page they sit on. Series 3 measured 2.54:1 and series 5 measured
+  // 2.01:1 in light before the light band was moved down the ramp.
+  ['color/chart/1', 'color/background', 3],
+  ['color/chart/2', 'color/background', 3],
+  ['color/chart/3', 'color/background', 3],
+  ['color/chart/4', 'color/background', 3],
+  ['color/chart/5', 'color/background', 3],
+  // Disabled controls are exempt from 1.4.3, so this is a self-imposed floor
+  // rather than a conformance one. It exists because the previous treatment
+  // faded label and fill independently and landed at 1.43:1.
+  ['color/content/on-brand-disabled', 'color/fill/brand-disabled', 3],
+  ['color/content/on-critical-disabled', 'color/fill/critical-disabled', 3],
+  ['color/content/on-success-disabled', 'color/fill/success-disabled', 3],
+  ['color/content/on-warning-disabled', 'color/fill/warning-disabled', 3],
+  ['color/content/on-info-disabled', 'color/fill/info-disabled', 3],
 ];
 
 /**
