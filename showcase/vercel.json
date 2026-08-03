@@ -1,8 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-
-  "//": "Read from showcase/ because the project's Root Directory is showcase — Vercel detects Next.js from the package.json at the root directory, and the repo root's package.json is the token package, which has no Next in it. The project also has sourceFilesOutsideRootDirectory enabled, because the three imports below live above this folder.",
-
-  "//buildCommand": "Regenerates the token layer before building, so the deployed CSS, Tailwind preset and audit data are compiled from build/spec.mjs on this commit rather than from whatever was last committed to dist/. The build is deterministic and gated — it exits non-zero on any failed gate — so this also means a deploy cannot ship a token set that does not pass its own contrast, motion and layout checks. The three files it writes are the ones app/layout.tsx, tailwind.config.js and lib/core/audit.ts import from ../.",
   "buildCommand": "node ../build/build.mjs && next build"
 }
