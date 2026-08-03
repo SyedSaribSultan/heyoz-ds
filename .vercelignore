@@ -1,0 +1,14 @@
+# Nothing here is needed to build the site, and all of it is heavy.
+node_modules
+.next
+.git
+git-history
+
+# Visual regression baselines: ~6 MB of PNGs that only the Playwright suite reads.
+showcase/visual/baselines
+showcase/test-results
+showcase/playwright-report
+showcase/.shots
+
+# Retired code, wired to nothing. See archive/README.md.
+archive
