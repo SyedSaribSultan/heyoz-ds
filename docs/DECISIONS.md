@@ -474,6 +474,67 @@ The cascade check is the one worth keeping in mind. It asserts a property of *ou
 that no assertion about *input* can reach, which is a category this repo did not
 previously test at all.
 
+### I14 — Opening a modal moved the whole page 15px sideways
+
+Reported from the screen, not found by a gate: the scrollbar disappears when a dialog
+opens and the page slides right to fill its track. Deliberately treated as a foundation
+problem rather than a Dialog one — Dialog was simply the only overlay that existed yet,
+and a sheet or a command palette would have arrived with the same bug already in it.
+
+| | Problem |
+|---|---|
+| a | The lock was `document.body.style.overflow = 'hidden'`, three lines inside one component. A classic scrollbar is 15px of real layout width, so turning it off hands those 15px back to the document. Measured: layout width 1265 → 1280, the sticky header's right edge and the sidebar's left edge both travelling 14.86px, on every open. |
+| b | Nothing named the behaviour, so the next overlay would have copied those three lines along with the bug. Related: the save/restore-a-string approach cannot express two overlays at once — a dialog opened from a sheet unlocks the page when the inner one closes. |
+| c | Introduced by the fix for (a), and caught before shipping: a reserved gutter is outside the initial containing block, so the scrim's `inset: 0` stops 15px short of the window edge and left an undimmed page-coloured band down the right of a dimmed page. |
+
+**Resolutions.** `scrollbar-gutter: stable` on `:root` in the token layer, next to
+`color-scheme` — that property already decides what the native scrollbar *looks* like,
+and this decides whether it takes up room. Reserving the track up front means removing
+the scrollbar costs no width. Isolated by measurement: with `stable` the sidebar moves
+`0.00px`, with `auto` it moves `15.00px`.
+
+The lock is now `.oz-scroll-lock` in the same file, applied to the root element rather
+than to `<body>`, so the element carrying the gutter is the element being locked and
+propagation drops out of the reasoning. `useScrollLock` in the showcase is the reference
+consumer and holds the depth counter that fixes (b). The gutter is painted while locked
+as `overlay/dimness` over `color/background`, which is exactly what the scrim is —
+verified per mode: light `rgb(255,255,255)` + `rgba(7,6,5,0.4)`, dark `rgb(7,6,5)` +
+`rgba(0,0,0,0.6)`, both matching the scrim's own computed value (c).
+
+Two layers rather than one translucent colour, because a semi-transparent background on
+the root composites against the browser's default canvas instead of against the page,
+which comes out grey in dark mode.
+
+**The gate, and why it needed its own browser.** `visual/scroll-lock.spec.ts` asserts
+that opening a dialog moves neither a fixed nor an in-flow element, preserves the scroll
+position, actually blocks the wheel, and releases cleanly. It runs in a second Playwright
+project because Chromium headless passes `--hide-scrollbars`, which means the condition
+being tested — a classic scrollbar being taken away — cannot occur, and the spec would
+have passed while measuring nothing. Dropping that one default argument produces a real
+15px scrollbar. It is scoped to that project because a 15px scrollbar changes the layout
+width of every page.
+
+Confirmed to fail before being trusted, at both layers: deleting the token line fails it
+on `scrollbar-gutter` computing to `auto`, and suppressing that assertion fails it on the
+layout width at exactly 15px.
+
+**Three things this cost, all worth recording.**
+
+- `documentElement.clientWidth` is the wrong instrument and the first draft asserted on
+  it. It is the padding box *minus the scrollbar*, so a reserved-but-empty gutter counts
+  toward it: locking sends it 1265 → 1280 while the gutter is still reserved and nothing
+  has moved. `body`'s width is the honest reading, because the gutter sits outside the
+  content box its children lay out in.
+- The same draft reported a scroll-position reset that was entirely its own doing.
+  Playwright scrolls a target into view before clicking, so a trigger that had gone
+  off-screen meant the *click* moved the page between the two measurements. Four
+  candidate locks were measured directly before the real cause was found; all four
+  preserved scroll perfectly.
+- All 34 visual baselines changed, and the new ones are more faithful than the old.
+  `--hide-scrollbars` hides the scrollbar without reserving its space, so headless had
+  been rendering every page at 1440 while every real user with a scrollbar sees 1425.
+  The gutter reservation reclaims that 15px, which is what a real browser always did.
+
 ### What this section is really for
 
 Every finding here is the same shape, including the ones in I11. The values were

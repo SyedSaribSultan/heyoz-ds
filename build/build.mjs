@@ -540,6 +540,33 @@ function emitTokensCss() {
   :root {
     color-scheme: light;
 
+    /* Reserve the classic scrollbar's track permanently.
+       color-scheme above decides what the native scrollbar LOOKS like; this decides
+       whether it takes up room, and the two belong together.
+
+       A classic scrollbar is 15px of real layout width. Any overlay that locks the
+       page — every dialog, sheet, menu and command palette there will ever be — turns
+       the page's scrollbar off, the scrollport gains those 15px back, and the whole
+       document reflows sideways under the thing that just opened. Measured on this
+       showcase before this line existed: layout width 1265 → 1280, header right edge
+       and sidebar both moving 14.86px, on every single dialog open.
+
+       Reserving the gutter up front means removing the scrollbar changes nothing, and
+       it fixes the class of bug rather than one instance: a component does not have to
+       know about scrollbars, and the next overlay someone writes inherits the fix
+       instead of re-earning the bug. The alternative — measuring the width in JS and
+       padding the body — compensates the document and NOT position: fixed elements,
+       which is how a compensated app ends up with a sticky header that still jumps.
+
+       The cost is 15px of reserved gutter on a page short enough not to scroll, and
+       only where scrollbars are classic: overlay scrollbars (macOS, iOS, Android, and
+       headless Chromium) reserve nothing, so this is a Windows-and-Linux-desktop
+       trade. A permanently steady 15px beats an intermittent 15px jump.
+
+       Browsers without support — Safari below 18.2 — fall back inside .oz-scroll-lock
+       below. */
+    scrollbar-gutter: stable;
+
     /* ---- foundations, motion, typography (mode-independent) ---- */
 ${rootLines}
 
@@ -575,6 +602,8 @@ ${reducedMotionBlock()}
 ${typeUtilities}
 
 ${motionUtilities()}
+
+${scrollLockUtility()}
 }
 `
   );
@@ -777,6 +806,77 @@ ${remaps.replace(/^ {4}/gm, '      ')}
     /* 4. Programmatic smooth scroll is large-viewport travel. */
     html {
       scroll-behavior: auto !important;
+    }
+  }`;
+}
+
+/**
+ * The page scroll lock.
+ *
+ * Ships from the token layer for the same reason the entrance animations do: a lock
+ * defined in the app layer is a lock defined outside the thing that reserved the
+ * gutter. `scrollbar-gutter: stable` on :root is what makes locking free of side
+ * effects, and the two have to be able to rely on each other, so they live in one
+ * file — the one every consumer imports. layout.css would have been the other
+ * candidate and is wrong: it is an optional import, so an app that skipped it would
+ * get a modal that does not lock the page at all.
+ *
+ * Applied to the root element rather than to <body>. Both work — a body overflow is
+ * propagated to the viewport — but only the root element is the box that
+ * `scrollbar-gutter` is declared on, and having one element carry both properties
+ * removes the propagation from the reasoning entirely.
+ *
+ * This exists as a named thing at all because the alternative is what was here
+ * before: three lines of `document.body.style.overflow` inside one component, which
+ * the next overlay copies along with whatever is wrong with them.
+ */
+function scrollLockUtility() {
+  return `  /* Stops the page behind an overlay from scrolling. Toggle it on the root
+     element; see useScrollLock in the showcase for the reference consumer.
+
+     No padding compensation here, and that is the point — :root reserves the
+     scrollbar gutter permanently, so taking the scrollbar away costs no width and
+     nothing moves. */
+  .${NAMESPACE}-scroll-lock {
+    overflow: hidden;
+
+    /* And the gutter has to be painted, because an overlay's scrim cannot reach it.
+       position: fixed resolves against the initial containing block, which excludes
+       reserved gutters, so \`inset: 0\` stops short of the window edge by exactly the
+       scrollbar's width. Left alone that strip keeps the page background — measured
+       here as an undimmed 15px band down the right of a dimmed page, which is a
+       smaller version of the artefact the gutter was reserved to remove.
+
+       Two background layers rather than one translucent colour: a semi-transparent
+       background on the root composites against the browser's default canvas, not
+       against the page, so it would come out grey in dark mode. A gradient of one
+       colour is the standard way to get a paint layer that composites over
+       background-color, and the pair reproduces exactly what the scrim is — dimness
+       over the page.
+
+       This also takes over from background propagation. With no background of its
+       own the root propagates <body>'s to the canvas; declaring one here stops that
+       for as long as the lock is held, which is correct — body still paints its own
+       box, so only the gutter changes. */
+    background-color: var(--${NAMESPACE}-color-background);
+    background-image: linear-gradient(
+      var(--${NAMESPACE}-overlay-dimness),
+      var(--${NAMESPACE}-overlay-dimness)
+    );
+  }
+
+  /* Safari below 18.2 has no scrollbar-gutter, so the gutter cannot be reserved and
+     the width has to be given back by hand. --${NAMESPACE}-scrollbar-width is measured by
+     the locking code BEFORE the class lands, because measuring afterwards reads the
+     scrollbar that has already gone. It falls back to 0px, so a browser with support
+     and a browser with overlay scrollbars both pay exactly nothing.
+
+     Scoped in @supports rather than applied unconditionally because the two fixes are
+     not additive: reserving the gutter AND padding for it would move the page 15px
+     the other way. */
+  @supports not (scrollbar-gutter: stable) {
+    .${NAMESPACE}-scroll-lock {
+      padding-right: var(--${NAMESPACE}-scrollbar-width, 0px);
     }
   }`;
 }

@@ -61,4 +61,30 @@ export default defineConfig({
   /* One directory, flat, named by what it shows. Playwright's default nests by test
    * file and platform, which buries the thing a reviewer wants to look at. */
   snapshotPathTemplate: '{testDir}/baselines/{arg}{ext}',
+
+  /* Two projects, because one spec needs a browser configured differently and must not
+   * be allowed to reconfigure the other. The template above takes no {projectName}, so
+   * the baselines stay flat and the existing filenames are untouched. */
+  projects: [
+    {
+      name: 'visual',
+      testMatch: /pages\.spec\.ts$/,
+    },
+    {
+      name: 'scroll-lock',
+      testMatch: /scroll-lock\.spec\.ts$/,
+      use: {
+        /* Chromium headless passes --hide-scrollbars, so the page's scrollbar occupies
+         * no layout width and the exact condition that spec exists to measure — a
+         * classic scrollbar being taken away — cannot occur at all. Under the default
+         * launch it would pass while testing nothing, which is worse than not having
+         * it. Dropping that one default argument produces a real 15px scrollbar.
+         *
+         * Scoped to this project deliberately: a 15px scrollbar changes the layout
+         * width of every page, so switching it on globally would invalidate all 34
+         * committed baselines to gain one behavioural check. */
+        launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] },
+      },
+    },
+  ],
 });

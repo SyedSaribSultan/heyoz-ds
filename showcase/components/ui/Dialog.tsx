@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useId, useRef } from 'react';
 import { dialogRecipe, type DialogVariant } from '@/lib/recipes';
 import { cx } from '@/lib/core/cx';
+import { useScrollLock } from '@/lib/core/scrollLock';
 import { Button } from './Button';
 import { IconButton } from './IconButton';
 
@@ -108,16 +109,18 @@ export function Dialog({
     );
     (target ?? panelRef.current)?.focus();
 
-    /* The page behind a modal must not scroll. Restored exactly, rather than reset to
-     * '', so a page that was already overflow-hidden for another reason stays that
-     * way when this closes. */
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = previous;
       restoreTo.current?.focus();
     };
   }, [open, variant]);
+
+  /* The page behind a modal must not scroll. This used to be
+   * `document.body.style.overflow = 'hidden'` right here, which worked and shifted the
+   * entire document 15px sideways every time it ran: turning off the page's scrollbar
+   * hands its track back to the layout. The fix is a reserved gutter on :root, which
+   * is in the token layer where every future overlay gets it too — so what is left
+   * here is a call to the shared lock. See lib/core/scrollLock.ts. */
+  useScrollLock(open);
 
   if (!open) return null;
 

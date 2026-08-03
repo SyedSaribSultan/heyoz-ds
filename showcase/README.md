@@ -206,6 +206,20 @@ Inlining the import first puts those declarations in the same file as
 the app's existing components; new code reads `--oz-*` directly, and this folder is
 new code.
 
+**`visual/scroll-lock.spec.ts` runs in its own browser.** Chromium headless passes
+`--hide-scrollbars`, so a classic scrollbar never exists and the one condition that spec
+measures — a scrollbar being taken away when an overlay locks the page — cannot occur.
+Under the default launch it would pass while testing nothing. The `scroll-lock` project
+drops that single default argument to get a real 15px scrollbar, and it is scoped there
+because switching it on globally would change the layout width of every page and
+invalidate all 34 baselines to gain one check.
+
+> That check exists because opening a dialog used to shift the whole page 15px sideways:
+> the lock was `body.style.overflow = 'hidden'`, and a classic scrollbar is real layout
+> width. The fix is `scrollbar-gutter: stable` on `:root` plus `.oz-scroll-lock`, both in
+> the token layer so every future overlay inherits them — see `docs/DECISIONS.md` I14.
+> `useScrollLock` in `lib/core/` is the reference consumer.
+
 ## Deliberate choices that look like omissions
 
 **Webfonts come from a `<link>`, not `next/font`.** The token values name the families
