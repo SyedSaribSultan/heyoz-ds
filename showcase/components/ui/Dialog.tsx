@@ -127,14 +127,23 @@ export function Dialog({
      * viewport scroll as a whole rather than trapping its own footer offscreen. That
      * is the edge case a centred flex modal usually gets wrong. */
     <div
-      /* The backdrop is content-fixed-primary at 70% — a token that is neutral/150 in
-         BOTH modes, which is the property a scrim needs and which no `fill` token has
-         (every neutral fill ramp inverts). Reaching into the content namespace for a
-         background is a wart, and the alternative was a new scrim token; that is a
-         foundation addition a backdrop does not justify. It carries no text, so no
-         contrast pairing depends on it. The /70 is Tailwind's opacity modifier on the
-         token rather than a second colour. */
-      className="fixed inset-0 z-modal flex items-center justify-center overflow-y-auto bg-content-fixed-primary/70 p-space-5"
+      /* The scrim. Paint comes from dialogRecipe.scrimStyle — `overlay/dimness` and
+         `overlay/blur`, the pair spec.mjs declares for precisely this element.
+         Previously `bg-content-fixed-primary/70`, which generated no rule and left the
+         panel apparently sitting on the page; see the last note in the recipe.
+
+         The paint is on this element and not on an inset child, which matters as soon
+         as the panel is taller than the viewport: this is `fixed`, so its background
+         always covers the viewport, whereas an `absolute inset-0` layer inside a scroll
+         container scrolls away with the content and reveals an unpainted strip.
+
+         `oz-enter-fade` rather than a spatial entrance: a scrim has nowhere to travel
+         from, and rule 1b keeps opacity on the effects family, where the curve does not
+         overshoot. The panel takes the spatial one. Both are the default tier of their
+         family, which is what the recipe's motion note means by one gesture — and both
+         come from the token layer, so reduced motion already knows about them. */
+      className="oz-enter-fade fixed inset-0 z-modal flex items-center justify-center overflow-y-auto p-space-5"
+      style={dialogRecipe.scrimStyle}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -146,7 +155,17 @@ export function Dialog({
         aria-labelledby={titleId}
         tabIndex={-1}
         onKeyDown={onKeyDown}
-        className={dialogRecipe.classes({ variant, className: cx('outline-none', className) })}
+        /* enterClass is applied here and not by the caller, which is the exception
+           rather than the rule: five other recipes declare an entrance and leave it to
+           whoever mounts them, because a card animating every time a grid renders is
+           noise. A dialog is different — it is created by the interaction, so it owns
+           its own mount and there is no caller decision to defer to. Without this the
+           panel appeared instantly under a fading scrim, which reads as the page
+           jumping. `rise` is the recipe's declaration, not a choice made here. */
+        className={dialogRecipe.classes({
+          variant,
+          className: cx('outline-none', dialogRecipe.enterClass, className),
+        })}
       >
         {/* Header. The close button is pulled out of the padding box with a negative
             margin so the glyph aligns optically with the title's cap height while the

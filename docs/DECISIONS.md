@@ -425,6 +425,55 @@ asserted per mode. The rig's phantom series is gone (g).
 
 Gates 172 → 188.
 
+### I13 — Two silent no-ops: a scrim that painted nothing, a preference that did nothing
+
+Found by opening a dialog and noticing the panel appeared to sit *on* the page rather
+than above it. Neither of these changed a token value; both were declarations that
+looked correct, were never measured, and did nothing at all.
+
+| | Problem |
+|---|---|
+| a | Dialog's backdrop was `bg-content-fixed-primary/70`. The preset emits every colour as a bare `var(--oz-…)` with no `<alpha-value>` slot, so Tailwind can neither parse nor call it, `withAlphaValue` returns the default, and **no rule is emitted** — measured: 0 occurrences of any `/nn` opacity-modifier rule in the whole 310 kB stylesheet. The element rendered `fixed inset-0` and fully transparent, so `surface/overlay` sat on `surface/page` with only its shadow between them. The tokens for the job, `overlay/dimness` and `overlay/blur`, already existed and were consumed only by the Elevation section's own demo — whose caption reads "The dim layer is a token, not an opacity guess." |
+| b | The entire `prefers-reduced-motion` block was inert. It was emitted *after* the closing brace of `@layer base`, on the reasoning that unlayered CSS outranks layered CSS. True of real cascade layers; false here — Tailwind consumes `@layer base` as its own directive, hoists the contents to the `@tailwind base` position, and emits no `@layer` at-rule at all. Measured in the compiled sheet: the override at **byte 95**, the `:root` that sets the multiplier to 1 at **byte 8849**, identical specificity, no layers. Later won. With the preference enabled the multiplier measured `1`, so every `.oz-enter-*` kept its full travel and every press-scale kept its squash, and the four spring remaps never applied either, so spatial curves kept their overshoot. |
+| c | Dialog declared `enter: 'rise'` and applied it nowhere, so the panel appeared instantly under a scrim that was itself invisible. Five other recipes also declare an entrance and leave it to the caller, which is correct for them — a card animating on every grid render is noise. A dialog is created *by* the interaction, so it owns its own mount and there is no caller to defer to. |
+
+**Resolutions.** The scrim is `dialogRecipe.scrimStyle`, reading both overlay tokens
+directly — a style object because they are not `color/*` tokens and are deliberately
+absent from the preset. Verified in a browser: `rgba(7, 6, 5, 0.4)` light and
+`rgba(0, 0, 0, 0.6)` dark, matching `overlay/dimness` in each mode, with
+`blur(4px)` from `overlay/blur`. The reduced-motion block moved inside `@layer base`,
+after the mode blocks; the multiplier now measures `0`, the panel's transform stays
+`matrix(1, 0, 0, 1, 0, 0)` throughout, and its spring resolves to the effects curve —
+movement gone, fade kept, which is the policy the block always claimed. `enterClass`
+is applied by Dialog, with the exception stated on the call site.
+
+**Why nothing caught either.** This is I11's lesson in its purest form — a metric
+applied where it cannot see.
+
+- `verify:classes` diffs *prerendered HTML* against the stylesheet. A closed dialog
+  renders `null`, so its markup was absent from the only input the check reads. It
+  had already found this exact bug shape once, at `bg-background/95` in the header,
+  where the markup does prerender.
+- Nothing could have caught (b) upstream at all. `build/build.mjs` emits correct CSS
+  in a correct order; the breakage is introduced by a second tool rearranging it. Only
+  the compiled artefact knows.
+
+Three checks were added, and each one was confirmed to fail before it was trusted.
+`verify:classes` gained a **source scan** for opacity modifiers on token colours,
+which does not care whether a state is reachable without a click, and a **cascade
+check** that brace-matches the reduced-motion block in the compiled sheet and asserts
+every one of its five overrides appears later than the last unconditional declaration
+of the same property — reintroducing (b) fails it with all five byte offsets. The
+visual suite gained an **open-dialog baseline** in both modes, which resolves both
+overlay tokens through a throwaway probe element and compares the scrim's computed
+value against them, so it pins the scrim to the tokens rather than to a hex; the
+panel itself had no baseline in either mode before this, because Dialog's specimen is
+its Live row of buttons.
+
+The cascade check is the one worth keeping in mind. It asserts a property of *output*
+that no assertion about *input* can reach, which is a category this repo did not
+previously test at all.
+
 ### What this section is really for
 
 Every finding here is the same shape, including the ones in I11. The values were

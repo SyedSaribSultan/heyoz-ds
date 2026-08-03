@@ -20,6 +20,7 @@ class DialogRecipe extends ComponentRecipe<DialogVariant, DialogSize> {
       'No border, and this is a deliberate deviation from the Figma file. The Figma panel carries border/primary, and the detailed type additionally carries a hairline under the title. Both are separation/elevation strokes, which CLAUDE.md rule 1c makes a build error: elevation is shadow in light and surface lightness in dark, and separation is a surface step or space. The panel gets surface-overlay plus a shadow; the title/body split gets space. verify-borders.ts would reject either stroke, and it is right to.',
       'surface-overlay rather than surface-elevated. They are the same value in light and in dark they are both neutral/105 — at the top of the usable ramp a popover separates by elevation rather than by hue, and there is only one rung available. overlay is the honest name for the thing that sits above everything.',
       'The confirm button is never the default focus target when it is destructive. The dialog focuses Cancel on open for the error type and the confirm for the rest, because an Enter keypress landing on "Yes, delete" before the user has read the sentence is the failure this component exists to prevent.',
+      'The scrim is overlay/dimness and overlay/blur — two tokens that already existed for exactly this element and that no component was using. It shipped instead as an opacity modifier on a content token, which painted nothing at all: the preset emits every colour as a bare var(--oz-…) with no <alpha-value> slot, so Tailwind cannot apply a modifier to one and drops the declaration silently. The compiled stylesheet contains no such rule, for any token, anywhere. So the backdrop was a full-viewport transparent div: surface-overlay sat on surface-page with only its shadow to separate them, and the panel read as part of the page — the one thing a modal must never do. verify-classes could not see it, because the dialog is closed in the prerender it reads; it now also scans source for the pattern, which is a check that does not depend on a state being reachable without a click.',
     ],
   };
 
@@ -93,6 +94,28 @@ class DialogRecipe extends ComponentRecipe<DialogVariant, DialogSize> {
   focusesCancel(variant: DialogVariant): boolean {
     return variant === 'error';
   }
+
+  /** The scrim's paint: `overlay/dimness` over `overlay/blur`.
+   *
+   *  A style object rather than utility classes, because these two are deliberately
+   *  absent from the Tailwind preset — they are not `color/*` tokens and reach CSS as
+   *  `--oz-overlay-dimness` and `--oz-overlay-blur`. The Scrim demo in the Elevation
+   *  section reads them exactly this way, and this is the second reader.
+   *
+   *  Here rather than in Dialog.tsx for the same reason every other appearance
+   *  decision is here: one description, which the page can then render. A plain object
+   *  and not `React.CSSProperties`, because nothing in `lib/recipes` imports React and
+   *  the scrim is not a good enough reason to be the first.
+   *
+   *  Both properties are one token each, so a designer changing the scrim changes it
+   *  in `build/spec.mjs` and both readers follow. The -webkit- twin is for Safari
+   *  below 18, where the unprefixed property does nothing and the dim would ship
+   *  without its blur — a degradation, not a break, but a free one to avoid. */
+  readonly scrimStyle = {
+    background: 'var(--oz-overlay-dimness)',
+    backdropFilter: 'blur(var(--oz-overlay-blur))',
+    WebkitBackdropFilter: 'blur(var(--oz-overlay-blur))',
+  } as const;
 
   protected sampleChildren(): string {
     return '';

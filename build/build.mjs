@@ -565,6 +565,8 @@ ${modeBlock('dark', '    ')}
     color-scheme: light;
 ${modeBlock('light', '    ')}
   }
+
+${reducedMotionBlock()}
 }
 
 /* Type steps. Weight is deliberately NOT baked in — every step accepts every
@@ -574,8 +576,7 @@ ${typeUtilities}
 
 ${motionUtilities()}
 }
-
-${reducedMotionBlock()}`
+`
   );
 }
 
@@ -722,37 +723,62 @@ function reducedMotionBlock() {
     })
     .join('\n');
 
-  return `/* Someone asked their operating system for less movement. Honour it here, in the
-   layer that defines the movement — not in whichever app happens to remember. See
-   reducedMotionBlock() in build/build.mjs for why this is not \`animation: none\`. */
-@media (prefers-reduced-motion: reduce) {
-  :root,
-  .dark,
-  [data-theme='dark'],
-  .light,
-  [data-theme='light'] {
-    /* 1. All spatial travel collapses; fades are untouched. */
-    --${NAMESPACE}-motion-spatial-scale: 0;
+  return `  /* Someone asked their operating system for less movement. Honour it here, in the
+     layer that defines the movement — not in whichever app happens to remember. See
+     reducedMotionBlock() in build/build.mjs for why this is not \`animation: none\`.
 
-    /* 2. Spatial springs lose their overshoot, keeping their speed. */
-${remaps}
-  }
+     INSIDE \`@layer base\`, and after the mode blocks, and both halves of that are
+     load-bearing. This block shipped after the closing brace instead, on the
+     reasoning that unlayered CSS outranks layered CSS — which is true of real
+     cascade layers and false here. Tailwind treats \`@layer base\` as its own
+     directive rather than as CSS: it hoists the contents to wherever
+     \`@tailwind base\` sits and emits no \`@layer\` at-rule at all. So in the compiled
+     sheet there were no layers to reason about, this block sat at byte 95, the
+     \`:root\` that sets the multiplier to 1 sat at byte 8849, the two had identical
+     specificity — and later won.
 
-  /* 3. Ambient loops stop. \`.oz-ambient\` is the opt-in marker for a decorative
-        loop; the attribute selector catches anything driving one from the token
-        directly. Not a universal selector — a functional transition is not the
-        thing being objected to. */
-  .${NAMESPACE}-ambient,
-  [style*='--${NAMESPACE}-duration-ambient'] {
-    animation: none !important;
-  }
+     The effect was total: the multiplier measured 1 with the preference on, so every
+     \`.oz-enter-*\` kept its full travel, every press-scale kept its squash, and the
+     spring remap never applied either, so spatial curves kept their overshoot.
+     Nothing was visibly broken, which is why it survived — the only symptom was that
+     a preference did nothing.
 
-  /* 4. Programmatic smooth scroll is large-viewport travel. */
-  html {
-    scroll-behavior: auto !important;
-  }
-}
-`;
+     Now the relative order is authored order within one layer, which Tailwind
+     preserves. Do not move it back out. \`verify-classes.mjs\` measures the byte
+     offsets in the compiled stylesheet, because this is a property of the output and
+     no assertion about the input can see it. */
+  @media (prefers-reduced-motion: reduce) {
+    /* The island selectors are not redundant with \`:root\`. A scoped \`.dark\` island
+       re-declares every value including the multiplier, and for an inherited custom
+       property the nearer element wins outright — specificity never enters into it —
+       so an island would silently re-enable motion inside itself. */
+    :root,
+    .dark,
+    [data-theme='dark'],
+    .light,
+    [data-theme='light'] {
+      /* 1. All spatial travel collapses; fades are untouched. */
+      --${NAMESPACE}-motion-spatial-scale: 0;
+
+      /* 2. Spatial springs lose their overshoot, keeping their speed. */
+${remaps.replace(/^ {4}/gm, '      ')}
+    }
+
+    /* 3. Ambient loops stop. \`.oz-ambient\` is the opt-in marker for a decorative
+          loop; the attribute selector catches anything driving one from the token
+          directly. Not a universal selector — a functional transition is not the
+          thing being objected to. \`!important\` is what carries this past the
+          \`.oz-ambient\` in @layer utilities, which is emitted after this one. */
+    .${NAMESPACE}-ambient,
+    [style*='--${NAMESPACE}-duration-ambient'] {
+      animation: none !important;
+    }
+
+    /* 4. Programmatic smooth scroll is large-viewport travel. */
+    html {
+      scroll-behavior: auto !important;
+    }
+  }`;
 }
 
 /**

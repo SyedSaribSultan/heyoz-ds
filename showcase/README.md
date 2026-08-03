@@ -122,6 +122,38 @@ build passes, the types pass, and one state renders unstyled.
 > classes that do not exist because the type steps already carry line height and
 > tracking.
 
+It now runs three passes, because that first one has a blind spot it cannot fix: it
+only sees markup that exists in a prerender. A dialog, a menu, a toast — anything that
+appears after a click — is absent from the HTML, so a dead class inside it is invisible
+to a diff of that HTML. Both extra passes exist because that blind spot hid real bugs.
+
+**Pass 2** scans source for the one dead-class shape that needs no interaction to
+detect: an opacity modifier on a token colour. Tailwind can only apply one to a colour
+it can parse or call, and every colour in the preset is a bare `var(--oz-…)`, so there
+are **zero** `/nn` rules in the whole stylesheet.
+
+> Dialog's backdrop was `bg-content-fixed-primary/70` for a release. It generated no
+> rule, so a full-viewport `fixed inset-0` element painted nothing and the panel
+> appeared to sit on the page. Pass 1 could not see it, because a closed dialog renders
+> `null`. Comments are stripped before the scan, which is load-bearing rather than
+> tidy — the one pre-existing mention of this pattern in the repo is the comment in
+> `Chrome.tsx` explaining why the header is opaque instead, and a scanner that failed
+> on the note documenting the hazard would be worse than no scanner.
+
+**Pass 3** asserts a property of the compiled output that no check on the input can
+reach: that the `prefers-reduced-motion` block still wins. It brace-matches the block
+in the stylesheet and requires each of its five overrides to appear later than the last
+unconditional declaration of the same property.
+
+> It did not win. `dist/tokens.css` emitted the block after the closing brace of
+> `@layer base`, on the reasoning that unlayered CSS outranks layered CSS — true of
+> real cascade layers, false here. Tailwind consumes `@layer base` as its own directive,
+> hoists the contents to the `@tailwind base` position, and emits no `@layer` at-rule at
+> all, so the override sat at byte 95, `--oz-motion-spatial-scale: 1` sat at byte 8849,
+> and later won. Measured in a browser with the preference on, the multiplier read `1`:
+> every entrance kept its full travel and every spatial spring kept its overshoot. The
+> fix is in `reducedMotionBlock()`; see `docs/DECISIONS.md` I13.
+
 ## The one change made outside this folder
 
 Building this section surfaced a miscount in the token build, and it has been fixed:

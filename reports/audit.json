@@ -1,12 +1,12 @@
 {
   "$generated": "GENERATED FILE — DO NOT EDIT. Overwritten by `node build/build.mjs`. Change build/spec.mjs or build/palette.mjs and rebuild. See CLAUDE.md.",
-  "generatedAt": "2026-08-03T18:45:23.736Z",
+  "generatedAt": "2026-08-03T20:17:31.449Z",
   "sources": {
     "build/palette.mjs": 1785759350845.3977,
     "build/motion.mjs": 1785509597309.4634,
     "build/layout.mjs": 1785739856175.4363,
     "build/spec.mjs": 1785759403231.3635,
-    "build/build.mjs": 1785759383219.4072
+    "build/build.mjs": 1785786977752.96
   },
   "namespace": "oz",
   "counts": {
