@@ -1,0 +1,48 @@
+{
+  "name": "@heyoz/design-system-showcase",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Living reference for the HeyOz design system. Every specimen on the page is the real component, rendered from the same recipe class the app imports.",
+  "scripts": {
+    "//dev": "Turbopack, measured on this repo: cold route 24s vs 40s, warm request ~700ms vs ~3.2s, index ~1.8s vs ~9.1s. It needs `turbopack.root` in next.config.mjs because the showcase imports three files from the repo root; without that it cannot resolve them. dev:webpack is the fallback if a Turbopack bug bites — the production build still uses webpack either way.",
+    "dev": "next dev --turbopack",
+    "dev:webpack": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "next lint",
+    "//verify": "The three checks this layer needs and none of which tsc or next build can do. verify:classes needs a build first, because it reads the compiled CSS and the prerendered HTML.",
+    "verify:contrast": "tsx scripts/verify-contrast.ts",
+    "verify:primitives": "tsx scripts/verify-primitives.ts",
+    "verify:motion": "tsx scripts/verify-motion.ts",
+    "verify:classes": "node scripts/verify-classes.mjs",
+    "verify": "npm run typecheck && npm run verify:primitives && npm run verify:contrast && npm run verify:motion && npm run verify:borders && npm run verify:coverage && npm run build && npm run verify:classes",
+    "verify:borders": "tsx scripts/verify-borders.ts",
+    "verify:coverage": "tsx scripts/verify-coverage.ts",
+    "visual": "npm run serve && playwright test",
+    "visual:update": "npm run serve && playwright test --update-snapshots",
+    "//visual": "Visual regression. Needs a BUILT server on :3000 — npm run build && npm start. Baselines live in visual/baselines/ and are committed; they are the only check in this repo that can see the page.",
+    "serve": "node scripts/serve.mjs",
+    "emit:recipes": "tsx scripts/emit-recipes.ts"
+  },
+  "//tailwind": "Pinned to Tailwind 3. dist/tailwind.tokens.js is emitted in v3 preset format (module.exports + presets[]). Upgrading to v4 means changing build/build.mjs first, not this file.",
+  "dependencies": {
+    "next": "15.5.22",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.20",
+    "playwright": "^1.62.1",
+    "postcss": "^8.4.49",
+    "postcss-import": "^16.1.0",
+    "tailwindcss": "3.4.19",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

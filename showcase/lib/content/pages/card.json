@@ -1,0 +1,228 @@
+{
+  "id": "card",
+  "definition": "A surface that holds content, and the one component whose variant decides its HTML element: `interactive` renders a `<button>`, the other three a `<div>`.",
+  "reachForItWhen": [
+    "Three or more records of the same shape each need a boundary \u2014 a finished render, a saved prompt, a preset.",
+    "A single figure has to read as one unit: \"Credits left\" over \"1,284\".",
+    "A popover, menu or tooltip body needs an edge against the content it is covering.",
+    "The whole record is one target and a click anywhere in it opens that render.",
+    "A composer has to read as one thing \u2014 prompt field, model switch and \"Generate video\" together."
+  ],
+  "reachForSomethingElseWhen": [
+    {
+      "situation": "The records share columns and the user scans down one of them.",
+      "instead": "Table. A card grid turns every record into a paragraph and leaves no column to scan."
+    },
+    {
+      "situation": "One word of status is the entire content.",
+      "instead": "Badge. A card drawn around \"Rendering\" is a boundary around nothing."
+    },
+    {
+      "situation": "Something happened and the user has to be told about it.",
+      "instead": "Alert. A card binds no role colour, so it cannot sort news from content."
+    },
+    {
+      "situation": "The model has not returned the content yet.",
+      "instead": "Skeleton lines inside a `flat` card. The card is already correct; only its content is missing."
+    },
+    {
+      "situation": "A whole page section needs grouping.",
+      "instead": "`.oz-stack` and a heading. A card around a page section demotes every real card on the screen by one rung."
+    }
+  ],
+  "variants": [
+    {
+      "variant": "flat",
+      "useWhen": "**The default, and the only variant legal inside another card.** Grouping with no depth claim: a composer, a form panel, a bed for skeleton rows, the wrapper around a record whose actions are its children. Nesting `raised` repaints the child in its parent's exact background \u2014 both bind `surface-primary`, 1.000:1 \u2014 so its shadow falls on a fill of its own colour and reads as a rendering artefact rather than as depth, and in dark, where elevation is lightness rather than shadow, the two cards sit on one rung of the ladder that carries the entire signal.",
+      "avoidWhen": "The card genuinely sits above the page. That is `raised`, which keeps the same background and adds the shadow \u2014 the repaint route is the documented failure and is answered below."
+    },
+    {
+      "variant": "raised",
+      "useWhen": "**A tile or panel that sits above the page: \"Renders this month / 1,284\".** At most one group of raised cards per view; a second group leaves the first meaning nothing.",
+      "avoidWhen": "As the only separation you are counting on. `x-small` is the smallest step the elevation gate accepts anywhere \u2014 \u0394L 0.0209 in light and 0.0236 in dark against a 0.02 floor (`reports/audit.json`, kind `elevation`) \u2014 so there is no headroom to make one group of raised cards louder than another. `raised` binds no border at all now, and its fill is `surface/primary`, byte-identical to `flat` at 1.000:1, so that smallest step is the entire difference between a card sitting above the page and one lying flat on it."
+    },
+    {
+      "variant": "overlay",
+      "useWhen": "**Detached from the page and covering something: a popover, a menu, a tooltip body, a dialog body.** One open per trigger.",
+      "avoidWhen": "Anywhere in normal document flow. It binds a shadow two steps above every other card on the screen, so an `overlay` sitting in the page grid claims to float over the cards it is sitting beside \u2014 and the reader has no way to tell which of the two claims is the honest one."
+    },
+    {
+      "variant": "interactive",
+      "useWhen": "**The whole card is one target and it holds no other control.** The only variant that binds hover, active, selected and a focus ring, and the only one that renders a `<button type=\"button\">`.",
+      "avoidWhen": "The card holds a second action, or carries a `CardMeta` line. A `<button>` inside a `<button>` is outside the HTML content model \u2014 the browser reparents or drops the inner control, so the card swallows the click meant for \"Delete permanently\" and the inner button never fires. `CardMeta` is `content/tertiary`, which on `fill/elevated-active` measures 4.171:1 in dark against a 4.5:1 floor (computed from `dist/tokens.css`), and `:active` fires on a keyboard Enter and on a touch tap with no hover, so it is not a mouse-only flicker."
+    }
+  ],
+  "sizes": {
+    "guidance": [
+      {
+        "size": "md",
+        "useWhen": "One of several cards in a row or a stack, where the padding inside has to match the gap outside."
+      },
+      {
+        "size": "lg",
+        "useWhen": "The only card in its container and carrying a heading plus body \u2014 a dialog body, a full-width composer panel."
+      }
+    ],
+    "note": "Both sizes are padding and nothing else. The card declares no width and no height, so the size never decides how large the card is, only how much air its content gets \u2014 which is why the deciding variable is the gap around the card rather than the content in it. `.oz-grid` and `.oz-stack` both default their gap to `--oz-space-5` in `dist/layout.css`, the same token `md` spends on padding, so a grid of `md` cards has one rhythm inside a card and between two. `lg` at `--oz-space-7` is heavier inside the card than the gap outside it, which is correct when there is no second card to compare against and wrong when the card is one of six."
+  },
+  "copy": [
+    "**Title copy** (`CardTitle`):",
+    "name what is inside the card, never the card or its category",
+    "hold it to four words in sentence case with no terminal punctuation",
+    "accept \"Credits left\" \u2014 reject \"Usage information\", which names a category and leaves the figure unlabelled",
+    "reject \"Overview\", which is true of every card ever built and tells the eye nothing about which tile it landed on",
+    "move anything that needs a clause down to the meta line",
+    "**Meta copy** (`CardMeta`):",
+    "write one sentence of at most twelve words, ending in a full stop",
+    "give the number and its unit, or the next thing that happens",
+    "accept \"About 74 renders left at your current settings.\" \u2014 reject \"You have used a lot of credits.\", which gives the user nothing to act on",
+    "reject \"Click to view details\", which names the gesture instead of the destination",
+    "never restate the title in other words \u2014 two lines saying one thing cost a line of measure and buy nothing",
+    "**Body copy** (children):",
+    "write it in the caller's markup and the caller's tokens \u2014 the card renders no string of its own beyond those two subparts",
+    "use shippable strings in every mock, and vary their lengths: \"A slow dolly through a rain-lit Karachi street at dusk\" beside \"Product loop, white cyc\" is what exposes the wrap that equal-length stand-ins hide",
+    "reject \"Untitled render\" as a fallback and use the prompt's first four words, because a grid of identical fallbacks is a grid with nothing to scan"
+  ],
+  "motion": "**The lift and the shadow are one gesture.** On a curve that overshoots, the card reads as coming toward you; on one that arrives and stops dead it reads as a box whose shadow was swapped, which is what shipped while the shadow animated and the position snapped. There is no press \u2014 a surface that gives way under the pointer promises a control, and a card is a destination. Under reduced motion the travel collapses and the shadow does not (B16).",
+  "behaviourUnderPressure": [
+    {
+      "case": "A render ID, a prompt URL or a model hash with no break opportunity in it",
+      "behaviour": "**Put `.oz-break` on that element.** The card sets no width and no `overflow`, so an unbreakable string runs past the rounded corner rather than widening the row \u2014 nothing clips and nothing is hidden. `.oz-break` is `overflow-wrap: anywhere` rather than `break-word` because `break-word` refuses to break a string with no break opportunity at all, which is exactly this case (`dist/layout.css`, failure mode 3)."
+    },
+    {
+      "case": "A German title that runs to twice the length of the English",
+      "behaviour": "**It wraps and the card grows; nothing truncates.** `CardTitle` sets no clamp and no ellipsis, and grid items stretch, so a two-line title lengthens every card in the row rather than clipping one. Truncating a card's own body copy to line a row up hides content on precisely the record whose title was longest \u2014 `.oz-truncate` belongs on a single line whose full value is available elsewhere, never on the body."
+    },
+    {
+      "case": "No records to show",
+      "behaviour": "**The empty state replaces the card rather than filling it, and there is no empty variant.** A card drawn around the word \"None\" is a boundary around an absence. The shipped form is the dashed `border/secondary` panel in `showcase/components/sections/Assembled.tsx` carrying \"No renders yet\" and \"Generate your first clip\". No component owns that panel \u2014 it is a bordered `<div>`, a heading and a Button, and it will drift until one does."
+    },
+    {
+      "case": "An `interactive` card hovered in light mode",
+      "behaviour": "**The background does not change, and the hover still has to read.** `fill/elevated-hover` and `surface/primary` are both `#F7F5F4` in `dist/tokens.css` \u2014 1.000:1 \u2014 so light mode is carried by the border step (`#E3E1E0` \u2192 `#D5D3D2`, 1.145:1), the shadow step from `x-small` to `medium`, and the lift. Dark does move the background, `#151312` \u2192 `#2E2C2B` at 1.333:1. A card started at a heavier shadow has no step left to travel and light mode is down to one signal."
+    },
+    {
+      "case": "An `interactive` card flush against the edge of its scroll container",
+      "behaviour": "**Give any container of `interactive` cards at least 4px of padding.** The ring is drawn outside the card box \u2014 `--oz-focus-ring-width: 2px` plus `--oz-focus-ring-offset: 2px` in `dist/tokens.css` \u2014 so a card sitting flush clips its own focus indicator on the side that touches the edge. Tab to the first and last card and confirm all four sides, because the ring is the only non-colour channel this variant has."
+    },
+    {
+      "case": "An `interactive` card holding a title, a meta line and a timestamp",
+      "behaviour": "**Set `aria-label` to the destination.** A `<button>`'s accessible name is every string it contains, concatenated, so the card announces the title, the meta sentence and the timestamp as one run-on. `aria-label=\"Open the Karachi street render\"` replaces the lot. Check it in the browser's accessibility tree \u2014 the markup looks correct either way."
+    }
+  ],
+  "whatTheBuildEnforces": {
+    "enforced": [
+      {
+        "claim": "Text set on an `overlay` card clears 4.5:1 in both modes.",
+        "mark": "E",
+        "assertion": "`CONTRAST_ASSERTIONS` in `build/spec.mjs`, six pairs naming `content/{primary,secondary,tertiary}` against `color/surface/elevated` and `color/surface/overlay`. Tightest is `content/tertiary` in dark at 4.95:1 (`reports/audit.json`, kind `contrast`). Added by B18b; before it, the two surfaces a popover and a dialog are made of were the only places text could be set with no floor."
+      },
+      {
+        "claim": "A floating card sits above every surface it can be stacked on, in dark.",
+        "mark": "E",
+        "assertion": "the `SURFACE_LADDER` monotonicity gate in `build/build.mjs` `validate()` \u2014 `surface/elevated` measures \u0394L 0.0433 over `surface/tertiary` against a 0.03 floor (`reports/audit.json`, kind `ladder`) \u2014 plus the four `COLLISION_ASSERTIONS` pairs holding both floating surfaces off `secondary` and `tertiary`."
+      },
+      {
+        "claim": "The shadow on `raised` and `overlay` moves the page enough to be seen.",
+        "mark": "E",
+        "assertion": "the elevation gates, `reports/audit.json` kind `elevation`: `x-small` measures \u0394L 0.0209 light and 0.0236 dark, `medium` 0.0419 and 0.0399, against a 0.02 floor."
+      },
+      {
+        "claim": "The hover lift collapses under reduced motion.",
+        "mark": "E",
+        "assertion": "the source sweep in `showcase/scripts/verify-motion.ts` over `lib/core/Recipe.ts` and every `*.recipe.ts`: an arbitrary-value transform that does not multiply by `--oz-motion-spatial-scale` fails the run, and a `STATE_TRANSFORMS` exemption that stops matching fails it too. B19 \u2014 this was a convention until the same change that wrote the rule into CLAUDE.md shipped a literal press-scale that four gate suites could not see."
+      },
+      {
+        "claim": "Only `interactive` can move.",
+        "mark": "S",
+        "assertion": "`cardRecipe.liftFor()` returns an empty string for `flat`, `raised` and `overlay`, and `Card.tsx` passes it a variant rather than a class. There is no argument that gives a static card a hover lift."
+      },
+      {
+        "claim": "A clickable card cannot ship as a `<div>` unless somebody asks for one.",
+        "mark": "S",
+        "assertion": "`Card.tsx` derives the element from the variant \u2014 `as ?? (variant === 'interactive' ? 'button' : 'div')` \u2014 so the tag is a recipe decision and the caller supplies none."
+      }
+    ],
+    "notEnforced": [
+      "`border/primary-hover` and `border/selected` \u2014 two of the three strokes `interactive` draws \u2014 are held above nothing. `VISIBILITY_ASSERTIONS` in `build/spec.mjs` is six rows asserted in both modes, twelve gates of kind `visibility` in `reports/audit.json`: `border/primary` against `surface/primary` (1.20:1 light, 2.27:1 dark, floor 1.1) and against `color/background`, `border/secondary` and `border/tertiary` against `surface/primary`, `color/sidebar/border` against `color/sidebar/background`, and `color/surface/primary` against `color/background`. The first row is `interactive` at rest, exactly. Hover repaints both halves of it \u2014 `border/primary-hover` on `fill/elevated-hover`, 1.373:1 light and 2.122:1 dark \u2014 and `selected` repaints both again, `border/selected` on `fill/selected` composited over the page, 4.194:1 light and 6.082:1 dark. Neither pair is named. The generated sweep in `validate()` holds `border/{t}` apart from `border/{t}-hover`, which asserts the two are different colours and says nothing about either being visible on the fill under it \u2014 and in light that stroke is the only colour the hover changes. CLAUDE.md rule 4: the resting state of the family is gated, the two states that move it are not.",
+      "`CardMeta` sets `text-content-tertiary` as a literal className inside `Card.tsx`, so `showcase/scripts/verify-contrast.ts` \u2014 which sweeps the foreground the *recipe* binds \u2014 never measures it. The same pair shape on the ghost button, `content/secondary` on `fill/tertiary-active` at 3.613:1 in dark, was caught only because that one was bound in the recipe.",
+      "No assertion names a variant's base background against its own hover when the two come from different ladders. The generated sweep in `validate()` asserts `fill/{t}` against `fill/{t}-hover` and `border/{t}` against `border/{t}-hover`; `interactive` starts on `surface/primary` and hovers to `fill/elevated-hover`, which crosses two ladders and is named by nothing. The exits are binding the base to `surface-elevated`, where the `fill/elevated-*` ladder is designed to start, or adding the pair to `COLLISION_ASSERTIONS`.",
+      "The transform sweep matches arbitrary-value utilities only. `hover:-translate-y-0.5` carries no brackets and passes it, and a transform written at a call site is outside the swept files entirely \u2014 `MOTION_SOURCES` is `lib/core/Recipe.ts` and `lib/recipes/*.recipe.ts`. A hand-written translate keeps rising for a user who asked for reduced motion while every other spatial movement has collapsed.",
+      "Nothing catches a click handler on a `flat`, `raised` or `overlay` card. All three bind `focus: 'none'`, so no ring compiles: the result has no role, no Enter or Space handling and no visible focus \u2014 a control that answers a mouse and is invisible to a keyboard. `interactive` is the variant that renders `<button type=\"button\">` and binds the outward ring.",
+      "Nothing sees which element a variant rendered into. `as=\"div\"` on `interactive` keeps every colour and removes the keyboard activation, the implicit role and the focus target that `focus: 'outline'` assumes \u2014 the ring compiles and there is nothing to focus.",
+      "`aria-selected` is valid only on `option`, `tab`, `row`, `gridcell`, `columnheader`, `rowheader` and `treeitem`. `Card.tsx` puts it on a bare `<button>` or `<div>`, so passing `selected` without `role=\"option\"` on the card and `role=\"listbox\"` on its container fails axe's `aria-allowed-attr`. The `selected` binding is a border and a tint \u2014 both colour \u2014 so that attribute is the only non-visual channel the state has.",
+      "`overlay` ships no `role`, no focus trap, no Escape handler and no `aria-modal`, deliberately, because the component cannot know which of popover, menu and modal it is being used as. Nothing checks that the caller added them: a menu needs `role=\"menu\"` and roving `tabindex`, a modal needs `<dialog>` or `role=\"dialog\"` with `aria-modal=\"true\"`. There is no Dialog recipe; one would go in `showcase/lib/recipes/`.",
+      "`forceState` is a showcase prop and nothing stops it shipping. `Card.tsx` drops the lift whenever a state is forced, so a matrix cell showing hover shows the colour instead of sitting permanently above its row \u2014 but a card shipped with `forceState` has the appearance of a state with none of the behaviour behind it, and no pointer or keyboard path back out of it."
+    ]
+  },
+  "looksLikeABugButIsNot": [
+    {
+      "observation": "The recipe's shape reads `border-2` and the border measures 1px.",
+      "why": "`--oz-stroke-2` is 1px in `dist/tokens.css`; the ordinal stroke scale is remapped in `dist/tailwind.tokens.js`, so `border-2` is the second step of the stroke ramp rather than Tailwind's 2px. The first draft of the Checkbox page read it as Tailwind's and derived a 12px tick from \"16px minus a 2px border\" \u2014 a `--oz-space-5` box with two 1px borders has a 14px interior, and the derivation was invented to make a real token value look computed."
+    },
+    {
+      "observation": "`flat` and `raised` resolve to the same background token, so the binding table shows two variants with an identical fill and one of them looks redundant.",
+      "why": "Depth here is elevation, not colour, and the shadow is the entire difference. Painting a card one rung up the surface ladder to make it look raised gives it the value that already means \"nested inside a card\", so it stops reading as lifted and starts reading as content belonging to a larger card further out \u2014 colliding in meaning with every nested panel on the page. `raised` keeps the background and adds `elevation/drop shadow/x-small`."
+    },
+    {
+      "observation": "In light, an `overlay` card's fill is the same colour as the page \u2014 both `#FFFFFF`, 1.000:1 \u2014 and it draws no border. A contrast checker finds no boundary at all.",
+      "why": "The boundary in light is the shadow, and light is the mode a shadow works in. `overlay` binds `medium`, which the elevation gate measures at \u0394L 0.0419 against a 0.02 floor and which sits two steps above the `x-small` a `raised` card gets (`reports/audit.json`, kind `elevation`). Dark is the mode where a shadow on a near-black page barely reads, and dark is where the fill takes over instead: `surface/elevated` sits at `neutral/105`, 1.563:1 against a `flat` card and 1.708:1 against the page. Each mode carries the channel the other one lacks, which is why B18 let the stroke that had been covering for both come off rather than keeping it for the weaker one."
+    },
+    {
+      "observation": "`interactive` binds no `min-h-target`, unlike Button at `md`.",
+      "why": "It clears the floor by construction: 32px of padding at `--oz-space-5` plus one `CardTitle` line at 18px \u00d7 `--oz-leading-heading-xs` 1.3333 is 56px, against `--oz-target-min: 44px`. It stops clearing when the card has no text child \u2014 a 16px icon row lands at 48px and an empty card at 32px. Measure any card that renders only an icon."
+    }
+  ],
+  "related": [
+    {
+      "component": "Table",
+      "difference": "Table owns the record whose fields are the same, in the same order, every time; Card owns the record with a thumbnail, a title of unpredictable length and one action."
+    },
+    {
+      "component": "Alert",
+      "difference": "The dialog body is a Card `overlay`; the line inside it explaining why the render failed is an Alert. Card carries the surface, Alert carries the announcement and the role colour."
+    },
+    {
+      "component": "Badge",
+      "difference": "Badge is the status word a card displays; Card is the boundary around the rest of the record. A Badge sits inside a card and never the reverse."
+    },
+    {
+      "component": "Skeleton",
+      "difference": "Skeleton is the card's content while the model is still working, not a substitute for the card \u2014 swapping the whole card for a spinner makes the layout jump when the data lands."
+    },
+    {
+      "component": "Button",
+      "difference": "When only part of the card is the target, the actions are children of a `flat` card, because a `<button>` cannot contain a `<button>`."
+    },
+    {
+      "component": "Input",
+      "difference": "When the card's content is one field the user types into, the composer is a `flat` card wrapping an Input \u2014 the field owns its label, its ring and its type step, and the card owns none of the three."
+    }
+  ],
+  "changed": [
+    {
+      "what": "In dark, a floating card now sits above `surface/tertiary` instead of below it: `surface/elevated` and `surface/overlay` moved to `neutral/105` (`#393735`, L* 33.8).",
+      "why": "B18. Both previously sat at `neutral/120`, byte-identical to `surface/secondary`, so an `overlay` over a nested panel had no fill boundary at all and the border was paying for a ladder that did not express elevation. The fill now carries it \u2014 \u0394L 0.0433 above `surface/tertiary`, 1.563:1 against a `flat` card and 1.708:1 against the page."
+    },
+    {
+      "what": "Every figure on the dark `overlay` surface from the previous draft of this page is stale. Recompute against `reports/audit.json` and `dist/tokens.css` rather than carrying one over.",
+      "why": "The surface moved and the stroke it had been propping up came off with it. `surface/elevated` and `surface/overlay` went from `neutral/120` to `neutral/105`, and no card variant binds `border/elevated` any more, so a dark figure carried over from that draft is either a ratio against a fill the token no longer holds or a ratio for a border that is no longer drawn. The figures that replace them are the ones above: the fill is the boundary now."
+    },
+    {
+      "what": "Text on an `overlay` card is gated for the first time, in both modes.",
+      "why": "B18b. `content/*` was asserted against the page and three surfaces and never against the two a popover and a dialog are made of. Six pairs added; contrast gates 118 \u2192 130. `content/tertiary` on `surface/elevated` in dark at 4.95:1 is the tightest and is what pins the rung \u2014 the window for a dark floating surface is 29.5 < L* \u2264 36.3 and holds exactly one."
+    },
+    {
+      "what": "The pairwise `elevated`-versus-`overlay` collision assertion was removed, in both modes.",
+      "why": "B18a. It was standing in for the real defect \u2014 both colliding with `surface/secondary` \u2014 which is now asserted directly. With one rung available and two tokens needing it, the two share it, as they already share `neutral/white` in light."
+    },
+    {
+      "what": "A disabled control inside an `overlay` card is now darker than the popover it sits on. `fill/*-disabled` moved to `neutral/115` (`#272524`), measuring 1.287:1 against `surface/elevated` in dark.",
+      "why": "B18c. Taking `neutral/105` for the floating surfaces evicted the rung the disabled fills had spent three attempts finding. Darker is deliberate: in dark mode lighter reads as more prominent, so a disabled fill above the surfaces would look more actionable than the live controls beside it. The pair is now named in `COLLISION_ASSERTIONS` rather than assumed."
+    },
+    {
+      "what": "The hover lift moved from convention to gate.",
+      "why": "B19 added a source sweep in `showcase/scripts/verify-motion.ts` over `Recipe.ts` and every recipe. `liftFor()` was already written correctly; what changed is that a future edit breaking it now fails the run instead of shipping."
+    }
+  ]
+}

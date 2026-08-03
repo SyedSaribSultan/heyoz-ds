@@ -1,0 +1,222 @@
+{
+  "id": "input",
+  "definition": "Text entry the user submits later. The one component whose smallest size is set by the platform rather than chosen — below 16px, iOS Safari zooms the viewport on focus.",
+  "reachForItWhen": [
+    "The user types a value the product stores — a prompt, a work email, a project name.",
+    "No fixed set of answers exists, so there is nothing to offer in place of a keyboard.",
+    "The value is typed, checked and submitted; nothing takes effect at the moment of typing.",
+    "One line holds the value and the user can read it back without scrolling."
+  ],
+  "reachForSomethingElseWhen": [
+    {
+      "situation": "The answer comes from a closed set and is submitted with the rest of the form",
+      "instead": "Checkbox. A keyboard beside a closed list invites values the form will reject, and the rejection arrives after the submit rather than before it."
+    },
+    {
+      "situation": "The change is written the moment it is made and there is no submit",
+      "instead": "Switch. A field's value only exists once the user stops typing, so a field wired to save per keystroke fires one write per character."
+    },
+    {
+      "situation": "The submit failed and no single field owns the failure",
+      "instead": "Alert above the form. No border can carry `Model timed out after 90 seconds`, and a red edge on a correct value tells the user to change something that is already right."
+    },
+    {
+      "situation": "The value has not arrived from the server yet",
+      "instead": "Skeleton shaped like the field. A field the user can type into is a field whose contents get overwritten when the response lands."
+    },
+    {
+      "situation": "The value runs to paragraphs",
+      "instead": "No Textarea recipe exists; add one in `showcase/lib/recipes/`. A taller Input still scrolls sideways on one line, because `<input>` never wraps at any height."
+    }
+  ],
+  "variants": [
+    {
+      "variant": "default",
+      "useWhen": "Every field until a validation attempt on that field has failed. One `message` per field, and here it is help that is already true before the user types — a limit, a format, or what the field does to the output.",
+      "avoidWhen": "After the server has rejected the value. `Input.tsx` derives `aria-invalid` from `variant` and never from the presence of `message`, so a red sentence under a `default` field announces nothing to a screen reader."
+    },
+    {
+      "variant": "invalid",
+      "useWhen": "After a validation attempt fails on a value this field owns, always paired with a `message` naming the fix. One field, one failure, one instruction.",
+      "avoidWhen": "On an empty required field before first interaction, and on every field at once after a submit-level rejection. Only the fields that actually failed turn; a form-level failure is an Alert."
+    }
+  ],
+  "sizes": {
+    "guidance": [
+      {
+        "size": "md",
+        "useWhen": "Every field in a form, a filter row or a dialog — the default, and correct at any density."
+      },
+      {
+        "size": "lg",
+        "useWhen": "One field carries the screen — the prompt composer, a search page whose only control is the input."
+      }
+    ],
+    "note": "Both steps sit at or above 16px because iOS Safari zooms the viewport on focus below that and does not zoom back, leaving the rest of the form off-screen for the session. There is no `sm`; a smaller field is a change to `spec.mjs` TYPOGRAPHY, not a variant here. The 44px touch floor is load-bearing at `md` only — 16px at leading 1.5, plus `space-3` top and bottom, plus two 1px strokes computes to 42px, so `min-h-target` supplies the last two. At `lg` the type step alone reaches 54px and the 48px floor never binds. All computed from `dist/tokens.css`."
+  },
+  "copy": [
+    "label copy: name the value in one or two words, sentence case — ship `Work email`, reject `Email Address (Required)`",
+    "label copy: mark the optional fields and never the required ones — an asterisk on nine labels out of ten is decoration the user learns to ignore",
+    "label copy: keep the label byte-identical when the field turns invalid — the label names the value and the message carries the failure",
+    "label copy: end with no colon — the `<label for>` association pairs the string to the field and the punctuation adds nothing",
+    "placeholder copy: show one real example of the value — ship `A slow dolly through a rain-lit street at dusk`, reject `Enter your prompt`",
+    "placeholder copy: list the shapes the field accepts when there are several — the primitives filter ships `brand, #FF3D01, fill/critical…`",
+    "placeholder copy: never repeat the label — `Work email` above and `Work email` inside teaches nothing, and the inside copy vanishes on the first keystroke",
+    "placeholder copy: never carry a format rule — it disappears exactly when the user is applying it, so a format goes in `message` on the `default` variant",
+    "placeholder copy: leave it out when no example says more than the label already does",
+    "message copy: on `invalid`, say what happened and what to do next in one sentence — ship `Add the domain — for example design@heyoz.com.`, reject `Invalid email`",
+    "message copy: reject the four near-misses for four different reasons — `Invalid email` names no fix, `Error` names nothing, `Please enter a valid work email address` asks instead of telling and still names no fix, `Must match ^[^@]+@[^@]+\\.[^@]+$` names the fix in a language the user does not read",
+    "message copy: address the value and never the person — reject `You entered an invalid email`",
+    "message copy: on `default`, carry something that is true before a single character is typed — ship `Specific camera language gives the model more to work with.`, reject `Please be as descriptive as possible.`",
+    "message copy: end with a full stop — every message the recipe and the assembled screen ship is a sentence and is punctuated as one",
+    "value copy: ship no default value — a prefilled prompt is a string the user deletes before typing, and the `defaultValue` on the composer field in `showcase/components/sections/Assembled.tsx` is demo content rather than a pattern"
+  ],
+  "motion": "Nothing about the field changes position. A press-scale claims a surface gave way under the pointer; on a text field it moves the caret the user is aiming at, a target roughly one character wide, so the sweep fails the build on one. `enter: 'none'` is an answer rather than an omission — a form is eight fields arriving at once, and eight staggered entrances delay the first tab stop to decorate a screen the user came to type on.",
+  "behaviourUnderPressure": [
+    {
+      "case": "The field is dropped straight into a flex row, or given a width class",
+      "behaviour": "It refuses to shrink and the row overflows: `min-width: auto` on a flex child resolves to the `<input>`'s intrinsic width — the HTML default `size` of 20 characters — so the recipe's `w-full` has nothing to shrink against. Put it in `.oz-cluster`, `.oz-switcher` or `.oz-grid`, whose children carry `min-width: 0` (seven `children-contained` gates in `reports/audit.json`), and let a wrapper carry any width: `cx` does no conflict resolution, so a `w-64` at the call site is a second width in one class attribute and stylesheet order decides which wins. `Primitives.tsx` wraps its filter field in `<div className=\"w-full max-w-[360px]\">` for exactly this reason."
+    },
+    {
+      "case": "The field sits on a `surface/secondary` panel",
+      "behaviour": "The field disappears into the panel. Its fill is `surface/secondary`, so the fill step is exactly 1.000:1 and the entire boundary becomes the 1px stroke — 1.41:1 light and 2.51:1 dark, computed from `dist/tokens.css`. `surface/tertiary-variant` collapses it the same way and is easier to miss, resolving to `#EFEDEC` light and `#211F1D` dark, byte-identical to the fill in both modes. Move the field to `color/background`, `surface/primary`, a `flat` Card, `surface/elevated` or `surface/overlay`."
+    },
+    {
+      "case": "An invalid field sits inside a dark dialog",
+      "behaviour": "The message falls below its floor. `content/critical` on `surface/elevated` measures 3.89:1 in dark against the 4.5:1 that 12px text needs, computed from `dist/tokens.css` with `contrast()`; it was 5.39:1 before both floating surfaces moved to `neutral/105`. Light is unaffected at 7.97:1. No assertion covers the pair — the fix is a step in the dark status ramp in `spec.mjs` plus the five missing assertions, never a local colour at the call site."
+    },
+    {
+      "case": "The label doubles in length after translation, or the value runs past the field",
+      "behaviour": "The label and the message wrap and the component grows downward; the `<input>` scrolls horizontally on its own axis and never wraps or grows. `.oz-truncate` on the field buys nothing, and truncating the label is worse — unlike a table cell there is no row carrying the field's name elsewhere, so a clipped label is an unanswerable field. `.oz-break` goes on a message that echoes a user-supplied string with no break opportunity, which is failure mode 3 in `dist/layout.css`."
+    },
+    {
+      "case": "The field is flush against a clipping ancestor",
+      "behaviour": "The focus ring is cut off and keyboard focus becomes invisible while the field still looks correct to everyone else. The ring is an outward outline needing 4px of clearance outside the border box — `--oz-focus-ring-width` and `--oz-focus-ring-offset` are 2px each in `dist/tokens.css` — so an `overflow: hidden` parent or an `.oz-reel` track erases it. Give the field 4px of room or move it out of the clipping box."
+    },
+    {
+      "case": "The page is at 200% browser zoom",
+      "behaviour": "Nothing is lost. The field carries no width of its own, the label and the message wrap, and the row reflows with its container. `body md` and `body lg` are fixed pixel steps in `dist/tokens.css`, so they answer page zoom and not a raised browser default font size — and the 16px floor on this component is about iOS Safari's automatic zoom on focus, which is a different mechanism that user zoom does not undo."
+    }
+  ],
+  "whatTheBuildEnforces": {
+    "enforced": [
+      {
+        "claim": "Declaring a press spring on this component fails the build.",
+        "mark": "E",
+        "assertion": "the `m.press && id === 'input'` check in `showcase/scripts/verify-motion.ts` — the only component-specific assertion in the motion sweep"
+      },
+      {
+        "claim": "A colour-only transition cannot be given an overshooting spring, so this field cannot be made to bounce.",
+        "mark": "E",
+        "assertion": "`ComponentRecipe.motionConsistent`, swept across every registered recipe by `showcase/scripts/verify-motion.ts`"
+      },
+      {
+        "claim": "Every token the two variants name resolves in both modes; a typo cannot ship as one silently unstyled state.",
+        "mark": "E",
+        "assertion": "the `bindingRoles` resolution loop at the top of `showcase/scripts/verify-contrast.ts`, which exits non-zero on an unresolved role/token pair"
+      },
+      {
+        "claim": "The value text clears 4.5:1 on the field's own fill in both modes — 17.35:1 light, 14.08:1 dark.",
+        "mark": "E",
+        "assertion": "`CONTRAST_ASSERTIONS` in `build/spec.mjs` for `content/primary` on `surface/secondary`, re-measured per variant and state from the recipe by `showcase/scripts/verify-contrast.ts`"
+      },
+      {
+        "claim": "Nothing about this component changes under `prefers-reduced-motion`, because its only motion is colour.",
+        "mark": "E",
+        "assertion": "`reducedMotionBlock()` in `build/build.mjs`, adjudicated in DECISIONS B16"
+      },
+      {
+        "claim": "Both variants declare a focus treatment; a field with no ring is not expressible.",
+        "mark": "S",
+        "assertion": "`focus` is a required field on `VariantBinding` in `showcase/lib/core/types.ts`, which is how the choice is forced at the one place the build cannot see it"
+      },
+      {
+        "claim": "The visible invalid state and the announced one come from one prop.",
+        "mark": "S",
+        "assertion": "`Input.tsx` derives `aria-invalid` and the `border/critical` binding from `variant`; no prop sets either alone"
+      },
+      {
+        "claim": "The field's boundary is a stroke step, not a hand-typed width.",
+        "mark": "S",
+        "assertion": "`border-2` maps to `var(--oz-stroke-2)` via `dist/tailwind.tokens.js`; a pixel value is not expressible in the recipe's shape"
+      }
+    ],
+    "notEnforced": [
+      "A field with neither `label` nor `aria-label` renders and passes every check. Nothing in `showcase/scripts/` measures an accessible name, so the check is review — and an `<input>` whose only name is its placeholder is unnamed from the first keystroke.",
+      "`{...rest}` is spread after `aria-invalid` and `aria-describedby` in `Input.tsx`, so a caller passing either silently wins: a red border with a valid announcement, or a message on screen described by nothing. No sweep reads a caller's props.",
+      "`content/critical` on `surface/elevated` and `surface/overlay` is in no assertion list, and measures 3.89:1 in dark. Its four status siblings are ungated on the same two surfaces at 3.89–4.08:1 — CLAUDE.md rule 4, one family down from where I11c already found it.",
+      "`content/placeholder` on `surface/secondary` — the field's own fill — is gated nowhere. It measures 5.61:1 light and 6.86:1 dark and passes only because the token is byte-identical to `content/tertiary`, which is gated there. Add the pair before either token moves.",
+      "`border/secondary` is gated against `surface/primary` only, at 1.51:1 light and 2.83:1 dark. Against the fill it actually outlines it is ungated, at 1.41:1 and 2.51:1.",
+      "`border/focus` is gated against `color/background` and `surface/primary`, not against `surface/elevated`. A focused field inside a dark dialog measures 4.54:1, above the 3:1 floor and covered by nothing.",
+      "A height or width utility passed through `className` merges over the recipe's own. `cx` does no conflict resolution by design, and no check reads the merged class string.",
+      "`type`, `inputmode` and `autocomplete` are never defaulted. A `Work email` field without `type=\"email\" autocomplete=\"email\"` opens a keyboard with no @ key and refuses autofill, and the build cannot see an attribute that was not passed.",
+      "`forceState` compiles a state's colours unprefixed, so a field painted disabled carries no `disabled` attribute: it keeps its tab stop, takes focus and accepts typing. It is I12b inverted — there a dead control read as live, here a live control reads as dead — and nothing stops it reaching production code."
+    ]
+  },
+  "looksLikeABugButIsNot": [
+    {
+      "observation": "In dark mode the field is darker than the dialog it sits in.",
+      "why": "`surface/elevated` is `#393735` and the field keeps `surface/secondary` at `#211F1D`, so it reads as a recess rather than a raised card — 1.39:1, and the largest fill separation the field gets in any legal bed, against 1.23:1 on the page and 1.13:1 on a `flat` Card. Rebinding it to `fill/elevated` to match the panel returns it to the pre-B18 state where field and panel were byte-identical and only the 1px stroke carried the boundary."
+    },
+    {
+      "observation": "`border-2` on the field measures 1px in devtools.",
+      "why": "`--oz-stroke-2: 1px` in `dist/tokens.css`. The ordinal stroke scale is remapped by `dist/tailwind.tokens.js`, so `border-2` is the second of six steps rather than two pixels, and `border-4` is the 2px step. An earlier revision of this guidance called the same class 2px, and a sibling page derived a 12px box interior from it by subtracting a 2px border from `--oz-space-5` — the real interior is 14px."
+    },
+    {
+      "observation": "`content/placeholder` and `content/tertiary` are byte-identical in both modes.",
+      "why": "Deliberate, and recorded as I11f. `content/tertiary` already sits on 4.70:1 against `surface/tertiary`, so there is no room to lighten the placeholder without failing 1.4.3. Collapsing the two because a token diff shows them equal deletes the placeholder's own two gates, and the next move of `content/tertiary` would then carry the placeholder with it in silence."
+    }
+  ],
+  "related": [
+    {
+      "component": "Alert",
+      "difference": "When the failure belongs to the submit rather than to one field. No border can carry `Model timed out after 90 seconds`, and lighting every field for a form-level rejection names no fix the user can act on."
+    },
+    {
+      "component": "Switch",
+      "difference": "When the change is written the moment it is made. A switch has no submit to wait for, so it needs no validation state and ships none."
+    },
+    {
+      "component": "Checkbox",
+      "difference": "When the answer is chosen from a closed set rather than typed. Both defer their value to a submit; only this component accepts a value nobody enumerated in advance."
+    },
+    {
+      "component": "Skeleton",
+      "difference": "When the value has not arrived yet. A field the user can type into is a field whose contents get overwritten when the response lands, so the field is replaced rather than disabled."
+    },
+    {
+      "component": "Button",
+      "difference": "When what needs describing is the submit beside the field rather than the field. Their motion specs are opposites, and the Button page carries that argument from its own side."
+    },
+    {
+      "component": "Card",
+      "difference": "Inputs group inside one Card as a form; one Card per Input turns a form into a list of boxes and loses the reading order a form depends on."
+    }
+  ],
+  "changed": [
+    {
+      "what": "2026-08-02 — a field inside a dark dialog or popover now sits on `#393735`. The byte-identity between the field's fill and `surface/elevated` in dark is gone, and the field reads as a recess at 1.39:1.",
+      "why": "B18. Both floating surfaces moved to `neutral/105` (L* 33.8) so the dark ladder is monotonic and the surface carries the boundary. The previous revision of this page said field and panel were both `#211F1D` and that the edge alone defined the field; that is now false."
+    },
+    {
+      "what": "2026-08-02 — the invalid message inside a dark dialog is recorded as `D` at 3.89:1, below the 4.5:1 floor for 12px text, and needs adjudicating in `docs/DECISIONS.md` before it becomes a gate.",
+      "why": "B18b completed `content/primary`, `content/secondary` and `content/tertiary` on `surface/elevated` and `surface/overlay` and took contrast gates 118 → 130, but left the five `content/<role>` siblings ungated on the same two surfaces. Measured with `contrast()` from `build/palette.mjs`."
+    },
+    {
+      "what": "2026-08-02 — the `default` variant's message now reads 4.95:1 on a dark elevated panel, its tightest bed; it read 6.86:1 before the ladder moved.",
+      "why": "B18b's new `content/tertiary` assertions in `reports/audit.json`. Every figure on this page touching a dark floating surface was recomputed rather than carried over, and any older number for those surfaces is stale."
+    },
+    {
+      "what": "2026-08-02 — the disabled figures are corrected: the edge sits at 1.09:1 light and 1.43:1 dark against the disabled fill, and `border/critical-disabled` holds the invalid hue at 1.98:1 in both modes.",
+      "why": "CLAUDE.md rule 5. The previous revision printed 1.05:1, 1.31:1, 1.88:1 and 1.82:1, none of which reproduce. B18c moved `fill/*-disabled` to `neutral/115` (`#272524`) for the five status roles only; this field binds `fill/secondary-disabled`, still `#211F1D80`, so the ladder change was checked here and does not apply."
+    },
+    {
+      "what": "2026-08-02 — every stroke figure is recomputed. `border-2` is 1px, and the field's whole visible boundary is one pixel wide.",
+      "why": "`--oz-stroke-2: 1px` in `dist/tokens.css`. The previous revision called the same class 2px, which is the arithmetic a sibling page then built a false 12px derivation on."
+    },
+    {
+      "what": "2026-08-02 — the press-scale prohibition is `E` rather than prose, and the motion argument moved out of Related into Motion.",
+      "why": "`showcase/scripts/verify-motion.ts` fails the build on a press spring declared for `input`. B19 also routed `ComponentRecipe.motionClasses` through `--oz-motion-spatial-scale` and added the literal-transform source sweep, so the press-scale that Button carries now collapses under `prefers-reduced-motion` as CLAUDE.md always required."
+    }
+  ]
+}

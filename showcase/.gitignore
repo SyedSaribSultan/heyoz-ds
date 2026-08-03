@@ -1,0 +1,9 @@
+node_modules/
+.next/
+next-env.d.ts
+tsconfig.tsbuildinfo
+.DS_Store
+.shots/
+reports/showcase-verify.json
+test-results/
+playwright-report/

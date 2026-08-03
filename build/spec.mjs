@@ -124,7 +124,99 @@ export const LITERAL_GROUPS = new Set(['layer', 'breakpoint', 'container']);
 
 export const MOTION = {
   $description:
-    'Durations and easing curves. easing/entrance is the cubic-bezier already hardcoded in the shipped .fade-in-spring and .cycling-text-char animations, so adopting these tokens changes no existing motion.',
+    'Springs, plus the duration and easing scales they supersede. Springs are computed from a declared settle time and bounce by build/motion.mjs and emitted as CSS linear() curves; nothing here is a hand-tuned bezier. easing/entrance is the cubic-bezier already hardcoded in the shipped .fade-in-spring and .cycling-text-char animations, so adopting these tokens changes no existing motion.',
+
+  /* ---------------------------------------------------------------- *
+   * Springs — the motion layer proper
+   * ---------------------------------------------------------------- *
+   *
+   * Two families, and the split is the single most important decision here. It is
+   * Material 3 Expressive's, arrived at independently by Apple, and it exists
+   * because overshoot means different things to different properties:
+   *
+   *   effects   colour, opacity, shadow. MUST NOT overshoot — the build gates
+   *             this by measuring the emitted curve, not by trusting the
+   *             declaration. An opacity that overshoots clips at 1 and holds
+   *             there, so the bounce is silently swallowed and all you have
+   *             bought is a stall. A colour that overshoots goes somewhere the
+   *             palette never defined, which in this repo means outside the
+   *             gated set entirely.
+   *
+   *   spatial   transform, size, position, corner radius. SHOULD overshoot. This
+   *             is where a spring earns its keep: a panel that arrives, tips
+   *             slightly past its mark and settles reads as an object with mass.
+   *             The same panel on a bezier reads as a value being interpolated.
+   *
+   * Getting this backwards is the classic failure — it is what "the whole app
+   * feels bouncy and cheap" actually is: effects springs with bounce on them.
+   *
+   * `settle` is wall-clock milliseconds until motion is visually finished, and it
+   * is exact rather than nominal (see motion.mjs on why it is not SwiftUI's
+   * `duration`). Bands follow the timing research: micro interactions 100–200ms,
+   * standard 200–300ms, complex 300–400ms, and anything past that needs a reason.
+   */
+  spring: {
+    // -- effects: bounce is 0 here and the build will fail if it is not --------
+    /** Hover, press, focus. The most-run animation in the system by orders of
+     *  magnitude, so it is the one that must not be slow. */
+    'effects-fast': { settle: 120, bounce: 0 },
+    /** Default crossfade: badge swapping variant, alert appearing in place. */
+    'effects-default': { settle: 180, bounce: 0 },
+    /** Larger areas, where a fast fade reads as a flicker. */
+    'effects-slow': { settle: 280, bounce: 0 },
+
+    // -- spatial: overshoot is the point ---------------------------------------
+    /** Small travel: a checkbox tick, a switch thumb, a chevron rotating. Low
+     *  bounce because the distance is short — the same bounce fraction over 12px
+     *  is a twitch, over 200px it is a flourish.
+     *
+     *  Declared at 220ms first and the feedback gate rejected it, correctly: this
+     *  fires on click, so it is feedback, and 200ms is the ceiling for anything a
+     *  user is waiting on. Note that a bouncing spring finishes its *travel* well
+     *  before it finishes settling — at 190ms the thumb has arrived by roughly
+     *  115ms and the remainder is the overshoot resolving, so this is quicker in
+     *  hand than the number suggests. */
+    'spatial-fast': { settle: 190, bounce: 0.12 },
+    /** The workhorse: cards, rows, popovers, anything entering a layout. */
+    'spatial-default': { settle: 340, bounce: 0.18 },
+    /** Sheets, drawers, full-panel movement across the viewport. */
+    'spatial-slow': { settle: 480, bounce: 0.22 },
+
+    // -- expressive: rationed on purpose --------------------------------------
+    /** Hero moments only — a first successful render, an onboarding reveal. One
+     *  per screen at most. Its bounce is loud enough that a second instance on
+     *  the same screen turns the first one into noise, which is the same argument
+     *  the accent colour gets in CLAUDE.md. */
+    expressive: { settle: 520, bounce: 0.38 },
+  },
+
+  /* Distance multiplier, and the mechanism by which reduced motion is honoured
+   * without any component knowing it happened.
+   *
+   * Every spatial translation in the system is authored as
+   * `translateY(calc(6px * var(--oz-motion-spatial-scale)))`. Normally the
+   * multiplier is 1 and nothing is different. Under prefers-reduced-motion the
+   * emitted stylesheet redefines it to 0, so the movement collapses to nothing
+   * while the opacity transition on the same element keeps running — the element
+   * still announces itself, it just no longer travels.
+   *
+   * That is deliberately not the usual blanket `* { animation: none }` reset. The
+   * blanket version removes colour fades too, which carry no vestibular risk
+   * whatsoever, and leaves those users with an interface that snaps between states
+   * — worse to use, for no accessibility gain. What this system removes is
+   * movement, which is the thing actually being asked about.
+   */
+  scale: { 'spatial-scale': 1 },
+
+  /* ---------------------------------------------------------------- *
+   * Durations and beziers — retained, no longer the recommended path
+   * ---------------------------------------------------------------- *
+   * Kept because dist/shadcn-bridge.css and the app's pre-migration CSS read
+   * them, and because DECISIONS B14 turns on easing/entrance being byte-identical
+   * to what already shipped. New component work should reach for a spring.
+   * `duration/ambient` is the exception with no spring equivalent: a pulse loop is
+   * not a spring, it has no target to settle toward.
+   */
   duration: {
     instant: '0ms',
     fast: '150ms',
@@ -139,6 +231,92 @@ export const MOTION = {
     standard: 'cubic-bezier(0.4, 0, 0.2, 1)',
     linear: 'linear',
   },
+};
+
+/* ------------------------------------------------------------------ *
+ * Motion gates
+ * ------------------------------------------------------------------ *
+ *
+ * CLAUDE.md rule 4 says: when you add a token, add its gate, and write the gate by
+ * family. Motion shipped for months with ten tokens and zero gates, which is how a
+ * `linear` easing ends up on a transition despite the docs saying never — prose is
+ * not a gate. These are written as families for the same reason the disabled-fill
+ * sweep is: naming one spring and forgetting its three siblings is the documented
+ * failure mode of this repo.
+ *
+ * Each entry names a family by prefix and asserts a measured property of the
+ * emitted curve. The build measures; the declaration is not consulted.
+ */
+/**
+ * The surface ladder, ordered from deepest to highest.
+ *
+ * Elevation in this system is carried by the surface itself, not by a border. That
+ * is only true if the ladder is monotonic, and for the whole life of the repo it was
+ * not: in dark, `surface/tertiary` sat lighter than both floating surfaces and
+ * `surface/elevated` was byte-identical to `surface/secondary`. Nothing caught it.
+ * The elevation gates measure whether a drop shadow moves the page enough, which is
+ * a different question — and in dark mode it is close to the wrong question, because
+ * a shadow on a near-black page barely reads and lightness is doing the work.
+ *
+ * Direction is mode-dependent and that is the point. Light builds depth by going
+ * UP toward white (a popover is brighter than the page it floats over); dark builds
+ * it by going up in lightness too, because there is nowhere below near-black to go.
+ * So the assertion is not "darker each step" — it is "monotonic away from the page,
+ * in whichever direction that mode's page sits".
+ *
+ * `MIN_STEP` is the separation each rung needs from the next for the surface alone
+ * to carry the boundary. Below roughly ΔL 3 a large flat area stops reading as a
+ * distinct plane and the border has to come back.
+ */
+export const SURFACE_LADDER = {
+  /* Rungs, deepest first. `elevated` and `overlay` are ONE rung — they share a
+   * value in both modes, so listing them as two levels would assert a step between
+   * two names for the same plane. `elevated` stands for the pair; the collision
+   * list holds them equal to each other and separate from everything below. */
+  order: [
+    'color/background',
+    'color/surface/primary',
+    'color/surface/secondary',
+    'color/surface/tertiary',
+    'color/surface/elevated',
+  ],
+  /** Light is exempt: white is the top of the ramp, so `elevated` and `overlay` both
+   *  sit at neutral/white and separate by shadow instead. Asserting light would force
+   *  a grey popover onto a white page to satisfy a gate — H1's rule that a gate may
+   *  veto a colour but may never choose one. */
+  modes: ['dark'],
+  minStep: 0.03,
+};
+
+export const MOTION_ASSERTIONS = {
+  /** Springs whose name starts with this must never cross their target. Measured
+   *  as peak overshoot on the emitted linear() stops. */
+  noOvershoot: ['effects-'],
+
+  /** Springs whose name starts with this are expected to overshoot. A spatial
+   *  spring with bounce accidentally zeroed is not a crash, it is a silent
+   *  downgrade to the thing this whole layer replaced, so it is asserted in the
+   *  positive direction too. */
+  mustOvershoot: ['spatial-', 'expressive'],
+
+  /** Nothing that runs on hover, press or focus may settle slower than this. It is
+   *  the most-executed animation in any interface and the one where latency is
+   *  read as the product being slow rather than as the animation being long. */
+  feedbackCeilingMs: 200,
+  feedbackFamilies: ['effects-fast', 'spatial-fast'],
+
+  /** Ceiling for everything else. Past this an animation is holding the interface
+   *  hostage; the timing research puts complex transitions at 300–400ms and treats
+   *  beyond that as needing justification. `expressive` is the documented
+   *  exception and is allowed its own, higher, ceiling.  */
+  generalCeilingMs: 500,
+  expressiveCeilingMs: 600,
+
+  /** Peak overshoot above this reads as a toy rather than as mass. 0.38 bounce
+   *  measures ~9.5%; the gate is set where a reviewer would start calling it
+   *  bouncy, not at the current value, so there is room to tune without moving
+   *  the gate. */
+  maxOvershoot: 0.2,
 };
 
 /* ================================================================== *
@@ -300,13 +478,73 @@ const SURFACE = {
   'tertiary-variant': [S('neutral/20'), S('neutral/120')],
   // elevated and overlay were BOTH neutral/120 in dark and both white in light,
   // so a popover sitting on a card had no boundary in either mode. Dark overlay
-  // moves to the 115 half-step; it is also the shadcn --popover target, which at
-  // 120 collided with --secondary as well. Light keeps both at white: white is
-  // the top of the ramp and a popover on an off-white page separates by shadow,
-  // not by hue — so only the light pair is exempt, and the collision gate below
-  // asserts the dark pair.
-  elevated: [S('neutral/white'), S('neutral/120')],
-  overlay: [S('neutral/white'), S('neutral/115')],
+  // moves off 120; it is also the shadcn --popover target, which at 120 collided
+  // with --secondary as well. Light keeps both at white: white is the top of the
+  // ramp and a popover on an off-white page separates by shadow, not by hue — so
+  // only the light pair is exempt, and the collision gate below asserts the dark
+  // pair.
+  //
+  // DARK ELEVATION, SECOND PASS. Moving overlay to 115 fixed overlay-vs-elevated
+  // and left the real problem standing: elevated was still neutral/120, which is
+  // byte-identical to secondary, so a popover on a nested surface had no boundary
+  // except its border. That is why every floating thing in this system was
+  // outlined — the stroke was compensating for a ladder that did not express
+  // elevation. Measured in dark, the old order was
+  //
+  //     tertiary 29.5  >  overlay 26.6  >  elevated 24.1  ==  secondary 24.1
+  //
+  // i.e. a muted panel read as MORE elevated than a dialog, and a popover read as
+  // exactly as elevated as the input background beneath it.
+  //
+  // In dark mode lightness is the elevation signal — there is nowhere below
+  // near-black to go, so depth has to be built upward, which is the model Material
+  // uses and the reason its dark surfaces get lighter with every step. The
+  // floating pair therefore moves above tertiary rather than below it:
+  //
+  //     overlay 38.1 > elevated 33.8 > tertiary 29.5 > secondary 24.1 > primary 18.9 > page 12.3
+  //
+  // Every rung is now ΔL 4.3–6.6 clear of the next, which is enough for the
+  // surface alone to carry the boundary and is what lets the borders come off.
+  // The monotonicity gate in build.mjs holds this ordering so a future step cannot
+  // quietly re-invert it.
+  //
+  // BOTH land on 105 in dark, and there is exactly one rung available. Finding
+  // that took two wrong attempts worth recording, because the constraint is not
+  // obvious and the next person to raise this ladder will hit it again.
+  //
+  // The ceiling is set by text, not by taste. content/tertiary is gated at 4.5:1
+  // against every surface, and it clears that floor only up to L* 36.3 — so no dark
+  // surface may be lighter than that, full stop. Measured at the candidate rungs:
+  //
+  //     neutral/95  L* 42.9   tertiary 3.40   fails
+  //     neutral/100 L* 38.1   tertiary 4.17   fails
+  //     neutral/105 L* 33.8   tertiary 4.95   passes
+  //
+  // The floor under it is surface/tertiary at neutral/110 (L* 29.5). So the whole
+  // available window for a floating surface is 29.5 < L* <= 36.3, and neutral/105
+  // is the only rung inside it. One rung, two tokens.
+  //
+  // They therefore share it, exactly as they share neutral/white in light — and
+  // for the same reason the light exemption already gives: at the top of the usable
+  // ramp a popover separates from what is under it by shadow and elevation, not by
+  // hue. The dark pair was only ever forced apart because both sat at 120 and
+  // collided with surface/secondary; moving both above tertiary fixes that
+  // collision properly, and the pair-wise assertion between them was standing in
+  // for it. See COLLISION_ASSERTIONS.
+  //
+  // The other wrong attempt: taking 105 for a surface and pushing the disabled
+  // fills off it. neutral/105 dark is one of two rungs in the ramp that no enabled
+  // surface and no enabled fill occupies, FILL_DISABLED_OVERRIDE took three
+  // attempts to find it, and a disabled fill that collides with an enabled one
+  // reads as a live control. Surfaces do not get to evict it — but they do get to
+  // sit on it, because a disabled fill inside a popover is still distinguishable
+  // from the popover by its own label and border, and the collision sweep asserts
+  // the pair explicitly.
+  //
+  //     elevated == overlay 105 (33.8) > tertiary 110 (29.5) > secondary 120 (24.1)
+  //       > primary 130 (18.9) > page 150 (12.3)
+  elevated: [S('neutral/white'), S('neutral/105')],
+  overlay: [S('neutral/white'), S('neutral/105')],
   inverse: [S('neutral/150'), S('neutral/10')],
   fixed: [S('neutral/white'), S('neutral/white')],
   brand: [S('brand/10'), A15('brand/60')],
@@ -730,15 +968,39 @@ const CONTENT_ON = {
 //                        exact failure I11c describes.
 //   neutral/30 light  == fill/tertiary. Same problem, other mode, unnoticed
 //                        because only the dark collision was reported.
-// neutral/25 and the new neutral/105 are the two rungs nothing else occupies.
+//   neutral/105 dark  == surface/elevated and surface/overlay, once the dark
+//                        ladder was raised so a floating surface sits above the
+//                        muted one. 105 was chosen here precisely because nothing
+//                        occupied it, and raising the ladder occupied it — the
+//                        fourth attempt, and the first one caused by a change
+//                        somewhere else in the file.
+//   neutral/100 dark  == nine enabled fills, including secondary-active,
+//                        tertiary-hover and elevated-active. The fifth attempt,
+//                        and the same failure as 110: a dead control reading as a
+//                        live one.
+// neutral/25 light and neutral/115 dark are the rungs nothing else occupies.
 // Verified against every surface and fill value in both modes by the assertions
 // below, which now enumerate the whole surface family rather than two members.
+//
+// 115 is DARKER than every surface it sits on, and that direction is the decision
+// rather than an accident of what was free. neutral/95 was also unoccupied and was
+// the other candidate; it is rejected because in dark mode lighter reads as more
+// prominent, so a disabled fill above the surfaces would look more actionable than
+// the enabled controls beside it — misleading in exactly the direction that
+// matters. A disabled control has to recede.
+//
+// It sits ΔL 2.9 from the enabled fills at neutral/110, which is close, and is
+// accepted only because the pair is never distinguished by fill alone: a disabled
+// control also carries content/on-*-disabled at neutral/70 against content/primary
+// at neutral/20, and that gap is enormous. Note also that WCAG 1.4.3 exempts
+// disabled controls from any contrast floor, so nothing here is constrained by the
+// L* 36.3 text ceiling the surfaces are held under — only by collision.
 export const FILL_DISABLED_OVERRIDE = {
-  brand: [S('neutral/25'), S('neutral/105')],
-  success: [S('neutral/25'), S('neutral/105')],
-  warning: [S('neutral/25'), S('neutral/105')],
-  critical: [S('neutral/25'), S('neutral/105')],
-  info: [S('neutral/25'), S('neutral/105')],
+  brand: [S('neutral/25'), S('neutral/115')],
+  success: [S('neutral/25'), S('neutral/115')],
+  warning: [S('neutral/25'), S('neutral/115')],
+  critical: [S('neutral/25'), S('neutral/115')],
+  info: [S('neutral/25'), S('neutral/115')],
 };
 
 /** Tier 3 — data visualisation. Per-mode, unlike the shipped --chart-* which
@@ -1003,6 +1265,15 @@ export const CONTRAST_ASSERTIONS = [
   ['color/content/primary', 'color/surface/brand-flat', 4.5],
   ['color/content/primary', 'color/surface/critical-flat', 4.5],
 
+  // The fixed pair, which had no gate at all until the icon button needed one.
+  // `fixed` is the pair that does not invert: white fill, near-black label, in both
+  // modes, for a control sitting on an image whose mode is unknowable. Both members
+  // are mode-independent, so one assertion covers both modes.
+  //
+  // Purely additive — it gates two tokens that already shipped and were simply never
+  // measured against each other. Nothing here changes a value.
+  ['color/content/fixed-primary', 'color/fill/fixed', 4.5],
+
   // Quiet text, on EVERY surface it can land on rather than only the page.
   // content/tertiary was gated at 3:1 against the page alone and measured
   // 3.93 / 3.66 / 3.07:1 on the three surfaces in light — it failed 4.5:1
@@ -1027,6 +1298,20 @@ export const CONTRAST_ASSERTIONS = [
   // Secondary text on the surfaces, not just the page.
   ['color/content/secondary', 'color/surface/secondary', 4.5],
   ['color/content/secondary', 'color/surface/tertiary', 4.5],
+  // The two members of the surface family this list never reached. content/* was
+  // gated against the page and three surfaces and stopped there, so the two
+  // floating surfaces — the ones a popover and a dialog are made of — were the
+  // only places text could be set without a floor. Exactly the shape of I-series
+  // bug CLAUDE.md rule 4 describes, and it went unnoticed while both were dark
+  // enough to pass by luck. Raising the dark ladder is what surfaced it: at
+  // neutral/95 the secondary pair measured 4.49:1 against a 4.5 floor, which is a
+  // fail nothing would have reported.
+  ['color/content/primary', 'color/surface/elevated', 4.5],
+  ['color/content/primary', 'color/surface/overlay', 4.5],
+  ['color/content/secondary', 'color/surface/elevated', 4.5],
+  ['color/content/secondary', 'color/surface/overlay', 4.5],
+  ['color/content/tertiary', 'color/surface/elevated', 4.5],
+  ['color/content/tertiary', 'color/surface/overlay', 4.5],
 
   // AA 3:1 — large text and meaningful non-text boundaries (WCAG 1.4.11)
   ['color/border/focus', 'color/background', 3],
@@ -1155,7 +1440,33 @@ export const COLLISION_ASSERTIONS = [
   // there separates by shadow and border, not by fill. Asserting light would
   // force a grey popover onto a white page to satisfy a gate, which is the exact
   // failure mode H1 is about: a gate may veto a colour, it may never choose one.
-  ['color/surface/elevated', 'color/surface/overlay', 'dark'],
+  // elevated vs overlay is NO LONGER asserted, in either mode, and that is a
+  // deliberate removal rather than a gate relaxed to make a build pass.
+  //
+  // It existed because both sat at neutral/120 in dark, where they were also
+  // byte-identical to surface/secondary — so a popover on a card had no boundary.
+  // The pair-wise assertion was standing in for the real defect, which was that
+  // neither surface was above the ladder it floats over. Both now sit at
+  // neutral/105, ΔL 4.3 clear of surface/tertiary and 9.7 clear of
+  // surface/secondary, and the assertions below hold that. With the real
+  // separation asserted, forcing the two floating tokens apart from each other
+  // asserts nothing — light has never asserted it, for the reason the original
+  // comment gives, and that reason now holds in dark too.
+  //
+  // The sibling this list forgot for the whole life of the repo: elevated and
+  // overlay were gated against each other while elevated sat byte-identical to
+  // secondary. Rule 4 — gating one member of a family and not the rest is this
+  // repo's most repeated bug, and a surface is in a family with every other
+  // surface it can be stacked on.
+  ['color/surface/elevated', 'color/surface/secondary', 'dark'],
+  ['color/surface/elevated', 'color/surface/tertiary', 'dark'],
+  ['color/surface/overlay', 'color/surface/secondary', 'dark'],
+  ['color/surface/overlay', 'color/surface/tertiary', 'dark'],
+  // Both floating surfaces now sit on the disabled-fill rung, so the pair that
+  // FILL_DISABLED_OVERRIDE spent three attempts avoiding has to be asserted
+  // directly rather than assumed from "nothing else occupies 105".
+  ['color/fill/brand-disabled', 'color/surface/elevated'],
+  ['color/fill/brand-disabled', 'color/surface/overlay'],
   // A hovered sidebar item must not erase the sidebar's divider. Both 30 / 120.
   ['color/sidebar/item-hover', 'color/sidebar/border'],
   ['color/sidebar/item-hover', 'color/sidebar/background'],

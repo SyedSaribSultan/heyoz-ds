@@ -1,0 +1,202 @@
+{
+  "id": "skeleton",
+  "definition": "A reserved rectangle in the shape of the response, pulsing until it arrives. The only ambient loop in the system, and the only motion the reduced-motion block stops outright.",
+  "reachForItWhen": [
+    "The response is coming, its shape is known, and the slot's height can be reserved before it lands.",
+    "The wait outlasts one 1500ms `--oz-duration-ambient` cycle; anything shorter shows a half-pulse and then a jump.",
+    "The region lands on `color/background`, `surface/primary` or `surface/elevated` — the beds where the bar clears 1.17:1.",
+    "Several regions of one screen resolve independently and each holds its own space — the clip table and the render counter."
+  ],
+  "reachForSomethingElseWhen": [
+    {
+      "situation": "The request failed and there is nothing left to wait for — \"Model timed out after 90 seconds\".",
+      "instead": "Alert, variant `critical`. It is `role=\"alert\" aria-live=\"assertive\"` and interrupts; the skeleton's group is polite and queues."
+    },
+    {
+      "situation": "The fetch succeeded and returned nothing.",
+      "instead": "The dashed panel in `showcase/components/sections/Assembled.tsx` — \"No renders yet\" over a `primary` Button reading \"Generate your first clip\". No EmptyState recipe owns it; it is a bordered `<div>`, a heading step and a Button."
+    },
+    {
+      "situation": "The row already exists and one field is still resolving — the clip is listed, the render is not finished.",
+      "instead": "Badge `info` with `dot`, reading \"Rendering\". A skeleton there hides data that has already arrived."
+    },
+    {
+      "situation": "The user pressed a control and is waiting on that control.",
+      "instead": "Button, kept mounted in its bound `disabled` state. Button's own rule against disabling — a disabled `<button>` leaves the tab order, so the user who needs the reason cannot reach the control carrying it — governs an action that is unavailable and needs explaining. An in-flight request explains itself by ending, and the axis is that difference."
+    },
+    {
+      "situation": "The shape of the response is unknown — a search returning between zero and 200 clips.",
+      "instead": "One `line` bar inside `SkeletonGroup` plus its label. A guessed run of eleven bars that resolves to two rows reflows by the difference, and the guess is what caused it."
+    }
+  ],
+  "variants": [
+    {
+      "variant": "line",
+      "useWhen": "Text that has not arrived — a clip name, a model name, a duration. Vary `width` across the run; four bars at one width read as a chart rather than as prose.",
+      "avoidWhen": "Standing in for `display lg/md/sm` or `heading xl/lg/md`. Those six steps run through `clamp()` on `100vw` in `dist/tokens.css`, so a `heading-md` line box is 26.67px at its 20px floor and 32px at its 24px ceiling — a 12px bar under-reserves by 14.67px to 20px per line and the shortfall moves with the viewport. `heading sm`, `heading xs` and every `body` and `label` step are fixed and safe."
+    },
+    {
+      "variant": "block",
+      "useWhen": "A media slot with a real aspect ratio — a clip still, a chart, a preview pane. One `block` per record; the metadata beneath it is `line`.",
+      "avoidWhen": "The real element is not 16:9 — a square avatar grid, a portrait render. `geometryFor('block')` holds `aspect-video` and the grid reflows the moment the image lands. Change `geometryFor()` in `skeleton.recipe.ts`, never the `className`."
+    },
+    {
+      "variant": "circle",
+      "useWhen": "A non-interactive avatar at 40px (`--oz-space-11`), with one `line` bar per text row beside it — the count comes from the row being reserved, and a circle on its own reserves the avatar and none of the name.",
+      "avoidWhen": "The real avatar is a link or a button. Those clear `--oz-target-min` at 44px, so the circle under-reserves by 4px and the row shifts when the image loads. Widen the geometry in `geometryFor()`."
+    }
+  ],
+  "sizes": {
+    "guidance": [
+      {
+        "size": "md",
+        "useWhen": "Every skeleton. `sizeClasses.md` is the empty string, so the size axis emits no class at all — height comes from `geometryFor(variant)` and never from the size."
+      }
+    ],
+    "note": "`ComponentRecipe` requires a size list, so `md` exists to satisfy the axis. A second size would restate all three geometries to change one number, and the number that actually varies is the line box the bar stands in: 24px for `body md` (16px x 1.5), 20px for `body sm` (14px x 1.4286). The 12px bar is a mark inside that box rather than the box itself, so it works in both; what changes with the text is the gap between bars, and that belongs to the caller's container."
+  },
+  "copy": [
+    "The bar renders no author-supplied string. `sampleChildren()` returns the empty string and `Skeleton` binds no child slot, so `SkeletonGroup`'s `label` is the only writable copy on this component.",
+    "Group label copy:",
+    "open with the gerund and name the objects the user is waiting for — accept `Loading recent renders`, the string `Assembled.tsx` ships",
+    "state the count where it is known before the response lands — `Loading four clips` tells a screen-reader user what the wait is proportional to; `Loading` tells them the page is unfinished and nothing else",
+    "use the user's nouns — clips, renders, models — and reject `Loading skeleton`, which names the implementation, and `Loading content`, which names the abstraction",
+    "keep it to one clause in sentence case with no terminal full stop — it is read aloud, and the stop buys a pause a status string has no use for",
+    "reject `Please wait`, which instructs the user to do the thing they are already doing, and `Loading…`, which announces that something is happening and never what"
+  ],
+  "motion": "A pulse rather than a spring, because a wait has no end the component knows about and therefore nothing to settle toward. Opacity alone: a bar that slid or shimmered would claim the content is arriving from a direction, and it is arriving from nowhere — a travelling highlight also drops the mark below its resting value for part of every cycle, on something already faint. Nothing transitions, because a skeleton has no state to move between; it is replaced. No press, because there is nothing here to press.",
+  "behaviourUnderPressure": [
+    {
+      "case": "The response resolves in under 1500ms.",
+      "behaviour": "The pulse reaches its 0.45 trough at 750ms, so a 400ms wait shows a bar fading and then vanishing — a flash that communicated nothing and reads as a rendering fault. The deciding variable is whether the wait is predictable before the request starts: a Seedance 2 render takes about a minute every time, so its group mounts one cycle late and a fast response never draws a bar; a clip list that comes back in 200ms or in four seconds cannot be predicted, so its group mounts at once and holds one full 1500ms cycle once shown. Delaying an unpredictable wait moves the flash later rather than removing it."
+    },
+    {
+      "case": "The arriving string is longer than the bar — \"harbour-pan-04\" in a 120px column.",
+      "behaviour": "No overflow guard applies. `.oz-truncate` and `.oz-break` in `dist/layout.css` act on text and the bar has none, so the skeleton reserves a rectangle and the string is what truncates once it lands. Size the bar to the column, not to the string you expect."
+    },
+    {
+      "case": "Zero items — the fetch succeeds and returns nothing.",
+      "behaviour": "The skeleton never becomes the empty state. The group unmounts and the dashed panel replaces it. A run of bars pulsing over a completed empty response reads as a stalled request, and the user waits for something that already finished."
+    },
+    {
+      "case": "`prefers-reduced-motion: reduce`.",
+      "behaviour": "The pulse stops dead — `.oz-ambient` takes `animation: none !important`, and this is the one component in the system the graded policy switches off rather than shortens (B16). Nothing is lost: the reserved shape was carrying the message and the pulse never was. The bar holds `fill/tertiary` flat and still says \"not here yet\"."
+    },
+    {
+      "case": "Dark mode with the loading region on `surface/tertiary`.",
+      "behaviour": "Both resolve to `#2E2C2B`. Contrast is 1.000:1 — the bar is not faint, it is absent, and the region reads as an empty panel rather than a busy one. Move the region onto `surface/primary` (1.333:1 dark) or `surface/elevated` (1.172:1). No gate catches this; a dark-mode screenshot does."
+    },
+    {
+      "case": "The request fails and the group is left mounted.",
+      "behaviour": "`aria-busy=\"true\"` persists for as long as the group is in the tree, so a screen reader reports the region as busy indefinitely, and the pulse is indistinguishable from a live fetch for everyone else. Unmount the group on both outcomes, success and failure."
+    }
+  ],
+  "whatTheBuildEnforces": {
+    "enforced": [
+      {
+        "claim": "`fill/tertiary` resolves to a real colour in both modes, so a typo in the binding cannot ship as one silently unstyled bar.",
+        "mark": "E",
+        "assertion": "The `bindingRoles` resolution loop in `showcase/scripts/verify-contrast.ts`, run by `npm run verify`. It collects every token a recipe names and exits non-zero on any that does not resolve in light or dark."
+      },
+      {
+        "claim": "A `SkeletonGroup` with no label does not compile.",
+        "mark": "S",
+        "assertion": "`label: string` is a required prop on `SkeletonGroup` in `showcase/components/ui/Skeleton.tsx`. TypeScript refuses the call site; no gate is involved."
+      },
+      {
+        "claim": "Only `line`, `block` and `circle` exist, and a fourth cannot be added without giving it a geometry.",
+        "mark": "S",
+        "assertion": "`geometryFor()` in `skeleton.recipe.ts` is a total `Record<SkeletonVariant, string>`, so widening the union fails at the geometry map before it reaches a call site."
+      },
+      {
+        "claim": "The pulse stops under `prefers-reduced-motion: reduce` for every consumer, not only the showcase.",
+        "mark": "S",
+        "assertion": "`reducedMotionBlock()` in `build/build.mjs` emits `.oz-ambient` and the block that switches it off into the same `dist/tokens.css`. An app installing the file cannot take one without the other (B16). Nothing measures the emitted block; the guarantee is that there is a single source."
+      },
+      {
+        "claim": "No literal transform in this recipe escapes `--oz-motion-spatial-scale`.",
+        "mark": "E",
+        "assertion": "The `TRANSFORM_UTILITY` source sweep over `MOTION_SOURCES` in `showcase/scripts/verify-motion.ts`, which reads `Recipe.ts` and every `lib/recipes/*.recipe.ts`. It passes here with nothing to find, because this component emits no transform (B19)."
+      }
+    ],
+    "notEnforced": [
+      "Nothing measures `fill/tertiary` against anything at all. It appears in zero of the 250 entries in `reports/audit.json`, so the 1.000:1 collision with `surface/tertiary` in dark clears every gate in the system. The human check is the Assembled screen's `loading` view in dark mode.",
+      "`verify-contrast.ts` skips any binding lacking both `fg` and `bg` — `if (!merged.fg || !merged.bg) continue;`. All three skeleton bindings declare `bg` only, so this component contributes zero pairings to the 4.5:1 recipe sweep.",
+      "Nothing requires a `Skeleton` to sit inside a `SkeletonGroup`. A bare bar renders, compiles and is `aria-hidden=\"true\"` — silence where a sighted user sees a busy page. Review with a screen reader is what catches it.",
+      "The ambient loop has no gate. The 22 motion assertions measure the seven springs' overshoot, settle and endpoints; `oz-pulse` is not a spring, so its 1500ms period and its 0.45 trough are unmeasured.",
+      "`motionConsistent` returns `true` for `properties: 'none'` without checking anything, so the declared `effects-default` is never held against a family. It emits nothing either: `motionClasses` returns the empty string.",
+      "`aria-hidden=\"true\"` is written before `{...rest}` spreads in `Skeleton.tsx`, so a caller passing `aria-hidden={false}` wins and nothing reports it. Verify in the rendered DOM, not in the source.",
+      "Nothing measures a run of bars against the text it replaces. The 24 layout gates cover `minmax()` clamping and `min-width: 0`; reserved height is not a property any of them can see."
+    ]
+  },
+  "looksLikeABugButIsNot": [
+    {
+      "observation": "In dark mode on an `overlay` Card, the bar is darker than the card it sits on rather than lighter.",
+      "why": "`surface/elevated` moved to `neutral/105` (`#393735`) and `fill/tertiary` stayed at `#2E2C2B`, so the mark now sits below its bed: 1.172:1, polarity inverted. Everywhere else in dark the bar is lighter. The ladder moved, the fill did not (B18)."
+    },
+    {
+      "observation": "The `md` size emits no class.",
+      "why": "`sizeClasses.md` is the empty string. Height comes from `geometryFor(variant)` — `line` is `h-space-4` (12px), `circle` is `w-space-11` (40px), and `block` declares no height at all, deriving it from `aspect-video` and the container width. `md` exists because `ComponentRecipe` requires a size list; shape is the variant's job."
+    },
+    {
+      "observation": "`.oz-enter-fade` never appears in the rendered class attribute, although the recipe declares `enter: 'fade'`.",
+      "why": "`classes()` composes `shape`, `motionClasses`, `sizeClasses` and the bindings, and never `enterClass` — an entrance runs once on mount and a transition runs on every state change, so they are separate accessors. The entrance is the caller's to apply, once, on the group. Eleven bars each fading independently reads as a rendering fault."
+    },
+    {
+      "observation": "The bar measures 1.199:1 against a `flat` Card in light and satisfies no contrast checker.",
+      "why": "It carries no text and is `aria-hidden=\"true\"`, so 1.4.3 does not reach it and there is no graphical object anyone needs to understand; the information is in `SkeletonGroup`'s live-region string. Darkening the fill is not local either — `fill/tertiary` is also the off track of every Switch, and its hover sibling is the bridge's `--accent`."
+    }
+  ],
+  "related": [
+    {
+      "component": "Alert",
+      "difference": "When the wait runs to minutes rather than to cycles, an `info` Alert says so in words — \"Three clips are queued\" — instead of holding a slot open: a 60-second render is 40 pulses at `--oz-duration-ambient`, every one of them claiming the content is about to land."
+    },
+    {
+      "component": "Badge",
+      "difference": "When each row of a set finishes at its own moment, a Badge per row names which one is still going; `SkeletonGroup` announces a single `label` for the whole region, so a screen-reader user hears one wait however many rows are behind it."
+    },
+    {
+      "component": "Card",
+      "difference": "When deciding where a loading region goes, the card's variant picks the bed the bar is measured against — `flat`, `raised` and `interactive` are `surface/primary` (1.199:1 light, 1.333:1 dark), `overlay` is `surface/elevated` (1.303:1 light, 1.172:1 dark)."
+    },
+    {
+      "component": "Table",
+      "difference": "When the thing loading is a table, the bars replace the rows inside a `flat` Card rather than rendering an empty `<table>` with a header and no body, and the container carries the entrance."
+    },
+    {
+      "component": "Input",
+      "difference": "When a field's value is still resolving rather than the region around it, the field keeps its `label` and its border and a `line` bar stands in for the value alone — replacing the whole field removes the name of the thing being loaded."
+    },
+    {
+      "component": "Button",
+      "difference": "A Button is present the whole time and changes label; a Skeleton is absent afterwards. If the slot survives the load, it was never a skeleton — it was a disabled control."
+    },
+    {
+      "component": "Checkbox",
+      "difference": "A Checkbox reserves a 16px box that stays; a Skeleton reserves the row it will become and then leaves. Skeletons are never per-control — one per region, or the page flickers."
+    }
+  ],
+  "changed": [
+    {
+      "what": "2026-08-02 — `surface/elevated` and `surface/overlay` are legal beds for a loading region. B18.",
+      "why": "Both dark floating surfaces moved from `neutral/120`/`neutral/115` to `neutral/105` (`#393735`, L* 33.8), above `surface/tertiary` instead of below it. The guidance previously named three beds and omitted these two, and quoted 1.182:1 measured against the retired `#211F1D`, which was byte-identical to `surface/secondary`. Every dark figure on this page was recomputed from `dist/tokens.css`; none was carried over."
+    },
+    {
+      "what": "2026-08-02 — on a dark `overlay` Card the bar is darker than the card. B18.",
+      "why": "1.172:1 with the polarity inverted, where every other dark bed puts the bar above its background. Guidance previously described the skeleton as one rung up the ladder from whatever it sits on, which is now true of four beds out of five."
+    },
+    {
+      "what": "2026-08-02 — every ratio on this page is `D`, not `E`. B18b.",
+      "why": "Contrast assertions went 118 to 130 when `content/*` was finally gated against `surface/elevated` and `surface/overlay`. None of the six new assertions names `fill/tertiary`, and no assertion anywhere does, so the surface family is still unswept for this component."
+    },
+    {
+      "what": "2026-08-02 — the disabled Button this page prescribes keeps an edge on a dark popover. B18c.",
+      "why": "Disabled fills moved to `neutral/115` (`#272524`), 1.287:1 against `surface/elevated`. Left at `neutral/105` they would have been byte-identical to it at 1.000:1, and a control kept mounted beside a loading region on an `overlay` Card would have disappeared into the card."
+    },
+    {
+      "what": "2026-08-01 — first published.",
+      "why": "Guidance split from the recipe notes in `skeleton.recipe.ts`, which remain the source for variants, sizes, states and motion."
+    }
+  ]
+}

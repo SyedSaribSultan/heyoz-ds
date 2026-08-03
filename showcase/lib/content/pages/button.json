@@ -1,0 +1,213 @@
+{
+  "id": "button",
+  "definition": "An action committed on this screen, never a route off it. The only recipe that mixes both focus rings, and the only one with a press.",
+  "reachForItWhen": [
+    "The user commits something and stays on the screen afterwards — generating a render, saving a draft, deleting a project",
+    "The screen has one reason to exist and the user has to find it without reading the page",
+    "A dialog needs a confirm and a way out, and the way out has to be reachable first",
+    "A toolbar or card header needs per-item actions that lose against the content they act on",
+    "A dense table row needs an action a mouse or keyboard drives and no thumb ever reaches"
+  ],
+  "reachForSomethingElseWhen": [
+    {
+      "situation": "The press changes the address bar",
+      "instead": "An `<a>`. `<button>` carries no `href`, so Cmd-click, middle-click and \"copy link address\" stop working, and a screen reader announces \"button\" to a user who is about to leave the screen."
+    },
+    {
+      "situation": "The control holds a lasting on or off state",
+      "instead": "Switch when the write is immediate, Checkbox when it is submitted with the form. No Button variant binds `selected`, and the prefix that state compiles to — `aria-selected:` — is invalid on `<button>`, so forcing the look with a className gives a control that appears pressed and announces nothing."
+    },
+    {
+      "situation": "The thing selected is a table row",
+      "instead": "Table's row binding, where selection is `aria-selected` — one attribute carrying the visual state and the accessible state, so the two cannot disagree."
+    },
+    {
+      "situation": "The word reports a status and nothing happens on press",
+      "instead": "Badge. A badge takes no tabstop and no focus ring, so anything clickable inside one is a dead control that reads as live."
+    },
+    {
+      "situation": "The whole card opens one thing",
+      "instead": "Card's `interactive` variant. A button inside it is a second target inside the first, and the outer target wins every click that lands on the gaps between the inner ones."
+    }
+  ],
+  "variants": [
+    {
+      "variant": "primary",
+      "useWhen": "The view has one reason to exist and this is it. At most one per view — the exception is a flow launched from inside the page, which brings its own primary and takes the count away with it.",
+      "avoidWhen": "Two actions are genuinely equal in weight. Nothing in the binding table distinguishes one primary from a second, so a pair is one signal split in half; the answer is primary beside secondary."
+    },
+    {
+      "variant": "secondary",
+      "useWhen": "The user picks between two real alternatives — `Save draft` beside `Generate video`. One primary and one secondary per row; a third action is ghost.",
+      "avoidWhen": "The action is a retreat: cancel, dismiss, back. A bordered box makes the retreat as findable as the commitment beside it, which is the job ghost holds."
+    },
+    {
+      "variant": "ghost",
+      "useWhen": "The action has to lose against what it acts on — `Docs` and `Duplicate` in a card header, `Reset` beside the composer, and the way out of a destructive dialog. No cap; ghost is the only variant without one.",
+      "avoidWhen": "The button sits on `surface/inverse`. Ghost's resting label is `content/secondary`, which measures 1.46:1 there in light and 1.67:1 in dark; bind `content/inverse-secondary` in `button.recipe.ts` first, which measures 11.17:1 and 12.78:1 on the same two surfaces."
+    },
+    {
+      "variant": "destructive",
+      "useWhen": "The press is irreversible and the label names what is destroyed. At most one per dialog, and never the dialog's initial focus — Enter is still under the finger that opened it, and the recipe binds no confirmation step.",
+      "avoidWhen": "The action undoes: sign out, cancel a subscription inside its grace period, remove from a list. Spending the red there leaves nothing louder for the delete that does not undo."
+    }
+  ],
+  "sizes": {
+    "guidance": [
+      {
+        "size": "sm",
+        "useWhen": "A dense row a mouse or keyboard drives and no thumb reaches — `Docs` and `Duplicate` in a card header."
+      },
+      {
+        "size": "md",
+        "useWhen": "Everything else, and everything on a touch screen. This is the size `Button.tsx` ships."
+      },
+      {
+        "size": "lg",
+        "useWhen": "One action standing alone with nothing beside it to compete against — the empty state's `Generate your first clip`."
+      }
+    ],
+    "note": "The pointer picks the size, not the visual weight. Height is padding plus the type step plus the 1px reserved border, so `sm` lands at 30px: clear of WCAG 2.2 SC 2.5.8 at 24px, short of SC 2.5.5 at 44px. `md` computes to 34px and is lifted to 44px by `min-h-target`; `lg` computes to 50px and never reaches its own 48px floor. An icon-only `sm` measures 42 × 30px with the 16px glyphs the showcase draws — under 44px on both axes — so icon-only starts at `md`, and the recipe binds no `min-width` even though `min-w-target` exists in the preset."
+  },
+  "copy": [
+    "Label copy: write the verb and its object — `Generate video`, never `Submit`, which names the form mechanism instead of the outcome",
+    "Label copy: name the consequence on a destructive label — `Delete permanently`, never `Continue`, which reads identically on a dialog that deletes and one that does not",
+    "Label copy: reject `OK` and `Yes` — both are legible only beside the question, and a screen-reader user arriving by Tab hears the button on its own",
+    "Label copy: separate two buttons sharing a verb by their object — `Delete draft` beside `Delete permanently`, never `Delete` twice",
+    "Label copy: shorten rather than truncate — the shape binds `whitespace-nowrap`, so `Delete perman…` is not a state this component can reach and a wider button is; `Generate your first clip` is the longest label shipped and it stands alone in an empty state",
+    "Label copy: set sentence case and end with no punctuation — `--oz-tracking-label-sm` is 0.01em, tuned for mixed case, and uppercase needs more tracking than the step gives it",
+    "The label is the only author-supplied string this component renders. There is no title, helper, placeholder, loading or error slot to write, and adding one is adding a component."
+  ],
+  "motion": "A button gives under the press and moves at no other time. The give is a physical claim — the surface moved because you moved it — and it can only be made after contact. A control that shifts on approach moves the target while the pointer is still travelling, so the user lands beside the button they aimed at. Nothing animates in, and that is an answer, not a gap: a control rising into place arrives late under a cursor already reaching for it.",
+  "behaviourUnderPressure": [
+    {
+      "case": "A label longer than its container",
+      "behaviour": "Grows. `whitespace-nowrap` sits on the shared shape, so there is no wrap or ellipsis policy underneath it — the button widens past its container and pushes the row. The lever is the copy. Review at `lg` with `Generate your first clip`, the longest label the showcase ships."
+    },
+    {
+      "case": "A button row narrower than the sum of its labels",
+      "behaviour": "Wraps if its container wraps; the buttons never shrink. The reserved border box holds a bordered `secondary` and an unbordered `primary` at one height, so a row breaking onto two lines develops no 1px step between them."
+    },
+    {
+      "case": "Translated labels longer than the English source",
+      "behaviour": "Grow on one line, exactly as any long label does. Size a toolbar against the longest string in the locale set rather than the English one — a bar fitted to `Generate video` breaks on the first translation past it, and the button gives no warning because it cannot wrap."
+    },
+    {
+      "case": "`prefers-reduced-motion: reduce`",
+      "behaviour": "The press loses its scale entirely. B19 routed it through `--oz-motion-spatial-scale`, which the reduced-motion block sets to 0, so the compiled `calc(1 − 0.02 × 0)` resolves to exactly 1 and the colour change carries the press alone — fades are untouched by design (B16)."
+    },
+    {
+      "case": "Disabled, in either mode",
+      "behaviour": "`primary` and `destructive` converge byte-identically — same fill token, same label token — so nothing about a disabled button says which action it was (I5). `ghost` does not converge with them: it keeps the page behind it and fades only its label, to 2.21:1 in light and 2.81:1 in dark, the faintest control the system draws. Keep the button enabled and put the reason in a focusable sibling instead."
+    }
+  ],
+  "whatTheBuildEnforces": {
+    "enforced": [
+      {
+        "claim": "White stays white on the brand and critical fills, in every state and both modes.",
+        "mark": "E",
+        "assertion": "`APCA_ASSERTIONS` at Lc 60 — 30 pairs, of which this component owns 12. `reports/audit.json` puts the tightest of all thirty at `content/on-brand` on `fill/brand-active` in dark, Lc 60.41, so any move in the dark brand ramp re-runs the sweep before it lands."
+      },
+      {
+        "claim": "A disabled button cannot take the colour of a live control.",
+        "mark": "E",
+        "assertion": "`FILL_DISABLED_OVERRIDE` plus the generated disabled-fill sweep in `build.mjs` `validate()`, which asserts every disabled fill against every enabled surface and every enabled fill in both modes. A hand-written list failed this three times (I12b), and a fourth time at B18c when the surface ladder moved onto the rung the fill was using."
+      },
+      {
+        "claim": "Every token the four variants name resolves in both modes.",
+        "mark": "E",
+        "assertion": "`recipe.bindingRoles` fed through `resolveRole` in `showcase/scripts/verify-contrast.ts`; an unresolved name is reported before any ratio is measured. Without it a typo ships as one silently unstyled state."
+      },
+      {
+        "claim": "A fifth variant cannot be added without declaring which focus ring it takes.",
+        "mark": "S",
+        "assertion": "`focus` is a required field on `VariantBinding` in `showcase/lib/core/types.ts`, with no default. The variant does not compile until the question is answered — the type system asks because the build cannot."
+      },
+      {
+        "claim": "The press cannot regress to a literal transform.",
+        "mark": "E",
+        "assertion": "the source sweep in `showcase/scripts/verify-motion.ts` — `TRANSFORM_UTILITY` over `Recipe.ts` and every `*.recipe.ts`, with `STATE_TRANSFORMS` the only exit and a stale exemption failing too. It exists because this component's press shipped as `active:scale-[0.98]` and survived four gate suites (B19)."
+      },
+      {
+        "claim": "A colour-only transition cannot be put on an overshooting spring.",
+        "mark": "S",
+        "assertion": "`ComponentRecipe.motionConsistent`, swept across every registered recipe by `showcase/scripts/verify-motion.ts`. Overshoot on a colour clips at the channel boundary, so it buys a stall and no bounce."
+      }
+    ],
+    "notEnforced": [
+      "Which of the two rings a variant actually reached for. The build measures both tokens and cannot see the pairing, so a variant declaring the wrong one compiles and ships — outward `border/focus` on `fill/brand` is 1.66:1 in light and 1.36:1 in dark, and inset `border/focus-inverse` drawn outward is 1.00:1 against the page in both. DEV-GUIDE, \"The two focus rings\", carries the reason there are two.",
+      "Whether a ghost button's fill is visible on the surface it is drawn on. `verify-contrast.ts` flattens `transparent` to `color/background`, so every ghost measurement is taken on the page — including the ones inside a dialog, where the real bed is `surface/overlay`.",
+      "Any accessible name. An icon-only button with no `aria-label` renders, clears all 32 pairings this component contributes to the sweep, and announces \"button\". Nothing in `showcase/scripts/` measures a name; `Button.tsx` spreads `...rest` onto the native element, so `aria-label=\"Delete permanently\"` is the whole mechanism.",
+      "Touch-target size. `min-h-target` is a class in `sizeClasses`, not an assertion — `sm` binds no floor and nothing fails when a 30px button is put where a thumb goes.",
+      "Whether `sizes[0]` is the size that ships. `ComponentRecipe.defaultSize` returns `sm` and `Button.tsx` defaults `size = 'md'`, so the four generated snippets and the state matrix on this page all read `sm`; paste one unchanged and the button is 30px.",
+      "The cap of one primary per view. It is a `D` convention carried in the `intent` string in `button.recipe.ts` and held by review. Two primaries compile.",
+      "That `type=\"submit\"` was passed. `Button.tsx` defaults `type` to `'button'`, so a form's primary does nothing on click and nothing when the user presses Enter in a field until the prop is set. Test it by pressing Enter in the last input, not by clicking the button."
+    ]
+  },
+  "looksLikeABugButIsNot": [
+    {
+      "observation": "White on the brand fill measures 3.55:1 and on the critical fill 4.04:1. axe and Lighthouse flag both, in both modes.",
+      "why": "These pairs are gated on APCA Lc 60 — 66.7 and 71.8 — and not on the WCAG ratio, because WCAG 2.x has no polarity term and prefers near-black on every fill lighter than `#767676`. An earlier revision \"fixed\" it and shipped a near-black label on the destructive button at Lc 42.7. Record it in the VPAT as a known divergence; the lever is the fill, never the label. DECISIONS H1."
+    },
+    {
+      "observation": "Changing `md`'s vertical padding does nothing to its height.",
+      "why": "`md` computes to 34px from padding, the type step and the 1px reserved border, and `min-h-target` lifts it to 44px — 10px of slack that swallows any padding edit under that threshold. The padding is not dead code: it sets the height the moment the type scale moves. `lg` has the opposite shape, computing to 50px and never touching its declared 48px floor."
+    },
+    {
+      "observation": "A ghost button's hover fill nearly disappears on a dark dialog.",
+      "why": "It measures 2.03:1 against the page and 1.19:1 against `surface/overlay` in dark. The fill did not change; the surface did — B18 raised both floating surfaces to `neutral/105`, and the dark ladder is deliberately ΔL 4.3–6.6 per rung (`SURFACE_LADDER`, 0.0433–0.0655 in `reports/audit.json`). Nothing gates this pairing, so check a ghost button on a dialog by eye before shipping one."
+    },
+    {
+      "observation": "`border-2` on every variant draws one pixel, not two.",
+      "why": "`dist/tailwind.tokens.js` maps `borderWidth.2` to `--oz-stroke-2`, which `dist/tokens.css` sets to 1px — the stroke scale is ordinal, not metric, and `stroke-1` is 0.5px. It is `border-transparent` on primary, ghost and destructive so a bordered `secondary` and an unbordered `primary` are the same height in one row; removing it to \"clean up\" the primary makes it 2px shorter than the secondary standing beside it."
+    }
+  ],
+  "related": [
+    {
+      "component": "Skeleton",
+      "difference": "When the button is waiting on its own request rather than being unavailable: it stays mounted in its bound `disabled` state and no skeleton stands in for it — a skeleton reserves content that will arrive, not a control that is already there."
+    },
+    {
+      "component": "Alert",
+      "difference": "When the reason an action cannot run has to be readable and reachable: a disabled `<button>` leaves the tab order, so the explanation goes in an Alert above the form, or in Input's `invalid` message when the cause is one field."
+    },
+    {
+      "component": "Input",
+      "difference": "When the target is a caret rather than a surface — an Input refuses the press-scale a Button takes, because a caret is a target with about one character of tolerance."
+    },
+    {
+      "component": "Card",
+      "difference": "When a dialog is being composed rather than a control chosen: `overlay` is a Card surface and ships no `role`, focus trap or Escape handler, so the button row's composition and focus order are settled here — one destructive plus one ghost, never two filled variants."
+    },
+    {
+      "component": "Badge",
+      "difference": "Both are a word in a box, and only one of them takes a tabstop. If pressing it does nothing, it is a Badge — a Button that does nothing is a control the keyboard can reach and the pointer cannot use."
+    },
+    {
+      "component": "Table",
+      "difference": "A Button inside a row is a second target inside the first; the row wins every click landing between the buttons. Put the action in its own cell, or make the row the target and drop the Button."
+    },
+    {
+      "component": "Switch",
+      "difference": "A Button asks for one thing to happen now; a Switch holds a state that persists. A Button whose label changes to report state is a Switch that forgot to be one."
+    }
+  ],
+  "changed": [
+    {
+      "what": "2026-08-02 — a `secondary` button on a dark dialog now reads 1.39:1 against the surface behind it. The guidance used to say the border was the only thing separating them.",
+      "why": "B18 moved `surface/elevated` and `surface/overlay` from `neutral/120`/`neutral/115` to `neutral/105` (`#393735`, L* 33.8), so a floating surface sits above `surface/tertiary` instead of below it. `surface/elevated` had been byte-identical to `fill/secondary` at `#211F1D`, which is why the pair measured 1.00:1 and why floating things needed a stroke."
+    },
+    {
+      "what": "2026-08-02 — the disabled label figure in dark is 4.92:1, not the 3.82:1 this page carried before.",
+      "why": "B18c moved `fill/*-disabled` to `neutral/115` (`#272524`), which is darker than every surface by design. `reports/audit.json` measures `content/on-brand-disabled` on `fill/brand-disabled` at 4.92:1 against a 3:1 floor; the comment in `spec.mjs` `CONTENT_ON` and DECISIONS I5 both still read 3.82. The gate passed while the prose drifted — I12a at the same site, and the comment carrying it says \"Recompute the number when you move the fill.\""
+    },
+    {
+      "what": "2026-08-02 — a button's label on a dialog surface now has a contrast floor.",
+      "why": "B18b gated `content/primary|secondary|tertiary` on `surface/elevated` and `surface/overlay` in both modes; contrast gates went 118 → 130. Ghost's resting label on a dark dialog measures 6.54:1. Before that, the two surfaces a dialog is made of were the only places text could be set with no floor at all."
+    },
+    {
+      "what": "2026-08-02 — under `prefers-reduced-motion: reduce` the press has no scale at all. The guidance used to say the press survived the preference.",
+      "why": "B19 routed it through `--oz-motion-spatial-scale`. It had shipped as a literal `active:scale-[0.98]` — introduced in the same change that wrote the multiplier rule into CLAUDE.md — and survived four gate suites, because no gate could see a literal transform inside a class string."
+    }
+  ]
+}

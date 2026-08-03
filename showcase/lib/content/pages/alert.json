@@ -1,0 +1,220 @@
+{
+  "id": "alert",
+  "definition": "Something happened, stated in words. The copy carries the meaning and the role colour only sorts it — no two of the four dots separate by more than 1.09:1 in greyscale.",
+  "reachForItWhen": [
+    "A render the user started has finished, failed or timed out, and nothing on the screen they are looking at says so",
+    "The user is heading towards a limit they can still avoid and both levers are known — the threshold and the reset date",
+    "A submission was rejected for a reason no single field owns, so there is no input to hang the message on",
+    "System state the user never asked about changes what they can do next — three clips queued, a model deprecated, a region degraded"
+  ],
+  "reachForSomethingElseWhen": [
+    {
+      "situation": "One field failed validation and the fix is inside that field",
+      "instead": "Input, variant `invalid`, whose message names the fix — \"Add the domain — for example design@heyoz.com.\" An alert floating above the form makes the user hunt for which field it meant."
+    },
+    {
+      "situation": "A row or object carries persistent state the user scans rather than reads",
+      "instead": "Badge — \"Queued\", \"Ready\", \"Failed\". A badge is a status word with no copy weight and no live region; an alert per table row is nine live regions announcing at once."
+    },
+    {
+      "situation": "The message is meant to clear itself after a few seconds",
+      "instead": "Nothing in this system. There is no Toast recipe and none is planned; Alert ships no dismiss control and no timer, so building one on top of it produces a `role=\"status\"` region that vanishes mid-announcement."
+    },
+    {
+      "situation": "The consequence needs stating inside a dialog, and dark mode is a supported target",
+      "instead": "Card `overlay`'s own body copy. Since B20 the alert draws no border, so the 14.9% tint is its whole boundary, and a dialog body binds `surface/elevated` — `#393735` in dark since B18 — where that tint composites to 1.13–1.15:1 against the bed behind it and the dot falls to 2.36–2.60:1 against its own surface. An alert there is a sentence with a dot in front of it. The dialog already owns the confirm button and the sentence beside it."
+    },
+    {
+      "situation": "Content has not arrived yet and the layout would otherwise collapse",
+      "instead": "Skeleton, which is the absence of content rather than news about it. An info alert saying loading is a sentence where a shape was needed."
+    }
+  ],
+  "variants": [
+    {
+      "variant": "info",
+      "useWhen": "System state the user did not ask about and now needs — \"Three clips are queued\", with the wait quantified in the body. At most one per view: two competing pieces of unrequested state is a feed, and a feed goes in a list.",
+      "avoidWhen": "The user caused the state and is waiting for confirmation of it. `info` on a finished render reads as still in progress, and the user submits the job again."
+    },
+    {
+      "variant": "success",
+      "useWhen": "The thing finished, with the result quantified. \"Render complete\" earns its second line only because \"Four clips are in your library at 1080p.\" adds the count and the resolution. Pairs with no action.",
+      "avoidWhen": "Nothing has finished. A success alert on a queued job is a claim the user acts on, and a Button beside it reopens a decision already made."
+    },
+    {
+      "variant": "warning",
+      "useWhen": "A consequence the user is heading towards and can still avoid, carrying both levers — \"82% of this month's credits used\" with \"Resets on 1 August.\" At most one Button, and that Button is the way out.",
+      "avoidWhen": "The thing has already failed. Warning offers an escape that no longer exists; `critical` states what failed and what to do next."
+    },
+    {
+      "variant": "critical",
+      "useWhen": "It failed. The only variant that mounts `role=\"alert\"` with `aria-live=\"assertive\"`, so it interrupts a screen reader mid-word. At most one per view — two assertive regions mounting together queue, and the second cuts off the first.",
+      "avoidWhen": "The alert exists to draw attention rather than to report a failure. An assertive interruption spent on emphasis arrives at exactly the volume the one genuine failure later in the session will arrive at, and the user can dismiss neither."
+    }
+  ],
+  "sizes": {
+    "guidance": [
+      {
+        "size": "md",
+        "useWhen": "Every alert, at every container width, on both legal beds. `md` is the only size and the only thing it names is `p-space-4` — 12px of padding. Height comes from the copy."
+      }
+    ],
+    "note": "A second size would break the dot silently. `Alert.tsx` offsets the 6px dot with a single literal `mt-[7px]`, derived from one type step: `body-sm` is 14px at 1.4286 leading, a 20px line box, and (20 − 6) / 2 = 7. That literal is not per-size. An `sm` alert at `body-xs` is a 16px line box needing 5px, so every alert of that size would carry a dot sitting 2px low against its first line, with no gate able to see it — `verify-classes.mjs` measures whether a class has a rule, never what the rule computes to. A smaller alert is a change to `spec.mjs` TYPOGRAPHY, not a component variant."
+  },
+  "copy": [
+    "Title copy: state the outcome, not the category — accept \"Model timed out after 90 seconds\", reject \"Error\", which names the shape of the event and nothing about it",
+    "Title copy: put the number in the title when the number is the news — accept \"82% of this month's credits used\", reject \"Credit warning\", which makes the user open something to learn the figure",
+    "Title copy: hold to 3–8 words in sentence case with no terminal full stop, because on `critical` this is the one line an assertive region is guaranteed to reach before the user moves",
+    "Title copy: never apologise — reject \"Oops! Something went wrong\", which spends that guaranteed line on a feeling",
+    "Title copy: never restate the variant — reject \"Success!\" and \"Warning:\", which say what the dot already says and what a greyscale reader still cannot see",
+    "Body copy: open with what it cost the user, then what to do — accept \"Nothing was charged. Shorten the clip to 8 seconds or try Veo 3.\", reject \"Please try again later.\", which repeats the request that already failed",
+    "Body copy: name the next action with its value attached — accept \"Shorten the clip to 8 seconds\", reject \"Adjust your settings\", which is the same sentence with the decision removed",
+    "Body copy: give a warning both levers — accept \"About 74 renders left at your current settings. Resets on 1 August.\", reject a threshold with no reset, which tells the user to worry and not for how long",
+    "Body copy: never put an error code where the recovery goes — reject \"An error occurred while processing your request (code 500)\", which hands the user the one fact they cannot act on",
+    "Body copy: hold to two sentences and about 25 words with terminal punctuation, because the body is `content/secondary` and a fourth line of quiet copy under a loud title stops being read",
+    "Body copy: omit the prop rather than pass an empty string — `Alert.tsx` renders `{children ?? copy.body}`, and `??` does not treat `\"\"` as absent, so an empty string ships an empty `<p>` carrying its 4px top margin instead of the fallback",
+    "Action copy: label a Button inside an alert with the verb already in the body — accept \"Try Veo 3\" after \"or try Veo 3\", reject \"Retry\", which re-issues the request that timed out at 90 seconds",
+    "Fallback copy: never ship an Alert with `title` and children both omitted — `Alert.tsx` falls back to `alertRecipe.copyFor(variant)`, so a forgotten prop renders \"82% of this month's credits used\" as a plausible, shippable, wrong sentence rather than an obviously empty box",
+    "Fallback copy: read `copyFor(variant)` as the contract for what alert copy looks like in this product, never as a default to lean on — all eight of its strings are shippable, which is exactly what makes the forgotten prop dangerous rather than obvious"
+  ],
+  "motion": "An alert was not there a moment ago, so it arrives rather than blinking — with no entrance it is the thing users describe as the page jumping. The travel is small on purpose: an alert is often an error, and a bouncy error is a tonal mistake. There is no press and no exit; nothing here is pressable, and an exit would animate a fact that has already stopped being true. Under B16 the alert still arrives.",
+  "behaviourUnderPressure": [
+    {
+      "case": "Dark mode, alert placed on `surface/elevated` or `surface/overlay` — a popover, a menu, or a Card `overlay` dialog body",
+      "behaviour": "Refuse. Since B18 both floating surfaces sit at `#393735`, L* 33.8, above `surface/tertiary` rather than below it, and the alert's 14.9% tint composites over a lighter bed than it used to. The warning dot lands at 2.36:1 against its own surface, and since B20 there is no border behind it to make the difference up: the composited tint separates the alert from the dialog at 1.15:1. That tint measures 1.12:1 against the page and 1.17:1 against `surface/primary`, so the tint is not what changes from bed to bed. The dot is — 4.11:1 on the page, 3.62:1 on `surface/primary`. Move the alert to one of those."
+    },
+    {
+      "case": "A title containing a string with no break opportunity — a model id, a prompt hash, a signed URL",
+      "behaviour": "Spills. The text column carries `min-w-0`, so it shrinks to zero and the string runs past the edge of the tint and out of the 10px radius. Add `oz-break` to the element holding it — `overflow-wrap: anywhere`, which `break-word` will not do for a string that has no break point at all — or move the string into the body, where it can take three lines."
+    },
+    {
+      "case": "Copy roughly 1.3× longer after translation into German",
+      "behaviour": "Grow. The title wraps, the body takes three or four lines, and the box grows downward while the dot stays pinned, because `mt-[7px]` is measured against the first line box and not against the block. Never reach for `oz-truncate` on an alert title: the ellipsis loses the fact the alert exists to carry while the live region still announces the full string, so the sighted user and the screen-reader user end up holding different messages."
+    },
+    {
+      "case": "An alert nested inside another alert or inside a status-tinted panel",
+      "behaviour": "Refuse. In light the status surfaces are opaque flats, so a same-role alert inside a same-role alert measures 1.000:1 between the two surfaces and 1.004:1 across roles. In dark the second 14.9% tint composites to 27.6% and the inner surface lands 1.17–1.20:1 from the outer. Either way the boundary is that number and nothing else, because B20 took the border off and the tint is the alert's whole edge, so the result reads as one block with a stray dot in it. Where two things failed, write one alert with two sentences."
+    },
+    {
+      "case": "Four alerts arriving in one feedback slot",
+      "behaviour": "One container, one gap, one entrance on the container. Four independent rises stagger into a ripple, and four `role=\"status\"` regions mounting together queue their announcements with no ordering cue for the listener. `Assembled.tsx` puts its three alerts in a plain `flex flex-col gap-space-3` and applies `oz-enter-rise` to the Table's wrapper instead — the entrance belongs to whatever appeared, and what appeared is the slot."
+    },
+    {
+      "case": "Zero alerts to show",
+      "behaviour": "Unmount the slot, not just its children. There is no empty state — an alert with nothing to say is an alert that is not mounted — and the container in `Assembled.tsx` is `gap`-based, so it contributes no internal space when empty. Its `mb-space-6` still contributes 20px, which is the part an empty render leaves behind."
+    }
+  ],
+  "whatTheBuildEnforces": {
+    "enforced": [
+      {
+        "claim": "The alert's bound foreground and background are measured in both modes, over the page and nowhere else.",
+        "mark": "E",
+        "assertion": "`showcase/scripts/verify-contrast.ts`. Four variants, one state each — `statesFor` returns `['base']` because no variant binds hover, active or disabled — times two modes is 8 alert pairings, every one of them `content-primary` on `surface-<role>`. Worst measured is 15.28:1, dark on the success tint."
+      },
+      {
+        "claim": "A runtime-composed class on the alert cannot render unstyled.",
+        "mark": "E",
+        "assertion": "`showcase/scripts/verify-classes.mjs` diffs every class in the prerendered HTML against every selector in the compiled stylesheet, which is what catches `bg-fill-${variant}` and the safelist pattern behind it. It proves the rule exists and never what the rule measures."
+      },
+      {
+        "claim": "The alert's colour transition cannot be paired with a spring that overshoots.",
+        "mark": "E",
+        "assertion": "`ComponentRecipe.motionConsistent`, swept over every registered recipe by `showcase/scripts/verify-motion.ts`. Overshoot on a colour clips at the channel boundary, so it buys a stall and no bounce."
+      },
+      {
+        "claim": "The dark surface ladder this component's placement rule depends on is monotonic.",
+        "mark": "E",
+        "assertion": "`SURFACE_LADDER` in `spec.mjs` and the ladder gate in `build.mjs` `validate()` — four ΔL assertions, dark only, `minStep` 0.03. `surface/elevated` clears `surface/tertiary` by ΔL 0.0433, which is the step that made the alert-in-a-dialog case measurable."
+      },
+      {
+        "claim": "The dot carries no information a reader has to see.",
+        "mark": "S",
+        "assertion": "`aria-hidden=\"true\"` is written into the `<span>` in `Alert.tsx` rather than passed, so no call site can expose the dot to the accessibility tree. That is what keeps its 2.36–4.47:1 range outside WCAG 1.4.11."
+      },
+      {
+        "claim": "The live region is derived from the variant rather than chosen.",
+        "mark": "D",
+        "assertion": "None, and the draft this page replaces marked it `S`. `ROLE` in `Alert.tsx` is keyed by variant, but `AlertProps` extends `React.HTMLAttributes<HTMLDivElement>` — which includes `role` and every `aria-*` — and `{...rest}` is spread after `role` and `aria-live` in the JSX. A caller passing `role=\"status\"` to a `critical` alert wins, silently. The convention lives in the comment above `ROLE` and nowhere else."
+      }
+    ],
+    "notEnforced": [
+      "The dot's contrast. `Alert.tsx` writes `bg-fill-${variant}` as a literal className outside the recipe's `bindings`, so `recipe.bindingRoles` never yields it and the 8 pairings the sweep measures exclude it. The human check that replaces the gate is `contrast()` and `composite()` from `build/palette.mjs`, which is how the 2.36:1 dot on `surface/elevated` was found.",
+      "The body's contrast, for the same reason — `text-content-secondary` is also a literal className. Measured by hand it holds 5.68:1 at worst, on the success tint over `surface/elevated`, against a 4.5 floor.",
+      "The alert on anything except the page. `verify-contrast.ts` flattens every translucent token over `resolve('background', mode)` and only that, so it cannot see an alert on a card, on `surface/tertiary` or inside a dialog. Re-measure by hand whenever an alert lands on a new bed.",
+      "The 4.5 floor on the alert's own surface, from the token side. `CONTRAST_ASSERTIONS` in `spec.mjs` names `color/surface/critical-flat`, not `color/surface/critical`. The two are byte-identical in light (`#FFEAEC`) and diverge in dark, where `-flat` is `#520C1E` and the bound token is a 14.9% tint — so the gate that appears to cover the alert covers a different token in the mode where the difference exists.",
+      "The greyscale spread of the four dots. All 20 `greyscale` assertions in `reports/audit.json` measure `color/chart/1..5`; the 1.001–1.093:1 spread across `fill/info|success|warning|critical` is a hand measurement.",
+      "That an alert's fact is still true. Nothing can see a `role=\"status\"` region outliving the state that mounted it, and because three of the four variants are polite, nothing announces its removal either.",
+      "That `title` and children were both supplied. No gate distinguishes a fallback from an intention, which is what makes `copyFor` dangerous.",
+      "That the mount site opts into an entrance, or opts into it once per container rather than once per alert."
+    ]
+  },
+  "looksLikeABugButIsNot": [
+    {
+      "observation": "The four alert dots are indistinguishable in a desaturated screenshot, and a colour-blindness audit will call the role a colour-only channel.",
+      "why": "It is one, deliberately. `fill/info` and `fill/warning` measure 1.001:1 against each other and `fill/success` and `fill/critical` 1.007:1, with all four inside OKLCH L 0.579–0.621. The dot marks that the alert has a role, never which one — the title does that in words. Screenshot the four desaturated: if you cannot name each from the copy alone, the copy is wrong, not the palette."
+    },
+    {
+      "observation": "The alert title renders as a `<p>`, so a heading-structure audit reports the region as unlabelled.",
+      "why": "Correct as shipped. An alert that injects an `<h3>` changes the heading order a screen-reader user navigates by, and does it at an unpredictable moment, because the alert mounts on a state change rather than on page load. The live region already announces the string; a heading would announce it a second time and rearrange the outline to do it."
+    },
+    {
+      "observation": "The alert draws no border on any variant, so a critical alert has no edge — only the point where the tint stops.",
+      "why": "Correct as shipped, and enforced. `BorderJob` in `lib/core/types.ts` admits a stroke for `affordance`, where the boundary is the control, or for `state`, and nothing else; an outline drawn around a status tint is `separation`, which is a build error. B20 took four off here, one per variant, and `border-2` came out of the shape with them — it is `flex items-start gap-space-4 rounded-5`, and the system is down to 21 bindings across 7 variants, every one of them affordance. `verify-borders.ts` fails a variant that keeps a `borderJob` after its border goes, so the justification cannot outlive the stroke. What is left is the tint at 1.12–1.14:1 against the page in dark and the `fill/<role>` dot at 4.11–4.47:1 against that tint: the tint places the block and the dot is the part a greyscale reader still sees."
+    },
+    {
+      "observation": "Nothing in the repo applies `alertRecipe.enterClass`, while the showcase's generated motion summary prints an entrance for the component.",
+      "why": "`Recipe.classes()` joins `shape`, `motionClasses`, the size class and the base binding; `enterClass` is a separate getter by design, because an entrance runs once on mount and a transition runs on every state change. The mount site opts in, and it opts in on the container that appeared. `Assembled.tsx` applies `oz-enter-rise` to the Table's wrapper and to nothing else."
+    }
+  ],
+  "related": [
+    {
+      "component": "Badge",
+      "difference": "When the state has a subject already on screen — the row, the clip, the object it belongs to — reach for Badge. Adjacency supplies the subject, so one word finishes the job. An alert sits beside nothing and has to name its subject in the title, which is why the same fact costs a badge a word and an alert a sentence."
+    },
+    {
+      "component": "Input",
+      "difference": "When the message has to be attached to the control it is about, reach for Input's `invalid` variant. `Input.tsx` wires `message` to both `aria-describedby` and `aria-invalid` from the one prop, so the message is announced when focus lands in the field that failed. An alert announces at mount, attached to no control, before the user has reached anything they can act on."
+    },
+    {
+      "component": "Card",
+      "difference": "When the grouping carries no judgement and the decision is which rung of the surface ladder it sits on, reach for Card. Alert is the only status-tinted surface in the system, and tinting a group asserts something about its contents."
+    },
+    {
+      "component": "Button",
+      "difference": "When the alert names a consequence the user can still escape, one Button goes in as `children` — and it lands inside the body `<p>`, because `Alert.tsx` renders `{children ?? copy.body}` and there is no action slot. Pass the body copy and the Button together, keep the child to phrasing content, and expect no layout and no focus treatment from the alert: all four bindings declare `focus: 'none'`, so the outward ring and the press are Button's."
+    },
+    {
+      "component": "Skeleton",
+      "difference": "When the wait itself is what is on screen, reach for Skeleton. It takes the geometry the content will take, so the arriving content displaces nothing, and it is the one recipe in the system that declares `ambient: true` — a wait has a duration. An alert states its fact once at mount and reads the same a second later or an hour later."
+    },
+    {
+      "component": "Switch",
+      "difference": "An Alert reports what already happened; a Switch is the thing that will make something happen. An Alert that appears the instant a Switch is thrown is usually the Switch failing to show its own state."
+    }
+  ],
+  "changed": [
+    {
+      "what": "2026-08-02 — an alert on `surface/elevated` or `surface/overlay` in dark is now ruled out, including inside the dialog that owns the confirm button, where the previous revision of this page put one. B18.",
+      "why": "Both floating surfaces moved from `neutral/120` and `neutral/115` to `neutral/105` (`#393735`, L* 33.8), so a floating surface now sits above `surface/tertiary` instead of below it. They had been byte-identical to `surface/secondary`, which is why floating things needed a border to have any boundary at all. Every figure on this page for that bed is recomputed rather than carried across: the title on the success tint was 11.91:1 and is 8.82:1, the body was 7.67:1 and is 5.68:1, the warning dot was 3.18:1 and is 2.36:1, and the warning tint's own separation from the bed behind it was 1.18:1 and is 1.15:1 — which is the whole boundary now, since B20 took the border off."
+    },
+    {
+      "what": "2026-08-02 — the enforcement list now states that the token build's 4.5 gate does not reach the alert's own surface, and gives the reason. B18b.",
+      "why": "Contrast assertions went 118 to 130 when `content/*` was finally gated against `surface/elevated` and `surface/overlay` — the two surfaces a popover and a dialog are made of, which had been the only places text could be set with no floor at all. That closed the family hole for the floating surfaces. It did not close the alert's, because `CONTRAST_ASSERTIONS` still names `surface/critical-flat` where `surface/critical` was meant, and the two diverge only in dark."
+    },
+    {
+      "what": "2026-08-02 — the live-region derivation is marked `D`, where the previous revision marked it `S` and called the mistake unexpressible.",
+      "why": "`AlertProps` extends `React.HTMLAttributes<HTMLDivElement>`, which carries `role` and every `aria-*`, and `{...rest}` is spread after them in the JSX. A caller can override a `critical` alert to `role=\"status\"` and nothing reports it. I12's closing rule is the adjudication: if you write `E` or `S`, point at the assertion, and if you cannot, write `D`."
+    },
+    {
+      "what": "2026-08-02 — every dot and body ratio on this page is written as a hand measurement rather than a gate result. I12.",
+      "why": "No assertion in `spec.mjs` or `showcase/scripts/` names `fill/<role>` against a composited alert surface, and the 20 `greyscale` assertions cover `color/chart/1..5` only. The figures come from `contrast()` and `composite()` in `build/palette.mjs`, and they say so."
+    },
+    {
+      "what": "2026-08-02 — noted as not applicable: `fill/<role>-disabled` moved to `neutral/115`, `#272524`. B18c.",
+      "why": "Taking `neutral/105` for the floating surfaces evicted the disabled fills onto a darker rung, deliberately, because in dark mode lighter reads as more prominent. It changes nothing an alert renders — no variant binds a disabled state and all four declare `focus: 'none'` — and it is recorded here so that a disabled-fill figure is not carried onto this page from a sibling."
+    },
+    {
+      "what": "2026-08-01 — first published.",
+      "why": "The four eligibility entries, the four variant caps and the copy contract are unchanged from that publication. Every measurement was recomputed on 2026-08-02 against `dist/tokens.css` and `reports/audit.json`."
+    }
+  ]
+}

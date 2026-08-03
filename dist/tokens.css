@@ -72,6 +72,21 @@
     --oz-container-xl: 1280px;
     --oz-container-gutter: 24px;
     --oz-container-measure: 65ch;
+    --oz-spring-effects-fast: linear(0, 0.024, 0.0823, 0.1594, 0.2448, 0.3315, 0.4153, 0.4934, 0.5646, 0.6283, 0.6845, 0.7335, 0.7758, 0.8122, 0.8432, 0.8695, 0.8916, 0.9102, 0.9258, 0.9388, 0.9496, 0.9586, 0.9661, 0.9722, 0.9772, 0.9814, 0.9848, 0.9876, 0.9899, 0.9918, 0.9933, 0.9946, 0.9956, 0.9964, 0.9971, 0.9977, 0.9981, 0.9985, 0.9988, 1);
+    --oz-spring-effects-fast-ms: 120ms;
+    --oz-spring-effects-default: linear(0, 0.024, 0.0823, 0.1594, 0.2448, 0.3315, 0.4153, 0.4934, 0.5646, 0.6283, 0.6845, 0.7335, 0.7758, 0.8122, 0.8432, 0.8695, 0.8916, 0.9102, 0.9258, 0.9388, 0.9496, 0.9586, 0.9661, 0.9722, 0.9772, 0.9814, 0.9848, 0.9876, 0.9899, 0.9918, 0.9933, 0.9946, 0.9956, 0.9964, 0.9971, 0.9977, 0.9981, 0.9985, 0.9988, 1);
+    --oz-spring-effects-default-ms: 180ms;
+    --oz-spring-effects-slow: linear(0, 0.024, 0.0823, 0.1594, 0.2448, 0.3315, 0.4153, 0.4934, 0.5646, 0.6283, 0.6845, 0.7335, 0.7758, 0.8122, 0.8432, 0.8695, 0.8916, 0.9102, 0.9258, 0.9388, 0.9496, 0.9586, 0.9661, 0.9722, 0.9772, 0.9814, 0.9848, 0.9876, 0.9899, 0.9918, 0.9933, 0.9946, 0.9956, 0.9964, 0.9971, 0.9977, 0.9981, 0.9985, 0.9988, 1);
+    --oz-spring-effects-slow-ms: 280ms;
+    --oz-spring-spatial-fast: linear(0, 0.0218, 0.0765, 0.1513, 0.2366, 0.3254, 0.413, 0.4962, 0.573, 0.6424, 0.7039, 0.7575, 0.8037, 0.8429, 0.8758, 0.9032, 0.9256, 0.9438, 0.9584, 0.9699, 0.979, 0.9859, 0.9912, 0.9951, 0.998, 1, 1.0014, 1.0022, 1.0027, 1.0029, 1.003, 1.0029, 1.0027, 1.0024, 1.0022, 1.0019, 1.0017, 1.0014, 1.0012, 1);
+    --oz-spring-spatial-fast-ms: 190ms;
+    --oz-spring-spatial-default: linear(0, 0.0217, 0.0767, 0.1527, 0.2402, 0.3321, 0.4233, 0.5104, 0.591, 0.6637, 0.7281, 0.784, 0.8317, 0.8718, 0.9049, 0.9318, 0.9534, 0.9702, 0.9832, 0.9929, 1, 1.0049, 1.0081, 1.01, 1.0109, 1.0111, 1.0108, 1.0101, 1.0092, 1.0083, 1.0072, 1.0062, 1.0053, 1.0044, 1.0036, 1.0029, 1.0023, 1.0018, 1.0014, 1);
+    --oz-spring-spatial-default-ms: 340ms;
+    --oz-spring-spatial-slow: linear(0, 0.0202, 0.0724, 0.1453, 0.2305, 0.3211, 0.4122, 0.5001, 0.5824, 0.6574, 0.7244, 0.7831, 0.8335, 0.876, 0.9113, 0.9401, 0.963, 0.9809, 0.9944, 1.0043, 1.0113, 1.0159, 1.0185, 1.0198, 1.0199, 1.0192, 1.0179, 1.0164, 1.0146, 1.0128, 1.011, 1.0093, 1.0077, 1.0063, 1.005, 1.0039, 1.003, 1.0022, 1.0015, 1);
+    --oz-spring-spatial-slow-ms: 480ms;
+    --oz-spring-expressive: linear(0, 0.031, 0.1102, 0.2197, 0.3445, 0.4731, 0.5968, 0.7098, 0.8083, 0.8907, 0.9566, 1.0067, 1.0424, 1.0657, 1.0787, 1.0834, 1.0819, 1.076, 1.0673, 1.0571, 1.0463, 1.0359, 1.0262, 1.0177, 1.0105, 1.0047, 1.0002, 0.997, 0.9949, 0.9936, 0.9931, 0.9931, 0.9935, 0.9942, 0.995, 0.9959, 0.9968, 0.9976, 0.9984, 1);
+    --oz-spring-expressive-ms: 520ms;
+    --oz-motion-spatial-scale: 1;
     --oz-duration-instant: 0ms;
     --oz-duration-fast: 150ms;
     --oz-duration-base: 250ms;
@@ -382,8 +397,8 @@
     --oz-color-surface-secondary-variant: #151312;
     --oz-color-surface-tertiary: #2E2C2B;
     --oz-color-surface-tertiary-variant: #211F1D;
-    --oz-color-surface-elevated: #211F1D;
-    --oz-color-surface-overlay: #272524;
+    --oz-color-surface-elevated: #393735;
+    --oz-color-surface-overlay: #393735;
     --oz-color-surface-inverse: #F7F5F4;
     --oz-color-surface-fixed: #FFFFFF;
     --oz-color-surface-brand: #FF3D0126;
@@ -431,23 +446,23 @@
     --oz-color-fill-brand: #FF3D01;
     --oz-color-fill-brand-hover: #FE542D;
     --oz-color-fill-brand-active: #FC6645;
-    --oz-color-fill-brand-disabled: #393735;
+    --oz-color-fill-brand-disabled: #272524;
     --oz-color-fill-success: #1D9156;
     --oz-color-fill-success-hover: #389D64;
     --oz-color-fill-success-active: #4DA972;
-    --oz-color-fill-success-disabled: #393735;
+    --oz-color-fill-success-disabled: #272524;
     --oz-color-fill-warning: #A36E07;
     --oz-color-fill-warning-hover: #B17C25;
     --oz-color-fill-warning-active: #BF8B39;
-    --oz-color-fill-warning-disabled: #393735;
+    --oz-color-fill-warning-disabled: #272524;
     --oz-color-fill-critical: #E63C65;
     --oz-color-fill-critical-hover: #EE5071;
     --oz-color-fill-critical-active: #F5617D;
-    --oz-color-fill-critical-disabled: #393735;
+    --oz-color-fill-critical-disabled: #272524;
     --oz-color-fill-info: #2C74EA;
     --oz-color-fill-info-hover: #4083F4;
     --oz-color-fill-info-active: #5292FD;
-    --oz-color-fill-info-disabled: #393735;
+    --oz-color-fill-info-disabled: #272524;
     --oz-color-fill-brand-secondary: #FF3D0126;
     --oz-color-fill-brand-secondary-hover: #FF3D014D;
     --oz-color-fill-brand-secondary-active: #FC66454D;
@@ -922,4 +937,102 @@
   line-height: var(--oz-leading-label-xs);
   letter-spacing: var(--oz-tracking-label-xs);
 }
+
+/* Every visual property, and nothing that triggers layout. */
+.oz-transition-visual {
+  transition-property: color, background-color, border-color, outline-color, fill,
+    stroke, opacity, box-shadow, transform, filter;
+}
+
+/* Depth alone, for a surface that lifts without changing colour. */
+.oz-transition-depth {
+  transition-property: box-shadow, transform;
+}
+
+@keyframes oz-enter-fade {
+  from { opacity: 0; transform: none; }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes oz-enter-rise {
+  from { opacity: 0; transform: translateY(calc(6px * var(--oz-motion-spatial-scale))); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes oz-enter-pop {
+  from { opacity: 0; transform: scale(calc(1 - 0.04 * var(--oz-motion-spatial-scale))); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes oz-enter-hero {
+  from { opacity: 0; transform: translateY(calc(10px * var(--oz-motion-spatial-scale))) scale(calc(1 - 0.02 * var(--oz-motion-spatial-scale))); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes oz-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
+
+/* Opacity only. The safe default, and the only one that is identical under reduced motion. */
+.oz-enter-fade {
+  animation: oz-enter-fade var(--oz-spring-effects-default-ms) var(--oz-spring-effects-default) both;
+}
+
+/* Content arriving in place: a row, a card, a result. */
+.oz-enter-rise {
+  animation: oz-enter-rise var(--oz-spring-spatial-default-ms) var(--oz-spring-spatial-default) both;
+}
+
+/* Something that appeared because you acted: a popover, a menu, a toast. */
+.oz-enter-pop {
+  animation: oz-enter-pop var(--oz-spring-spatial-fast-ms) var(--oz-spring-spatial-fast) both;
+}
+
+/* One per screen. The moment worth noticing. */
+.oz-enter-hero {
+  animation: oz-enter-hero var(--oz-spring-expressive-ms) var(--oz-spring-expressive) both;
+}
+
+/* The one loop in the system. Not a spring — a pulse has no target to settle
+   toward, so it keeps the ambient duration and a symmetric curve. Carries the
+   .oz-ambient marker that the reduced-motion block switches off, because an endless
+   decorative loop is the clearest case of what that preference is asking about. */
+.oz-ambient {
+  animation: oz-pulse var(--oz-duration-ambient) var(--oz-ease-standard) infinite;
+}
+}
+
+/* Someone asked their operating system for less movement. Honour it here, in the
+   layer that defines the movement — not in whichever app happens to remember. See
+   reducedMotionBlock() in build/build.mjs for why this is not `animation: none`. */
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  .dark,
+  [data-theme='dark'],
+  .light,
+  [data-theme='light'] {
+    /* 1. All spatial travel collapses; fades are untouched. */
+    --oz-motion-spatial-scale: 0;
+
+    /* 2. Spatial springs lose their overshoot, keeping their speed. */
+    --oz-spring-spatial-fast: var(--oz-spring-effects-fast);
+    --oz-spring-spatial-default: var(--oz-spring-effects-default);
+    --oz-spring-spatial-slow: var(--oz-spring-effects-slow);
+    --oz-spring-expressive: var(--oz-spring-effects-slow);
+  }
+
+  /* 3. Ambient loops stop. `.oz-ambient` is the opt-in marker for a decorative
+        loop; the attribute selector catches anything driving one from the token
+        directly. Not a universal selector — a functional transition is not the
+        thing being objected to. */
+  .oz-ambient,
+  [style*='--oz-duration-ambient'] {
+    animation: none !important;
+  }
+
+  /* 4. Programmatic smooth scroll is large-viewport travel. */
+  html {
+    scroll-behavior: auto !important;
+  }
 }

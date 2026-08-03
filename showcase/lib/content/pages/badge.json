@@ -1,0 +1,226 @@
+{
+  "id": "badge",
+  "definition": "A status word in a pill. The only component that puts role-coloured text on a role-coloured tint, so the surface underneath it changes what the pairing measures.",
+  "reachForItWhen": [
+    "A render finished or failed and the row has to say which without the user opening the clip",
+    "One column of a table carries the same kind of fact in every row — state, plan tier, model",
+    "A queue item is waiting and the word has to change under the user's eyes when it starts",
+    "A count, quota or version sits beside a heading with no room to become a sentence",
+    "A feature is new and the nav item has to say so for the fortnight that stays true"
+  ],
+  "reachForSomethingElseWhen": [
+    {
+      "situation": "The word is clickable — it filters the list, clears the tag or opens the failure",
+      "instead": "Button. `BadgeProps` extends `React.HTMLAttributes<HTMLSpanElement>`, so an `onClick` type-checks and spreads onto the `<span>` — arriving with no tabstop, no ring and no 44px target."
+    },
+    {
+      "situation": "The status needs a sentence — what failed, and what the user does next",
+      "instead": "Alert. Same `surface/<role>` tint, body set in `content/secondary` at `text-body-sm` (`Alert.tsx:43`); the pill has no second line to put it on."
+    },
+    {
+      "situation": "The user writes the state rather than reads it — a setting they can turn off",
+      "instead": "Switch. A badge reports what the system decided; a switch is the decision. A pill that changes when clicked is a switch wearing the wrong component."
+    },
+    {
+      "situation": "The value has not arrived and the layout slot still has to hold its width",
+      "instead": "Skeleton, which reserves the box and pulses. There is no loading variant here and none is coming — a badge is a resolved fact or it is absent."
+    },
+    {
+      "situation": "Every cell in the column would get one, so the pills outnumber the words",
+      "instead": "Table. Put the value in the cell as text; a state column is findable only while it is the one column with colour in it."
+    }
+  ],
+  "variants": [
+    {
+      "variant": "neutral",
+      "useWhen": "Metadata with no valence — a model name, a count, a plan tier. The default, and the only variant with no cap, because it spends nothing from the screen's colour budget.",
+      "avoidWhen": "On a `surface/secondary` panel. The pill fill is that same token — 1.000:1 against its own bed in both modes — and the badge draws no border, so there is no boundary at all. The word holds at 11.91:1 in light and 9.06:1 in dark while the pill around it stops existing, which turns a status into loose text. Move it to a card or the page."
+    },
+    {
+      "variant": "brand",
+      "useWhen": "The thing is new, in beta, or ours: \"New\" beside a model heading. At most one per view — it draws on the accent `button.recipe.ts` already caps at one primary per view.",
+      "avoidWhen": "A brand badge is already on screen, or the word names an outcome. Two orange objects and the eye stops finding the action; \"Ready\" is a finished state, which is success."
+    },
+    {
+      "variant": "success",
+      "useWhen": "A finished, good outcome the user can act on now: \"Ready\", \"Complete\", \"Paid\". At most one status badge per object.",
+      "avoidWhen": "The work is still running. A green \"Rendering\" promises a result that has not arrived and the user opens the row to collect it — that state is info."
+    },
+    {
+      "variant": "warning",
+      "useWhen": "Nothing is broken, something will break, and the user still holds a lever: \"82% of quota\", \"Expires in 3 days\". One per object, and the object still works.",
+      "avoidWhen": "The user cannot change the outcome. A warning with no lever is an outcome, and an outcome is success, critical or neutral."
+    },
+    {
+      "variant": "critical",
+      "useWhen": "Failed or blocked, and the row carries the action that clears it: \"Failed\". One per object, and it is the variant that earns a scan of the whole column.",
+      "avoidWhen": "The state is closed and nothing can be done — a cancelled job, an expired trial. Red on a finished list reads as a queue of work, and the user opens every red row to find nothing in it. Use neutral."
+    },
+    {
+      "variant": "info",
+      "useWhen": "A system state that is still moving: \"Queued\", \"Rendering\", \"Scheduled\". One per object, and the variant a badge changes away from rather than toward.",
+      "avoidWhen": "The value is permanent metadata. \"Seedance 2\" never becomes \"Ready\", so it is neutral — info is the blue that means wait."
+    }
+  ],
+  "sizes": {
+    "guidance": [
+      {
+        "size": "sm",
+        "useWhen": "The text beside it is set at the 12px label step or smaller — a table cell, a nav item, a row of chips."
+      },
+      {
+        "size": "md",
+        "useWhen": "The badge sits beside a heading or body copy, which is everywhere a badge is not inside a dense row."
+      }
+    ],
+    "note": "Two sizes, and the type step of the neighbouring text selects between them — never the urgency of the status. `sm` sets its label at 10px, the smallest of the fifteen steps in the scale; `md` sets it at the same 12px a Button `sm` label uses, so a badge beside a small button is set to match it. There is no `lg`, because the next step up is 14px (`text-label-md`), the default Button label — a badge set exactly like a button label with no tabstop and no 44px target reads as a control that is not one. Mixing sizes down a column is what breaks: an `md` badge dropped into a run of `sm` rows makes that one row taller than its neighbours, and a table where every fifth row is taller reads as a rendering fault rather than as emphasis."
+  },
+  "copy": [
+    "Label copy — the only author-supplied string this component renders:",
+    "name the state as it is now, not the event that reached it: \"Ready\", never \"Render finished\"",
+    "cap at three words carrying one fact: \"82% of quota\", never \"82% of your monthly render quota\"",
+    "keep a number with its subject: \"82% of quota\", never a bare \"82%\"",
+    "write sentence case: \"New\", never \"NEW\" — the two label steps ship at 10px and 12px with tracking already applied, and all-caps at 10px is the least legible pair in the scale",
+    "take no terminal punctuation and no exclamation mark: \"New\", never \"New!\"",
+    "reject \"Error\" — it names the category the column already names; \"Failed\" names what happened to this clip",
+    "reject \"OK\" — an outcome word with no object; \"Ready\" says the clip can be played",
+    "reject \"Active\" — it reads as both \"currently running\" and \"not cancelled\"; pick \"Rendering\" or \"Enabled\" and mean one of them",
+    "reject \"Model timed out after 90 seconds\" — that is an Alert body, and the pill does not wrap",
+    "Dot copy: none. The dot renders no string and carries `aria-hidden=\"true\"` in `Badge.tsx`, so the label rules above are the whole copy contract for this component."
+  ],
+  "motion": "A badge appears because something changed — a render finished, a queue moved — so it arrives with a small scale-up rather than materialising; a fade alone lets a status flip past unnoticed. When only the variant changes under a mounted pill the colour crossfades and nothing moves: a bounce there is a physical claim about a word that has not moved. There is no press response, deliberately — a pill that answers the pointer teaches the user it can be pressed.",
+  "behaviourUnderPressure": [
+    {
+      "case": "Dark mode, the badge placed deeper than a card",
+      "behaviour": "Refuse below `surface/secondary`. The tint is a 15%-alpha token in dark, so it composites with its bed: `content/<role>` on `surface/<role>` measures 5.93–6.14:1 on the page, 5.26–5.45:1 on `surface/primary` and 4.60–4.79:1 on `surface/secondary`, then falls to 3.93–4.08:1 on `surface/tertiary` and 3.42–3.55:1 on `surface/elevated` — under the 4.5 floor on all five status roles for the last two. Measured 2026-08-02 with `contrast()` and `composite()` from `build/palette.mjs`. Light is bed-invariant at 6.24–7.47:1 because the tint is opaque there, so this fails in exactly one mode and only for whoever is running it."
+    },
+    {
+      "case": "A label long enough to widen the pill — a model name, or \"Rendering\" doubled by translation",
+      "behaviour": "Grow. `whitespace-nowrap` is in the shape, so the pill widens and never wraps, and the row reflows around it. The one string that earns `.oz-truncate` is a user-supplied value in the neutral variant — a model name, a filename — and it needs `min-width: 0` on the parent flex or grid child, which `dist/layout.css` already ships on its primitives, or `text-overflow` does nothing at all."
+    },
+    {
+      "case": "The status changes while the user is looking at the row",
+      "behaviour": "Crossfade in place, silently. The element does not re-mount, so the entrance does not replay and only the colour moves. `Badge` renders a bare `<span>` with no `role` and no `aria-live`, so a pill flipping from \"Queued\" to \"Failed\" announces nothing — the live region belongs on the container that owns the row and says \"Clip 3 failed\", not on the eleven elements inside it. `{...rest}` spreads onto the `<span>`, so the component does not block one either."
+    },
+    {
+      "case": "The consuming app's Tailwind config carries no safelist",
+      "behaviour": "The dot disappears and the label survives. `Badge.tsx` composes the dot's class at runtime as `bg-fill-${variant}`, so it exists only because of the `^bg-(fill|surface|sidebar|background)(-|$)` pattern in `tailwind.config.js`; without it the class is emitted into the HTML, matches no CSS rule, and the badge renders a 6px transparent gap before the word."
+    },
+    {
+      "case": "There is no status to show",
+      "behaviour": "Render nothing. There is no empty state and no zero-height variant: an empty pill is 8px or 12px of horizontal padding either side of zero characters, so it renders as a 16px or 24px lozenge of bare `surface/<role>` tint, which a user reads as a fault rather than as an absence."
+    },
+    {
+      "case": "200% browser zoom",
+      "behaviour": "The pill widens; it neither wraps nor truncates. When a row loses content at 200%, the defect is a fixed-width column around the badge and not the badge — WCAG 1.4.4."
+    }
+  ],
+  "whatTheBuildEnforces": {
+    "enforced": [
+      {
+        "claim": "Every colour token the six bindings name resolves in both modes.",
+        "mark": "E",
+        "assertion": "the `bindingRoles` existence sweep at the head of `showcase/scripts/verify-contrast.ts`, run by `npm run verify`"
+      },
+      {
+        "claim": "`content/<role>` on `surface/<role>` clears 4.5:1 for all six variants in both modes — measured over the page and nowhere else.",
+        "mark": "E",
+        "assertion": "the per-variant WCAG sweep in `showcase/scripts/verify-contrast.ts`, whose `flatten()` composites every translucent token over `resolve('background', mode)`. It passes this component at 5.93–6.14:1 dark; see `notEnforced` for what that number is not."
+      },
+      {
+        "claim": "A `spatial-*` spring on the badge's colour transition fails the build.",
+        "mark": "E",
+        "assertion": "`ComponentRecipe.motionConsistent` in `showcase/lib/core/Recipe.ts`, swept by check 2 of `showcase/scripts/verify-motion.ts`"
+      },
+      {
+        "claim": "The dot's runtime-composed class matches a real CSS rule.",
+        "mark": "E",
+        "assertion": "`showcase/scripts/verify-classes.mjs`, which diffs the prerendered HTML against the compiled stylesheet — the showcase's own output only, never a consumer's"
+      },
+      {
+        "claim": "The badge cannot ship without a stated reason for how it moves.",
+        "mark": "E",
+        "assertion": "check 1 of `showcase/scripts/verify-motion.ts` fails a `motion.intent` under eight words; `motion` is additionally `abstract readonly` on `ComponentRecipe`, so a recipe without one does not compile"
+      },
+      {
+        "claim": "A seventh variant cannot be added without answering the focus question.",
+        "mark": "S",
+        "assertion": "`focus: FocusMode` is a required field on `VariantBinding` in `showcase/lib/core/types.ts`. `'none'` is a stated answer, not an omission — the mistake is unexpressible rather than caught."
+      }
+    ],
+    "notEnforced": [
+      "The bed. Every gate that touches this component flattens the tint over `color/background`, so the four surfaces a badge can actually sit on are invisible to all of them. The two deepest fail 4.5:1 in dark and nothing reports it. The human check is to measure with `contrast()` and `composite()` from `build/palette.mjs` against the surface the badge really sits on.",
+      "The pill's edge. The badge draws no border, so the `surface/<role>` tint is the only thing dividing it from what it sits on, and nothing measures that. `VISIBILITY_ASSERTIONS` in `build/spec.mjs` holds six pairs — five of them a border against a surface, the sixth `surface/primary` against the page — and no `surface/<role>` against any bed a badge lands on. The worst case is the neutral pill on a `surface/secondary` panel at 1.000:1, and the build reports that badge as passing.",
+      "The dot's greyscale separation. `CHART_MIN_DL` in `build/build.mjs` is 0.05 and is applied to `color/chart/1..5` only. Run against the five status dot fills it would fail seven of the ten pairs, three of them below ΔL 0.002.",
+      "A click handler. `BadgeProps` extends `React.HTMLAttributes<HTMLSpanElement>`, so `onClick`, `tabIndex` and `role` type-check and spread onto the `<span>`. Nothing in the type system, the token build or `showcase/scripts/` sees a badge that has become a control.",
+      "Scarcity. Nothing counts badges per view, per object or per column. Every cap on this page is a review step, not a gate.",
+      "The accessible name. Nothing measures whether the label is a complete status once the colour is gone. The human check is to desaturate a screenshot of the status column and read it top to bottom."
+    ]
+  },
+  "looksLikeABugButIsNot": [
+    {
+      "observation": "On a neutral badge the dot nearly vanishes, while the same dot on every other variant reads at a glance.",
+      "why": "`fill/tertiary` is `#E3E1E0` on an `#EFEDEC` pill in light, so a neutral dot measures 1.117:1 against the tint it sits on; in dark the pair is `#2E2C2B` on `#211F1D` and measures 1.182:1. The five coloured dots measure 3.11–3.90:1 in light and 4.09–5.05:1 in dark against their own tints. Correct: neutral carries no valence to signal, and a visible dot on it would be a status marker on a badge that reports no status. Turn the dot off on neutral."
+    },
+    {
+      "observation": "A contrast check on the pill against the page comes back at 1.123–1.152:1 in light, and the badge draws no border to make up the difference.",
+      "why": "The tint separates by chroma and a contrast ratio reads only luminance, so the instrument cannot see the thing doing the work. In light the five status tints sit at L* 95.3–96.1 against a page at L* 100 — four points — and carry C 0.0198–0.0276 where the neutral pill beside them carries C 0.0025. WCAG 1.4.11 reaches non-text objects that carry meaning; a pill boundary is not one, because the word carries the status and `content/<role>` on `surface/<role>` clears 4.5:1 over the page in both modes. Six borders came off this component when the stroke policy landed, and the twenty-one that survive across seven variants are all `affordance`, which a badge edge is not."
+    },
+    {
+      "observation": "The badge still animates for a user who set `prefers-reduced-motion: reduce`.",
+      "why": "Only the fade does. The entrance's scale term is written through the multiplier and collapses to 1 while the opacity ramp survives — the graded tier legislated in DECISIONS.md B16 and listed in CLAUDE.md, which the badge neither overrides nor needs to. The crossfade between variants survives with it, so a pill going from \"Queued\" to \"Failed\" marks the change for that user rather than swapping colour between two frames."
+    },
+    {
+      "observation": "A target-size audit flags the `sm` badge: it is far under 44px and shows no focus indicator.",
+      "why": "Correct, and both are the same fact. WCAG 2.5.8 and 2.4.7 reach targets and focusable elements; a badge is neither. All six bindings declare `focus: 'none'`, the recipe binds no hover and no active, and the `<span>` takes no tabstop. The moment a badge acquires an `onClick` all three become real defects at once — which is the same sentence as: it is a Button."
+    }
+  ],
+  "related": [
+    {
+      "component": "Alert",
+      "difference": "When one message covers many objects rather than one per object. An Alert speaks for the batch — what happened and what to do next — and the badges say which three of the forty clips it was; one alert per failed row buries the fix under repetitions of the same sentence."
+    },
+    {
+      "component": "Button",
+      "difference": "When the red proposes something rather than reports it. A badge's `critical` records the render that already failed; a button's `destructive` offers \"Delete permanently\", which has not happened yet — the same role colour, the opposite tense."
+    },
+    {
+      "component": "Switch",
+      "difference": "When the state has two positions and no third. A switch is `off` or `on` by construction, so a clip that is neither — \"Rendering\", between queued and ready — has nowhere to sit on a track, which is why there are six variants here and two there."
+    },
+    {
+      "component": "Table",
+      "difference": "When the fact belongs to the row rather than to one object inside it. The row takes the interaction states and the badge becomes one cell of it."
+    },
+    {
+      "component": "Skeleton",
+      "difference": "When it is the object that is missing and not its status. `info` covers a state that is still moving, so a row already on screen has a word for it — a shimmer in that one cell reserves width for a value the system already knows."
+    },
+    {
+      "component": "Card",
+      "difference": "A Badge inside a Card is metadata about the card; a Badge as the card is a card with one word in it. If it is the only content, the container is the wrong component."
+    }
+  ],
+  "changed": [
+    {
+      "what": "2026-08-02 — In dark, `surface/elevated` and `surface/overlay` moved to `neutral/105` (`#393735`, L* 33.8), and a badge in a popover or a dialog body became the worst bed in the system for this component: `content/<role>` on `surface/<role>` fell from 4.60–4.79:1 there to 3.42–3.55:1. The placement rule tightened to the page, `surface/primary` or `surface/secondary`, and no deeper.",
+      "why": "DECISIONS.md B18 and B18a. Both floating surfaces previously sat at `neutral/120`, byte-identical to `surface/secondary`, so the tint composited over a darker bed and cleared 4.5:1 by luck. Every dark-bed figure on this page was recomputed on 2026-08-02 rather than carried over; a number measured before the move is wrong by roughly 1.2 ratio points."
+    },
+    {
+      "what": "2026-08-02 — The neutral badge became visible on a floating surface. Its pill is `surface/secondary` (`#211F1D`), which was byte-identical to the old dark `surface/elevated` at 1.000:1; against `#393735` it now measures 1.386:1.",
+      "why": "DECISIONS.md B18. This is the one place the ladder move improved this component instead of degrading it, and it is why a popover no longer needs a border to stop a neutral pill dissolving into it."
+    },
+    {
+      "what": "2026-08-02 — Contrast gates went 118 → 130, and none of the six new ones is the badge's pairing.",
+      "why": "DECISIONS.md B18b added `content/primary|secondary|tertiary` against `surface/elevated` and `surface/overlay`. `content/<role>` on `surface/<role>` still appears nowhere in `reports/audit.json` and is measured only by the showcase sweep, over the page. The count rising changes nothing in the `notEnforced` list above."
+    },
+    {
+      "what": "2026-08-02 — `fill/*-disabled` moved to `neutral/115` (`#272524`). No effect on this component.",
+      "why": "DECISIONS.md B18c. The badge binds no disabled state and the dot reads `fill/<role>` at rest only. Recorded to close the question rather than because anything moved here."
+    },
+    {
+      "what": "2026-08-02 — The reduced-motion press-scale fix does not reach this component.",
+      "why": "DECISIONS.md B19 routed `Recipe.motionClasses`'s literal `active:scale-[0.98]` through the multiplier. `motionClasses` emits that class only when `motion.press` is set and the badge sets none, so nothing here changed. Recorded because B19 edited `Recipe.ts` itself, which every recipe inherits from."
+    }
+  ]
+}

@@ -9,16 +9,31 @@ hand-picked. Two source files produce everything else.
 
 ```
 build/palette.mjs   the OKLCH engine and the authored ramps      ← edit
+build/motion.mjs    the spring engine                            ← edit
+build/layout.mjs    the layout primitives                        ← edit
 build/spec.mjs      every decision: semantic map, gates, bridge  ← edit
 build/build.mjs     emitters + validation                        ← edit (rarely)
-build/harness.mjs   test-rig HTML template                       ← edit (rarely)
 build/shipped.mjs   pre-migration values, for the diff only      ← do not edit
 
 tokens/   GENERATED  DTCG JSON for Figma
-dist/     GENERATED  CSS + Tailwind preset for the app
-reports/  GENERATED  audit data
-test/     GENERATED  standalone review rig
+dist/     GENERATED  CSS + Tailwind preset + layout.css
+reports/  GENERATED  audit data, rendered by showcase /verify
+archive/  retired, wired to nothing — read archive/README.md first
+showcase/ the living reference. Two routes: / and /verify
 ```
+
+`test/index.html` is gone. It rendered the same `reports/audit.json` the `/verify`
+route now renders, and it could only ever show the *token* gates — the four checks
+that live at the component layer were invisible to it. The last copy and its
+template are in `archive/`, with the full argument and the instructions to restore
+it.
+
+There are three engines and they all work the same way: a perceptual declaration in
+`spec.mjs`, a computed result. Colours are authored in OKLCH and computed
+(`palette.mjs`). Springs are authored as a settle time and a bounce and computed
+into CSS `linear()` curves (`motion.mjs`). Neither a hex nor a cubic-bezier is ever
+hand-typed. `layout.mjs` is the odd one out — it computes nothing, but it is the
+single place layout behaviour is described.
 
 ## The one command
 
@@ -34,6 +49,27 @@ offending token and measured value on any failure. No dependencies, Node 18+.
 **1. Never edit `tokens/`, `dist/`, `reports/` or `test/`.** They are overwritten
 on every build. A change there looks like it worked and vanishes. If you want a
 different value in `dist/tokens.css`, change `build/spec.mjs` and rebuild.
+
+**1b. Never hand-type an easing curve either.** Springs are declared in
+`spec.mjs` as `{ settle, bounce }` and computed by `build/motion.mjs` into a
+`linear()` stop list. A pasted curve from a generator is a magic number — nobody can
+say why the fourth stop is 1.0837, so nobody can change it. If motion feels wrong,
+move `bounce` or `settle`. Two families and the split is load-bearing: `effects-*`
+for colour and opacity and it **must not** overshoot; `spatial-*` for transform and
+size and it **must**. Overshoot on an opacity clips at 1 and stalls, so it buys a
+pause and no bounce; getting this backwards is what "the whole app feels bouncy and
+cheap" actually is. The build measures the emitted curve rather than trusting the
+declaration.
+
+**1c. Never add a border without saying what it is for.** A stroke does one of four
+jobs and only two of them need one: `affordance` (the boundary *is* the control — an
+input, a secondary button, an unchecked box) and `state` (a focus ring, a selected
+row). `separation` and `elevation` are build errors — separation is a surface step or
+space, elevation is shadow in light and surface lightness in dark. Declare
+`borderJob` on the variant; `verify:borders` sweeps every recipe and fails on an
+undeclared border, an illegal job, and a stale declaration on a variant that no
+longer binds one. This is why the count went from 34 bindings to 19: almost all of
+them were separation, and separation had a cheaper answer the whole time.
 
 **2. Never hand-type a colour above tier 1.** Every semantic token names a
 primitive path like `solid/brand/60` or `opacity-15/neutral/20`. The build fails on
@@ -84,9 +120,62 @@ Lc 60, not the WCAG ratio. axe and Lighthouse will flag them. An earlier revisio
 "fixed" this and shipped a near-black label on the destructive button. Read
 `docs/DECISIONS.md` H1 in full before touching `CONTENT_ON`.
 
+**In dark mode, elevation is lightness — not shadow, and not a border.** A drop
+shadow on a near-black page barely reads, so depth is built upward instead: every
+rung of the surface ladder is lighter than the one below it, ΔL 4.3–6.6 apart, and
+`SURFACE_LADDER` in `spec.mjs` gates the ordering. This is why `surface/elevated`
+and `surface/overlay` both sit at `neutral/105` in dark and both at `neutral/white`
+in light — at the top of the usable ramp a popover separates by elevation, not by
+hue, and there is only one rung available. The ceiling is set by text: `content/tertiary`
+clears 4.5:1 only up to L\* 36.3, so no dark surface may be lighter than that.
+
+**`fill/*-disabled` is darker than every surface in dark, and that is the point.**
+Lighter reads as more prominent, so a disabled fill above the surfaces would look
+more actionable than the live controls beside it. `neutral/95` was free and was
+rejected for exactly that reason. Nothing here is constrained by a contrast floor —
+WCAG 1.4.3 exempts disabled controls — only by collision, and it has now collided
+five separate times. Read the comment on `FILL_DISABLED_OVERRIDE` before moving it.
+
 **`border/focus-inverse` is the same colour as the page.** It is an inset ring, for
 use on a saturated fill only. There is no colour that is readable both on brand
 orange and on the white page beside it, which is why there are two ring tokens.
+
+**`prefers-reduced-motion` does not switch motion off.** It removes *movement* and
+keeps fades. `--oz-motion-spatial-scale` goes to 0, so every spatial translate —
+authored as `calc(<distance> * var(--oz-motion-spatial-scale))` — collapses while the
+opacity transition on the same element still runs; spatial springs repoint to their
+effects equivalents so the overshoot goes too; `.oz-ambient` stops. The blanket
+`* { transition: none !important }` reset that used to live in the showcase is
+**wrong** and was removed: a background fading between two greys carries no
+vestibular risk, so killing it costs those users a snapping interface and buys
+nothing. Do not reintroduce it — and note it cannot merely coexist, because a
+blanket `!important` block downstream of `tokens.css` wins the cascade and defeats
+the graded version.
+
+**A spatial translate must be written through the multiplier — unless the transform
+*is* the state.** `translateY(6px)` is a bug; `translateY(calc(6px *
+var(--oz-motion-spatial-scale)))` is the same motion that also knows how to stop.
+This is why entrance animations ship as `.oz-enter-*` classes from the token layer
+rather than as Tailwind keyframes — a keyframe defined in the app layer is a keyframe
+defined outside the thing that knows when not to run.
+
+The exception is narrow and real: the multiplier removes travel that exists to be
+*noticed*, not travel that encodes *where something is*. A switch thumb multiplied to
+zero sits in the same place whether the switch is on or off, so the component stops
+communicating — a worse outcome for that user than the movement was. Those transforms
+keep their distance and lose their overshoot instead, because their transition still
+runs on a spatial spring that reduced motion repoints to an effects one. State
+transforms are listed with a reason in `STATE_TRANSFORMS` in
+`showcase/scripts/verify-motion.ts`, which fails both on an unlisted literal
+transform and on a listed one that no longer matches — an exemption written down
+beats a hole, and a stale exemption is worse than neither.
+
+**`dist/layout.css` has no media queries and that is not an omission.** All eight
+primitives read their own container, not the viewport, because the same card sits in
+a 200px sidebar and a 900px column at one viewport width and a media query cannot
+tell those apart. `minmax()` always wraps its minimum in `min(…, 100%)`; flex and
+grid children always get `min-width: 0`. Both are gated — they are the two failure
+modes that produce every horizontal overflow.
 
 **Ten elevation tokens carry no Figma `aliasData`.** Deliberate. Figma discards a
 variable's local value when it is bound to an alias, and these carry alpha

@@ -442,13 +442,45 @@ module.exports = {
         "base": "var(--oz-duration-base)",
         "slow": "var(--oz-duration-slow)",
         "slower": "var(--oz-duration-slower)",
-        "ambient": "var(--oz-duration-ambient)"
+        "ambient": "var(--oz-duration-ambient)",
+        "effects-fast": "var(--oz-spring-effects-fast-ms)",
+        "effects-default": "var(--oz-spring-effects-default-ms)",
+        "effects-slow": "var(--oz-spring-effects-slow-ms)",
+        "spatial-fast": "var(--oz-spring-spatial-fast-ms)",
+        "spatial-default": "var(--oz-spring-spatial-default-ms)",
+        "spatial-slow": "var(--oz-spring-spatial-slow-ms)",
+        "expressive": "var(--oz-spring-expressive-ms)"
       },
       "transitionTimingFunction": {
         "entrance": "var(--oz-ease-entrance)",
         "exit": "var(--oz-ease-exit)",
         "standard": "var(--oz-ease-standard)",
-        "linear": "var(--oz-ease-linear)"
+        "linear": "var(--oz-ease-linear)",
+        "effects-fast": "var(--oz-spring-effects-fast)",
+        "effects-default": "var(--oz-spring-effects-default)",
+        "effects-slow": "var(--oz-spring-effects-slow)",
+        "spatial-fast": "var(--oz-spring-spatial-fast)",
+        "spatial-default": "var(--oz-spring-spatial-default)",
+        "spatial-slow": "var(--oz-spring-spatial-slow)",
+        "expressive": "var(--oz-spring-expressive)"
+      },
+      "animationDuration": {
+        "effects-fast": "var(--oz-spring-effects-fast-ms)",
+        "effects-default": "var(--oz-spring-effects-default-ms)",
+        "effects-slow": "var(--oz-spring-effects-slow-ms)",
+        "spatial-fast": "var(--oz-spring-spatial-fast-ms)",
+        "spatial-default": "var(--oz-spring-spatial-default-ms)",
+        "spatial-slow": "var(--oz-spring-spatial-slow-ms)",
+        "expressive": "var(--oz-spring-expressive-ms)"
+      },
+      "animationTimingFunction": {
+        "effects-fast": "var(--oz-spring-effects-fast)",
+        "effects-default": "var(--oz-spring-effects-default)",
+        "effects-slow": "var(--oz-spring-effects-slow)",
+        "spatial-fast": "var(--oz-spring-spatial-fast)",
+        "spatial-default": "var(--oz-spring-spatial-default)",
+        "spatial-slow": "var(--oz-spring-spatial-slow)",
+        "expressive": "var(--oz-spring-expressive)"
       },
       "boxShadow": {
         "x-small": "var(--oz-elevation-x-small)",

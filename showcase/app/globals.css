@@ -1,0 +1,98 @@
+/* The generated token layer, inlined by postcss-import before Tailwind runs. This
+ * is the same one-line install docs/DEV-GUIDE.md gives app developers, pointed at
+ * dist/ in the repo rather than at a vendored copy — so `node build/build.mjs` is
+ * the only way a value on this page can change.
+ *
+ * It must come before @tailwind base: tokens.css wraps its declarations in
+ * `@layer base`, and Tailwind hoists that into its own base layer, ahead of every
+ * utility that reads the variables. */
+@import '../../dist/tokens.css';
+
+/* The layout primitives. A second file rather than part of tokens.css because
+ * tokens are values and these are behaviour — see emitLayoutCss() in
+ * build/build.mjs. Must come after tokens.css: every knob defaults to a token. */
+@import '../../dist/layout.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    /* Anchor scrolling has to clear the sticky header. */
+    scroll-behavior: smooth;
+    scroll-padding-top: 88px;
+  }
+
+  body {
+    background: var(--oz-color-background);
+    color: var(--oz-color-content-primary);
+    font-family: var(--oz-font-body);
+    font-size: var(--oz-text-body-md);
+    line-height: var(--oz-leading-body-md);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* The reduced-motion policy is NOT here any more. It ships in dist/tokens.css,
+   * which is imported above — see reducedMotionBlock() in build/build.mjs.
+   *
+   * What used to be here was the blanket reset:
+   *
+   *     *, *::before, *::after { animation-duration: 0.01ms !important; ... }
+   *
+   * Two things were wrong with it. It lived in the app rather than in the layer that
+   * defines the motion, so every consumer of dist/tokens.css got the tokens and none
+   * of the policy — the demo honoured the preference and the product did not. And it
+   * removed colour and opacity transitions along with movement, which is more than
+   * the preference asks for: a background fading between two greys carries no
+   * vestibular risk, so killing it costs those users a snapping interface and buys
+   * them nothing.
+   *
+   * It also has to be gone rather than merely redundant. postcss-import inlines
+   * tokens.css at the top of this file, so a blanket !important block down here would
+   * win the cascade and defeat the graded version above it. */
+}
+
+@layer utilities {
+  /* Specimen canvas.
+   *
+   * A live component has to sit on the page colour to be judged honestly — its own
+   * surface token is the thing under test, and putting it on a card would mean
+   * reading surface/primary against surface/primary. But a region that is exactly
+   * the page colour has nothing except its outline to define it, which is the
+   * weakest framing available and the reason the stages read as empty boxes.
+   *
+   * A dot grid says "canvas, not page" — the convention Figma and Storybook both use
+   * — without introducing a surface the component was never specified against.
+   *
+   * The dot is surface/tertiary, which is the token .oz-alpha-grid below already uses
+   * for exactly this job. border/tertiary was the first choice and is wrong: it
+   * resolves to #C2C0BF on a #FFFFFF page in light, which is fine, but to #7C7A78 on
+   * a #070605 page in dark — a mid-grey on near-black, which reads as a pattern
+   * competing with the specimen rather than as a surface behind it. surface/tertiary
+   * stays quiet in both (#DCDAD9 and #2E2C2B against their pages). Same lesson as the
+   * modes elsewhere in this repo: check the value in both, not the one you are
+   * looking at. */
+  .oz-canvas {
+    background-color: var(--oz-color-background);
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      var(--oz-color-surface-tertiary) 1px,
+      transparent 0
+    );
+    background-size: 16px 16px;
+  }
+
+  /* Checkerboard behind translucent swatches, so a 20%-alpha fill cannot be
+   * mistaken for an opaque pale one. Built from tokens, not from a PNG. */
+  .oz-alpha-grid {
+    background-image:
+      linear-gradient(45deg, var(--oz-color-surface-tertiary) 25%, transparent 25%),
+      linear-gradient(-45deg, var(--oz-color-surface-tertiary) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, var(--oz-color-surface-tertiary) 75%),
+      linear-gradient(-45deg, transparent 75%, var(--oz-color-surface-tertiary) 75%);
+    background-size: 8px 8px;
+    background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+  }
+}

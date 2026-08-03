@@ -1,0 +1,194 @@
+{
+  "id": "checkbox",
+  "definition": "A value collected now and committed by a separate, later act. The only control here with three values, and no click reaches the third.",
+  "reachForItWhen": [
+    "The user picks any number of options from a set and a Save or Generate button commits them.",
+    "A clip, file or row needs a selection that a bulk action reads afterwards.",
+    "A table header governs rows that are individually selectable — the one place mixed is legal.",
+    "The user accepts terms whose full text is on the screen and stays on it."
+  ],
+  "reachForSomethingElseWhen": [
+    {
+      "situation": "The setting applies the moment it is toggled, with no Save step",
+      "instead": "Switch, whose whole contract is immediate effect — a checkbox here promises a commit that never arrives"
+    },
+    {
+      "situation": "Exactly one option out of several is legal",
+      "instead": "No radio recipe exists. Add one under `showcase/lib/recipes/` with its own `MotionSpec` — a checkbox group enforces nothing and lets the user pick two"
+    },
+    {
+      "situation": "The selection belongs to the whole row rather than to one cell",
+      "instead": "Table, whose row variant binds `aria-selected` and `fill/selected`; a checkbox inside such a row is decoration"
+    },
+    {
+      "situation": "The tick is the action itself rather than a value collected for one",
+      "instead": "Button — the destructive variant where the action cannot be undone"
+    }
+  ],
+  "variants": [
+    {
+      "variant": "unchecked",
+      "useWhen": "Every option the user has not acted on. First in the recipe's order, so it is what renders with neither `checked` nor `defaultChecked` passed.",
+      "avoidWhen": "Standing in for a setting that is off and applies on click. That is Switch's off state, and this variant promises a Save step the screen does not have."
+    },
+    {
+      "variant": "checked",
+      "useWhen": "The value is already true in the data at render — a saved preference, or a row a pending bulk action already covers.",
+      "avoidWhen": "Pre-ticking an option that costs the user money, storage or data. A pre-ticked box records an agreement indistinguishable afterwards from one the user made."
+    },
+    {
+      "variant": "indeterminate",
+      "useWhen": "At most one per set, and always the governing control: the header or parent whose members are split, never a member.",
+      "avoidWhen": "As a value the user picks, or as a half-loaded indicator. No click produces mixed, and rows that have not loaded are Skeleton's."
+    }
+  ],
+  "sizes": {
+    "guidance": [
+      {
+        "size": "md",
+        "useWhen": "Always. One size, and `sizeClasses.md` is empty — nothing in the class string varies with it."
+      }
+    ],
+    "note": "The 44px touch target (`--oz-target-min`) comes from the labelled row, not from the box, so a larger box would buy no target. A smaller one is unavailable for a different reason: the tick is a token at `--oz-space-4` (12px) and the box interior is 14px — `--oz-space-5` (16px) less two `--oz-stroke-2` strokes of 1px each — so dropping the box one step crops the tick instead of scaling it."
+  },
+  "copy": [
+    "Label copy: state what is true when the box is ticked, in sentence case with no terminal full stop — accept `Add a watermark`, reject `Watermark`, a noun that says nothing about the tick",
+    "Label copy: keep the verb out of Switch's register — reject `Enable upscaling to 4K`, which claims the setting already applies, accept `Upscale to 4K on export`",
+    "Label copy: never a negation, because the user inverts twice at reading speed and gets it wrong — reject `Do not keep the source file after export`, accept `Keep the source file after export`",
+    "Label copy: never a destructive verb, because the tick then commits the deletion instead of collecting a value for one — reject `Delete source clips after export`, accept `Keep the source file after export`",
+    "Label copy: name the count and the set on a select-all — accept `Select all 12 clips`, reject `Select all`, which does not say whether all is the twelve clips on screen or the four hundred behind the filter",
+    "Label copy: put the reason inside a disabled label — the shipped string is `Commercial licence (required, locked)`, because `<button disabled>` leaves the tab order and a keyboard user never reaches the control that would otherwise carry it",
+    "No second slot: the component renders one author string. There is no description, helper or message slot in the recipe, and that is answered rather than missing — a checkbox needing a sentence of explanation has the wrong label, and the explanation goes above the group as body copy.",
+    "Fallback name: `aria-label` falls back to the string `Select` when `label` is absent. It exists so an unlabelled box is not nameless; it is not a name, and a select-all shipping it announces `Select, checkbox, mixed`, which names neither the set nor what is mixed in it."
+  ],
+  "motion": "Nothing about the box moves. A press-scale here would cost more than it does on a button: the checkbox is the one control operated as a column, and a target that shrinks under the pointer at row four moves the row-five target the user is already reaching for. `enter: 'none'` is the box saying it has nothing to arrive from — it was on screen before the click, and the state change is the whole event.",
+  "behaviourUnderPressure": [
+    {
+      "case": "A label longer than its column",
+      "behaviour": "Wrap and grow past the 44px floor. Never truncate: the label is the only place the commitment is written, so the user ticks `Keep the source file after ex…` and the record says they agreed to it. `items-center` centres the box against the whole block, so beside a three-line label it sits level with line two."
+    },
+    {
+      "case": "A select-all header over an empty set",
+      "behaviour": "Refuse mixed and render `unchecked` and `disabled` instead. Mixed over zero rows claims some of nothing is selected, and `Select all 12 clips` has no legal form at 0."
+    },
+    {
+      "case": "Disabled and unchecked",
+      "behaviour": "The box carries no signal and the label carries all of it. `fill/secondary-disabled` composites to 1.08:1 against a white page and the disabled stroke to 1.09:1 over that fill; on a dark dialog the same fill composites to 1.19:1 against its bed. Ship the reason in the string."
+    },
+    {
+      "case": "The tick fires a request",
+      "behaviour": "Refuse. The recipe binds base, hover, disabled and focus and no pending state, so nothing sits on screen between the tick and the response and the user ticks a second time. Leave the request on the Save or Generate button the checkbox feeds."
+    },
+    {
+      "case": "A label translated to roughly 1.3× its English length",
+      "behaviour": "Wrap. The 16px box, the 12px gap and the 44px floor are tokens and hold in every locale, so line count is the only variable. The string that does not survive a length pass is the select-all: `Select all 12 clips` needs its count interpolated by the locale layer, because a concatenated number takes the wrong plural in Polish and Russian."
+    }
+  ],
+  "whatTheBuildEnforces": {
+    "enforced": [
+      {
+        "claim": "The tick clears APCA Lc 60 on the brand fill in both modes and on hover — Lc 66.73 base, 77.83 light and 63.62 dark on hover. It is gated on Lc, not on the 3.55:1 WCAG ratio axe will report; DECISIONS.md H1 is the tie-breaker.",
+        "mark": "E",
+        "assertion": "`APCA_ASSERTIONS` in `build/spec.mjs` for the token pair, and the `content-on-*` branch of `showcase/scripts/verify-contrast.ts` for the pairing the recipe creates."
+      },
+      {
+        "claim": "Every token name in the three bindings resolves in both modes. A typo fails the run rather than rendering one silently unstyled state.",
+        "mark": "E",
+        "assertion": "the `resolveRole` sweep over `recipe.bindingRoles` in `showcase/scripts/verify-contrast.ts`."
+      },
+      {
+        "claim": "A click can never produce `mixed`, so a header that unchecks from mixed is a caller reimplementing the component.",
+        "mark": "S",
+        "assertion": "`toggle()` in `Checkbox.tsx` computes `value === true ? false : true`; `onCheckedChange` is typed `(checked: boolean) => void` and `defaultChecked` is `boolean`, so mixed is controlled-only."
+      },
+      {
+        "claim": "The box's colour change cannot be given a spring that overshoots — an overshoot on a colour clips at the channel boundary and buys a stall.",
+        "mark": "E",
+        "assertion": "`motionConsistent` in `showcase/lib/core/Recipe.ts`, swept by check 2 of `showcase/scripts/verify-motion.ts`."
+      },
+      {
+        "claim": "The checkbox cannot be made motionless while it binds hover.",
+        "mark": "E",
+        "assertion": "check 3 of `showcase/scripts/verify-motion.ts`, which sweeps every bound interactive state rather than hover alone."
+      },
+      {
+        "claim": "In dark mode the bed under a checkbox in a dialog sits above `surface/tertiary`, at ΔL 0.0433 against a 0.03 floor.",
+        "mark": "E",
+        "assertion": "the `SURFACE_LADDER` monotonicity gate in `build/build.mjs`, dark only — the four rungs are in `reports/audit.json` under `kind: 'ladder'`."
+      },
+      {
+        "claim": "The label's colour pair is gated on a floating surface: `content/secondary` on `surface/elevated` measures 6.54:1 dark against a 4.5 floor.",
+        "mark": "E",
+        "assertion": "`CONTRAST_ASSERTIONS` in `build/spec.mjs`, six pairs added by B18b. The pair is gated; the component's use of it is not — see the first line below."
+      }
+    ],
+    "notEnforced": [
+      "The label's colour is a literal `text-content-secondary` in `Checkbox.tsx`, outside `bindings`. `recipe.bindingRoles` never yields it, so no component sweep measures it, and swapping it at the call site fails nothing.",
+      "The unchecked variant creates no measured pairing at all. `verify-contrast.ts` runs `if (!merged.fg || !merged.bg) continue;` and unchecked binds no `fg` in base, hover or disabled — the box a user sees most often is measured by nothing.",
+      "`VISIBILITY_ASSERTIONS` names `border/tertiary` against `color/surface/primary` only, at a 1.6 floor. The box's stroke actually sits on `surface/primary-variant` — 1.81:1 light, 4.57:1 dark — and against a dark dialog it measures 2.77:1. Neither pair is named; adding them goes in `build/spec.mjs`, per CLAUDE.md rule 3.",
+      "The tick's spring is a class in `Checkbox.tsx`. `verify-motion.ts` sweeps `lib/core/Recipe.ts` and `lib/recipes/*.recipe.ts` and nothing else, so a hand-written `scale-[0.96]` in that file would pass every gate and keep moving for a user who asked it not to — the shape of B19, in a file the sweep B19 added does not reach.",
+      "Nothing checks that a `label` was passed. Without one the component returns the bare box, the 44px row never renders, and the accessible name falls back to `Select` — the failure the last copy bullet describes, shipping green.",
+      "Nothing checks that a select-all header derives its value from its rows on every render. A header holding its own boolean drifts the moment a row is toggled directly, and then reports checked while eleven of twelve clips are selected.",
+      "`border/focus` is gated against the page and `surface/primary`, not against `surface/elevated`, where it measures 4.54:1 dark — computed here, not from `reports/audit.json`. A checkbox in a dialog is the common case and the unnamed pair.",
+      "The 16px box, the 1px stroke and the 12px tick are arithmetic spread across two files. Change `h-space-5` in the recipe and nothing reports that the tick stopped fitting."
+    ]
+  },
+  "looksLikeABugButIsNot": [
+    {
+      "observation": "The generated motion summary reads `enter: — none`, and the tick visibly scales in on every click.",
+      "why": "The summary is compiled from `recipe.motion`, and that object describes the box. The box was on screen before the click and has no entrance to declare; the thing that enters is the tick, whose class sits on a child element and never passes through the recipe. `enter: 'none'` is an answer about the box, not a missing entrance."
+    },
+    {
+      "observation": "`checked` and `indeterminate` are byte-identical in the binding table — same fill, same border, same tick colour, in both modes and every state.",
+      "why": "The difference is the SVG path and `aria-checked`, never colour. Collapsing them into a boolean deletes the only place `'mixed'` is declared, and the select-all header then announces `checked` while half its rows are unselected. The distinction is shape, and shape is not something the binding table can show."
+    },
+    {
+      "observation": "The unchecked box has no fill of its own on a white page: `surface/primary-variant` is `#FFFFFF`, byte-identical to `color/background`.",
+      "why": "An opaque white rather than `transparent`, so the box keeps a white interior when it lands on a `surface/primary` card, a tinted panel or a thumbnail instead of taking the bed's colour. `COLLISION_ASSERTIONS` holds `surface/primary` apart from the page and deliberately does not name this pair."
+    },
+    {
+      "observation": "A disabled checked box reads as a tick floating with no square behind it.",
+      "why": "`fill/brand-disabled` measures 1.23:1 against a white page while the tick on it measures 3.47:1, so the tick carries the whole signal and the fill carries none. A control you cannot act on keeps no role colour — I5 — and removing the tick to match the fill would delete the only readable part of the state."
+    }
+  ],
+  "related": [
+    {
+      "component": "Switch",
+      "difference": "When both sit in one settings panel, colour cannot separate them — `on` and `checked` both bind `fill/brand`, so the shape and the label's verb carry the whole contract."
+    },
+    {
+      "component": "Table",
+      "difference": "When the row is already selectable, a box inside it is a second copy of the selection — one `selectedKeys` prop drives both the row's fill and its announcement, and the box's own boolean is a third value nothing reconciles."
+    },
+    {
+      "component": "Input",
+      "difference": "When the option is an open string rather than one of an enumerated set, there is no value here to bind it to."
+    },
+    {
+      "component": "Skeleton",
+      "difference": "When the rows a select-all governs have not arrived, the region is named once — `SkeletonGroup` takes a required `label` and marks itself `aria-busy`, where a column of boxes announces one at a time."
+    },
+    {
+      "component": "Radio — not in this system",
+      "difference": "When exactly one option is legal, the keyboard pays too — twelve boxes are twelve tab stops where a radio group is one, and the exit is a new recipe in `showcase/lib/recipes/`."
+    }
+  ],
+  "changed": [
+    {
+      "what": "2026-08-01 — a checkbox on a dark dialog now sits on a lighter bed. Its stroke measures 2.77:1 against `surface/elevated` where it measured 3.84:1, and its fill separates from that bed at 1.65:1 where it measured 1.19:1.",
+      "why": "DECISIONS.md B18. Both floating surfaces were `neutral/120`, byte-identical to `surface/secondary`, so the box's 1px stroke was the entire boundary; `neutral/105` (`#393735`, L* 33.8) gives the bed part of that job and takes some from the stroke. Neither pair is asserted, so measure before moving `border/tertiary`."
+    },
+    {
+      "what": "2026-08-01 — the disabled checked tick measures 4.92:1 in dark. Guidance quoting 3.82:1 is reading a fill that no longer exists. Light is unchanged at 3.47:1.",
+      "why": "DECISIONS.md B18c moved `fill/*-disabled` to `neutral/115` (`#272524`) after the floating surfaces took `neutral/105`. `reports/audit.json` carries 4.92; I5's prose still says 3.82:1 and has not been reconciled, so the audit wins."
+    },
+    {
+      "what": "2026-08-01 — the tick is 12px inside a 14px interior. Earlier guidance called the interior 12px and derived the tick from it.",
+      "why": "`border-2` resolves to `--oz-stroke-2`, which is 1px, not 2px — the ordinal stroke scale is remapped in `dist/tailwind.tokens.js`. The derivation was invented to make a token value look computed; the arithmetic that replaces it is in Sizes. CLAUDE.md rule 5."
+    },
+    {
+      "what": "2026-08-01 — B19's press-scale fix changes nothing to act on here, and the sweep shipped with it does not reach this component's tick.",
+      "why": "`Recipe.motionClasses` now routes a press through the multiplier, and `checkbox.recipe.ts` declares no press. The tick's scale is graded because `.oz-enter-pop` is a token-layer class, not because a gate checks it — do not add a second multiplier by hand."
+    }
+  ]
+}

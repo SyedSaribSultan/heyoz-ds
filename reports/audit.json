@@ -1,13 +1,20 @@
 {
   "$generated": "GENERATED FILE — DO NOT EDIT. Overwritten by `node build/build.mjs`. Change build/spec.mjs or build/palette.mjs and rebuild. See CLAUDE.md.",
-  "generatedAt": "2026-07-31T11:15:22.514Z",
+  "generatedAt": "2026-08-03T18:45:23.736Z",
+  "sources": {
+    "build/palette.mjs": 1785759350845.3977,
+    "build/motion.mjs": 1785509597309.4634,
+    "build/layout.mjs": 1785739856175.4363,
+    "build/spec.mjs": 1785759403231.3635,
+    "build/build.mjs": 1785759383219.4072
+  },
   "namespace": "oz",
   "counts": {
     "colorPrimitives": 655,
     "numberPrimitives": 29,
     "semanticPerMode": 210,
     "typeSteps": 15,
-    "unusedPrimitives": 504
+    "unusedPrimitives": 503
   },
   "contrast": [
     {
@@ -224,6 +231,16 @@
       "kind": "contrast",
       "metric": "wcag",
       "mode": "light",
+      "fg": "color/content/fixed-primary",
+      "bg": "color/fill/fixed",
+      "ratio": 20.25,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "light",
       "fg": "color/content/tertiary",
       "bg": "color/background",
       "ratio": 6.55,
@@ -387,6 +404,66 @@
       "fg": "color/content/secondary",
       "bg": "color/surface/tertiary",
       "ratio": 9.97,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/content/primary",
+      "bg": "color/surface/elevated",
+      "ratio": 20.25,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/content/primary",
+      "bg": "color/surface/overlay",
+      "ratio": 20.25,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/content/secondary",
+      "bg": "color/surface/elevated",
+      "ratio": 13.9,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/content/secondary",
+      "bg": "color/surface/overlay",
+      "ratio": 13.9,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/content/tertiary",
+      "bg": "color/surface/elevated",
+      "ratio": 6.55,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/content/tertiary",
+      "bg": "color/surface/overlay",
+      "ratio": 6.55,
       "min": 4.5,
       "pass": true
     },
@@ -814,6 +891,16 @@
       "kind": "contrast",
       "metric": "wcag",
       "mode": "dark",
+      "fg": "color/content/fixed-primary",
+      "bg": "color/fill/fixed",
+      "ratio": 20.25,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
       "fg": "color/content/tertiary",
       "bg": "color/background",
       "ratio": 8.45,
@@ -984,6 +1071,66 @@
       "kind": "contrast",
       "metric": "wcag",
       "mode": "dark",
+      "fg": "color/content/primary",
+      "bg": "color/surface/elevated",
+      "ratio": 10.16,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/content/primary",
+      "bg": "color/surface/overlay",
+      "ratio": 10.16,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/content/secondary",
+      "bg": "color/surface/elevated",
+      "ratio": 6.54,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/content/secondary",
+      "bg": "color/surface/overlay",
+      "ratio": 6.54,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/content/tertiary",
+      "bg": "color/surface/elevated",
+      "ratio": 4.95,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/content/tertiary",
+      "bg": "color/surface/overlay",
+      "ratio": 4.95,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
       "fg": "color/border/focus",
       "bg": "color/background",
       "ratio": 7.76,
@@ -1066,7 +1213,7 @@
       "mode": "dark",
       "fg": "color/content/on-brand-disabled",
       "bg": "color/fill/brand-disabled",
-      "ratio": 3.82,
+      "ratio": 4.92,
       "min": 3,
       "pass": true
     },
@@ -1076,7 +1223,7 @@
       "mode": "dark",
       "fg": "color/content/on-critical-disabled",
       "bg": "color/fill/critical-disabled",
-      "ratio": 3.82,
+      "ratio": 4.92,
       "min": 3,
       "pass": true
     },
@@ -1086,7 +1233,7 @@
       "mode": "dark",
       "fg": "color/content/on-success-disabled",
       "bg": "color/fill/success-disabled",
-      "ratio": 3.82,
+      "ratio": 4.92,
       "min": 3,
       "pass": true
     },
@@ -1096,7 +1243,7 @@
       "mode": "dark",
       "fg": "color/content/on-warning-disabled",
       "bg": "color/fill/warning-disabled",
-      "ratio": 3.82,
+      "ratio": 4.92,
       "min": 3,
       "pass": true
     },
@@ -1106,7 +1253,7 @@
       "mode": "dark",
       "fg": "color/content/on-info-disabled",
       "bg": "color/fill/info-disabled",
-      "ratio": 3.82,
+      "ratio": 4.92,
       "min": 3,
       "pass": true
     },
@@ -1888,6 +2035,414 @@
       "bg": "color/chart/5",
       "ratio": 0.3098,
       "min": 0.05,
+      "pass": true
+    },
+    {
+      "kind": "ladder",
+      "metric": "dL",
+      "mode": "dark",
+      "fg": "color/surface/primary",
+      "bg": "color/background",
+      "ratio": 0.0655,
+      "min": 0.03,
+      "pass": true
+    },
+    {
+      "kind": "ladder",
+      "metric": "dL",
+      "mode": "dark",
+      "fg": "color/surface/secondary",
+      "bg": "color/surface/primary",
+      "ratio": 0.052,
+      "min": 0.03,
+      "pass": true
+    },
+    {
+      "kind": "ladder",
+      "metric": "dL",
+      "mode": "dark",
+      "fg": "color/surface/tertiary",
+      "bg": "color/surface/secondary",
+      "ratio": 0.0541,
+      "min": 0.03,
+      "pass": true
+    },
+    {
+      "kind": "ladder",
+      "metric": "dL",
+      "mode": "dark",
+      "fg": "color/surface/elevated",
+      "bg": "color/surface/tertiary",
+      "ratio": 0.0433,
+      "min": 0.03,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "overshoot",
+      "token": "spring/effects-fast",
+      "ratio": 0,
+      "min": 0,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "settle",
+      "token": "spring/effects-fast",
+      "ratio": 120,
+      "min": 200,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "endpoints",
+      "token": "spring/effects-fast",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "overshoot",
+      "token": "spring/effects-default",
+      "ratio": 0,
+      "min": 0,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "settle",
+      "token": "spring/effects-default",
+      "ratio": 180,
+      "min": 500,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "endpoints",
+      "token": "spring/effects-default",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "overshoot",
+      "token": "spring/effects-slow",
+      "ratio": 0,
+      "min": 0,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "settle",
+      "token": "spring/effects-slow",
+      "ratio": 280,
+      "min": 500,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "endpoints",
+      "token": "spring/effects-slow",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "overshoot",
+      "token": "spring/spatial-fast",
+      "ratio": 0.00296,
+      "min": 0.00001,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "settle",
+      "token": "spring/spatial-fast",
+      "ratio": 190,
+      "min": 200,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "endpoints",
+      "token": "spring/spatial-fast",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "overshoot",
+      "token": "spring/spatial-default",
+      "ratio": 0.01109,
+      "min": 0.00001,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "settle",
+      "token": "spring/spatial-default",
+      "ratio": 340,
+      "min": 500,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "endpoints",
+      "token": "spring/spatial-default",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "overshoot",
+      "token": "spring/spatial-slow",
+      "ratio": 0.01986,
+      "min": 0.00001,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "settle",
+      "token": "spring/spatial-slow",
+      "ratio": 480,
+      "min": 500,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "endpoints",
+      "token": "spring/spatial-slow",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "overshoot",
+      "token": "spring/expressive",
+      "ratio": 0.08339,
+      "min": 0.00001,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "settle",
+      "token": "spring/expressive",
+      "ratio": 520,
+      "min": 600,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "endpoints",
+      "token": "spring/expressive",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "motion",
+      "metric": "spatial-scale",
+      "token": "scale/spatial-scale",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "minmax-clamped",
+      "token": "minmax(min(var(--grid-min), …)",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "minmax-clamped",
+      "token": "minmax(min(var(--grid-min), …)",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "children-contained",
+      "token": "oz-stack",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "children-contained",
+      "token": "oz-cluster",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "children-contained",
+      "token": "oz-switcher",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "children-contained",
+      "token": "oz-grid",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "children-contained",
+      "token": "oz-sidebar",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "children-contained",
+      "token": "oz-frame",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "children-contained",
+      "token": "oz-reel",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "no-fixed-width",
+      "token": "oz-stack",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "no-fixed-width",
+      "token": "oz-cluster",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "no-fixed-width",
+      "token": "oz-switcher",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "no-fixed-width",
+      "token": "oz-grid",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "no-fixed-width",
+      "token": "oz-sidebar",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "no-fixed-width",
+      "token": "oz-center",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "no-fixed-width",
+      "token": "oz-frame",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "no-fixed-width",
+      "token": "oz-reel",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "selector-has-no-var",
+      "token": ".oz-switcher > :nth-last-child(n + 5)",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "selector-has-no-var",
+      "token": ".oz-switcher > :nth-last-child(n + 5)",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "selector-has-no-var",
+      "token": ".oz-switcher-max-3 > :nth-last-child(n + 3)",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "selector-has-no-var",
+      "token": ".oz-switcher-max-3 > :nth-last-child(n + 3)",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "selector-has-no-var",
+      "token": ".oz-switcher-max-4 > :nth-last-child(n + 4)",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "selector-has-no-var",
+      "token": ".oz-switcher-max-4 > :nth-last-child(n + 4)",
+      "ratio": 1,
+      "min": 1,
+      "pass": true
+    },
+    {
+      "kind": "layout",
+      "metric": "sidebar-wraps",
+      "token": "--sidebar-content-min",
+      "ratio": 1,
+      "min": 1,
       "pass": true
     }
   ],
@@ -3015,14 +3570,14 @@
       "target": "solid/neutral/120"
     },
     "color/surface/elevated": {
-      "hex": "#211F1D",
+      "hex": "#393735",
       "alpha": 1,
-      "target": "solid/neutral/120"
+      "target": "solid/neutral/105"
     },
     "color/surface/overlay": {
-      "hex": "#272524",
+      "hex": "#393735",
       "alpha": 1,
-      "target": "solid/neutral/115"
+      "target": "solid/neutral/105"
     },
     "color/surface/inverse": {
       "hex": "#F7F5F4",
@@ -3260,9 +3815,9 @@
       "target": "solid/brand/50"
     },
     "color/fill/brand-disabled": {
-      "hex": "#393735",
+      "hex": "#272524",
       "alpha": 1,
-      "target": "solid/neutral/105"
+      "target": "solid/neutral/115"
     },
     "color/fill/success": {
       "hex": "#1D9156",
@@ -3280,9 +3835,9 @@
       "target": "solid/success/50"
     },
     "color/fill/success-disabled": {
-      "hex": "#393735",
+      "hex": "#272524",
       "alpha": 1,
-      "target": "solid/neutral/105"
+      "target": "solid/neutral/115"
     },
     "color/fill/warning": {
       "hex": "#A36E07",
@@ -3300,9 +3855,9 @@
       "target": "solid/warning/50"
     },
     "color/fill/warning-disabled": {
-      "hex": "#393735",
+      "hex": "#272524",
       "alpha": 1,
-      "target": "solid/neutral/105"
+      "target": "solid/neutral/115"
     },
     "color/fill/critical": {
       "hex": "#E63C65",
@@ -3320,9 +3875,9 @@
       "target": "solid/error/50"
     },
     "color/fill/critical-disabled": {
-      "hex": "#393735",
+      "hex": "#272524",
       "alpha": 1,
-      "target": "solid/neutral/105"
+      "target": "solid/neutral/115"
     },
     "color/fill/info": {
       "hex": "#2C74EA",
@@ -3340,9 +3895,9 @@
       "target": "solid/info/50"
     },
     "color/fill/info-disabled": {
-      "hex": "#393735",
+      "hex": "#272524",
       "alpha": 1,
-      "target": "solid/neutral/105"
+      "target": "solid/neutral/115"
     },
     "color/fill/brand-secondary": {
       "hex": "#FF3D01",

@@ -1,0 +1,218 @@
+{
+  "id": "switch",
+  "definition": "A setting written the moment it is thrown. The toggle is the commit — the only control here with no submit step.",
+  "reachForItWhen": [
+    "The user changes a preference and wants it live before they leave the row — \"Upscale to 4K on export\".",
+    "A settings column where each row is written independently of the others.",
+    "Throwing it back restores the previous value with no confirmation step and no cost.",
+    "Both positions are legitimate resting states and neither one reads as an unfinished task."
+  ],
+  "reachForSomethingElseWhen": [
+    {
+      "situation": "The value travels with the screen and a later Save draft or Generate video press writes it. The test is the Save button: if one belongs at the foot, the rows were never switches.",
+      "instead": "Checkbox — \"Add a watermark\", which is exactly where the assembled composer puts it."
+    },
+    {
+      "situation": "The control runs work once and holds no value between visits.",
+      "instead": "Button. A switch that fires and springs back is a button wearing a track."
+    },
+    {
+      "situation": "The action cannot be undone. There is no confirmation step, no pending state and no undo affordance behind a switch, so one stray pointer-down destroys the thing.",
+      "instead": "`Button variant=\"destructive\"` in a dialog carrying \"Delete permanently\", and never the dialog's default focus target."
+    },
+    {
+      "situation": "The system reports the state and the user has no way to change it.",
+      "instead": "Badge, which is not clickable by construction."
+    },
+    {
+      "situation": "Three or more mutually exclusive options.",
+      "instead": "A new radio recipe in `showcase/lib/recipes/`, never a row of Switch."
+    },
+    {
+      "situation": "The immediate write failed and the user has to be told what happened.",
+      "instead": "Alert, critical, carrying the sentence the switch has no slot for."
+    }
+  ],
+  "variants": [
+    {
+      "variant": "off",
+      "useWhen": "The setting is not applied and nothing is wrong — the resting state of every row nobody has touched. Off is neutral, never an error and never a warning.",
+      "avoidWhen": "As a stand-in for unavailable or failed. There are exactly two variants and no third is coming: a control that cannot be thrown takes the `disabled` prop, and a write that failed returns to its previous position."
+    },
+    {
+      "variant": "on",
+      "useWhen": "The setting is applied and already written, with nothing outstanding. Thumb position is the state and the track colour is the second signal, not the first.",
+      "avoidWhen": "Holding `on` while the write is still in flight. There is no pending variant — the toggle is the commit, and a spinner inside the track turns the switch into a Button."
+    }
+  ],
+  "sizes": {
+    "guidance": [
+      {
+        "size": "md",
+        "useWhen": "Every switch. `sizeClasses.md` is the empty string: the track's 44 × 20px lives in `shape`, so a second size would have to move the thumb's geometry with it and there is nothing for it to buy."
+      }
+    ],
+    "note": "The touch target is the labelled row at `min-h-target` (`--oz-target-min`, 44px in `dist/tokens.css`), not the track — so a smaller track would shrink nothing the user aims at. There is also no slack to take out: `border-2` resolves to `--oz-stroke-2` at 1px, leaving a 42 × 18px interior around a 16px thumb with 1px above and below it."
+  },
+  "copy": [
+    "**Label** — name the state that is true while the switch is on, not the act of turning it on: \"Upscale to 4K on export\" accepted, \"Enable 4K upscaling\" rejected, because the instruction is still true after the user has followed it and the on position then reads as an outstanding chore",
+    "**Label** — write one clause, sentence case, no terminal full stop, at most 40 characters: the two the recipe ships are 23 and 31",
+    "**Label** — reject the bare category noun \"Notifications\": it names a group of settings and never says what the on position does",
+    "**Label** — reject the negative \"Do not email me when a render finishes\": off then reads as a double negative",
+    "**Label** — reject the paired verb \"Enable/Disable email\": the word flips meaning with the position it is meant to describe",
+    "**Label** — reject the question \"Email me when a render finishes?\": a question implies an answer step, and there is none",
+    "**Aria-label** — pass `ariaLabel` only where something else already names the row, a table column header or a state grid, and repeat the header's words exactly",
+    "**Aria-label** — reject the component's own fallback: with neither `label` nor `ariaLabel`, `Switch.tsx` announces `aria-label=\"On\"` or `\"Off\"`, which restates `aria-checked` and names no setting",
+    "**No description slot** — there is no `message` or helper prop, deliberately. The sentence explaining a setting goes in the surrounding `CardMeta`; adding a slot is an edit to `switch.recipe.ts` and `Switch.tsx`, never a `<span>` at the call site"
+  ],
+  "motion": "A thumb that eases to a stop reads as a graphic being repainted. One that overruns its stop by a hair reads as a mechanism thrown, and over 20px of travel that overrun is a nudge rather than a flourish. Settings rows do not animate in — twelve values arriving in pieces look unwritten. Nothing scales under the press, because the travel already answers the finger and a second movement would compete with the one carrying the state.",
+  "behaviourUnderPressure": [
+    {
+      "case": "A label that wraps to three lines, or doubles in German",
+      "behaviour": "The row grows and the track holds its width — `shrink-0` is in `shape`. The row is `flex items-center`, so a three-line label centres the 20px track against the middle of the block, not against its first line. Never `oz-truncate` a switch label: a setting whose name is cut off is a setting whose effect is unknown, and the full string appears nowhere else on the screen."
+    },
+    {
+      "case": "A label carrying a model id — \"Default to veo-3-fast-preview\"",
+      "behaviour": "Add `oz-break`. Ordinary wrapping finds no break opportunity inside an unbroken run, and `.oz-break` in `dist/layout.css` sets `overflow-wrap: anywhere` for that one case. Nothing else in the row can absorb the overflow, because the track refuses to shrink."
+    },
+    {
+      "case": "Disabled",
+      "behaviour": "The two tracks converge to 1.08:1 apart in light and 1.15:1 in dark, recomputed from the resolved maps in `reports/audit.json`, because a control you cannot act on keeps no role colour (§I5). Thumb position and `aria-checked` are then the whole state. Put the reason it is dead in enabled text beside the row — the switch has no slot that could carry it and a disabled `<button>` is out of the tab order."
+    },
+    {
+      "case": "A write that takes seconds, or fails",
+      "behaviour": "The thumb moves once and stays moved; there is no spinner slot in the track. On failure, return it to its previous position and raise a critical Alert naming the setting — \"Model timed out after 90 seconds\", not \"Something went wrong\". A switch left in the new position after a failed write is a claim the component has no way to retract."
+    },
+    {
+      "case": "A switch row inside a dark popover or dialog",
+      "behaviour": "It sits on `surface/elevated`, `#393735` since B18. The on track measures 3.34:1 against that bed and the focus ring 4.54:1 — both clear the 3:1 non-text floor, both lower than the 4.63:1 and 6.30:1 they measured against the old `#211F1D`. The off track is now darker than its bed rather than lighter, at 1.17:1, so the thumb and its shadow are the entire boundary."
+    },
+    {
+      "case": "Nothing to render",
+      "behaviour": "There is no empty case. The component renders one control and at most one string, never a collection, so there is nothing for it to have zero of. The nearest thing is a switch shipped without `label`, which is a missing accessible name rather than a missing item."
+    }
+  ],
+  "whatTheBuildEnforces": {
+    "enforced": [
+      {
+        "claim": "The thumb's two literal translates are a recorded exemption from the spatial-scale rule, and the exemption is checked in both directions.",
+        "mark": "E",
+        "assertion": "`STATE_TRANSFORMS` in `showcase/scripts/verify-motion.ts`, run by `npm run verify`. It fails on an unlisted literal transform and equally on an exemption nothing matches any more, so routing the travel through the multiplier fails the build as surely as adding a new literal would. Adjudicated in DECISIONS B19."
+      },
+      {
+        "claim": "The row's label clears 4.5:1 on every surface a switch can sit on, floating surfaces included.",
+        "mark": "E",
+        "assertion": "`CONTRAST_ASSERTIONS` in `build/spec.mjs`. `content/secondary` measures 13.90:1 light and 11.17:1 dark on `color/background`, and 13.90:1 light and 6.54:1 dark on `surface/elevated`. 130 contrast results in `reports/audit.json`."
+      },
+      {
+        "claim": "The focus ring clears the 3:1 non-text floor against the page and against `surface/primary` in both modes.",
+        "mark": "E",
+        "assertion": "`CONTRAST_ASSERTIONS`, the `color/border/focus` rows — 5.90:1 light and 7.76:1 dark against `color/background`."
+      },
+      {
+        "claim": "Neither disabled track can go byte-identical to any enabled surface or any enabled fill.",
+        "mark": "E",
+        "assertion": "the disabled-fill sweep in `validate()` in `build/build.mjs`, generated over `FILL_DISABLED_OVERRIDE` against every surface and every enabled fill rather than hand-listed — a hand-written list failed this three times."
+      },
+      {
+        "claim": "The thumb's shadow is strong enough to be seen at all.",
+        "mark": "E",
+        "assertion": "the elevation ΔL gate in `validate()`. `drop shadow/x-small` moves the page ΔL 0.0209 in light and 0.0236 in dark against a floor of 0.02 — the thinnest step in the scale, and it clears."
+      },
+      {
+        "claim": "The thumb overshoots its stop and the track's colour change does not.",
+        "mark": "E",
+        "assertion": "the `kind: 'motion'` overshoot rows in `reports/audit.json`, measured off the emitted `linear()` stop list rather than trusting the declaration. `spring/spatial-fast` peaks 0.00296 past its target; the effects family is gated at a ceiling of zero."
+      },
+      {
+        "claim": "Every token this recipe names resolves in both modes.",
+        "mark": "S",
+        "assertion": "the `recipe.bindingRoles` loop in `showcase/scripts/verify-contrast.ts`, which pushes any miss to `unresolved` and exits non-zero. A typo would otherwise surface as one silently unstyled state."
+      },
+      {
+        "claim": "Every switch in product code passes `label`, or `ariaLabel` where a column header already names the row.",
+        "mark": "D",
+        "assertion": "the convention lives in the `label` prop's doc comment in `showcase/components/ui/Switch.tsx`. `if (!label) return track;` drops the `min-h-target` wrapper and leaves a 44 × 20px pointer target against a `--oz-target-min` of 44px. Nothing in `showcase/scripts/` measures a rendered target, so the replacement is a review step."
+      }
+    ],
+    "notEnforced": [
+      "No gate measures the thumb against the track. `verify-contrast.ts` skips any binding lacking both `fg` and `bg` — `if (!merged.fg || !merged.bg) continue;` — and every switch binding carries only `bg`, so the sweep resolves each token this recipe names and then measures zero pairs for it. White on the light off track is 1.30:1 and the separation is entirely `shadow-x-small`; moving either token means remeasuring both by hand before merge.",
+      "Nothing measures the on track against the off track. They are 2.72:1 apart in light and 3.92:1 in dark; the light figure is below the 3:1 non-text floor, which is why the 20px of thumb travel is the primary state signal and colour is the second. No assertion in `spec.mjs` looks at the pair.",
+      "Nothing measures a switch against the surface under it. In dark `fill/tertiary` and `surface/tertiary` resolve to the same byte, `neutral/110` / `#2E2C2B`, and no gate notices.",
+      "Nothing keeps the thumb's resting insets symmetric. `border-2` resolves to `--oz-stroke-2` at 1px, so the interior is 42 × 18px and the 16px thumb rests 2px inside the left edge when off and 4px inside the right edge when on. Any arithmetic on this track built on Tailwind's own 2px `border-2` is off by 2px in both axes.",
+      "Nothing rejects `forceState` outside the showcase. It compiles a state's appearance with none of the state behind it — a track rendered disabled that still fires `onCheckedChange` on click — and both class strings come from the same binding table, so both are legal Tailwind.",
+      "Nothing reads a label. Register, length, and whether the words name a state rather than an instruction are all unmeasured; the copy rules on this page are the only thing holding them.",
+      "Nothing compares a recipe's `meta.notes` against its own `shape`. Prose sitting beside a value it contradicts is exactly what §I9 and §I11f–i are ledgers of."
+    ]
+  },
+  "looksLikeABugButIsNot": [
+    {
+      "observation": "The assembled composer puts a Switch and a Checkbox in the same flex row, under a Generate video button.",
+      "why": "`showcase/components/sections/Assembled.tsx` renders `<Switch label=\"Upscale to 4K on export\" defaultChecked />` beside `<Checkbox label=\"Add a watermark\" />` at `gap-space-6`. The discriminator is which press writes the value, not which row it sits on: the switch writes on the throw, the checkbox waits for Generate video. Changing either one to match the other is what makes a screen where half the controls lie about whether they have been applied."
+    },
+    {
+      "observation": "An off switch on a dark `surface/tertiary` panel has no visible track at all.",
+      "why": "`fill/tertiary` and `surface/tertiary` resolve to the same byte in dark — `neutral/110`, `#2E2C2B` — so the pair measures 1.000:1. The tokens agree deliberately: one is the muted fill role and the other the muted panel role. Repainting the off track to separate them moves every other `fill/tertiary` in the system. The thumb and `shadow-x-small` carry the control, and a settings list belongs on `color/background` or `surface/primary`, where the same off track measures 1.46:1 and 1.33:1 in dark."
+    },
+    {
+      "observation": "The white thumb keeps full strength on a disabled switch, so a dead control holds the brightest pixel in the row.",
+      "why": "`thumbClasses` binds `content/fixed-inverse` in every state and has no disabled branch. In dark that puts the thumb at 17.52:1 against its own composited track while the label drops to 4.73:1 against the page. Once the two tracks have converged to 1.15:1, thumb position is the only state signal left, and fading it removes the state along with the emphasis. In light the same construction nearly vanishes instead — 1.14:1 on the disabled off track — and the shadow is what remains."
+    }
+  ],
+  "related": [
+    {
+      "component": "Checkbox",
+      "difference": "`aria-checked` is boolean here and tri-state on Checkbox. A select-all header over \"Select all 12 clips\" needs `mixed` for a partly-selected set; the switch track has no position that means \"some but not all\", so it reports a half-selected set as fully on."
+    },
+    {
+      "component": "Button",
+      "difference": "Switch renders a real `<button type=\"button\" role=\"switch\">`, so the two sit one attribute apart in the accessibility tree — and that attribute is the difference: a Button press is a request, a Switch press is the write. Button's variants are an emphasis order capped at one primary per view; `on` and `off` are values and rank nothing."
+    },
+    {
+      "component": "Badge",
+      "difference": "Badge's `dot` is `aria-hidden` because its word already carries the state; a switch carries no word at all — the thumb's position is the state and `aria-checked` is what announces it. Badge also has six role variants where the track has two positions, so \"Rendering\", \"Failed\" and \"Ready\" have nowhere to sit."
+    },
+    {
+      "component": "Alert",
+      "difference": "`Alert.tsx` derives `role` and `aria-live` from the variant — `critical` is `role=\"alert\" aria-live=\"assertive\"` — and `Switch.tsx` declares neither, so a track that moves back on its own is a silent `aria-checked` change. Alert is the announcement layer; a switch reaches only whoever still has it focused."
+    },
+    {
+      "component": "Input",
+      "difference": "Input's value space is open, which is why it binds an `invalid` variant and an `aria-describedby` message; the switch's is closed at two legal resting positions, so neither can be wrong and it binds neither. The pair splits one settings row — the switch gates whether the setting applies, the field holds what it applies to."
+    },
+    {
+      "component": "Table",
+      "difference": "Table collects rows into `selectedKeys` and one action applies to the whole set; a switch has no set and no submit, so twelve rows toggled is twelve writes, each thrown back on its own. A switch inside a cell writes that row's setting — it never records that the row is selected."
+    }
+  ],
+  "changed": [
+    {
+      "what": "2026-08-02 — Disabled convergence in dark is 1.15:1, not the 1.48:1 this page previously carried.",
+      "why": "`fill/brand-disabled` moved to `neutral/115` (`#272524`) because the floating surfaces took `neutral/105`. Darker than every surface on purpose: in dark, lighter reads as more prominent, and a disabled fill above the surfaces would look more actionable than the live controls beside it. DECISIONS B18c. The two disabled tracks are now closer together than before, which strengthens the rule that the reason a switch is dead belongs in enabled text."
+    },
+    {
+      "what": "2026-08-02 — A switch on a dark popover or dialog is measured against `#393735`, not `#211F1D`.",
+      "why": "`surface/elevated` and `surface/overlay` moved to `neutral/105` (L* 33.8), so a floating surface now sits above `surface/tertiary` instead of below it; they previously collided with `surface/secondary`, which is why floating things needed a border. The on track falls from 4.63:1 to 3.34:1 against its bed and the focus ring from 6.30:1 to 4.54:1 — both still clear 3:1. DECISIONS B18 and B18a."
+    },
+    {
+      "what": "2026-08-02 — The switch row's label is gated on floating surfaces for the first time.",
+      "why": "`content/*` had been gated against the page and three surfaces but never against `surface/elevated` or `surface/overlay` — the two surfaces a popover and a dialog are made of. `content/secondary` is now asserted at 13.90:1 light and 6.54:1 dark there. Contrast assertions went 118 to 130. DECISIONS B18b."
+    },
+    {
+      "what": "2026-08-02 — The thumb's exemption from the spatial-scale rule is enforced, not merely documented.",
+      "why": "This page previously stated the carve-out as a flat reversal of a CLAUDE.md hard rule with no adjudication behind it, which left a reader holding two documents and no tie-breaker. `STATE_TRANSFORMS` in `showcase/scripts/verify-motion.ts` now carries `translate-x-[2px]` and `translate-x-[22px]` with their reasons, and fails on a stale exemption as well as an unlisted literal. DECISIONS B19."
+    },
+    {
+      "what": "2026-08-02 — The track is 44 × 20px. `switch.recipe.ts` says 28px twice and is wrong.",
+      "why": "The shape is `h-space-6 w-[44px]` and `--oz-space-6` is 20px in `dist/tokens.css`. Both `meta.notes` entries predate the shape they describe. The recipe comment is the defect and needs the edit; §I9 and §I11f–i exist because comments contradicting the values eight lines above them shipped three times."
+    },
+    {
+      "what": "2026-08-02 — `border-2` on the track is 1px, so the interior is 42 × 18px.",
+      "why": "`--oz-stroke-2` is 1px in `dist/tokens.css` and the ordinal stroke scale is remapped in `dist/tailwind.tokens.js`. Every earlier figure on this page derived from Tailwind's own 2px `border-2` was off by 2px in both axes, which is the same arithmetic error the Checkbox page built a false derivation on."
+    },
+    {
+      "what": "2026-08-01 — First published.",
+      "why": "Eight sections shipped where the house style names twelve, and two global policies — the container argument and the reduced-motion grading — were re-argued here rather than cited. Both live in DECISIONS B16 and B17 and are cited, not restated, on this page now."
+    }
+  ]
+}

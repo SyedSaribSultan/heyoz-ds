@@ -1,0 +1,232 @@
+{
+  "id": "table",
+  "definition": "Rows of the same kind of thing, scanned down a column. The row carries every state — the table around it is a border, a radius and a clip.",
+  "reachForItWhen": [
+    "The user compares one field down a column — which of twelve renders finished, which one failed.",
+    "Every record has the same columns and the same types, and the row count is unknown until runtime.",
+    "The user picks several records now and acts on all of them afterwards.",
+    "A record's name, its state and a quantity have to be readable in one horizontal pass."
+  ],
+  "reachForSomethingElseWhen": [
+    {
+      "situation": "The records have different shapes — one carries a thumbnail, another three lines of prose.",
+      "instead": "Card. A column holding a paragraph in one row and `0:12` in the next is not comparable down its length, and the grid is then decoration."
+    },
+    {
+      "situation": "There are three records and no column anyone compares down.",
+      "instead": "Card, or a stack of them. A three-row table is a grid drawn around nothing."
+    },
+    {
+      "situation": "Clicking a record navigates away and the view changes.",
+      "instead": "Card with `interactive`, which renders a real `<button>` and carries the affordance. A `<tr>` carries none: the row is for a selection that persists in place, not for departure."
+    },
+    {
+      "situation": "The rows have not arrived from the network yet.",
+      "instead": "Skeleton, shaped like the rows. A rendered table with empty cells claims the rows exist and are blank."
+    },
+    {
+      "situation": "There is one record and the fields are different kinds of thing — a name, a prompt, a resolution, a seed.",
+      "instead": "Card with a definition list inside it. A two-column label/value table borrows table semantics for a layout, and a screen reader then announces \"column 2 of 2\" over every value the user wanted."
+    }
+  ],
+  "variants": [
+    {
+      "variant": "row",
+      "useWhen": "Every `<tr>` in `<tbody>`, without exception — one variant covers all of them, and the recipe lists it first, so it is also the default. A row you want to draw attention to is the selected state, not a third variant.",
+      "avoidWhen": "Never on the `<thead>` row: `row` binds hover and a focus ring, so a header built from it lights up under the pointer and takes a tabstop that activates nothing."
+    },
+    {
+      "variant": "header",
+      "useWhen": "The one `<tr>` in `<thead>`, once per table. It binds base only and declares `focus: 'none'` — the statement that a column label is not a control.",
+      "avoidWhen": "Never as a group separator inside `<tbody>`, and never as the thing a sort click hangs on: `FOCUS_CLASSES.none` is the empty string, so a sortable `<th>` built this way is keyboard-dead. Put a ghost Button inside the cell, which brings its own ring and its own 44px target."
+    }
+  ],
+  "sizes": {
+    "guidance": [
+      {
+        "size": "md",
+        "useWhen": "Every table. It is the only size the recipe declares, and `sizeClasses.md` is the empty string — the geometry lives in `cellClasses`, so a second size could vary nothing but padding."
+      }
+    ],
+    "note": "A data cell is `py-space-3` on a 14px `body sm` line box: 8 + 20 + 8 = 36px, from `--oz-space-3: 8px`, `--oz-text-body-sm: 14px` and `--oz-leading-body-sm: 1.4286` in `dist/tokens.css`. A header cell is the same padding on a 10px `label xs` box at leading 1.2, so 28px. Between them sits the divider: `border-b-2` resolves through `dist/tailwind.tokens.js` to `--oz-stroke-2`, which is 1px, not Tailwind's ordinal 2px. 36px clears SC 2.5.8's 24×24 CSS px and sits 8px under this system's own `--oz-target-min` of 44px. Where the row is the only path to the record on touch, the edit is `py-space-3` → `py-space-4` in `cellClasses` and lands on exactly 44px — one edit, every table. Padding added at a call site gives two tables that disagree about how tall a row is."
+  },
+  "copy": [
+    "**Column header copy:**",
+    "write in sentence case — `Clip`, `Model`, `Status`, `Length`; `headerCellClasses` carries `uppercase`, and a DOM string already in capitals is spelled out letter by letter by some screen readers",
+    "name the field and leave the unit in the cell — `Length`, never `Length (mm:ss)`",
+    "keep to one or two words at 10px — `Model` and `Status` fit; `Estimated render duration` sets a column width nothing else in the table needs",
+    "say what the thing is, not what the field is called — `Clip`, never `Name` and never `ID`",
+    "leave the header empty for a column of row actions — the `<th>` still carries `scope=\"col\"`, so the column keeps its binding to its cells and loses only its name, and a screen reader walking the header row hears nothing there; `Delete permanently` on the control below already says what the cell does, and `Actions` announces a noun ahead of it once per row",
+    "pick a visible word or nothing — `Column.label` is typed `string` and `headerCellClasses` carries no `sr-only`, so a visually hidden column name is not expressible at all",
+    "**Cell copy:**",
+    "put the record's own identifier in column one — `street-dusk-01`, never `Row 1` and never a sequence number; `Table.tsx` gives cell index 0 `font-medium text-content-primary` whatever it holds, so a duration parked there gets the emphasis of a name and the table stops being scannable by name",
+    "write status as a word the user repeats back to support — `Ready`, `Rendering`, `Failed`",
+    "use one em dash where a value does not exist yet — `—`, never `N/A`, never `null` and never an empty cell, because an empty cell is indistinguishable from a rendering bug",
+    "keep the unit attached to the number — `0:12`, not `12` under a header that has to explain it",
+    "move anything needing a sentence to the record's detail view — a cell that wraps to three lines has stopped being comparable down its column",
+    "right-align a column of quantities with `Column.align` — `0:12` and `0:08` then line up on the colon and `—` lands where the eye already is",
+    "**Caption copy:**",
+    "name what the rows are and which ones — `Recent renders`, never `Table` and never `Results`",
+    "write one on every table; it renders `sr-only`, so it costs nothing on screen and it is the only accessible name the table has",
+    "keep it to a noun phrase under six words — it is announced ahead of the row and column counts",
+    "say the filter when one is applied — `Renders from the last 7 days` tells a screen-reader user why a clip they expected is absent",
+    "**Empty-state copy** (rendered instead of the table, not inside it)**:**",
+    "say what would be here and how to get one — `No renders yet`, then `Describe a shot above and Seedance 2 will return four variations in about a minute.`",
+    "put the action in it — `Generate your first clip`, as a primary Button",
+    "reject `No data`, `Nothing to show` and `0 results` — none of the three says whether the user filtered the rows away or the account is new"
+  ],
+  "motion": "A table is scanned, and the pointer crosses rows while the eye reads down a column. Only the row's background changes, and it settles before the pointer reaches the next row. Rows do not arrive individually; twenty staggering in is decoration over the thing people came to read. No press, deliberately: a row that dips under the cursor moves the click target during the click. B16's grading has nothing to collapse here — nothing in a row travels.",
+  "behaviourUnderPressure": [
+    {
+      "case": "A cell value longer than its column",
+      "behaviour": "It wraps and the row grows taller; no cell sets `white-space: nowrap`, so nothing is cut. `.oz-truncate` on a `<td>` is a defect rather than a fallback — the table is `w-full border-collapse` at `table-layout: auto`, so the cell sizes itself from its content, the ellipsis never renders, and the `nowrap` the class brings with it pushes the table into the wrapper's clip. Add `.oz-break` where the value has no break opportunity at all: `harbour-pan-04-take-12-final-v3`, a hash, a path."
+    },
+    {
+      "case": "More columns than the container is wide",
+      "behaviour": "Column widths are content-driven, so they redistribute down to min-content and then the table overflows the wrapper — whose `overflow: hidden`, there to keep row fills inside the 12px radius, eats the rightmost column with no scrollbar and nothing on screen saying a column is missing. The policy is scroll: wrap the component in `.oz-reel`, B17's guard for this case. Its children are non-shrinking flex items (`flex: 0 0 auto`), so the wrapper takes the table's own width instead of being narrower than it, and the guard is written in logical properties (`overscroll-behavior-inline`) so the scroll axis follows the writing direction."
+    },
+    {
+      "case": "200% browser zoom",
+      "behaviour": "The container does not grow while the columns' min-content roughly doubles, so a table that fitted at 100% reaches the same clip at 200% and loses its right-hand column silently. WCAG 1.4.4 requires 200% with no loss of content, and nothing in this repo measures a rendered table width — this is a manual pass at 200%, in the narrowest container the table ships in."
+    },
+    {
+      "case": "Zero rows",
+      "behaviour": "Render the empty state instead of the table. A `<tbody>` with no `<tr>` leaves a 28px header band on its 1px divider with nothing beneath it, which reads as a failed fetch rather than an empty account. `Assembled.tsx` swaps the whole table for `rounded-6 border-2 border-dashed border-border-secondary bg-surface-primary p-space-11`, carrying `No renders yet`, one line and a primary Button. No component owns that panel — it is a `<div>`, a `<p>` and a Button."
+    },
+    {
+      "case": "The user tabs to a row that is already selected",
+      "behaviour": "No focus ring appears. `Table.tsx` renders a selected row through `Recipe.classes({ force: 'selected' })`, and the forced branch returns before `FOCUS_CLASSES` is appended: the compiled string is exactly `bg-fill-selected text-content-primary`, with no `focus-visible:outline`, no `hover:` binding and no transition. `onRowClick` still gives the row a tabstop, so it is focusable and unmarked while focused, and the `aria-selected:` classes the recipe compiles are dead in this component. Check it by tabbing through a table with a row already selected."
+    },
+    {
+      "case": "Copy doubling in translation",
+      "behaviour": "The table widens toward the scroll case rather than squeezing its neighbours to nothing. A long header — `Wiedergabelänge` under a 10px `label xs` — claims its own column's width first, and the columns that lose space stop at min-content. Test the German build inside the narrowest container the table ships in, not at a narrow window; the two are different failures."
+    }
+  ],
+  "whatTheBuildEnforces": {
+    "enforced": [
+      {
+        "claim": "The header pairing clears 4.5:1 in both modes — `content/tertiary` on `surface/secondary` measures 5.61:1 light and 6.86:1 dark.",
+        "mark": "E",
+        "assertion": "`CONTRAST_ASSERTIONS` in `build/spec.mjs`; both rows are in `reports/audit.json`."
+      },
+      {
+        "claim": "Every foreground/background pair these two variants create is measured in both modes, with translucent tokens flattened first. The table's four are row base 13.90:1 / 11.17:1, row hover 17.35:1 / 14.08:1, row selected 17.26:1 / 15.36:1, header 5.61:1 / 6.86:1.",
+        "mark": "E",
+        "assertion": "`showcase/scripts/verify-contrast.ts`, run by `npm run verify` in `showcase/`. The 2026-08-02 run reports 9 components and 98 pairings — wcag 70, apca 28 — all clearing their floors."
+      },
+      {
+        "claim": "A colour-only transition cannot be given an overshooting spring, and the spring it does get does not overshoot.",
+        "mark": "E",
+        "assertion": "`ComponentRecipe.motionConsistent` in `showcase/lib/core/Recipe.ts`, swept by `showcase/scripts/verify-motion.ts`; the emitted curve is measured by `MOTION_ASSERTIONS` in `build/spec.mjs` — overshoot 0, `reports/audit.json`."
+      },
+      {
+        "claim": "Both dividers stay visible, at different floors. The header divider is `border/primary`, gated against the page and against `surface/primary` — 1.30:1 and 1.20:1 light, 2.49:1 and 2.27:1 dark, against a 1.1 floor. The row divider is `border/tertiary`, gated against `surface/primary` alone at a 1.6 floor — 1.67:1 light, 4.33:1 dark.",
+        "mark": "E",
+        "assertion": "`VISIBILITY_ASSERTIONS` in `build/spec.mjs`."
+      },
+      {
+        "claim": "In dark mode a floating surface sits above `surface/tertiary`, so a table dropped into a dialog or popover lands on a rung of its own rather than on the one its header row already occupies.",
+        "mark": "E",
+        "assertion": "`SURFACE_LADDER` in `build/spec.mjs` — ΔL 0.0433 for `surface/elevated` over `surface/tertiary` against a 0.03 floor (`reports/audit.json`)."
+      },
+      {
+        "claim": "There is one size, and a second is not expressible without editing the recipe.",
+        "mark": "S",
+        "assertion": "`TableSize` is the union `'md'` and `sizeClasses.md` is `''` — `showcase/lib/recipes/table.recipe.ts`."
+      },
+      {
+        "claim": "The cell-to-column association cannot be dropped at a call site.",
+        "mark": "S",
+        "assertion": "`Table.tsx` writes `scope=\"col\"` on every `<th>`; the `Column` type has no field for it, so a caller can neither omit nor override it."
+      },
+      {
+        "claim": "A caption goes on every table.",
+        "mark": "D",
+        "assertion": "Convention only. `caption` is optional in `TableProps` and nothing in `build/` or `showcase/scripts/` measures an accessible name — a table without one renders, typechecks and passes `npm run verify`. Review step."
+      }
+    ],
+    "notEnforced": [
+      "That the row divider survives the row hover it separates. `COLLISION_ASSERTIONS` holds `border/primary` apart from `fill/tertiary-hover` — the bridge's `--accent`, the pair that actually shipped equal — and that is the wrong token on both sides of this table. The divider between two data rows is `border/tertiary`, and this table's hover is `fill/primary-hover`: the pair measures 1.553:1 in light and 3.842:1 in dark, which is ample, and `border/tertiary` is named against no fill anywhere in the list. CLAUDE.md rule 4 is exactly this shape of gap.",
+      "That the header divider is visible on the surface a dialog puts the table on. `VISIBILITY_ASSERTIONS` names `border/primary` against `surface/primary` and `background` only. On dark `surface/elevated` that same border measures 1.455:1 — computed with `contrast()` from `build/palette.mjs`, by no gate.",
+      "That the row divider is visible against the page. `VISIBILITY_ASSERTIONS` names one pair for `border/tertiary`, against `surface/primary`, and a table dropped straight onto the page has `background` behind its rows because the row base is `transparent`. That pair measures 1.813:1 light and 4.736:1 dark, and on dark `surface/elevated` 2.772:1 — all computed with `contrast()`, none of them gated. The header divider is gated against the page and the row divider is not, which is rule 4 inside one family of three.",
+      "Any table pairing on a surface other than the page. `verify-contrast.ts` flattens translucent tokens over `background` before measuring, so the selected tint is measured over the page and never over the dialog. `content/primary` on the selected tint over dark `surface/elevated` measures 8.96:1, computed by hand with `composite()` and `contrast()`.",
+      "That selection is legible without colour. `fill/selected` over the page measures 1.173:1 light and 1.130:1 dark against SC 1.4.11's 3:1 for a state indicator — and the hovered row and the selected row differ by 1.005:1 in light, L* 94.7 against L* 94.8. In greyscale they are the same row, which is SC 1.4.1. This is what a Checkbox column is for: `aria-selected` carries selection for a screen reader, the tick carries it for everyone reading on a dim panel, in greyscale, or across a room.",
+      "That a selected row keeps its focus ring. Nothing asserts that `Recipe.classes` with `force` still emits a focus class, and `verify-classes.mjs` cannot see it — that script reports classes present in the prerendered HTML with no matching CSS rule, and this is a class absent from the HTML.",
+      "That `aria-sort` is set on a sorted column. `Table.tsx` writes `scope` and nothing else on the `<th>`; `TableProps` carries no sort state and no gate expects one, so a sorted table announces its sort to nobody.",
+      "That a `text-right` column right-aligns for the reason you think. `cellClasses` ships `text-left` and `Table.tsx` appends `text-right`; `cx` does no conflict resolution, so stylesheet order decides — `.text-right` lands 58 bytes after `.text-left` in the compiled sheet and wins there, not in the class attribute.",
+      "That `.oz-truncate` is absent from every `<td>`. It compiles, renders no ellipsis, and pushes the table into the clip.",
+      "That a table which can outgrow its container is wrapped in `.oz-reel`. `Table.tsx` renders its own wrapper and cannot see the container; `Assembled.tsx` ships the table in `.oz-enter-rise` with no reel, correct for that column and wrong in a 200px one.",
+      "That `forceRowState` stays in the showcase. It renders a state with no pseudo-class behind it — a row that permanently looks hovered and never responds to being hovered. `Table.tsx` marks it \"Showcase-only, as elsewhere\" and nothing in `npm run verify` tells showcase code from product code."
+    ]
+  },
+  "looksLikeABugButIsNot": [
+    {
+      "observation": "A hovered row is exactly the header's colour.",
+      "why": "`fill/primary-hover` and `surface/secondary` are byte-identical in both modes — `#EFEDEC` light, `#211F1D` dark, `dist/tokens.css`. Hovering the first data row matches it to the header at 1.000:1, and the whole boundary is the 1px `border/primary` beneath the header, at 1.117:1 light and 2.017:1 dark. Both are the same rung of one ramp, which is why the divider is structure rather than decoration."
+    },
+    {
+      "observation": "In dark mode a table inside a dialog has a header band darker than the dialog, and its rows darken on hover.",
+      "why": "`surface/secondary` names a rung, not a relative tint, so it does not track what it floats on. On dark `surface/elevated` (`#393735` since B18) the header reads at 1.386:1 below the surface. Before B18 that same header and that same hover measured 1.000:1 against `surface/elevated` and were invisible. Darker-than-the-surface is the new behaviour and it is the one you can see."
+    },
+    {
+      "observation": "The last row has no bottom divider.",
+      "why": "`Table.tsx` writes `border-b-2` on cells where `i < rows.length - 1`. A trailing divider would draw a straight 1px line 1px inside a 12px corner radius, where it cannot follow the curve and the clip takes its last 12px at each end — and it would draw it in a second token a pixel from the first. The divider is `border/tertiary` (`#C2C0BF` light, `#7C7A78` dark); the wrapper is `border/secondary` (`#CCC9C8`, `#5F5D5C`). They sit 1.101:1 apart in light, which reads as one edge drawn twice at the wrong weight, and 1.532:1 apart in dark, which reads as two. The wrapper's edge is the table's last line."
+    },
+    {
+      "observation": "A focused row's ring is trimmed at the table's left and right edges.",
+      "why": "The ring is an outline at a 2px offset (`--oz-focus-ring-width`, `--oz-focus-ring-offset`, both 2px), and the wrapper's `overflow: hidden` clips to its padding box. The table is `w-full`, so the outline's vertical strokes fall outside that box, and the first and last rows lose their outer horizontal stroke too. The clip is not removable — it is what keeps row fills inside the 12px radius."
+    }
+  ],
+  "related": [
+    {
+      "component": "Card",
+      "difference": "When the records stop having the same shape, the comparison is gone and the grid is decoration. Card's decision is which rung of the surface ladder it sits on; a table's rows name no surface at all — the row base is `transparent` — so a table inherits whatever it is dropped onto, and its figures change with it."
+    },
+    {
+      "component": "Checkbox",
+      "difference": "When the selection is the thing the user is building — twelve clips to delete together — the tick is the record of it. Checkbox also owns the mixed state a select-all header needs, which `selectedKeys` on its own cannot express."
+    },
+    {
+      "component": "Badge",
+      "difference": "When a cell holds a status word — `Ready`, `Rendering`, `Failed` — it holds a Badge: the row supplies the record and the Badge supplies the state, at `size=\"sm\"` with `dot`, which is what `Assembled.tsx` ships in the Status column."
+    },
+    {
+      "component": "Skeleton",
+      "difference": "When the rows have not arrived, the loading shape replaces the table. Skeleton is `aria-hidden` with the live region on the group, so the announcement is \"Loading recent renders\" rather than eleven unlabelled boxes."
+    },
+    {
+      "component": "Switch",
+      "difference": "When each row carries a setting the user writes immediately, the cell holds a Switch and the row is scaffolding. Selection is `aria-selected` and reverts with the view; a toggle writes on change and survives it."
+    },
+    {
+      "component": "Button",
+      "difference": "When the screen's action is the point — `Generate video` above the table, `Generate your first clip` inside the empty state — the Button owns the primary. At most one primary per view, so a column of per-row primaries spends it once per record."
+    }
+  ],
+  "changed": [
+    {
+      "what": "2026-08-02 — dark `surface/elevated` and `surface/overlay` moved to `neutral/105` (`#393735`, L* 33.8). Every figure on this page for a table inside a dialog, a popover or an `overlay` Card is new.",
+      "why": "B18. Both floating surfaces were `neutral/120` and `neutral/115` and sat below `surface/tertiary`. `#211F1D` is also `surface/secondary` and `fill/primary-hover`, so a table on a dark floating surface had a header band at 1.000:1 against it and a row hover that changed nothing at all. Both now measure 1.386:1."
+    },
+    {
+      "what": "2026-08-02 — the header divider on a dark floating surface is weaker than it was: `border/primary` against `surface/elevated` measures 1.455:1, down from 2.017:1.",
+      "why": "B18 raised the surface and `VISIBILITY_ASSERTIONS` names only `surface/primary` and `background`, so this pair is measured by no gate. Recompute it before deepening a table's dividers on a dialog rather than carrying the old figure across."
+    },
+    {
+      "what": "2026-08-02 — contrast gates went 118 to 130, and six of the new pairs are `content/*` on `surface/elevated` and `surface/overlay`.",
+      "why": "B18b. Those two surfaces were the only places text could be set with no floor at all; raising the ladder put a floor under all three content roles there, and the tightest pair the addition created is `content/tertiary` in dark at 4.95:1 against 4.5 — the pair that sets the ceiling on how light a dark surface may be (`reports/audit.json`). A table's cell text inside a dialog is now gated where it was not."
+    },
+    {
+      "what": "2026-08-02 — `fill/*-disabled` moved to `neutral/115` (`#272524`). No table changes.",
+      "why": "B18c. No binding in `table.recipe.ts` names a disabled fill — the row binds base, hover and selected, the header binds base. Recorded so a reader diffing `dist/tokens.css` does not go hunting for a table consequence."
+    },
+    {
+      "what": "2026-08-02 — B19 routed the press-scale through `--oz-motion-spatial-scale`. No table changes.",
+      "why": "`tableRecipe.motion` declares no press, so `motionClasses` emits `transition-colors` and its spring pair and no transform at all. Recorded because B19 is marked M in DECISIONS.md and a reader auditing `Recipe.motionClasses` will land here."
+    },
+    {
+      "what": "2026-08-02 — this page previously called `border-2` a 2px border, five times, and rested its divider argument on that weight. It is 1px.",
+      "why": "`dist/tailwind.tokens.js` maps `borderWidth.2` to `--oz-stroke-2`, which `dist/tokens.css` sets to 1px — the ordinal stroke scale is remapped, so Tailwind's ordinal meaning does not survive the preset. Every wrapper and divider figure here was recomputed against the emitted files. CLAUDE.md rule 5."
+    }
+  ]
+}
