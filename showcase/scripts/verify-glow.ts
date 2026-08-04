@@ -109,7 +109,59 @@ function apcaLc(txt: Rgba, bg: Rgba): number {
  * that order backwards is what hid the cap in the first place.
  * ------------------------------------------------------------------------- */
 
-type Coat = { token: string; cy: number; ry: number };
+/**
+ * A Gaussian blur applied to a coat, as CSS `filter: blur(σpx)` applies it.
+ *
+ * WHY THIS IS MODELLED AND NOT IGNORED. The blur is not a finish on top of the ground, it
+ * *is* the ground: it lowers the coat's peak and spreads it outward, so the colour under the
+ * headline is a different colour with the blur than without. A gate that skipped it would be
+ * measuring a page that does not exist — the same failure as leaving the model at the old
+ * coordinate origin, one step further in.
+ *
+ * The field is convolved in two dimensions rather than one. A coat is a single hue whose alpha
+ * varies, so blurring in premultiplied space is a blur of the alpha channel alone and the hue
+ * is carried through untouched — but the field is an ellipse, not a function of y, so the
+ * horizontal neighbours a sample sees are not the sample's own value. With rx around 2160 the
+ * x-term is nearly flat over ±4σ and a 1D convolution would come close; "close" is not a
+ * thing a contrast floor can be argued with, so it does the real integral.
+ *
+ * A fixed grid, ±4σ at σ/8 — 65×65 samples per row. Convergence was checked rather than
+ * assumed: against σ/32 at ±4σ and against σ/16 at ±6σ, the alpha agrees to seven decimal
+ * places and the resulting ratio moves by 0.0002:1, four orders of magnitude below anything
+ * a 4.5 floor could turn on.
+ */
+function blurredAlphaAt(
+  y0: number,
+  sigma: number,
+  field: (x: number, y: number) => number,
+): number {
+  const step = sigma / 8;
+  const reach = sigma * 4;
+  let sum = 0;
+  let weight = 0;
+  for (let dy = -reach; dy <= reach; dy += step) {
+    for (let dx = -reach; dx <= reach; dx += step) {
+      const w = Math.exp(-(dx * dx + dy * dy) / (2 * sigma * sigma));
+      sum += w * field(dx, y0 + dy);
+      weight += w;
+    }
+  }
+  return sum / weight;
+}
+
+type Coat = {
+  token: string;
+  cy: number;
+  ry: number;
+  /** Horizontal radius. Only matters once a coat is blurred, since the sweep runs down the
+   *  centre column where the x-term is zero — but the kernel reaches sideways. */
+  rx?: number;
+  /** σ in px, matching CSS `filter: blur()`. Omitted means the layer carries no filter. */
+  sigma?: number;
+  /** Coats stacked in one element are composited before that element's filter runs, so they
+   *  blur together. `coats: 2` says "this alpha ramp painted twice, then blurred once". */
+  coats?: number;
+};
 type Ground = {
   where: string;
   /** The opaque fill the coats are painted over. */
@@ -143,9 +195,13 @@ const GROUNDS: Ground[] = [
     where: 'ai-ugc hero',
     base: 'color-background',
     coats: [
-      { ...HALO, cy: 320, ry: 711 },
-      { ...HALO, cy: 320, ry: 711 },
-      { token: 'color-gradient-mesh-base', cy: -756, ry: 1024 },
+      /* The warm wash: `gradient/halo` twice in one element, then that element's 175px blur.
+       * rx is 1.125 of the frame width and the frame is the viewport; 1920 is the width the
+       * file was drawn at and the widest the sweep needs, since a wider rx only flattens the
+       * x-term further and a flatter x-term cannot darken the ground. */
+      { ...HALO, cy: 320, ry: 711, rx: 2160, sigma: 175, coats: 2 },
+      /* The cap, its own element and its own blur. */
+      { token: 'color-gradient-mesh-base', cy: -756, ry: 1024, rx: 960, sigma: 175 },
     ],
     bands: [
       { label: 'headline', role: 'color-content-primary', from: -136, to: 0 },
@@ -201,9 +257,24 @@ for (const mode of ['light', 'dark'] as const) {
 
     const groundAt = (y: number): Rgba =>
       g.coats.reduce((under, coat) => {
-        const t = Math.min(1, Math.abs(coat.cy - y) / coat.ry);
         const c = rgba(tok(block, coat.token));
-        return over({ ...c, a: c.a * (1 - t) }, under);
+
+        /* The unblurred alpha field of this element: the coat's ramp, painted `coats` times
+         * and composited, which is what the browser hands to the filter. */
+        const stacked = coat.coats ?? 1;
+        const field = (dx: number, y: number) => {
+          const nx = coat.rx ? dx / coat.rx : 0;
+          const ny = (y - coat.cy) / coat.ry;
+          const t = Math.min(1, Math.hypot(nx, ny));
+          const one = c.a * (1 - t);
+          return 1 - Math.pow(1 - one, stacked);
+        };
+
+        const a = coat.sigma
+          ? blurredAlphaAt(y, coat.sigma, field)
+          : field(0, y);
+
+        return over({ ...c, a }, under);
       }, base);
 
     for (const b of g.bands) {

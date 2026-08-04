@@ -145,9 +145,28 @@ function SocialProof() {
  *
  *  FIGMA DRAWS THIS as one ellipse filled with a radial gradient: `#FF3D00` at 50% alpha
  *  in the centre falling to 0 at the edge, with radii of 1.125× the frame width and a
- *  flat 711px, centred 882px down the page. The radii are identical in all nine frames, so
- *  they are px here too — expressing them as a percentage of the section's height would make
- *  the glow grow with the hero and stop matching any frame.
+ *  flat 711px, centred 882px down the page. The vertical radius is identical in all nine
+ *  frames, so it is px here too — expressing it as a percentage of the section's height would
+ *  make the glow grow with the hero and stop matching any frame.
+ *
+ *  AND EVERY LAYER CARRIES A 350px LAYER BLUR, which is the whole character of the effect and
+ *  which the first version of this shipped without. Unblurred, a radial gradient has a bright
+ *  core and a kink where its alpha ramp meets zero at the ellipse edge, and the thing reads as
+ *  emerging from the middle of the page — which is exactly how Sarib described it. Blurred, it
+ *  is a wash with no core and no edge. The number in the Figma panel is a diameter: the layer
+ *  exports as `feGaussianBlur stdDeviation="175"`, and CSS `blur()` takes the deviation, so it
+ *  is `blur(175px)` and not `blur(350px)`. Confirmed off the exported SVG rather than assumed.
+ *
+ *  ONE ELEMENT PER LAYER, because Figma blurs each of its three ellipses on its own and
+ *  composites afterwards. Several background layers on one element are composited and then
+ *  blurred together, which is a different picture whenever an opaque layer sits over a
+ *  translucent one — and the cap is opaque over the warm coat, so it is precisely that case.
+ *
+ *  The two coats of `gradient/halo` DO share one element and one blur, deliberately: they are
+ *  the same hue and the same ellipse, so the only thing compositing them buys is the alpha,
+ *  and 51% against the drawn 50% survives a 175px blur with nothing to see. Two coats is
+ *  still what gets the peak — see below — and a `gradient/halo-strong` at 50% would be a
+ *  token-layer change for one decorative wash.
  *
  *  BOTH COATS ARE PLACED FROM THE SECTION'S CENTRE LINE, not from its top, because the copy
  *  is centred there and a glow pinned to the top would slide out from under the words as the
@@ -201,21 +220,65 @@ function SocialProof() {
  *  here, because the glow is clipped to this section — so it is a fade to `background`
  *  inside the section's last quarter instead, which buys the same soft ending and keeps
  *  the seam with the section below from being a hard warm edge. */
-function HeroGlow() {
+/** How far each blurred layer is grown past the section, and why it has to be.
+ *
+ *  `filter: blur()` samples outside the element's own box, and outside the box there is
+ *  nothing — so an un-grown layer fades out over ~3σ at all four of its edges. Vertically
+ *  that would eat the cap right where it is doing its job; horizontally it would add a
+ *  vignette the drawing does not have, because Figma's ellipse is 2.25× the frame wide and
+ *  never reaches the sides. 3σ is 525px at σ=175, so 600 clears it, and the section's
+ *  `overflow-hidden` throws the surplus away. */
+const GLOW_BLEED = 600;
+
+/** σ, not the number in the Figma panel. Figma's "Layer blur: 350" exports as
+ *  `feGaussianBlur stdDeviation="175"` — the panel states a diameter — and CSS `blur()`
+ *  takes the standard deviation. Read off the exported SVG rather than halved on faith. */
+const GLOW_BLUR = 'blur(175px)';
+
+/** One blurred coat. Its own element, because Figma's layers are blurred independently and
+ *  only then composited, which is not what one element with several background layers does:
+ *  that blurs the composite. For opaque-over-translucent — which the cap is — the two are
+ *  visibly different. */
+function GlowLayer({ image }: { image: string }) {
   return (
     <div
       aria-hidden="true"
-      className="absolute inset-0 -z-10"
+      className="pointer-events-none absolute"
       style={{
-        /* First listed paints on top. Cap over glow over page. */
-        backgroundImage: [
-          'linear-gradient(to bottom, transparent 78%, var(--oz-color-background) 100%)',
-          'radial-gradient(50% 1024px at 50% calc(50% - 756px), var(--oz-color-gradient-mesh-base) 0%, transparent 100%)',
-          'radial-gradient(112.5% 711px at 50% calc(50% + 320px), var(--oz-color-gradient-halo) 0%, transparent 100%)',
-          'radial-gradient(112.5% 711px at 50% calc(50% + 320px), var(--oz-color-gradient-halo) 0%, transparent 100%)',
-        ].join(', '),
+        inset: `-${GLOW_BLEED}px`,
+        filter: GLOW_BLUR,
+        backgroundImage: image,
       }}
     />
+  );
+}
+
+/* Horizontal radii are `vw` and not `%`. A percentage would resolve against the grown box,
+ * which is 1200px wider than the section, and the ellipse would inflate with the bleed.
+ * Figma's radii are fractions of the FRAME, and the frame is the viewport here, so `vw` is
+ * the honest unit and it makes GLOW_BLEED free to change. The vertical radii are already px
+ * in the file — identical in all nine frames — so they stay px. */
+const HALO_COAT =
+  'radial-gradient(112.5vw 711px at 50% calc(50% + 320px), var(--oz-color-gradient-halo) 0%, transparent 100%)';
+
+function HeroGlow() {
+  return (
+    <div aria-hidden="true" className="absolute inset-0 -z-10">
+      {/* Warm first, cap over it, matching the sibling order in the file. */}
+      <GlowLayer image={`${HALO_COAT}, ${HALO_COAT}`} />
+      <GlowLayer image="radial-gradient(50vw 1024px at 50% calc(50% - 756px), var(--oz-color-gradient-mesh-base) 0%, transparent 100%)" />
+
+      {/* NOT blurred, and not grown. Blurring a fade whose whole job is to arrive exactly at
+          the section's bottom edge would feather away the edge it exists to hide, and growing
+          it would move that edge outside the clip. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            'linear-gradient(to bottom, transparent 78%, var(--oz-color-background) 100%)',
+        }}
+      />
+    </div>
   );
 }
 
