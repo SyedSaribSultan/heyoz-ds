@@ -3,6 +3,7 @@
 import { ThemeProvider, useTheme, type ThemePreference } from '@/components/showcase/ThemeProvider';
 import { StudioSidebar } from './StudioSidebar';
 import { StudioHero } from './StudioHero';
+import { ReferralDialog } from './ReferralDialog';
 import { AdStudioRow, PromoRow } from './StudioRows';
 
 /* ---------------------------------------------------------------------------
@@ -69,6 +70,11 @@ export function Studio() {
           </div>
         </main>
       </div>
+
+      {/* Mounted last so it paints over the page, and rendered unconditionally — it
+          decides for itself whether this session has already been asked. Inside
+          ThemeProvider, because the scrim and the panel are both mode-dependent. */}
+      <ReferralDialog />
 
       <ModeSwitcher />
     </ThemeProvider>

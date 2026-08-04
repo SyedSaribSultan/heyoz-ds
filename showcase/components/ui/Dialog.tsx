@@ -33,6 +33,36 @@ export type DialogProps = {
   detailLabel?: React.ReactNode;
   confirmLabel?: string;
   cancelLabel?: string;
+  /**
+   * One action instead of two: the cancel button is dropped and confirm goes full
+   * width.
+   *
+   * Added for a dialog that asks rather than confirms — an onboarding question has no
+   * destructive branch, so a Cancel beside Continue offers a choice between two words
+   * that mean the same thing. The escape routes are unchanged and still three: Escape,
+   * the scrim, and the close button in the header. That last one is why this is safe to
+   * add — dropping Cancel does not make the dialog inescapable, which is the only
+   * reason a two-button footer would have been load-bearing.
+   *
+   * Defaults to false, so every existing caller is byte-identical.
+   */
+  singleAction?: boolean;
+  /**
+   * Disables the confirm button without disabling the dialog.
+   *
+   * Added for the same caller as `singleAction`: a dialog that asks a question cannot
+   * submit until the question has been answered, and a live-looking button that
+   * silently does nothing is worse than a greyed one. WCAG 1.4.3 exempts disabled
+   * controls from the contrast floor, so the greyed state costs nothing to show.
+   *
+   * Deliberately does NOT gate the escape routes. Escape, the scrim and the close
+   * button stay live whatever this is set to — a dialog that can neither be submitted
+   * nor left is the one shape a modal must never take, and it is the shape this prop
+   * would otherwise make reachable in one line.
+   *
+   * Defaults to false, so every existing caller is byte-identical.
+   */
+  confirmDisabled?: boolean;
   className?: string;
 };
 
@@ -65,6 +95,8 @@ export function Dialog({
   detailLabel,
   confirmLabel = 'Confirm',
   cancelLabel = 'Cancel',
+  singleAction = false,
+  confirmDisabled = false,
   className,
 }: DialogProps) {
   const titleId = useId();
@@ -107,7 +139,26 @@ export function Dialog({
     const target = panelRef.current?.querySelector<HTMLElement>(
       dialogRecipe.focusesCancel(variant) ? '[data-dialog-cancel]' : '[data-dialog-confirm]',
     );
-    (target ?? panelRef.current)?.focus();
+
+    /* The disabled check is not defensive padding — `confirmDisabled` makes it reachable.
+     * `.focus()` on a disabled button is a silent no-op, and because `target` is still a
+     * non-null element the `??` below would never reach the fallback: focus would stay on
+     * <body>, outside the modal, with the page behind it inert to a pointer and fully
+     * tabbable. That is the exact defect this component's header comment says the tab
+     * loop exists to prevent, arriving through the one prop that can disable the element
+     * the loop starts from.
+     *
+     * The fallback deliberately skips the close button. It is the first focusable in the
+     * panel, so "first focusable" would open every gated dialog with the caret on Dismiss
+     * — which on an onboarding question is an invitation to leave, offered before the
+     * question has been read. First non-dismiss control, then the panel itself. */
+    const usable =
+      target && !target.hasAttribute('disabled')
+        ? target
+        : [...(panelRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [])].find(
+            (el) => !el.hasAttribute('data-dialog-close'),
+          );
+    (usable ?? panelRef.current)?.focus();
 
     return () => {
       restoreTo.current?.focus();
@@ -184,6 +235,10 @@ export function Dialog({
             label="Close"
             icon={<CloseIcon />}
             onClick={onClose}
+            /* Marked so the open-effect can skip it. See the note there: it is the first
+               focusable in the panel, so a fallback that took "the first focusable" would
+               open every gated dialog with the caret on Dismiss. */
+            data-dialog-close=""
             className="-mr-space-2 -mt-space-1 shrink-0"
           />
         </div>
@@ -209,22 +264,35 @@ export function Dialog({
             small phone, and a squeezed row truncates the label that says what the
             button does. Confirm sits last in the DOM and first visually when stacked,
             which keeps the tab order (Cancel, then Confirm) stable across both. */}
-        <div className="flex flex-col-reverse gap-space-3 min-[380px]:flex-row min-[380px]:justify-end">
-          <Button
-            variant="outline"
-            size="md"
-            onClick={onClose}
-            data-dialog-cancel=""
-            className="min-[380px]:w-auto"
-          >
-            {cancelLabel}
-          </Button>
+        <div
+          className={
+            singleAction
+              ? ''
+              : 'flex flex-col-reverse gap-space-3 min-[380px]:flex-row min-[380px]:justify-end'
+          }
+        >
+          {!singleAction && (
+            <Button
+              variant="outline"
+              size="md"
+              onClick={onClose}
+              data-dialog-cancel=""
+              className="min-[380px]:w-auto"
+            >
+              {cancelLabel}
+            </Button>
+          )}
           <Button
             variant={dialogRecipe.confirmVariant(variant)}
             size="md"
             onClick={onConfirm}
+            disabled={confirmDisabled}
             data-dialog-confirm=""
-            className="min-[380px]:w-auto"
+            /* w-full is stated rather than inherited in the single-action case. In the
+               two-button footer the buttons stretch because the wrapper is a stacked
+               flex column and only widen back at 380px; with no wrapper flex there is
+               nothing to stretch against. */
+            className={singleAction ? 'w-full' : 'min-[380px]:w-auto'}
           >
             {confirmLabel}
           </Button>
