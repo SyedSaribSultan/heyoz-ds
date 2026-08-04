@@ -231,14 +231,18 @@ export function Faq() {
         {FAQ_GROUPS.map((g) => (
           <div key={g.group}>
             <h3 className="font-mono text-label-sm uppercase text-content-tertiary">{g.group}</h3>
-            <div className="mt-space-5 oz-stack oz-stack-4">
+            {/* E33: horizontal rules rather than twelve bordered boxes. Seven cards in a
+                column is seven frames competing with the text inside them; a divider says
+                "next item" with one line. The open item gets a tinted surface instead of a
+                box, so the state still reads. */}
+            <div className="mt-space-5 border-t-2 border-border-tertiary">
               {g.items.map((item) => {
                 const first = index++ === 0;
                 return (
                   <details
                     key={item.q}
                     open={first}
-                    className="group rounded-6 border-2 border-border-secondary bg-background px-space-6 open:bg-surface-elevated"
+                    className="group border-b-2 border-border-tertiary px-space-4 open:bg-surface-elevated"
                   >
                     <summary className="flex cursor-pointer list-none items-center justify-between gap-space-5 py-space-6 text-body-lg font-medium text-content-primary focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus [&::-webkit-details-marker]:hidden">
                       {item.q}

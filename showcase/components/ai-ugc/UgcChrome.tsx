@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui';
+import { Button, Input } from '@/components/ui';
 import { ArrowRightIcon, SocialIcon } from './icons';
 import { CTA_PRIMARY, FOOTER_COLUMNS, FOOTER_SUPPORT, FOOTER_TAGLINE, NAV, SOCIALS } from './content';
 
@@ -88,33 +88,20 @@ export function BandHead({
 /* ---------------------------------------------------------------------------
  * Header.
  *
- * Sticky, with the CTA in it. The brief asks for a persistent CTA on a page this long,
- * and a header that is already sticky is the cheapest place to put one — a floating
- * button is a second control competing with the hero's.
- *
- * The CTA appears only after the hero's own has scrolled away. Two identical primary
- * buttons on screen at once is the redundancy the brief flags between the hero and the
- * closing CTA, and it would be worse here because they would be 200px apart.
+ * A thin floating pill. The persistent primary CTA is NOT here any more — it moved to
+ * UgcStickyCta below, which is what E40 asks for and which is the better place for it: a
+ * bottom bar can carry the reassurance line beside the button, and a header cannot
+ * without becoming two rows tall.
  * ------------------------------------------------------------------------- */
 export function UgcHeader() {
-  const [pastHero, setPastHero] = useState(false);
-
-  useEffect(() => {
-    const hero = document.getElementById('ugc-hero-cta');
-    if (!hero) return;
-    /* An observer rather than a scroll listener: the question is "is the hero CTA still
-     * on screen", which is what an IntersectionObserver answers natively and what a
-     * scroll handler answers by re-measuring on every frame. */
-    const io = new IntersectionObserver(([e]) => setPastHero(!e.isIntersecting), {
-      rootMargin: '-88px 0px 0px 0px',
-    });
-    io.observe(hero);
-    return () => io.disconnect();
-  }, []);
-
   return (
-    <header className="sticky top-0 z-sticky border-b-2 border-border-secondary bg-background">
-      <div className="mx-auto flex max-w-container-xl items-center gap-space-6 px-space-6 py-space-4">
+    /* C25, as far as the token set allows. Thinner (py-space-3, not -4) and a floating
+       rounded-full pill rather than a full-bleed bar. NOT glass: a frosted panel needs a
+       translucent surface token, and the preset has no <alpha-value> slot, so
+       `bg-background/70` would emit nothing at all. surface/elevated with a stroke and a
+       shadow is the in-system way to say "floating". */
+    <div className="sticky top-space-4 z-sticky px-space-4">
+      <header className="mx-auto flex max-w-container-lg items-center gap-space-6 rounded-full border-2 border-border-secondary bg-surface-elevated px-space-6 py-space-3 shadow-medium">
         <a
           href="#ugc-main"
           className="font-display text-heading-xs font-extrabold text-content-primary focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
@@ -137,22 +124,64 @@ export function UgcHeader() {
           </ul>
         </nav>
 
-        {/* Reserved, not conditional. Mounting the button when the hero leaves would
-            change the header's height mid-scroll and shift the nav under the reader's
-            cursor; opacity plus pointer-events keeps the box and hides the control.
-            aria-hidden while invisible so it is not a phantom tab stop. */}
-        <div
-          className={`ml-auto transition-opacity duration-effects-default ease-effects-default ${
-            pastHero ? 'opacity-100' : 'pointer-events-none opacity-0'
-          }`}
-          aria-hidden={!pastHero}
-        >
-          <Button variant="primary" size="sm" shape="pill" trailingIcon={<ArrowRightIcon />}>
-            {CTA_PRIMARY}
+        {/* The header keeps a quiet CTA at all times; the loud one lives in the bottom
+            bar. Two primaries on screen at once was the redundancy worth avoiding, not the
+            presence of a header action. */}
+        <div className="ml-auto">
+          <Button variant="ghost" size="sm" shape="pill">
+            Sign in
           </Button>
         </div>
+      </header>
+    </div>
+  );
+}
+
+/** E40: the floating micro-bar.
+ *
+ *  Appears once the hero's own CTA has scrolled out, which is what makes it a capture
+ *  rather than a duplicate. It carries the sub-copy too, so the reassurance travels with
+ *  the button instead of living only in the hero.
+ *
+ *  `translate-y` is written through --oz-motion-spatial-scale, because it is decorative
+ *  travel: reduced motion collapses the slide and keeps the fade, which is exactly the
+ *  graded behaviour CLAUDE.md describes. It is not a state transform — the bar's position
+ *  carries no meaning that its presence does not already carry — so it does not belong in
+ *  the STATE_TRANSFORMS exemption list. */
+export function UgcStickyCta() {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const hero = document.getElementById('ugc-hero-cta');
+    if (!hero) return;
+    const io = new IntersectionObserver(([e]) => setShow(!e.isIntersecting), {
+      rootMargin: '-120px 0px 0px 0px',
+    });
+    io.observe(hero);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      aria-hidden={!show}
+      className={`fixed inset-x-0 bottom-space-5 z-sticky flex justify-center px-space-5 transition-opacity duration-effects-default ease-effects-default ${
+        show ? 'opacity-100' : 'pointer-events-none opacity-0'
+      }`}
+      style={{
+        transform: show
+          ? undefined
+          : 'translateY(calc(var(--oz-space-6) * var(--oz-motion-spatial-scale)))',
+      }}
+    >
+      <div className="flex flex-wrap items-center justify-center gap-x-space-6 gap-y-space-3 rounded-full border-2 border-border-secondary bg-surface-elevated px-space-6 py-space-4 shadow-large">
+        <p className="text-body-sm text-content-secondary">
+          No credit card required · Cancel anytime
+        </p>
+        <Button variant="primary" size="sm" shape="pill" trailingIcon={<ArrowRightIcon />}>
+          {CTA_PRIMARY}
+        </Button>
       </div>
-    </header>
+    </div>
   );
 }
 
@@ -189,7 +218,26 @@ export function UgcFooter() {
               ))}
             </p>
 
-            <ul className="mt-space-7 flex flex-wrap gap-space-3">
+            {/* F50. Real Input and Button, so the field inherits the system's focus ring,
+                its invalid state and its label wiring rather than being a styled div. */}
+            <form
+              className="mt-space-7 max-w-[340px]"
+              onSubmit={(e) => e.preventDefault()}
+            >
+              <Input
+                type="email"
+                label="Get the monthly roundup"
+                placeholder="you@company.com"
+                message="One email a month. Unsubscribe in one click."
+              />
+              <div className="mt-space-4">
+                <Button type="submit" variant="inverse" size="sm" shape="pill" className="w-full">
+                  Subscribe
+                </Button>
+              </div>
+            </form>
+
+            <ul className="mt-space-9 flex flex-wrap gap-space-3">
               {SOCIALS.map((s) => (
                 <li key={s}>
                   {/* min-h-target: the brief flags these as too small to tap. The token

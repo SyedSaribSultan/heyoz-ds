@@ -1,7 +1,7 @@
 'use client';
 
 import { ThemeProvider, useTheme, type ThemePreference } from '@/components/showcase/ThemeProvider';
-import { UgcFooter, UgcHeader } from './UgcChrome';
+import { UgcFooter, UgcHeader, UgcStickyCta } from './UgcChrome';
 import { UgcHero } from './UgcHero';
 import { HowItWorks, KeyFeatures, UseCases, WhyChoose } from './UgcBody';
 import { Faq, FinalCta, Pricing, RelatedTools } from './UgcClose';
@@ -64,6 +64,10 @@ export function AiUgc() {
         </main>
 
         <UgcFooter />
+
+        {/* Outside <main> so it is not inside the skip-link target, and last so it paints
+            above the page. It decides for itself when to appear. */}
+        <UgcStickyCta />
       </div>
 
       <ModeSwitcher />
@@ -81,7 +85,9 @@ function ModeSwitcher() {
     <div
       role="group"
       aria-label="Colour mode"
-      className="fixed bottom-space-5 right-space-5 z-sticky flex gap-space-1 rounded-full border-2 border-border-secondary bg-surface-elevated p-space-1 shadow-medium"
+      /* Lifted clear of UgcStickyCta, which is also fixed to bottom-space-5 and is
+         centred — at 390px it spans the width, so "bottom-right" is not out of its way. */
+      className="fixed bottom-space-16 right-space-5 z-sticky flex gap-space-1 rounded-full border-2 border-border-secondary bg-surface-elevated p-space-1 shadow-medium"
     >
       {PREFERENCES.map((p) => {
         const on = preference === p;

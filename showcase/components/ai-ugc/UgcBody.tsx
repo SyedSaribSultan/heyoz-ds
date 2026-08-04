@@ -257,7 +257,10 @@ export function UseCases() {
                 <span className="min-w-0 text-body-md font-medium text-content-primary">
                   {u.label}
                 </span>
-                <ArrowRightIcon className="h-space-5 w-space-5 shrink-0 text-content-tertiary transition-colors duration-effects-fast ease-effects-fast group-hover:text-content-brand" />
+                {/* E35: the arrow shifts as well as recolouring on hover. Written through
+                    --oz-motion-spatial-scale because it is decorative travel — reduced
+                    motion collapses the nudge and keeps the colour change. */}
+                <ArrowRightIcon className="h-space-5 w-space-5 shrink-0 text-content-tertiary transition-all duration-effects-fast ease-effects-fast group-hover:translate-x-[calc(var(--oz-space-2)*var(--oz-motion-spatial-scale))] group-hover:text-content-brand" />
               </span>
             </a>
           </li>
@@ -318,20 +321,27 @@ export function HowItWorks() {
           return (
             <li key={s.title} className="grid items-center gap-space-11 lg:grid-cols-2">
               <div className={mediaFirst ? 'lg:order-2' : ''}>
-                <div className="flex items-baseline gap-space-5">
+                {/* B20: the numeral gets its own fixed column rather than sitting inline.
+                    Inline, "01" and "04" are the same width but the heading beside them is
+                    not, so each step's title started at a slightly different x and the
+                    column of headings drifted down the page. A 3ch tabular gutter fixes the
+                    text edge for all four — the same device Notes uses in Section.tsx. */}
+                <div className="flex gap-space-6">
                   <span
                     aria-hidden="true"
-                    className="font-display text-display-sm font-extrabold tabular-nums text-content-brand"
+                    className="w-[3ch] shrink-0 select-none font-display text-display-sm font-extrabold tabular-nums text-content-brand"
                   >
                     {String(i + 1).padStart(2, '0')}
                   </span>
-                  <h3 className="font-display text-heading-lg font-bold text-content-primary">
-                    {s.title}
-                  </h3>
+                  <div className="min-w-0">
+                    <h3 className="font-display text-heading-lg font-bold text-content-primary">
+                      {s.title}
+                    </h3>
+                    <p className="mt-space-5 max-w-[58ch] text-body-lg text-content-secondary">
+                      {s.body}
+                    </p>
+                  </div>
                 </div>
-                <p className="mt-space-5 max-w-[58ch] text-body-lg text-content-secondary">
-                  {s.body}
-                </p>
               </div>
 
               <figure className={mediaFirst ? 'lg:order-1' : ''}>

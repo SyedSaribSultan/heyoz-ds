@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui';
+import { Badge, Button } from '@/components/ui';
 import { ArrowRightIcon, PlayIcon, StarIcon } from './icons';
 import { CTA_PRIMARY, CTA_SECONDARY, HERO, SOCIAL_PROOF } from './content';
 
@@ -114,6 +114,67 @@ function SocialProof() {
   );
 }
 
+/** The product in a frame, on a canvas, wearing two tags.
+ *
+ *  C21, C24 and E31 in one component.
+ *
+ *  THE FRAME is a window, not a phone. A phone bezel around a 9:16 video says "this is a
+ *  phone screenshot"; a window with three dots says "this is our app", which is the thing
+ *  being sold. Built from three tokens and a radius — there is no chrome asset and none is
+ *  needed.
+ *
+ *  THE CANVAS is `.oz-canvas`, which already exists in globals.css and is already a
+ *  token-built dot grid — the exact "dark viewport with a subtle dot-grid" E31 asks for,
+ *  at no cost. It also solves a real problem: a 9:16 video in a 2-up column leaves dead
+ *  space either side, and dead space that is textured reads as a stage rather than as a
+ *  gap.
+ *
+ *  THE TAGS use Badge's `neutral-over-image` variant, which exists precisely because a
+ *  label sitting on a photograph cannot use the page's content roles. Not invented
+ *  metrics — they name what the video is, which is a claim the video itself supports. */
+function HeroShowcase() {
+  return (
+    <div className="relative mx-auto w-full max-w-[520px]">
+      <div className="oz-canvas overflow-hidden rounded-8 border-2 border-border-secondary p-space-6 shadow-large">
+        {/* Window chrome. Decorative, so aria-hidden — three dots are not information. */}
+        <div
+          aria-hidden="true"
+          className="mb-space-5 flex items-center gap-space-3 rounded-4 bg-surface-secondary px-space-4 py-space-3"
+        >
+          <span className="h-space-3 w-space-3 rounded-full bg-fill-critical" />
+          <span className="h-space-3 w-space-3 rounded-full bg-fill-warning" />
+          <span className="h-space-3 w-space-3 rounded-full bg-fill-success" />
+          <span className="ml-space-3 h-space-3 flex-1 rounded-full bg-fill-tertiary" />
+        </div>
+
+        {/* The video, centred on the canvas at its native portrait ratio. */}
+        <div className="relative mx-auto w-full max-w-[300px]">
+          <div className="overflow-hidden rounded-6 border-2 border-border-secondary bg-surface-primary shadow-medium">
+            <div className="aspect-[9/16]">
+              <ProductVideo
+                src={HERO.video}
+                poster={HERO.poster}
+                label="Example UGC ad generated with HeyOz"
+              />
+            </div>
+          </div>
+
+          {/* F47: the tags sit on their own elevation step above the video, which is what
+              makes the stack read as depth rather than as one flat image. Negative offsets
+              so they overhang the frame — an element that breaks its container's edge is
+              the cheapest depth cue there is, and it costs no shadow. */}
+          <span className="absolute -left-space-5 top-space-7 shadow-medium">
+            <Badge variant="neutral-over-image">9:16 · ready to post</Badge>
+          </span>
+          <span className="absolute -right-space-5 bottom-space-9 shadow-medium">
+            <Badge variant="neutral-over-image">AI voice · 30+ options</Badge>
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function UgcHero() {
   return (
     <section
@@ -124,79 +185,74 @@ export function UgcHero() {
          at the very bottom edge, not across the middle of the panel. */
       className="relative isolate overflow-hidden bg-gradient-mesh-base px-space-6 pb-space-16 pt-space-14"
     >
+      {/* Softened, per A1. Two changes: the hot rung is mesh-3 rather than mesh-4 — one
+          step cooler, and mesh-4 in dark is #FF3D01, the brand fill itself, which has no
+          business being the largest area of colour on the page — and the linear now tops
+          out at mesh-3 instead of running to the floor, so the wash reads as a glow under
+          the content rather than as a band across it. No opacity involved: the preset has
+          no <alpha-value> slot, so "lower the opacity" is spelled "pick a lower rung". */}
       <div
         aria-hidden="true"
         className="absolute inset-0 -z-10"
         style={{
           backgroundImage: [
-            'radial-gradient(60% 40% at 50% 110%, var(--oz-color-gradient-mesh-4) 0%, transparent 60%)',
-            'linear-gradient(to bottom, transparent 40%, var(--oz-color-gradient-mesh-3) 100%)',
+            'radial-gradient(50% 34% at 50% 108%, var(--oz-color-gradient-mesh-3) 0%, transparent 62%)',
+            'linear-gradient(to bottom, transparent 58%, var(--oz-color-gradient-mesh-3) 100%)',
           ].join(', '),
         }}
       />
 
-      <div className="mx-auto max-w-container-xl">
-        {/* 24ch was far too tight: at display-md this headline broke into five lines and
-            split "scroll-stopping" across two of them, which is the one place a hyphen
-            break is unreadable. Wider measure plus `text-balance`, which lets the browser
-            even out the lines rather than filling the first and orphaning the last —
-            a headline is the one element worth spending that on.
-
-            Capped in px, not ch. A `ch` is the width of a "0" in the current font, and
-            in an extrabold display face at 52px that is wide enough that 34ch measured
-            far narrower than it reads — the headline still broke to four lines. Every
-            other measure on this page is in ch because it is prose at a reading size,
-            where ch is the right unit; a display headline is not prose. */}
-        <div className="mx-auto max-w-[860px] text-center">
+      {/* Two columns from lg, per C23. The single centred column put a 640px-tall video
+          below a centred headline, which is 1250px of hero before anything else — and it
+          wasted the whole right half of a 1920 viewport. Text left, product right, both
+          vertically centred: the asymmetry is the point, and it halves the fold. Still one
+          centred column below lg, where two would be 180px wide each. */}
+      <div className="mx-auto grid max-w-container-xl items-center gap-space-12 lg:grid-cols-2 lg:gap-space-14">
+        {/* LEFT: the argument. */}
+        <div className="text-center lg:text-left">
+          {/* Capped in px, not ch. A `ch` is the width of a "0" in the current font, and in
+              an extrabold display face at 52px that is wide enough that a ch-based measure
+              read far narrower than it looked — the headline broke to four lines. Every
+              other measure on this page is in ch because it is prose at a reading size,
+              where ch is the right unit; a display headline is not prose. `text-balance`
+              evens the lines instead of filling the first and orphaning the last. */}
           <h1
             id="ugc-headline"
-            className="text-balance font-display text-display-md font-extrabold text-content-primary"
+            className="mx-auto text-balance font-display text-display-md font-extrabold text-content-primary lg:mx-0"
           >
-            {HERO.headline}{' '}
-            <span className="text-content-brand">{HERO.headlineAccent}</span>
+            {HERO.headline} <span className="text-content-brand">{HERO.headlineAccent}</span>
           </h1>
-        </div>
 
-        <p className="mx-auto mt-space-6 max-w-[58ch] text-center text-body-lg text-content-secondary">
-          {HERO.sub}
-        </p>
+          <p className="mx-auto mt-space-6 max-w-[58ch] text-body-lg text-content-secondary lg:mx-0">
+            {HERO.sub}
+          </p>
 
-        {/* The sticky header watches this id — see UgcHeader. */}
-        <div
-          id="ugc-hero-cta"
-          className="mt-space-9 flex flex-col items-center justify-center gap-space-4 sm:flex-row"
-        >
-          <Button variant="primary" size="lg" shape="pill" trailingIcon={<ArrowRightIcon />}>
-            {CTA_PRIMARY}
-          </Button>
-          {/* Outline, not a second primary. A secondary CTA that looks primary splits the
-              click rather than capturing a different intent. */}
-          <Button variant="outline" size="lg" shape="pill" leadingIcon={<PlayIcon />}>
-            {CTA_SECONDARY}
-          </Button>
-        </div>
-
-        <SocialProof />
-
-        {/* The visual. 9:16 because that is the aspect the product outputs and the aspect
-            every platform it publishes to expects — showing a UGC tool's output in a
-            16:9 box misrepresents the thing being sold. Capped in height so the hero
-            still fits a laptop viewport. */}
-        <div className="mx-auto mt-space-12 w-full max-w-[360px]">
-          <div className="overflow-hidden rounded-8 border-2 border-border-secondary bg-surface-primary shadow-large">
-            {/* aspect-ratio alone. With max-h as well the two fought: the ratio asked
-                for 640px at this width, the cap said 560, and the box ended up wider than
-                9:16 with the video letterboxed inside its own frame. The width cap above
-                is what controls the size. */}
-            <div className="aspect-[9/16]">
-              <ProductVideo
-                src={HERO.video}
-                poster={HERO.poster}
-                label="Example UGC ad generated with HeyOz"
-              />
-            </div>
+          {/* The sticky bottom bar watches this id — see UgcStickyCta. */}
+          <div
+            id="ugc-hero-cta"
+            className="mt-space-9 flex flex-col items-center gap-space-4 sm:flex-row sm:justify-center lg:justify-start"
+          >
+            <Button variant="primary" size="lg" shape="pill" trailingIcon={<ArrowRightIcon />}>
+              {CTA_PRIMARY}
+            </Button>
+            {/* Outline, not a second primary. A secondary CTA that looks primary splits the
+                click rather than capturing a different intent. */}
+            <Button variant="outline" size="lg" shape="pill" leadingIcon={<PlayIcon />}>
+              {CTA_SECONDARY}
+            </Button>
           </div>
+
+          {/* E39: the sub-copy belongs under the button whose objection it removes, not in
+              the footer. One muted line. */}
+          <p className="mt-space-5 text-body-sm text-content-tertiary">
+            No credit card required · Cancel anytime
+          </p>
+
+          <SocialProof />
         </div>
+
+        {/* RIGHT: the product, in a frame. */}
+        <HeroShowcase />
       </div>
     </section>
   );
