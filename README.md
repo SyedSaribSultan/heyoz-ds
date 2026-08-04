@@ -5,15 +5,15 @@ One source of truth. JSON in, Figma and CSS out.
 ```
 build/          the only files anyone edits
   palette.mjs   OKLCH colour engine + the authored ramps
+  motion.mjs    spring engine — settle + bounce to a linear() curve
+  layout.mjs    the layout primitives
   spec.mjs      every decision: foundations, type, motion, semantic map, bridge
   shipped.mjs   pre-migration globals.css values — for the diff only, delete after
-  harness.mjs   test-rig template
   build.mjs     emitters + validation gates
 
 tokens/         GENERATED — import these into Figma, in numeric order
 dist/           GENERATED — the dev drops these into the app
-reports/        GENERATED — audit data
-test/index.html GENERATED — open in a browser, no server needed
+reports/        GENERATED — audit data, rendered by the showcase /verify route
 
 docs/
   TESTING.md    ← start here for the test phase
@@ -71,7 +71,7 @@ Follow those and every future change is a token added, never a restructure.
 ```
 build/spec.mjs ──▶ node build/build.mjs ──┬──▶ tokens/*.json ──▶ Figma (Tokens Studio)
                                           ├──▶ dist/*        ──▶ the app
-                                          └──▶ test/index.html ─▶ review + sign-off
+                                          └──▶ reports/audit.json ─▶ showcase /verify ─▶ sign-off
 ```
 
 ## Text on filled colours is white

@@ -23,8 +23,9 @@ showcase/ the living reference. Two routes: / and /verify
 ```
 
 `test/index.html` is gone. It rendered the same `reports/audit.json` the `/verify`
-route now renders, and it could only ever show the *token* gates — the four checks
-that live at the component layer were invisible to it. The last copy and its
+route now renders, and it could only ever show the *token* gates — the six checks
+that live at the component layer (`verify:primitives`, `:contrast`, `:motion`,
+`:borders`, `:coverage`, `:classes`) were invisible to it. The last copy and its
 template are in `archive/`, with the full argument and the instructions to restore
 it.
 
@@ -68,8 +69,11 @@ row). `separation` and `elevation` are build errors — separation is a surface 
 space, elevation is shadow in light and surface lightness in dark. Declare
 `borderJob` on the variant; `verify:borders` sweeps every recipe and fails on an
 undeclared border, an illegal job, and a stale declaration on a variant that no
-longer binds one. This is why the count went from 34 bindings to 19: almost all of
-them were separation, and separation had a cheaper answer the whole time.
+longer binds one. This is why the count fell from 34 bindings to 21: almost all of
+them were separation, and separation had a cheaper answer the whole time. Do not
+restate the live count here — run `verify:borders`, which prints it. This sentence
+read "to 19" for months; 19 was a figure `docs/DECISIONS.md` B20 had already
+retracted, and the retraction never made it across.
 
 **2. Never hand-type a colour above tier 1.** Every semantic token names a
 primitive path like `solid/brand/60` or `opacity-15/neutral/20`. The build fails on
@@ -213,12 +217,9 @@ cannot drift.
 
 ## Repo state
 
-Git history is in `git-history/`, not `.git` — see `GIT-SETUP.md` for the two
-commands to activate it. It has not been done yet, so **changes are currently not
-revertible**. Doing that rename is a reasonable first suggestion to the user.
+`.git` is live and changes are revertible. History was activated in `8b85a1a`, which
+also retired the `git-history/` copy and `GIT-SETUP.md` — neither exists now, and
+nothing needs renaming.
 
 `build/shipped.mjs` and `dist/shadcn-bridge.css` are migration scaffolding and get
 deleted once the app stops reading the old variables. Both say so in their headers.
-
-`test/index.html` needs the network for its two webfonts and nothing else; it shows
-a banner if they fail to load.
