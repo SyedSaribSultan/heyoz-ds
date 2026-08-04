@@ -233,6 +233,21 @@ console.log(
     `${rows.filter((r) => r.family === 'effects').length} effects / ${rows.filter((r) => r.family === 'spatial').length} spatial`,
 );
 
+report({
+  suite: 'motion',
+  blurb:
+    'Every recipe declares motion, the spring family matches the properties it animates, ' +
+    'nothing interactive is silent, and every decorative transform routes through the ' +
+    'reduced-motion multiplier.',
+  passed: rows.length - FAIL.length,
+  total: rows.length,
+  detail: [
+    `${rows.filter((r) => r.family === 'effects').length} effects / ${rows.filter((r) => r.family === 'spatial').length} spatial springs across ${rows.length} recipes`,
+    `${exempted.length} state transform(s) exempt from the multiplier, each with a stated reason`,
+  ],
+  ok: FAIL.length === 0,
+});
+
 if (FAIL.length) {
   console.error(`\nFAILED — ${FAIL.length} motion problem${FAIL.length === 1 ? '' : 's'}:\n`);
   for (const f of FAIL) console.error(`  x ${f}`);

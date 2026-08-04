@@ -158,6 +158,20 @@ if (exempted.length) {
   console.log(`\n  exempt: ${exempted.map((g) => `${g} — ${EXEMPT[g]}`).join('\n          ')}`);
 }
 
+report({
+  suite: 'coverage',
+  blurb:
+    'Every semantic colour group the build ships is drawn somewhere. A gated token nobody ' +
+    'renders is a gate nobody can falsify.',
+  passed: covered.length,
+  total: groups.size,
+  detail: [
+    `${groups.size} semantic colour groups · ${covered.length} demonstrated`,
+    exempted.length ? `exempt: ${exempted.join(', ')}` : 'no exemptions',
+  ],
+  ok: FAIL.length === 0,
+});
+
 if (FAIL.length) {
   console.error(`\nFAILED — ${FAIL.length} group${FAIL.length === 1 ? '' : 's'} with no specimen:\n`);
   for (const f of FAIL) console.error(`  x ${f}`);

@@ -29,6 +29,7 @@ import {
   primitiveTiers,
 } from '../lib/core/primitives';
 import { audit } from '../lib/core/audit';
+import { report } from './report';
 
 const errors: string[] = [];
 const notes: string[] = [];
@@ -125,6 +126,17 @@ if (primitiveSummary.unused !== primitiveSummary.auditUnused) {
     );
   }
 }
+
+report({
+  suite: 'primitives',
+  blurb:
+    'Tier shapes, ramp monotonicity, and that every primitive a semantic token names ' +
+    'actually exists — the check that the three tiers have not drifted apart.',
+  passed: allPrimitives.length - errors.length,
+  total: allPrimitives.length,
+  detail: [`${allPrimitives.length} primitives checked for tier shape, ordering and existence`],
+  ok: errors.length === 0,
+});
 
 if (errors.length) {
   console.error(`\n${errors.length} problem(s):\n`);

@@ -26,6 +26,7 @@
 import { allRecipes } from '../lib/recipes';
 import { resolve, resolveRole } from '../lib/core/audit';
 import type { Mode, StateName, TokenBinding } from '../lib/core/types';
+import { report } from './report';
 
 /* -- metrics -------------------------------------------------------------- */
 
@@ -205,6 +206,20 @@ const tight = findings
 
 console.log('\nclosest to their floor:');
 for (const f of tight) console.log(`  ${fmt(f).replace(', need', ' · floor')}`);
+
+report({
+  suite: 'contrast',
+  blurb:
+    'Every foreground/background pairing the recipes create, resolved in both modes and ' +
+    'measured — WCAG 4.5:1 for normal pairs, APCA Lc 60 for on-fill pairs per DECISIONS H1.',
+  passed: findings.filter((f) => f.pass).length,
+  total: findings.length,
+  detail: [
+    `${allRecipes.length} components · ${findings.length} pairings measured in both modes`,
+    tight.length ? `tightest passing: ${fmt(tight[0]).replace(', need', ' · floor')}` : 'no passing pairs to rank',
+  ],
+  ok: unresolved.length === 0 && failed.length === 0,
+});
 
 if (unresolved.length || failed.length) process.exit(1);
 console.log('\nOK — every pairing the recipes create clears its floor.');

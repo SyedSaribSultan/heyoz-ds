@@ -132,6 +132,22 @@ console.log(
     .join(' · ')} — and nothing for separation or elevation`,
 );
 
+report({
+  suite: 'borders',
+  blurb:
+    'Every stroke declares the job it does, and that job is affordance or state. ' +
+    'Separation and elevation are build errors, not style choices.',
+  passed: rows.length - FAIL.length,
+  total: rows.length,
+  detail: [
+    `${rows.length} variants carry a border · ${totalBindings} bindings in total`,
+    `${Object.entries(byJob)
+      .map(([k, v]) => `${v} ${k}`)
+      .join(' · ')} — nothing for separation or elevation`,
+  ],
+  ok: FAIL.length === 0,
+});
+
 if (FAIL.length) {
   console.error(`\nFAILED — ${FAIL.length} stroke problem${FAIL.length === 1 ? '' : 's'}:\n`);
   for (const f of FAIL) console.error(`  x ${f}`);

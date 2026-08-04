@@ -23,9 +23,9 @@ showcase/ the living reference. Two routes: / and /verify
 ```
 
 `test/index.html` is gone. It rendered the same `reports/audit.json` the `/verify`
-route now renders, and it could only ever show the *token* gates — the six checks
+route now renders, and it could only ever show the *token* gates — the seven checks
 that live at the component layer (`verify:primitives`, `:contrast`, `:motion`,
-`:borders`, `:coverage`, `:classes`) were invisible to it. The last copy and its
+`:borders`, `:coverage`, `:glow`, `:classes`) were invisible to it. The last copy and its
 template are in `archive/`, with the full argument and the instructions to restore
 it.
 
@@ -185,6 +185,16 @@ modes that produce every horizontal overflow.
 variable's local value when it is bound to an alias, and these carry alpha
 0.08–0.90, so an alias would import them opaque. An alias that lies about alpha is
 worse than no alias. The build asserts the agreement.
+
+**The `/ai-ugc` hero paints a dark ellipse *over* its warm glow.** It looks like a
+layer fighting the effect it sits on. It is the effect: the glow is two coats of
+`gradient/halo` blooming below the fold, and the cap is what keeps the headline band
+near-black so the copy has a ground. Take it out and `content/brand` — the accent word
+in the headline — measures 4.39:1 in dark, under the floor. `verify:glow` is the gate
+that catches it, and it exists because neither the token build nor `verify:contrast` can
+see a composited ground: both measure a foreground token against a background *token*,
+and a gradient's colour at a row is not a token. Read the comment on `HeroGlow` before
+retuning any coat, and retune the model in `showcase/scripts/verify-glow.ts` with it.
 
 **492+ of the colour primitives are unused.** The alpha grid is generated, not
 curated. Decision D7.
