@@ -1,6 +1,7 @@
 'use client';
 
 import type { ComponentContent } from '@/lib/content/types';
+import { ScrollRegion } from './ScrollRegion';
 import { SubHead } from './Section';
 
 /* ---------------------------------------------------------------------------
@@ -57,7 +58,17 @@ function PairTable({
   right: string;
 }) {
   return (
-    <div className="overflow-x-auto">
+    /* The label comes off the two column heads rather than out of a string typed here,
+       because this table renders twice on every component page — "Reach for something
+       else when" and "Related" — and two regions announced identically are worse than one
+       region: a reader tabbing into the second cannot tell it from the first they left.
+       Derived, they announce as "situation and use instead" and "component and difference",
+       which is what is actually inside each.
+
+       It was a bare `overflow-x-auto`: reachable by pointer and by nothing else (WCAG
+       2.1.1), with no edge to say the second column continued past the fold. Default fade
+       — these sit in the prose column on the page background, with no surface under them. */
+    <ScrollRegion label={`${left} and ${right}`}>
       <table className="w-full border-collapse">
         <thead>
           <tr>
@@ -85,7 +96,7 @@ function PairTable({
           ))}
         </tbody>
       </table>
-    </div>
+    </ScrollRegion>
   );
 }
 

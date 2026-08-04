@@ -4,19 +4,25 @@ import { allRecipes } from '@/lib/recipes';
 import { content } from '@/lib/content';
 import { staleSources } from '@/lib/core/staleness';
 
-/* One static page per component.
+/* One static page per registered recipe, and nothing in this file decides which those
+ * are.
  *
  * The params come from `allRecipes` rather than from the registry, for the reason
  * lib/recipes/index.ts gives: the registry lives in a .tsx file full of JSX demos,
- * and this module runs on the server at build time. The two lists are the same nine
- * — and if they ever were not, the list that should decide which pages exist is the
- * one that cannot be forgotten to be updated. */
+ * and this module runs on the server at build time. The two lists hold the same
+ * recipes — and if they ever were not, the list that should decide which pages exist
+ * is the one that cannot be forgotten to be updated.
+ *
+ * Neither sentence names a count, on purpose. Both of them used to say "nine" and
+ * both lists had held fourteen for some time; the number is a property of the
+ * catalogue and never was this file's to restate. See the note in ComponentPage.tsx. */
 export function generateStaticParams() {
   return allRecipes.map((r) => ({ component: r.meta.id }));
 }
 
-/** No dynamic segments beyond the nine. A typo in a URL gets a real 404 rather than
- *  a rendered page saying the component does not exist. */
+/** No dynamic segment that `generateStaticParams` did not return. A typo in a URL gets
+ *  a real 404 — app/not-found.tsx — rather than a rendered page saying the component
+ *  does not exist, which is what ComponentPage used to answer with, at HTTP 200. */
 export const dynamicParams = false;
 
 export async function generateMetadata({

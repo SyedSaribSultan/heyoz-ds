@@ -2,6 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react';
 import type { PrimitiveStep, PrimitiveTier } from '@/lib/core/primitives';
+import { ScrollRegion } from './ScrollRegion';
 
 /* ---------------------------------------------------------------------------
  * One hue family, all five alpha tiers, as a single 2-D grid.
@@ -14,7 +15,9 @@ import type { PrimitiveStep, PrimitiveTier } from '@/lib/core/primitives';
  * Keyboard: the whole family is one composite widget with a roving tabIndex — arrows
  * move within it, Enter or Space inspects. 655 individually focusable swatches would
  * be 655 tab stops, which is technically accessible and practically unusable; this is
- * 11. Left/right walks the ramp, up/down crosses the tiers.
+ * one per family, plus one more on any family whose strip is currently clipped, where
+ * ScrollRegion adds a stop for the scroller itself. Left/right walks the ramp,
+ * up/down crosses the tiers, Home and End jump to the ends of the strip.
  * ------------------------------------------------------------------------- */
 
 export type RampProps = {
@@ -27,6 +30,11 @@ export type RampProps = {
   selected: PrimitiveStep | null;
   onSelect: (step: PrimitiveStep) => void;
 };
+
+/** Which cell the roving tabIndex is on. Row is the alpha tier, column is the ramp
+ *  step, and both are indices into `rows` rather than keys — the tiers carry identical
+ *  step keys in identical order, which the verify script asserts. */
+type Cursor = { row: number; col: number };
 
 /** Referenced by at least one semantic token.
  *
@@ -67,48 +75,64 @@ export function PrimitiveRamp({
   const total = rows.reduce((n, r) => n + r.steps.length, 0);
   const used = rows.reduce((n, r) => n + r.steps.filter((s) => s.consumers.length).length, 0);
 
-  const [cursor, setCursor] = useState({ row: 0, col: 0 });
+  const [cursor, setCursor] = useState<Cursor>({ row: 0, col: 0 });
   const gridRef = useRef<HTMLDivElement>(null);
 
-  const move = useCallback(
-    (dRow: number, dCol: number) => {
-      setCursor((c) => {
-        const row = Math.min(rows.length - 1, Math.max(0, c.row + dRow));
-        const col = Math.min(stepCount - 1, Math.max(0, c.col + dCol));
-        /* Focus follows the cursor, which is what makes arrow keys feel like a grid
-         * rather than like a state machine someone forgot to wire to the DOM. */
-        requestAnimationFrame(() => {
-          gridRef.current
-            ?.querySelector<HTMLButtonElement>(`[data-cell="${row}-${col}"]`)
-            ?.focus();
-        });
-        return { row, col };
+  /* The only place the cursor moves, and the only place this file calls .focus().
+   * That it was not the only place is the bug this replaced.
+   *
+   * The arrows went through a relative `move()` that clamped the cursor AND moved DOM
+   * focus onto the new cell. Home and End called setCursor directly and focused
+   * nothing — so End handed the family's single tabbable cell to the far end of the
+   * ramp while focus stayed where it was, and the next Tab left the widget from a cell
+   * the reader was not on. A roving tabIndex that has stopped describing where focus
+   * is has stopped being a roving tabIndex. Two paths through one widget is how they
+   * came apart, and there is now one.
+   *
+   * It takes an absolute target rather than a delta, and Home is the reason. Home IS
+   * expressible through the old relative form — `move(0, -stepCount)` clamps to column
+   * 0 — and that is precisely the version to avoid: it says "go a very long way left"
+   * and leans on the clamp being the only thing that stops it, so the day this grid
+   * wraps at the edges, or a ramp gains a column, Home quietly means something else. An
+   * absolute target says what the key means. The deltas are resolved by the caller,
+   * where the current cursor is already in scope, and the clamp is left with one job —
+   * keeping a target inside the grid — instead of two.
+   *
+   * The focus call stays a frame behind, as it was. A keydown is a discrete event, so
+   * setCursor has already flushed by the time the frame runs and the new cell holds
+   * tabIndex=0 before it is focused; the tab stop and the focused element are therefore
+   * never briefly two different cells. It is not waiting for the cell to exist — all
+   * 655 are mounted at all times, dimmed rather than removed. */
+  const moveTo = useCallback(
+    (target: Cursor) => {
+      const row = Math.min(rows.length - 1, Math.max(0, target.row));
+      const col = Math.min(stepCount - 1, Math.max(0, target.col));
+      setCursor({ row, col });
+      requestAnimationFrame(() => {
+        gridRef.current?.querySelector<HTMLButtonElement>(`[data-cell="${row}-${col}"]`)?.focus();
       });
     },
     [rows.length, stepCount],
   );
 
   function onKeyDown(e: React.KeyboardEvent) {
-    const map: Record<string, [number, number]> = {
-      ArrowLeft: [0, -1],
-      ArrowRight: [0, 1],
-      ArrowUp: [-1, 0],
-      ArrowDown: [1, 0],
+    const { row, col } = cursor;
+    /* Absolute destinations, the arrows included, so no key can reach the grid by a
+     * different route than the others. `cursor` is read from the render closure rather
+     * than from a ref because a keydown here can only have come from the focused cell,
+     * and the cell's onFocus below is what keeps the cursor on it. */
+    const target: Record<string, Cursor> = {
+      ArrowLeft: { row, col: col - 1 },
+      ArrowRight: { row, col: col + 1 },
+      ArrowUp: { row: row - 1, col },
+      ArrowDown: { row: row + 1, col },
+      Home: { row, col: 0 },
+      End: { row, col: stepCount - 1 },
     };
-    const delta = map[e.key];
-    if (delta) {
-      e.preventDefault();
-      move(delta[0], delta[1]);
-      return;
-    }
-    if (e.key === 'Home') {
-      e.preventDefault();
-      setCursor((c) => ({ ...c, col: 0 }));
-    }
-    if (e.key === 'End') {
-      e.preventDefault();
-      setCursor((c) => ({ ...c, col: stepCount - 1 }));
-    }
+    const next = target[e.key];
+    if (!next) return;
+    e.preventDefault();
+    moveTo(next);
   }
 
   /* Column count varies by family — 10, 11, 13 or 24 — so the template is computed.
@@ -124,8 +148,33 @@ export function PrimitiveRamp({
         </p>
       </div>
 
-      {/* Left gutter holds the tier labels; the grid to its right is the widget. */}
-      <div className="flex gap-space-3 overflow-x-auto">
+      {/* Left gutter holds the tier labels; the grid to its right is the widget.
+       *
+       * This strip was a bare `flex … overflow-x-auto`. The grid carries a 520px
+       * minimum, so on a narrow column — and on the phone layout, where the rail is
+       * above the content rather than beside it — it clipped, and the clipped part of a
+       * ramp was reachable by pointer and by nothing else (WCAG 2.1.1) with no visible
+       * edge to say it continued. ScrollRegion brings the tab stop, the accessible name
+       * and the edge fades, and adds the tab stop only while something is actually
+       * clipped.
+       *
+       * That stop sits in front of the cells rather than instead of them. Tabbing into
+       * a clipped family lands on the scroller, where the arrows scroll it — this grid's
+       * onKeyDown is on a descendant and a keydown does not travel downward, so the two
+       * arrow behaviours cannot collide — and the next Tab lands on the cursor cell,
+       * where the arrows move the cursor. Two stops for a clipped family, one for a
+       * family that fits.
+       *
+       * The flex classes move onto ScrollRegion's own className because the element that
+       * clips has to be the element laying out the two columns. `fade` names the page
+       * colour, which is what these strips sit on. The label is not `${family} ramp`:
+       * that is already the enclosing section's name, and `${family} primitives` is the
+       * grid's, so a third distinct name keeps the three announcements apart. */}
+      <ScrollRegion
+        label={`${family} ramp strips`}
+        className="flex gap-space-3"
+        fade="background"
+      >
         <div className="flex shrink-0 flex-col pt-[18px]">
           {rows.map((r) => (
             <div
@@ -142,10 +191,16 @@ export function PrimitiveRamp({
           {/* Shared step labels. One row for all five tiers.
            *
            * The last label-xs on the page that is not inside a mock product, and it
-           * stays: neutral runs 22 steps across a 520px minimum, so a column is about
-           * 23px wide and every label is already truncating. A step up in size here
-           * buys nothing a reader can use and costs the column alignment that is doing
-           * the labelling for all five strips. */}
+           * stays: neutral runs 24 steps, which at the 520px minimum and a 2px gap is a
+           * column under 20px wide, and every label is already truncating. A step up in
+           * size here buys nothing a reader can use and costs the column alignment that
+           * is doing the labelling for all five strips.
+           *
+           * This read "22 steps … about 23px" and both figures were wrong: neutral is 15
+           * decades plus white, black and the seven half-steps, which is 24, and 24
+           * columns and 23 gaps do not fit in 23px each. CLAUDE.md rule 5 — the ramp is
+           * in tokens/01-colors-primitives.tokens.json, so count it rather than
+           * remember it. `stepCount` above is the same figure, computed. */}
           <div className="grid gap-[2px] pb-space-1" style={columns}>
             {solid.steps.map((s) => (
               <span
@@ -203,9 +258,29 @@ export function PrimitiveRamp({
                         style={{ background: s.value }}
                       />
                       {isUsed && <span className="relative">{<UsedMark />}</span>}
+                      {/* Every fact the title carries, in the order the detail panel
+                          shows them. The title above stays — it is right for a pointer
+                          — but it was the only place any of this existed, so on touch
+                          there was nothing at all, and a title is read at the screen
+                          reader's discretion rather than reliably.
+
+                          What was missing here was the lightness, which is the measured
+                          number the whole ramp is ordered by, and on the four alpha
+                          tiers the alpha: `value` there is an 8-bit suffix on the hex —
+                          opacity-15/brand/60 is `#FF3D0126` — which is announced as two
+                          more hex characters rather than as "15%". Prose rather than the
+                          panel's `L*`: the asterisk is read as anything from nothing to
+                          "asterisk" depending on the reader's punctuation setting, and
+                          "lightness 65.4" needs no setting to come out right. */}
                       <span className="sr-only">
                         {s.path}, {s.value}
-                        {isUsed ? `, used by ${s.consumers.length} tokens` : ', unused'}
+                        {translucent ? `, ${Math.round(s.alpha * 100)}% alpha` : ''}, lightness{' '}
+                        {s.lightness.toFixed(1)}
+                        {isUsed
+                          ? `, used by ${s.consumers.length} token${
+                              s.consumers.length === 1 ? '' : 's'
+                            }`
+                          : ', unused'}
                       </span>
                     </button>
                   );
@@ -214,7 +289,7 @@ export function PrimitiveRamp({
             ))}
           </div>
         </div>
-      </div>
+      </ScrollRegion>
     </section>
   );
 }

@@ -1,7 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
+  allPrimitives,
   FAMILY_ORDER,
   primitiveSummary,
   primitiveTiers,
@@ -25,18 +26,110 @@ import { Button, Input } from '@/components/ui';
  * differs between the modes.
  * ------------------------------------------------------------------------- */
 
-function Detail({ step }: { step: PrimitiveStep | null }) {
-  if (!step) {
-    return (
-      <div className="rounded-5 border-2 border-dashed border-border-secondary p-space-5">
-        <p className="text-body-sm text-content-tertiary">
-          Pick a swatch to see its value, its lightness, and which semantic tokens reference it.
-          Arrow keys move within a ramp once it has focus.
-        </p>
-      </div>
-    );
-  }
+/* ---------------------------------------------------------------------------
+ * The three things this section holds, as URL parameters.
+ *
+ * All three were local state, which meant the one thing a reference page is for —
+ * "look at this" — could not be sent to anybody. "Filter for brand" was a sentence you
+ * typed to a colleague along with instructions; the selected swatch was worse, because
+ * the reader on the other end had to find one cell out of 655.
+ *
+ *   q     the filter string
+ *   ref   the referenced-only toggle, and only ever the literal '1'
+ *   p     the selected primitive's path, e.g. solid/brand/60
+ *
+ * `ref` rather than `used` because "referenced" is the word this page uses everywhere
+ * the reader can see it — the button, the match counter and the legend under the ramps
+ * — and a parameter somebody may type by hand should use the page's vocabulary rather
+ * than the field name behind it. The strict '1' comparison is not fussiness: `?ref=` is
+ * a referral parameter in the wild, and a link arriving as `?ref=newsletter` must not
+ * quietly hide most of the palette.
+ *
+ * Our own writes percent-encode the slashes in `p` — URLSearchParams does that and it
+ * round-trips — so the address bar shows `p=solid%2Fbrand%2F60` while a hand-typed
+ * `?p=solid/brand/60` also parses. Same parameter either way; the encoded form is not
+ * worth hand-rolling a serialiser to avoid.
+ * ------------------------------------------------------------------------- */
+const PARAM = { query: 'q', used: 'ref', path: 'p' } as const;
 
+/** Long enough that typing a word is one entry in the address bar rather than six,
+ *  short enough that letting go of the keyboard and reaching for the URL always finds
+ *  it settled. The toggle and the swatch click do not need a debounce and get it
+ *  anyway: one write path is worth more than saving them a quarter of a second. */
+const URL_DEBOUNCE_MS = 250;
+
+/** Present when it has a value, gone when it does not, so a cleared filter leaves a
+ *  clean URL rather than `?q=&ref=&p=`. */
+function setParam(params: URLSearchParams, key: string, value: string) {
+  if (value) params.set(key, value);
+  else params.delete(key);
+}
+
+/** Rewrite the query string and nothing else about the URL.
+ *
+ *  PRESERVES THE HASH, and that is the load-bearing part. The scroll spy in Chrome.tsx
+ *  writes `#primitives`, `#colour` and so on into the address bar as the reader moves
+ *  down the page; a URL assembled from pathname plus search alone deletes it, so the two
+ *  would fight and whichever wrote last would win. The spy carries the mirror image of
+ *  this note and preserves the search for the same reason — read live, both of them, so
+ *  neither has to know when the other ran.
+ *
+ *  The parameters are edited in place rather than rebuilt from state, so anything this
+ *  section does not own survives too.
+ *
+ *  replaceState, not pushState: a filter is a view of one page, and a history entry per
+ *  keystroke turns Back into "delete a letter". */
+function writeParams(edit: (params: URLSearchParams) => void) {
+  const { pathname, search, hash } = window.location;
+  const params = new URLSearchParams(search);
+  edit(params);
+  const next = params.toString();
+  const url = `${pathname}${next ? `?${next}` : ''}${hash}`;
+  if (url === `${pathname}${search}${hash}`) return;
+  window.history.replaceState(null, '', url);
+}
+
+function Detail({ step }: { step: PrimitiveStep | null }) {
+  return (
+    <>
+      {/* What was picked, out loud.
+       *
+       * The live region is this one node and not the panel below, for two reasons. A
+       * live region announces its whole subtree, and the panel's ends in one chip per
+       * semantic token that resolves to the step — two dozen of them on
+       * solid/neutral/white, the busiest step in the palette. Somebody who taps a swatch
+       * to ask "which one is this" would be read the entire consumer list, which is the
+       * part of the panel you go and read rather than the part you need told.
+       *
+       * And the panel does not exist in both states: the empty state is a different
+       * element, so a region that first mounted with the first selection would arrive
+       * already populated, and a region with nothing to diff against is routinely not
+       * announced at all. Mounted unconditionally and empty when there is nothing to say
+       * — the same construction, for the same reason, as Snippet.tsx's copy receipt.
+       *
+       * Lightness is in here as well as the path and the value. It is the number the
+       * ramp is ordered by, and it used to live in a title attribute and nowhere else. */}
+      <p aria-live="polite" className="sr-only">
+        {step ? `${step.path}, ${step.value}, lightness ${step.lightness.toFixed(1)}` : ''}
+      </p>
+      {step ? <DetailPanel step={step} /> : <DetailEmpty />}
+    </>
+  );
+}
+
+function DetailEmpty() {
+  return (
+    <div className="rounded-5 border-2 border-dashed border-border-secondary p-space-5">
+      <p className="text-body-sm text-content-tertiary">
+        Pick a swatch to see its value, its lightness, and which semantic tokens reference it.
+        Arrow keys move within a ramp once it has focus; Home and End jump to the ends of a
+        strip.
+      </p>
+    </div>
+  );
+}
+
+function DetailPanel({ step }: { step: PrimitiveStep }) {
   const translucent = step.alpha < 1;
   const byMode = {
     light: step.consumers.filter((c) => c.endsWith('(light)')),
@@ -111,6 +204,50 @@ export function Primitives({ index }: { index: string }) {
   const [usedOnly, setUsedOnly] = useState(false);
   const [selected, setSelected] = useState<PrimitiveStep | null>(null);
 
+  /* Read the URL once, after hydration — and gate the writer on having done so.
+   *
+   * Not in a lazy useState initialiser and not during render: window.location does not
+   * exist during the server render, so a first client render that consulted it would
+   * disagree with the markup React is hydrating and the tree would be thrown away. That
+   * is the discipline ThemeProvider.tsx documents at length, and the price here is one
+   * frame of the unfiltered grid before `?q=` lands.
+   *
+   * The gate matters as much as the read. Without it the write effect below fires on
+   * mount holding the default empty state and deletes the very parameters this effect is
+   * about to read — a link that clears itself the moment it is opened. */
+  const [readUrl, setReadUrl] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setQuery(params.get(PARAM.query) ?? '');
+    setUsedOnly(params.get(PARAM.used) === '1');
+    /* A path that no longer names a primitive resolves to nothing, and the first write
+     * below then drops it from the URL. This is a normal event rather than a defensive
+     * flourish: steps get added when a semantic role needs a rung that is not there,
+     * which is the entire reason neutral carries seven half-steps, so a link somebody
+     * sent last month can name a step that has since moved. `find`'s undefined is
+     * collapsed to null on the way in — `selected` is `PrimitiveStep | null` everywhere
+     * below and downstream, and a third empty value that only this path can produce is
+     * how a missing step would turn into a crash somewhere else. */
+    const path = params.get(PARAM.path);
+    setSelected(path ? (allPrimitives.find((p) => p.path === path) ?? null) : null);
+    setReadUrl(true);
+  }, []);
+
+  /* One debounced write for all three parameters. The timer restarts on every change,
+   * so a typed word reaches the address bar once, when the typing stops. */
+  useEffect(() => {
+    if (!readUrl) return;
+    const timer = window.setTimeout(() => {
+      writeParams((params) => {
+        setParam(params, PARAM.query, query.trim());
+        setParam(params, PARAM.used, usedOnly ? '1' : '');
+        setParam(params, PARAM.path, selected?.path ?? '');
+      });
+    }, URL_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [readUrl, query, usedOnly, selected]);
+
   const needle = query.trim().toLowerCase();
   const filtering = needle.length > 0 || usedOnly;
 
@@ -143,7 +280,43 @@ export function Primitives({ index }: { index: string }) {
       blurb="Tier 1, in full. Authored in OKLCH and computed — every ramp step is a measured lightness, not a picked colour. Nothing above this tier may contain a hex, so every semantic token on the page resolves to one of these."
     >
       <div className="oz-stack oz-stack-9">
-        <div className="oz-stack oz-stack-4">
+        {/* The controls and the detail panel, pinned.
+         *
+         * The panel renders above 655 swatches, so clicking a step near the bottom of the
+         * neutral ramp updated a block a screen and a half off the top of the viewport and
+         * nothing the reader could see moved at all. That is the same bug as the swatch
+         * being unlinkable, from the other end: the selection existed and was
+         * unobservable.
+         *
+         * This is the element that can be sticky, and the markup is why rather than the
+         * intent: it is the first child of the section's `oz-stack oz-stack-9`, the ramps
+         * are its sibling, so its containing block is that flex column — which is as tall
+         * as every ramp put together — and it holds for the whole scroll past them. The
+         * other half of the requirement is negative and is the half that usually kills a
+         * sticky silently: nothing between here and <body> sets overflow. `.oz-stack` sets
+         * display, direction and gap and puts `min-width: 0` on its children, and that is
+         * all it sets.
+         *
+         * Opaque, and only from lg. `bg-background` because the block sits on the page and
+         * a card behind a card is what the rest of this folder spent its comments
+         * removing; the panel's own surface/primary covers its own box and nothing else,
+         * so without this the swatches scroll visibly through the gaps around it. Below lg
+         * the controls plus the panel are most of a phone viewport, and the grid is what
+         * the reader came for, so there it stays in the flow.
+         *
+         * `lg:z-dropdown`, deliberately not `lg:z-sticky`. The header already owns
+         * z-sticky, an equal z-index is resolved by document order, and this block comes
+         * later in the document — so the two being equal means this paints over the header
+         * the first time they ever touch. It does need a layer of some kind, though:
+         * ScrollRegion wraps each ramp strip in a `relative` div, positioned siblings at
+         * z-index auto paint in tree order, and every strip is after this block. Leaving
+         * it unlayered puts the swatches on top of the panel that describes them.
+         *
+         * The padding is at lg only for the same reason the position is: it is breathing
+         * room for the pinned state — clearance under the header's rule at the top, and a
+         * gap at the bottom so the swatches disappear a little clear of the panel rather
+         * than against its edge. */}
+        <div className="oz-stack oz-stack-4 lg:sticky lg:top-[var(--showcase-header)] lg:z-dropdown lg:bg-background lg:pb-space-5 lg:pt-space-4">
           <div className="flex flex-wrap items-end gap-space-5">
             <div className="w-full max-w-[360px]">
               <Input

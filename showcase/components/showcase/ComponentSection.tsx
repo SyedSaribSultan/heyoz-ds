@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import type { RegistryEntry } from '@/lib/core/Registry';
 import { content } from '@/lib/content';
 import { ContentSections } from './ContentSections';
@@ -14,6 +15,50 @@ import { VariantMatrix } from './VariantMatrix';
  * binding table, a token inventory and a usage snippet from the act of being
  * registered. Consistency here is structural rather than a thing to remember. */
 
+/** The settle time of a spring, as the running stylesheet resolves it.
+ *
+ *  This block used to render the literal string `var(--oz-spring-<name>-ms)` — the
+ *  name of the place a value lives, on a page whose whole thesis is that every figure
+ *  it shows was measured. The comment below it already claimed the settle times were
+ *  "read from the CSS custom properties the token build emitted"; that was true of the
+ *  mechanism and false of the rendering, which is the more embarrassing half.
+ *
+ *  It is the only number in this folder that cannot come out of `reports/audit.json`:
+ *  the audit carries colour, contrast, typography and the bridge, and no motion at
+ *  all, so there is nothing to join against. Swatch.tsx makes the case for preferring
+ *  the audit to a computed style wherever both exist — it would "agree most of the
+ *  time and disagree exactly when something was wrong" — and here only the second
+ *  exists. It is not a parallel figure either: `duration-<spring>` in
+ *  `recipe.motionClasses` resolves to this same custom property, so what is printed is
+ *  what the bar beside it is running on.
+ *
+ *  Returns '' for a property that is not there, which is what a renamed token or an
+ *  unbuilt `dist/` looks like from in here. The caller has to cope with that rather
+ *  than render "settles in ms".
+ *
+ *  Nothing is read while rendering. getComputedStyle does not exist on the server, and
+ *  a value present on the first client render and absent from the server's HTML is a
+ *  hydration mismatch — the discipline ThemeProvider documents at length. One read is
+ *  enough: the reduced-motion block repoints the spring *curves* and deliberately
+ *  leaves the `-ms` twins alone (movement goes, speed stays), and no mode changes a
+ *  duration, so there is nothing here for a theme switch to invalidate. */
+function useSettleTime(spring: string): string {
+  const [settle, setSettle] = useState('');
+
+  useEffect(() => {
+    /* Trimmed. A custom property comes back carrying whatever whitespace followed the
+     * colon in the declaration, so the string arrives with a leading space and would be
+     * rendered with it — mono type, so it shows. */
+    setSettle(
+      getComputedStyle(document.documentElement)
+        .getPropertyValue(`--oz-spring-${spring}-ms`)
+        .trim(),
+    );
+  }, [spring]);
+
+  return settle;
+}
+
 /** The component's motion, rendered from `recipe.motion`.
  *
  *  Same contract as the binding table above it: this is not a description of how the
@@ -26,6 +71,13 @@ import { VariantMatrix } from './VariantMatrix';
  *  applied to time rather than to colour. */
 function MotionSummary({ recipe }: { recipe: RegistryEntry['recipe'] }) {
   const m = recipe.motion;
+  const settle = useSettleTime(m.transition);
+
+  /* Whether the demonstrated state is being held. Client state only — it starts false
+   * on the server and on the first client render, so there is nothing to hydrate
+   * wrongly, and nothing about it is persisted: it is a thing you do to a bar, not a
+   * preference. */
+  const [held, setHeld] = useState(false);
 
   const facts: Array<[string, string]> = [
     ['transition', m.transition],
@@ -48,23 +100,75 @@ function MotionSummary({ recipe }: { recipe: RegistryEntry['recipe'] }) {
 
       <p className="max-w-[68ch] text-body-md text-content-secondary">{m.intent}</p>
 
-      {/* The live proof. Hovering this bar runs the component's own spring on its own
-          declared properties — not an illustration of it, the same two custom
-          properties the className resolves to. */}
+      {/* The live proof, and until now the one piece of live evidence on this page that
+          needed a mouse.
+
+          It was an `aria-hidden` div whose only trigger was `hover:bg-fill-brand`, so on
+          a phone and from a keyboard the single demonstration of how this system moves
+          did nothing whatsoever. Snippet.tsx opens with exactly this argument about its
+          copy button — hover is not an affordance on a touch screen and is not reachable
+          from a keyboard — and this bar is the place it was not applied. It is a toggle
+          button now: a click or Enter latches the transitioned state and a second one
+          releases it, a pointer still gets the hover preview it always had, and
+          `aria-pressed` is what tells a reader which way it currently is.
+
+          It cannot stay `aria-hidden` once it is a control — a focusable element hidden
+          from the accessibility tree is a tab stop a screen reader cannot describe — so
+          it needs a name, and "feel it" beside it is not one: it says nothing about what
+          pressing the thing does. The name leads with that visible text all the same,
+          because WCAG 2.5.3 asks that a control's visible label appear inside its
+          accessible name; a speech-input user saying "click feel it" has to hit
+          something.
+
+          The motion is untouched, which is the entire claim the bar makes: those are the
+          component's own `duration-<spring> ease-<spring>` classes, not an imitation of
+          them. The inline transition-property narrows the compiled set to the one
+          property this bar actually changes, and that stays honest only while every
+          declared set contains colour — `colors` and `colors-and-transform` both list
+          background-color, `oz-transition-depth` (`properties: 'shadow'`) does not, and
+          the first recipe to declare `shadow` would have the bar transitioning on a
+          property its component never transitions.
+
+          No min-h-target, for the reason Section.tsx gives about its anchor link: the bar
+          is space-8 tall, which clears WCAG 2.5.8's 24px floor, and it is the only
+          control in this row so the spacing exception applies — while a 44px box would
+          push the row apart to say nothing new. */}
       <div className="oz-cluster oz-cluster-4">
         <span className="font-mono text-label-sm text-content-tertiary">feel it</span>
-        <div
-          className={`h-space-8 w-space-14 rounded-4 bg-fill-secondary hover:bg-fill-brand ${
-            m.properties === 'none' ? '' : recipe.motionClasses
-          }`}
+        <button
+          type="button"
+          aria-pressed={held}
+          aria-label={`Feel it: hold the ${m.transition} transition`}
+          onClick={() => setHeld((h) => !h)}
+          className={`h-space-8 w-space-14 rounded-4 focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus ${
+            held ? 'bg-fill-brand' : 'bg-fill-secondary hover:bg-fill-brand'
+          } ${m.properties === 'none' ? '' : recipe.motionClasses}`}
           style={{ transitionProperty: 'background-color' }}
-          aria-hidden="true"
         />
+        {/* The measured number, with the property it came from kept behind it. Dropping
+            the name to print the value would trade one kind of missing provenance for
+            another — the number is the fact, the name is where to go and change it — so
+            the value takes content/secondary and the name stays at the tertiary of the
+            sentence around it.
+
+            The middle clause drops out in three cases and the row still reads true
+            without it — `effects-fast · --oz-spring-effects-fast-ms`, a spring and where
+            its value lives. Before the effect has read the document; when the property is
+            not there at all; and when the component declares `properties: 'none'`, which
+            is the interesting one. Skeleton declares a spring on the record while
+            transitioning nothing, so its bar snaps — and a settle time printed beside a bar
+            that snaps is a measured number describing something that is not happening,
+            which is this fix's own complaint pointing the other way. (No figure quoted
+            here on purpose: the value is the build's and quoting it is how a comment goes
+            stale.) */}
         <span className="font-mono text-label-sm text-content-tertiary">
-          {m.transition} · settles in{' '}
-          <span className="text-content-secondary">
-            var(--oz-spring-{m.transition}-ms)
-          </span>
+          {m.transition} ·{' '}
+          {m.properties !== 'none' && settle && (
+            <>
+              settles in <span className="text-content-secondary">{settle}</span> ·{' '}
+            </>
+          )}
+          --oz-spring-{m.transition}-ms
         </span>
       </div>
     </div>

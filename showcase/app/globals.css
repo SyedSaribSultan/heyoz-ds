@@ -19,9 +19,27 @@
 
 @layer base {
   html {
+    /* The height of the sticky header, in one place.
+     *
+     * This was the literal 88px, in three files: here, `scroll-mt-[88px]` on Section,
+     * and the rail's `lg:top-[88px]`. Chrome.tsx carried a comment warning that
+     * growing the bar would silently misalign every anchor on the page — which is a
+     * comment standing in for a variable, and it was already wrong: the bar is
+     * `flex-wrap`, so below `md` it wraps to two rows and is taller than 88px, and
+     * every anchor on a phone landed short by the difference.
+     *
+     * Deliberately NOT namespaced `--oz-`. Everything under that prefix comes out of
+     * `node build/build.mjs`, and a hand-written `--oz-*` in the showcase would be
+     * exactly the fourth place a value could be wrong that next.config.mjs argues
+     * against. This is showcase chrome, not a token.
+     *
+     * 88px is the fallback for first paint and for no-JS. The Header measures itself
+     * with a ResizeObserver and writes the real height here — see Chrome.tsx. */
+    --showcase-header: 88px;
+
     /* Anchor scrolling has to clear the sticky header. */
     scroll-behavior: smooth;
-    scroll-padding-top: 88px;
+    scroll-padding-top: var(--showcase-header);
   }
 
   body {
@@ -94,5 +112,109 @@
       linear-gradient(-45deg, transparent 75%, var(--oz-color-surface-tertiary) 75%);
     background-size: 8px 8px;
     background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Print.
+ *
+ * `/verify` is the page somebody exports to PDF and sends to a reviewer, and until
+ * now that export carried a sticky header floating over the first table, a 188px
+ * empty column where the nav rail used to be, a dot grid behind every specimen, and —
+ * worst — every horizontal scroller clipped at the paper width, silently dropping the
+ * `floor` and `pass` columns off the right-hand edge of a contrast table. A printed
+ * audit that quietly loses the column carrying the verdict is worse than no printout.
+ *
+ * Unlayered on purpose. Tailwind's utilities layer is emitted last, so a `@media
+ * print` block inside `@layer utilities` would tie with the utilities it has to beat
+ * and lose on source order; unlayered declarations outrank every layered one outright,
+ * which is the same cascade argument the reduced-motion note above makes from the
+ * other direction.
+ *
+ * DARK MODE IS NOT HANDLED, and printing in dark mode gets the dark palette.
+ *
+ * An earlier version of this comment claimed a `beforeprint` listener dropped the
+ * `.dark` class and `afterprint` put it back, "see ThemeProvider.tsx". Nothing of the
+ * kind was ever written — the comment described an intention as though it were code,
+ * which is the failure mode CLAUDE.md rule 5 is about, arriving in a comment instead of
+ * a number. Retracted rather than quietly deleted, because the reason it is hard is
+ * worth keeping:
+ *
+ * Re-declaring the custom properties inside this media query would be a second copy of
+ * the token layer, so that is out. And the cheap version — strip `.dark` on
+ * `beforeprint` — introduces a worse bug than it fixes: the class drives the paint but
+ * `ThemeProvider`'s `mode` drives the numbers, so a page printed that way puts light
+ * surfaces under dark-mode hex values in every BindingTable. That is exactly the
+ * "light-mode numbers under a dark-mode component" failure the opening comment of
+ * ThemeProvider.tsx says the single context exists to prevent. Flipping React state
+ * inside `beforeprint` is not guaranteed to flush before the print snapshot either, so
+ * the honest options are a real implementation that also re-renders the tables, or
+ * this note. Until somebody wants the first: switch to light before printing.
+ * ------------------------------------------------------------------------- */
+@media print {
+  /* Interactive chrome carries no information on paper. Selected on the roles they
+     already declare rather than on classes or new attributes — these four names are
+     the components' accessible labels and are asserted by the a11y of the page
+     itself, so they cannot be refactored out from under this block silently.
+
+     `body > header`, NOT `header`. A bare `header` matched eleven elements on
+     /verify, not one: the sticky bar plus every Section's own <header>, which is the
+     element carrying the section number, the h2 and the pass tag. Hiding those
+     printed an audit of unlabelled tables — the same failure this block was written
+     to prevent, arriving through the selector meant to prevent it. The child
+     combinator is the landmark distinction rather than a trick: a <header> that is a
+     direct child of <body> IS the page's banner, and a <header> nested inside a
+     <section> is not a landmark at all. ThemeProvider renders no element of its own,
+     so the bar is a child of <body> on every route. */
+  body > header,
+  nav[aria-label='Sections'],
+  nav[aria-label='View'],
+  nav[aria-label='Other components'],
+  [role='group'][aria-label='Colour mode'] {
+    display: none !important;
+  }
+
+  /* The rail column goes with the rail. */
+  .lg\:grid-cols-rail,
+  [class*='grid-cols-rail'] {
+    display: block !important;
+  }
+
+  /* THE important one. Every ScrollRegion and every remaining overflow-x-auto must
+     spill onto the page rather than clip — a printed table missing its last two
+     columns still looks like a complete table. */
+  [role='region'],
+  .overflow-x-auto {
+    overflow: visible !important;
+  }
+
+  /* Ink. The specimen canvas and the alpha checkerboard are both texture that says
+     "this is a canvas, not the page" — a distinction paper makes on its own. */
+  .oz-canvas,
+  .oz-alpha-grid {
+    background-image: none !important;
+  }
+
+  /* Keep a heading with what it introduces, and keep a row whole. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    break-after: avoid;
+  }
+
+  tr,
+  li {
+    break-inside: avoid;
+  }
+
+  /* A table spanning a page break repeats its header. */
+  thead {
+    display: table-header-group;
+  }
+
+  /* Nothing sticks to a sheet of paper. */
+  [class*='sticky'] {
+    position: static !important;
   }
 }

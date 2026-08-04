@@ -109,8 +109,13 @@ export function Showcase({ staleSources = [] }: { staleSources?: string[] }) {
 
   /* Components are links now, not anchors. Each is its own route — see
    * ComponentPage.tsx for why the single scroll stopped working once the written
-   * guidance landed. The rail still lists all nine, because the list is how somebody
-   * finds the one they want, and losing it to save a click would be the wrong trade. */
+   * guidance landed. The rail still lists every one of them, because the list is how
+   * somebody finds the one they want, and losing it to save a click would be the wrong
+   * trade.
+   *
+   * That sentence read "all nine" while the catalogue held fourteen. The list is
+   * `entries`, so it should never have carried a numeral at all — see the note in
+   * ComponentPage.tsx for how far that particular figure spread before anyone counted. */
   const navGroups: NavGroup[] = [
     { label: 'foundations', items: FOUNDATION_SECTIONS },
     {
@@ -152,9 +157,11 @@ export function Showcase({ staleSources = [] }: { staleSources?: string[] }) {
           <Elevation index={pad(++n)} />
           <Spectrum index={pad(++n)} />
 
-          {/* One index tile per component, each linking to its own route. This used
-              to be nine full ComponentSections inline, which was ~150,000px of page
-              once the guidance landed. */}
+          {/* One index tile per component, each linking to its own route. This used to
+              be one full ComponentSection per component, inline — ~150,000px of page
+              once the guidance landed. (It said "nine full ComponentSections"; the
+              earliest commit that has this file already registered fourteen, so the
+              count was describing a catalogue that predates the history.) */}
           <ComponentIndex index={pad(++n)} />
 
           <Assembled index={pad(++n)} />

@@ -30,12 +30,33 @@ export function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="scroll-mt-[88px] pt-space-17 first:pt-space-9">
-      <header className="border-b-2 border-border-primary pb-space-5">
+    /* The anchor offset is the sticky header's measured height, not a literal 88px.
+     * That number was written out in three files — here, scroll-padding-top in
+     * globals.css, and the rail's sticky top — and it was already wrong: the bar is
+     * flex-wrap, so below md it wraps to two rows and every anchor on a phone landed
+     * short by the difference. --showcase-header is declared once and the Header
+     * measures itself into it; see the note on the property in globals.css for why it
+     * is deliberately not --oz- prefixed. */
+    <section id={id} className="scroll-mt-[var(--showcase-header)] pt-space-17 first:pt-space-9">
+      {/* `group` is on the header rather than on the row, so pointing anywhere in the
+          block — including the blurb — counts as pointing at the section. */}
+      <header className="group border-b-2 border-border-primary pb-space-5">
         <div className="flex items-baseline gap-space-5">
           {/* Tabular so 01 and 14 occupy the same width and the headings align down
-              the page rather than drifting a fraction with each numeral. */}
-          <span className="font-mono text-label-md tabular-nums text-content-tertiary">
+              the page rather than drifting a fraction with each numeral.
+
+              aria-hidden because a screen reader was announcing "oh-one" before
+              "Primitives" on every section of every route — a prefix on every heading
+              of the page. Safe precisely BECAUSE the number is derived rather than
+              authored: Showcase.tsx counts sections as it renders them (`pad(++n)`),
+              so the numeral carries nothing a reader cannot get from the heading and
+              its place in the document. Hiding an authored label would be a different
+              question with a different answer. Notes at the bottom of this file already
+              does exactly this with its list numerals, for the same reason. */}
+          <span
+            aria-hidden="true"
+            className="font-mono text-label-md tabular-nums text-content-tertiary"
+          >
             {index}
           </span>
           {/* No tracking- or leading- utility here on purpose: every step in this
@@ -45,6 +66,56 @@ export function Section({
           <h2 className="font-display text-heading-xl font-bold text-content-primary">
             {title}
           </h2>
+          {/* The section's own URL, as a control.
+           *
+           * Every section here has had an `id` from the first revision and no way to get
+           * at it. The ROUTES comment in Chrome.tsx makes the argument for the two views
+           * — they were made real links so that "this looks wrong" could be a URL — and
+           * then stops one level short: the URL of the thing that looks wrong was still
+           * something you had to read out of the rail's href and retype.
+           *
+           * A link, not a copy-to-clipboard button. Clicking it puts the fragment in the
+           * address bar, which is the shareable artefact, and it inherits middle-click,
+           * "copy link address" and Enter — none of which a button calling
+           * navigator.clipboard gets, and that call also needs a secure context and a
+           * transient "copied" state somebody has to remember to reset.
+           *
+           * The name is an aria-label rather than the glyph, because the glyph is a hash
+           * mark and "number sign, link" tells a reader nothing. It is not on the h2
+           * either: an aria-label on a descendant is folded into the heading's own
+           * accessible name, so nesting this inside the h2 would rename the heading to
+           * "Primitives Link to Primitives".
+           *
+           * opacity, never `hidden` or display:none — a control that is display:none is
+           * not focusable, so the keyboard user half of this reveal could never reach it.
+           * It fades in on hover of the whole header and on its own focus-visible, so a
+           * Tab through the page surfaces it in the same place a pointer does.
+           *
+           * Typed like the numeral, font-mono at label-md, because that pairing is
+           * already proven not to move this row: it is a shorter line box than the h2's,
+           * so baseline alignment leaves the numeral, the heading and the ml-auto tag
+           * exactly where they were, and the padding is horizontal only so the header
+           * keeps its height and its rule stays put. shrink-0 for the same reason the tag
+           * carries it — the heading is the thing that should give way.
+           *
+           * transition-opacity alone, on the effects family. `transition-colors` would
+           * also describe the hover colour, but both utilities set `transition-property`
+           * and which one wins is decided by their order in the compiled sheet rather
+           * than by their order in the attribute — the same trap the note on Stage's
+           * `flush` prop documents. The reveal is the part worth timing, it is an
+           * opacity, and effects is the family that must not overshoot.
+           *
+           * No min-h-target. WCAG 2.5.8's spacing exception covers an undersized target
+           * with nothing else nearby to hit, and this row contains no other control,
+           * whereas a 44px box dropped into a baseline row would push the header's rule
+           * down by the difference on every section of the page. */}
+          <a
+            href={`#${id}`}
+            aria-label={`Link to ${title}`}
+            className="shrink-0 rounded-2 px-space-1 font-mono text-label-md text-content-tertiary opacity-0 transition-opacity duration-effects-fast ease-effects-fast hover:text-content-primary group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
+          >
+            #
+          </a>
           {tag && (
             <span className="ml-auto hidden shrink-0 font-mono text-label-sm text-content-tertiary sm:block">
               {tag}
