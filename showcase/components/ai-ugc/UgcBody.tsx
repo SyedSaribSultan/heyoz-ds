@@ -302,6 +302,15 @@ export function UseCases() {
  *
  * The fifth — autoplaying clips per step — is not: the four step assets are .webp
  * stills, and the only moving asset on the page is UGC_6.webm, already used twice above.
+ *
+ * A LATER BRIEF ASKED FOR TABS HERE AND THE ANSWER WAS NO. The refinement list's
+ * "interactive feature toggles" item proposed replacing these four blocks with four tab
+ * buttons driving one preview pane. It would save roughly 900px and the token set has a
+ * Tabs component, so it was cheap to do — and it was declined deliberately, twice over:
+ * an earlier read of this page called the stacked version its strongest section, and tabs
+ * show one step to a reader who scrolls without clicking, which is most of them. The
+ * height is the cost of all four steps being visible. Do not "modernise" this into tabs
+ * without a new reason; the trade was made with both options on the table.
  * Four short screen recordings would do it, and they do not exist yet.
  * ------------------------------------------------------------------------- */
 export function HowItWorks() {

@@ -51,7 +51,15 @@ export const HERO = {
  *
  *  Same reasoning kills the testimonials and customer logos the brief also asks for: a
  *  fabricated quote attributed to a fabricated person is worse than a missing section,
- *  and the honest version of "add testimonials" is "collect testimonials". */
+ *  and the honest version of "add testimonials" is "collect testimonials".
+ *
+ *  KEEPING THIS GATED IS A CONFIRMED DECISION, not an unfinished edit. Deleting the block
+ *  and re-adding it later was offered and declined — the layout is the expensive part and
+ *  it is already solved, so it waits here. Two things to know if you are the one flipping
+ *  it: every value below is false, so `shipReady: true` without replacing all five ships
+ *  "0.0/5 from 000 reviews on REPLACE WITH REAL SOURCE" to production; and `reviewSource`
+ *  wants the real platform name, because a rating with no attribution is the kind of trust
+ *  signal that costs trust. */
 export const SOCIAL_PROOF = {
   shipReady: false,
   rating: '0.0',
