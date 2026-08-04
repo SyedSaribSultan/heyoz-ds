@@ -74,8 +74,12 @@ export const HERO = {
  * frame. Both were checked against the sub-headline and the CTA at the ends of their
  * ranges.
  *
- * Tops are px from the top of the section, matching Figma, which places these against
- * the page rather than against the section's height.
+ * TOPS ARE FIGMA'S MINUS 70, because they are px from the top of the *section* and Figma
+ * measures from the top of the *page* — its hero frame contains the 70px nav band, where
+ * here the header is a separate element in the flow ahead of the section. Applying the page
+ * values directly counted that band twice and put the whole hero one header-height low; the
+ * same correction applies to `lg:pt` and to both glow coats in UgcHero.tsx, and all three
+ * have to move together or the cards stop lining up with the words.
  *
  * The stills are the Figma assets re-encoded to webp at 2× their drawn box — 5.4MB of
  * PNG became 56KB, which matters on the one image set on this page that cannot be
@@ -87,7 +91,7 @@ export const HERO_CARDS = [
     tilt: 'rotate-[-15deg]',
     collage: 'left-[-22.5%] top-[24px] h-[424px] w-[239px]',
     scattered:
-      'lg:left-[calc(50%-413px)] lg:top-[680px] lg:h-[300px] lg:w-[169px] xl:left-[calc(50%-664px)] xl:top-[554px]',
+      'lg:left-[calc(50%-413px)] lg:top-[610px] lg:h-[300px] lg:w-[169px] xl:left-[calc(50%-664px)] xl:top-[484px]',
   },
   {
     src: '/ai-ugc/hero-wide.webp',
@@ -95,7 +99,7 @@ export const HERO_CARDS = [
     tilt: 'rotate-[-5deg]',
     collage: 'left-[37.9%] top-[117px] h-[238px] w-[424px]',
     scattered:
-      'lg:left-[calc(50%-419px)] lg:top-[230px] lg:h-[168px] lg:w-[300px] xl:left-[calc(50%-523px)] xl:top-[217px]',
+      'lg:left-[calc(50%-419px)] lg:top-[160px] lg:h-[168px] lg:w-[300px] xl:left-[calc(50%-523px)] xl:top-[147px]',
   },
   {
     src: '/ai-ugc/hero-square.webp',
@@ -103,7 +107,7 @@ export const HERO_CARDS = [
     tilt: 'rotate-[10deg]',
     collage: 'left-[9.2%] top-[75px] h-[322px] w-[257px]',
     scattered:
-      'lg:left-[calc(50%+273px)] lg:top-[174px] lg:h-[228px] lg:w-[182px] xl:left-[calc(50%+366px)] xl:top-[152px]',
+      'lg:left-[calc(50%+273px)] lg:top-[104px] lg:h-[228px] lg:w-[182px] xl:left-[calc(50%+366px)] xl:top-[82px]',
   },
   {
     /* The card the 375 frame drops. Hidden below `sm` rather than reordered, so the three
@@ -113,7 +117,7 @@ export const HERO_CARDS = [
     tilt: 'rotate-[15deg]',
     collage: 'hidden sm:block left-[91.7%] top-[24px] h-[424px] w-[238px]',
     scattered:
-      'lg:left-[calc(50%+350px)] lg:top-[645px] lg:h-[300px] lg:w-[168px] xl:left-[calc(50%+505px)] xl:top-[536px]',
+      'lg:left-[calc(50%+350px)] lg:top-[575px] lg:h-[300px] lg:w-[168px] xl:left-[calc(50%+505px)] xl:top-[466px]',
   },
 ] as const;
 

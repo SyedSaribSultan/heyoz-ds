@@ -126,19 +126,26 @@ const GROUNDS: Ground[] = [
     /* UgcHero → HeroGlow. Figma node 4442:80522: the warm ellipse has ry 711 centred 882px
      * down the page, and the dark cap has ry 1024 centred 194px above it. Both are
      * identical in all nine responsive frames, which is why they are px and not relative
-     * to the section. The band rows are the rendered desktop layout: the headline's first
-     * line starts at the 430px Figma pins it to. */
+     * to the section.
+     *
+     * EVERY y HERE IS FIGMA'S MINUS 70 — coats and bands alike — because the component
+     * measures from the top of its section and Figma measures from the top of the page,
+     * whose hero frame includes the 70px nav band. The verdict is unaffected by the shift
+     * (both the coats and the copy move by the same amount, so every distance between them
+     * is unchanged) but the numbers have to match the component or this file is measuring a
+     * ground that is not on screen. So: 812 not 882, -264 not -194, and the headline band
+     * starts at the 360px `lg:pt` rather than at Figma's page-relative 430. */
     where: 'ai-ugc hero',
     base: 'color-background',
     coats: [
-      { ...HALO, cy: 882, ry: 711 },
-      { ...HALO, cy: 882, ry: 711 },
-      { token: 'color-gradient-mesh-base', cy: -194, ry: 1024 },
+      { ...HALO, cy: 812, ry: 711 },
+      { ...HALO, cy: 812, ry: 711 },
+      { token: 'color-gradient-mesh-base', cy: -264, ry: 1024 },
     ],
     bands: [
-      { label: 'headline', role: 'color-content-primary', from: 430, to: 566 },
-      { label: 'headline accent', role: 'color-content-brand', from: 430, to: 566 },
-      { label: 'sub-headline', role: 'color-content-secondary', from: 574, to: 630 },
+      { label: 'headline', role: 'color-content-primary', from: 360, to: 496 },
+      { label: 'headline accent', role: 'color-content-brand', from: 360, to: 496 },
+      { label: 'sub-headline', role: 'color-content-secondary', from: 504, to: 560 },
     ],
   },
   {

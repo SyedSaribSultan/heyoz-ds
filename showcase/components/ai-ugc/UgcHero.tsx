@@ -150,6 +150,14 @@ function SocialProof() {
  *  section — so they are px here too. Reproducing that as a percentage of the section's
  *  height would make the glow grow with the hero and stop matching any frame.
  *
+ *  EVERY PINNED NUMBER IN THIS FILE IS FIGMA'S MINUS 70, and that is the whole reason the
+ *  section-origin note at the bottom of this file exists. Figma draws the nav *inside* the
+ *  hero frame, occupying its first 70px, so a y in the file is measured from the top of the
+ *  page. Here the header is a real element in the flow ahead of this section, so the section
+ *  already starts below it and a page-relative y applied to it counts the nav band twice.
+ *  It did: measured in the browser, every part of this hero sat exactly one header-height
+ *  too low. So the glow's centre is 812 and not 882, and the cap's is -264 and not -194.
+ *
  *  THE COLOUR IS `gradient/halo`, which is brand at 30% alpha and is the only token that
  *  carries alpha for this job — and alpha is the whole point of the layer, because at 50%
  *  over the page this reads as deep burnt orange while the same hue at full strength is
@@ -162,7 +170,7 @@ function SocialProof() {
  *  layers are named "gradient-white" and are not white: they are `#151312` to `#070605`,
  *  and they are later siblings, so they paint *over* the glow rather than under it. The
  *  upper one is an ellipse whose centre is 194px above the page and whose radius reaches
- *  y 830 — which is to say it dims the glow across exactly the band the headline occupies,
+ *  y 830 in Figma's coordinates — which is to say it dims the glow across exactly the band the headline occupies,
  *  and it is the reason the drawn headline sits on a near-black ground while the glow
  *  blooms below it.
  *
@@ -199,9 +207,9 @@ function HeroGlow() {
         /* First listed paints on top. Cap over glow over page. */
         backgroundImage: [
           'linear-gradient(to bottom, transparent 78%, var(--oz-color-background) 100%)',
-          'radial-gradient(50% 1024px at 50% -194px, var(--oz-color-gradient-mesh-base) 0%, transparent 100%)',
-          'radial-gradient(112.5% 711px at 50% 882px, var(--oz-color-gradient-halo) 0%, transparent 100%)',
-          'radial-gradient(112.5% 711px at 50% 882px, var(--oz-color-gradient-halo) 0%, transparent 100%)',
+          'radial-gradient(50% 1024px at 50% -264px, var(--oz-color-gradient-mesh-base) 0%, transparent 100%)',
+          'radial-gradient(112.5% 711px at 50% 812px, var(--oz-color-gradient-halo) 0%, transparent 100%)',
+          'radial-gradient(112.5% 711px at 50% 812px, var(--oz-color-gradient-halo) 0%, transparent 100%)',
         ].join(', '),
       }}
     />
@@ -311,20 +319,35 @@ export function UgcHero() {
          the clip they were drawn against. `isolate` keeps the glow's negative z-index
          inside the section instead of behind the page.
 
-         The min-heights are Figma's hero at each step, and they only apply from `lg`;
-         below that the section is as tall as its contents. */
-      className="relative isolate overflow-hidden bg-background lg:min-h-[1024px] xl:min-h-[1054px]"
+         The min-heights are Figma's hero at each step MINUS the 70px nav band it draws
+         inside that height — 1024 and 1054 in the file, 954 and 984 here, because the
+         header is its own element ahead of this section. They only apply from `lg`; below
+         that the section is as tall as its contents. */
+      className="relative isolate overflow-hidden bg-background lg:min-h-[954px] xl:min-h-[984px]"
     >
       <HeroGlow />
 
-      {/* THE COPY IS PINNED, NOT CENTRED, from `lg` up. Figma puts the first line of the
-          headline 430px down the page at 1025, 1280, 1440 and 1920 alike, and the cards
-          are placed against that — so centring the copy in the section instead moves it
-          relative to them. Measured: with this block centred, the 64px headline is 54px
-          taller than Figma's 56px one, which lifted it into the sunglasses card at 1025.
-          430px is a layout position off the drawing, which is why it is a literal; the
+      {/* THE COPY IS PINNED, NOT CENTRED, from `lg` up. Figma places `hero-text` 360px down
+          its `content` frame at 1025, 1280, 1440 and 1920 alike, and the cards are placed
+          against that — so centring the copy in the section instead moves it relative to
+          them. Measured: with this block centred, the 64px headline is 54px taller than
+          Figma's 56px one, which lifted it into the sunglasses card at 1025.
+
+          360 IS THE `content`-FRAME VALUE, NOT THE PAGE VALUE, and getting that wrong is the
+          one bug this hero shipped with. It was 430 — the same position measured from the top
+          of the page, i.e. 360 plus the 70px nav band Figma draws inside the hero frame. But
+          the header here is a real 74px element in the flow ahead of this section, so the
+          section already begins below it and 430 counted the nav twice: measured in the
+          browser, the headline landed at 504 against a drawn 430, and every card and the glow
+          were the same 74px low with it. It is 360 now, which is the number the file states.
+
+          The 4px that remains — a 74px header against a 70px nav band — is the honest
+          residue of a real control being 2px taller than the drawn one on each edge. It is
+          uniform, so nothing inside the composition shifts relative to anything else.
+
+          These are layout positions off a drawing, which is why they are literals; the
           padding below `lg` is spacing, so it comes off the ramp. */}
-      <div className="oz-enter-hero relative z-10 px-space-6 pt-space-6 text-center sm:pt-space-14 md:pt-space-18 lg:pb-space-18 lg:pt-[430px]">
+      <div className="oz-enter-hero relative z-10 px-space-6 pt-space-6 text-center sm:pt-space-14 md:pt-space-18 lg:pb-space-18 lg:pt-[360px]">
         {/* Two measures, not one. Figma sets 56px type in a 768px column, which breaks to
             two lines; `display-lg` tops out at 64px, which is the step this scale has for
             the biggest line on a page and the closest one to the drawing — but at 64px a
