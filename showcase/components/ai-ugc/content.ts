@@ -21,24 +21,101 @@
  *  nobody can say which one a conversion belongs to. NEW. */
 export const CTA_PRIMARY = 'Create your first UGC ad free';
 
-/** The one place a second action is offered, in the hero only. A page-long secondary
- *  CTA competes with the primary at every scroll depth. NEW. */
-export const CTA_SECONDARY = 'Watch a 60-second demo';
+/* CTA_SECONDARY IS GONE, and it was 'Watch a 60-second demo'. It existed for the hero
+ * only, on the argument that a page-long secondary CTA competes with the primary at every
+ * scroll depth but a hero can afford one route for a reader not ready to sign up. The nine
+ * Figma frames all draw exactly one button, and against a composition that points at one
+ * button a second one is an argument with the design rather than an implementation of it.
+ * Deleted rather than left as a dead export: this file is the copy deck, and a string in it
+ * that renders nowhere is a trap for whoever edits it next. */
 
 export const HERO = {
   /* NEW. "Create UGC Ads" is the feature name, which the reader already knows from the
-   * link they clicked. The outcome is what they do not know. */
+   * link they clicked. The outcome is what they do not know.
+   *
+   * Both lines are verbatim in the Figma hero (node 4442:80522), which is the artifact
+   * this hero is built from — the copy written here for the brief and the copy the design
+   * was set with turned out to be the same two sentences. */
   headline: 'Turn one script into scroll-stopping UGC ads',
   headlineAccent: 'in minutes',
   /* NEW, trimmed. The live subhead lists four features and a promise in one sentence;
    * the features moved to Key Features, where they are already listed again. */
   sub: 'No influencers, no filming, no studio time. Pick an AI creator, paste your script, and get a creator-style ad that looks real and converts.',
-  video: '/ai-ugc/UGC_6.webm',
-  /* The poster is one of the step stills rather than a frame grab: a <video> with no
-   * poster paints the page background until the first frame decodes, which on a 4MB
-   * webm is a visible hole exactly where the hero is. */
-  poster: '/ai-ugc/UGC_21.webp',
+  /* `video` and `poster` were here and are gone with the framed hero video the drawn hero
+   * replaces. Neither asset is orphaned — WhyChoose still plays UGC_6.webm and the first
+   * how-it-works step still uses UGC_21.webp — so this removes two keys, not two files. */
 } as const;
+
+/** The four tilted stills the Figma hero arranges around the headline.
+ *
+ * GEOMETRY LIVES HERE, not in the component, for the same reason the copy does: it is
+ * two arrangements of four cards across three breakpoints, and one array is the only
+ * version of that which cannot drift out of step with itself.
+ *
+ * THE TWO ARRANGEMENTS come from the nine Figma frames, which draw this hero at 375,
+ * 430, 768, 1025, 1280, 1440 and 1920:
+ *
+ *   - `collage`, below `lg`. All four cards sit in a band at the foot of the hero,
+ *     bleeding off both edges and clipped by the section's bottom — Figma's 768 frame,
+ *     where the cards are drawn at √2 the desktop size precisely because most of each
+ *     one is off-screen. The sizes are the same at 375 as at 768, so they are px and not
+ *     fluid. `sm:` is where the fourth card arrives: the 375 frame ships three.
+ *
+ *   - `scattered`, `lg` and up. Two cards above the headline, two flanking the CTA.
+ *
+ * WHY THE SCATTERED OFFSETS ARE `calc(50% ± Npx)` AND NOT PERCENTAGES. The text column
+ * is a fixed width, so the gutter either side of it grows at half the rate the viewport
+ * does, while a percentage offset grows at a tenth of it. Percentages taken off the 1920
+ * frame therefore walk the two lower cards into the sub-headline as the window narrows —
+ * measured, they collide below about 1710px, which is most desktops. Anchoring each card
+ * to the centre line instead reproduces the 1920 frame exactly and holds its clearance
+ * at every width, and the cards bleed off the edges rather than into the words. The `lg`
+ * row is Figma's 1025 frame, which pulls the lower pair down and in; `xl` is the 1920
+ * frame. Both were checked against the sub-headline and the CTA at the ends of their
+ * ranges.
+ *
+ * Tops are px from the top of the section, matching Figma, which places these against
+ * the page rather than against the section's height.
+ *
+ * The stills are the Figma assets re-encoded to webp at 2× their drawn box — 5.4MB of
+ * PNG became 56KB, which matters on the one image set on this page that cannot be
+ * lazy-loaded, because it is the fold. */
+export const HERO_CARDS = [
+  {
+    src: '/ai-ugc/hero-tall-left.webp',
+    alt: 'A generated ad: a creator holding a skincare serum up to camera',
+    tilt: 'rotate-[-15deg]',
+    collage: 'left-[-22.5%] top-[24px] h-[424px] w-[239px]',
+    scattered:
+      'lg:left-[calc(50%-413px)] lg:top-[680px] lg:h-[300px] lg:w-[169px] xl:left-[calc(50%-664px)] xl:top-[554px]',
+  },
+  {
+    src: '/ai-ugc/hero-wide.webp',
+    alt: 'A generated ad: a close crop on a model wearing branded sunglasses',
+    tilt: 'rotate-[-5deg]',
+    collage: 'left-[37.9%] top-[117px] h-[238px] w-[424px]',
+    scattered:
+      'lg:left-[calc(50%-419px)] lg:top-[230px] lg:h-[168px] lg:w-[300px] xl:left-[calc(50%-523px)] xl:top-[217px]',
+  },
+  {
+    src: '/ai-ugc/hero-square.webp',
+    alt: 'A generated ad: a creator presenting a bottle of perfume',
+    tilt: 'rotate-[10deg]',
+    collage: 'left-[9.2%] top-[75px] h-[322px] w-[257px]',
+    scattered:
+      'lg:left-[calc(50%+273px)] lg:top-[174px] lg:h-[228px] lg:w-[182px] xl:left-[calc(50%+366px)] xl:top-[152px]',
+  },
+  {
+    /* The card the 375 frame drops. Hidden below `sm` rather than reordered, so the three
+     * that remain keep the positions they were drawn with. */
+    src: '/ai-ugc/hero-tall-right.webp',
+    alt: 'A generated ad: a creator in profile carrying a leather handbag',
+    tilt: 'rotate-[15deg]',
+    collage: 'hidden sm:block left-[91.7%] top-[24px] h-[424px] w-[238px]',
+    scattered:
+      'lg:left-[calc(50%+350px)] lg:top-[645px] lg:h-[300px] lg:w-[168px] xl:left-[calc(50%+505px)] xl:top-[536px]',
+  },
+] as const;
 
 /** PLACEHOLDER — every figure here is invented and must be replaced or removed.
  *

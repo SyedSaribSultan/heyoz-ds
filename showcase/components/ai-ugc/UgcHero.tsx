@@ -1,21 +1,45 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Badge, Button } from '@/components/ui';
-import { ArrowRightIcon, PlayIcon, StarIcon } from './icons';
-import { CTA_PRIMARY, CTA_SECONDARY, HERO, SOCIAL_PROOF } from './content';
+import { Button } from '@/components/ui';
+import { ArrowRightIcon, StarIcon } from './icons';
+import { CTA_PRIMARY, HERO, HERO_CARDS, SOCIAL_PROOF } from './content';
 
 /* ---------------------------------------------------------------------------
  * Hero.
  *
- * Five of the brief's seven hero points land here: an outcome headline instead of the
- * feature name, an actual visual instead of pure text, a trimmed subhead, a CTA that
- * says what happens, and a secondary route for someone not ready to sign up. The sixth
- * — social proof under the CTA — is built and deliberately switched off; see
- * SOCIAL_PROOF in content.ts. The seventh was contrast, and it is handled by using a
- * gated pair rather than by checking one: content/on-brand on fill/brand is measured at
- * APCA Lc 66.7 in reports/audit.json, which is the pairing `Button variant="primary"`
- * already binds.
+ * BUILT FROM FIGMA node 4442:80522, plus the eight responsive frames that go with it
+ * (375, 430, 768, 1025, 1280, 1440, 1920). It replaces the two-column
+ * headline-beside-a-video hero that was here before, and the replacement is a different
+ * idea rather than a restyle: one centred column of type on a warm glow, with four
+ * generated ads arranged around it. The argument for it is the same one the old hero's
+ * comment made for the video — show the output, do not describe it — settled a better
+ * way. Four stills say "this is what comes out" at a glance and at a fifth of the weight
+ * of a 4MB webm, and they say it above the fold on a phone, which the video never did.
+ *
+ * WHAT WENT, AND WHY IT IS NOT AN OVERSIGHT:
+ *
+ *   - The framed product video and its window chrome. Superseded by the four stills. The
+ *     video itself is still on the page — WhyChoose renders it — and `ProductVideo` below
+ *     is still its component, so nothing about the reduced-motion handling was lost.
+ *   - The secondary "Watch a 60-second demo" CTA. Every one of the nine frames draws
+ *     exactly one button. A second action in the hero was a defensible call when the hero
+ *     was mostly text; against a design whose whole composition points at one button it
+ *     is an argument with the design rather than an implementation of it.
+ *   - "No credit card required · Cancel anytime". Not in any frame. It is not lost: it is
+ *     the line the pricing card carries beside its own button, which is where the
+ *     objection actually gets raised.
+ *
+ * SOCIAL PROOF STAYS GATED AND STAYS HERE. The Figma has no slot for it, but the block is
+ * a confirmed decision recorded in content.ts, `shipReady: false` means it renders
+ * nothing, and the reason it exists — the layout is the expensive part and it is already
+ * solved — is unaffected by the hero being redrawn.
+ *
+ * ONE IMPLEMENTATION, BOTH MODES. The Figma is dark only, and every value it names has a
+ * semantic token whose dark value is the one drawn: `bg/subtle` is the page,
+ * `content/primary` and `content/brand` are the headline's two colours, `fill/brand` is
+ * the button. So this is written in those roles and light mode comes out for free, which
+ * is the whole bet of this folder. There is still no `dark:` anywhere in it.
  * ------------------------------------------------------------------------- */
 
 /** Does this reader want movement?
@@ -41,6 +65,9 @@ function usePrefersReducedMotion() {
 }
 
 /** The product, moving. Autoplay is conditional; controls are always available.
+ *
+ *  No longer used by the hero — see the note above — but still the page's only video
+ *  component, and still the only place the preference above is honoured.
  *
  *  `muted` and `playsInline` are not decoration — without both, mobile Safari refuses to
  *  autoplay at all and the reader gets a still frame with no explanation. */
@@ -114,64 +141,164 @@ function SocialProof() {
   );
 }
 
-/** The product in a frame, on a canvas, wearing two tags.
+/** The warm glow behind everything.
  *
- *  C21, C24 and E31 in one component.
+ *  FIGMA DRAWS THIS as one ellipse filled with a radial gradient: `#FF3D00` at 50% alpha
+ *  in the centre falling to 0 at the edge, with radii of 1.125× the frame width and a
+ *  flat 711px, centred 882px down the page. Those last two numbers are identical in all
+ *  nine frames — the glow is pinned to the top of the document, not scaled to the
+ *  section — so they are px here too. Reproducing that as a percentage of the section's
+ *  height would make the glow grow with the hero and stop matching any frame.
  *
- *  THE FRAME is a window, not a phone. A phone bezel around a 9:16 video says "this is a
- *  phone screenshot"; a window with three dots says "this is our app", which is the thing
- *  being sold. Built from three tokens and a radius — there is no chrome asset and none is
- *  needed.
+ *  THE COLOUR IS `gradient/halo`, which is brand at 30% alpha and is the only token that
+ *  carries alpha for this job — and alpha is the whole point of the layer, because at 50%
+ *  over the page this reads as deep burnt orange while the same hue at full strength is
+ *  the brand fill itself. A1 in DECISIONS.md rejected `mesh-4` as a large-area wash for
+ *  exactly that reason and the reasoning still holds; the answer here is not a cooler hue
+ *  but a transparent one. Two coats of the 30% token measure 51%, which is the 50% the
+ *  design asks for and needs no hand-computed alpha to say so.
  *
- *  THE CANVAS is `.oz-canvas`, which already exists in globals.css and is already a
- *  token-built dot grid — the exact "dark viewport with a subtle dot-grid" E31 asks for,
- *  at no cost. It also solves a real problem: a 9:16 video in a 2-up column leaves dead
- *  space either side, and dead space that is textured reads as a stage rather than as a
- *  gap.
+ *  THE DARK CAP OVER THE TOP IS LOAD-BEARING AND WAS NEARLY MISSED. Figma's other two
+ *  layers are named "gradient-white" and are not white: they are `#151312` to `#070605`,
+ *  and they are later siblings, so they paint *over* the glow rather than under it. The
+ *  upper one is an ellipse whose centre is 194px above the page and whose radius reaches
+ *  y 830 — which is to say it dims the glow across exactly the band the headline occupies,
+ *  and it is the reason the drawn headline sits on a near-black ground while the glow
+ *  blooms below it.
  *
- *  THE TAGS use Badge's `neutral-over-image` variant, which exists precisely because a
- *  label sitting on a photograph cannot use the page's content roles. Not invented
- *  metrics — they name what the video is, which is a claim the video itself supports. */
-function HeroShowcase() {
+ *  Leaving it out is not a cosmetic difference. Measured with a compositing sweep over the
+ *  text band, `content/brand` on the uncapped glow came to 4.39:1 in dark — under the 4.5
+ *  floor, and failing in the one place on this page where the accent is the whole point.
+ *  Nothing about the floor was negotiated: the missing layer was found and added, and the
+ *  pair now measures 4.93:1 in dark and 5.20:1 in light, worst row of the swept band in
+ *  each. The two quieter roles clear it wider — `content/primary` at 12.44:1 and
+ *  `content/secondary` at 7.26:1 in dark. This is CLAUDE.md rule 4 arriving through a background
+ *  instead of a token — the glow created a pairing no gate could see, because both gate
+ *  suites measure a foreground against an opaque token and this ground is a composite.
+ *
+ *  THE SWEEP IS NOW A GATE: scripts/verify-glow.ts, wired into `npm run verify`. It reads
+ *  its own model of this stack rather than parsing it out of here, so if these coats are
+ *  retuned, retune the copy in that file too or the new ground goes unmeasured. That is the
+ *  one thing about this arrangement that can rot, and it is stated in both places.
+ *
+ *  `gradient/mesh-base` rather than `surface/primary` for the cap: it is the same value in
+ *  dark (#151312, Figma's exactly), it is the gradient family's own base, and a stop in a
+ *  gradient belongs to the gradient group.
+ *
+ *  The lower vignette is Figma's third layer, which in the file starts below the hero and
+ *  fades the glow out over the next 800px of page. That cannot be reproduced literally
+ *  here, because the glow is clipped to this section — so it is a fade to `background`
+ *  inside the section's last quarter instead, which buys the same soft ending and keeps
+ *  the seam with the section below from being a hard warm edge. */
+function HeroGlow() {
   return (
-    <div className="relative mx-auto w-full max-w-[520px]">
-      <div className="oz-canvas overflow-hidden rounded-8 border-2 border-border-secondary p-space-6 shadow-large">
-        {/* Window chrome. Decorative, so aria-hidden — three dots are not information. */}
-        <div
-          aria-hidden="true"
-          className="mb-space-5 flex items-center gap-space-3 rounded-4 bg-surface-secondary px-space-4 py-space-3"
+    <div
+      aria-hidden="true"
+      className="absolute inset-0 -z-10"
+      style={{
+        /* First listed paints on top. Cap over glow over page. */
+        backgroundImage: [
+          'linear-gradient(to bottom, transparent 78%, var(--oz-color-background) 100%)',
+          'radial-gradient(50% 1024px at 50% -194px, var(--oz-color-gradient-mesh-base) 0%, transparent 100%)',
+          'radial-gradient(112.5% 711px at 50% 882px, var(--oz-color-gradient-halo) 0%, transparent 100%)',
+          'radial-gradient(112.5% 711px at 50% 882px, var(--oz-color-gradient-halo) 0%, transparent 100%)',
+        ].join(', '),
+      }}
+    />
+  );
+}
+
+/** The four generated ads, in whichever arrangement the width calls for.
+ *
+ *  One list, two layouts, both read off HERO_CARDS — see the geometry note there. Below
+ *  `lg` this is a band in the flow at the foot of the hero; from `lg` it is an absolute
+ *  layer over the whole section. Either way each card is positioned, so only the offsets
+ *  change across the breakpoint.
+ *
+ *  THE ROTATION SITS ON AN INNER ELEMENT, and that is load-bearing rather than tidy:
+ *  `.oz-enter-rise` finishes on `transform: none` with `animation-fill-mode: both`, so an
+ *  entrance animation and a static tilt on the same element means the animation flattens
+ *  the tilt and holds it flat. Two elements let the outer one animate and the inner one
+ *  stay tilted.
+ *
+ *  A static `rotate` needs no `--oz-motion-spatial-scale`: the multiplier removes travel,
+ *  and this is orientation — it never moves, so there is nothing for reduced motion to
+ *  collapse. The stagger below is on the entrance, which is already graded by the
+ *  keyframe it plays.
+ *
+ *  `z-0` against the copy's `z-10`, so the paint order does not depend on which layout is
+ *  in force: at `lg` these come after the copy in the DOM and would otherwise cover it. */
+function HeroStills() {
+  return (
+    /* The gap above the band is small on purpose: the 375 frame leaves 20px between the
+       CTA and the first card, which is what makes the hero read as one screen with the
+       collage as its floor rather than as a section with pictures under it. */
+    <ul className="relative z-0 mt-space-6 h-[220px] sm:mt-space-12 sm:h-[300px] md:mt-space-16 md:h-[424px] lg:absolute lg:inset-0 lg:mt-0 lg:h-auto">
+      {HERO_CARDS.map((card, i) => (
+        <li
+          key={card.src}
+          className={`oz-enter-rise absolute ${card.collage} ${card.scattered}`}
+          /* Staggered by index so the four read as arriving rather than appearing. The
+             delay is a fraction of the spring the class already uses, so it stays in
+             step with the token if the spring is retuned. */
+          style={{ animationDelay: `calc(var(--oz-spring-spatial-default-ms) * ${0.18 * (i + 1)})` }}
         >
-          <span className="h-space-3 w-space-3 rounded-full bg-fill-critical" />
-          <span className="h-space-3 w-space-3 rounded-full bg-fill-warning" />
-          <span className="h-space-3 w-space-3 rounded-full bg-fill-success" />
-          <span className="ml-space-3 h-space-3 flex-1 rounded-full bg-fill-tertiary" />
-        </div>
-
-        {/* The video, centred on the canvas at its native portrait ratio. */}
-        <div className="relative mx-auto w-full max-w-[300px]">
-          <div className="overflow-hidden rounded-6 border-2 border-border-secondary bg-surface-primary shadow-medium">
-            <div className="aspect-[9/16]">
-              <ProductVideo
-                src={HERO.video}
-                poster={HERO.poster}
-                label="Example UGC ad generated with HeyOz"
-              />
-            </div>
+          <div className={`h-full w-full ${card.tilt}`}>
+            <img
+              src={card.src}
+              alt={card.alt}
+              /* No lazy loading and no async decode: this is the fold. `fetchPriority`
+                 pulls them level with the headline's font rather than behind it. */
+              fetchPriority="high"
+              className="h-full w-full rounded-11 object-cover shadow-large lg:rounded-10"
+            />
           </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
-          {/* F47: the tags sit on their own elevation step above the video, which is what
-              makes the stack read as depth rather than as one flat image. Negative offsets
-              so they overhang the frame — an element that breaks its container's edge is
-              the cheapest depth cue there is, and it costs no shadow. */}
-          <span className="absolute -left-space-5 top-space-7 shadow-medium">
-            <Badge variant="neutral-over-image">9:16 · ready to post</Badge>
-          </span>
-          <span className="absolute -right-space-5 bottom-space-9 shadow-medium">
-            <Badge variant="neutral-over-image">AI voice · 30+ options</Badge>
-          </span>
-        </div>
-      </div>
-    </div>
+/** The one button.
+ *
+ *  Figma's annotation on it: "only on hover will the arrow appear in a smooth animation".
+ *
+ *  THE ARROW'S SPACE IS RESERVED and only its paint is withheld, rather than the arrow
+ *  being added to the flow on hover. Animating it in would change the button's width, and
+ *  a primary CTA that grows under the cursor moves its own hit target away from the
+ *  pointer that is arriving at it.
+ *
+ *  THE TRAVEL GOES THROUGH `--oz-motion-spatial-scale` and the fade does not, which is
+ *  the point of splitting them: under `prefers-reduced-motion` the multiplier is 0, the
+ *  slide collapses to nothing, and the arrow simply fades in. The two properties also get
+ *  their own springs — the fade on `effects`, which must not overshoot, and the slide on
+ *  `spatial`, which must. One spring for both would break rule 1b on whichever of the two
+ *  it was wrong for.
+ *
+ *  Keyed on focus-visible as well as hover, because a keyboard user gets to this button
+ *  without a pointer and should see the same affordance.
+ *
+ *  `size="xl"` `shape="rect"` is not an approximation of the Figma button — it is the
+ *  same object. The recipe's xl row is 56px tall with 20px of horizontal padding, an 8px
+ *  gap, a 20px medium label and a 16px radius, and Figma draws 56 / 20 / 8 / 20 / 16. */
+function HeroCta() {
+  return (
+    <Button
+      variant="primary"
+      size="xl"
+      shape="rect"
+      className="group"
+      trailingIcon={
+        <span
+          aria-hidden="true"
+          className="inline-flex translate-x-[calc(var(--oz-space-3)*var(--oz-motion-spatial-scale)*-1)] opacity-0 [transition-duration:var(--oz-spring-effects-default-ms),var(--oz-spring-spatial-default-ms)] [transition-property:opacity,transform] [transition-timing-function:var(--oz-spring-effects-default),var(--oz-spring-spatial-default)] group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
+        >
+          <ArrowRightIcon className="h-[26px] w-[26px]" />
+        </span>
+      }
+    >
+      {CTA_PRIMARY}
+    </Button>
   );
 }
 
@@ -179,81 +306,58 @@ export function UgcHero() {
   return (
     <section
       aria-labelledby="ugc-headline"
-      /* The gradient is the token set's, so the hero inverts with the page for free —
-         white-to-coral in light, near-black-to-deep-red in dark. Same three rungs the
-         studio hero uses, and the same reason the stops sit low: full saturation belongs
-         at the very bottom edge, not across the middle of the panel. */
-      className="relative isolate overflow-hidden bg-gradient-mesh-base px-space-6 pb-space-16 pt-space-14"
+      /* `overflow-hidden` is what makes the collage a design rather than a scrollbar:
+         every frame draws cards past both edges and past the section's foot, and this is
+         the clip they were drawn against. `isolate` keeps the glow's negative z-index
+         inside the section instead of behind the page.
+
+         The min-heights are Figma's hero at each step, and they only apply from `lg`;
+         below that the section is as tall as its contents. */
+      className="relative isolate overflow-hidden bg-background lg:min-h-[1024px] xl:min-h-[1054px]"
     >
-      {/* Softened, per A1. Two changes: the hot rung is mesh-3 rather than mesh-4 — one
-          step cooler, and mesh-4 in dark is #FF3D01, the brand fill itself, which has no
-          business being the largest area of colour on the page — and the linear now tops
-          out at mesh-3 instead of running to the floor, so the wash reads as a glow under
-          the content rather than as a band across it. No opacity involved: the preset has
-          no <alpha-value> slot, so "lower the opacity" is spelled "pick a lower rung". */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10"
-        style={{
-          backgroundImage: [
-            'radial-gradient(50% 34% at 50% 108%, var(--oz-color-gradient-mesh-3) 0%, transparent 62%)',
-            'linear-gradient(to bottom, transparent 58%, var(--oz-color-gradient-mesh-3) 100%)',
-          ].join(', '),
-        }}
-      />
+      <HeroGlow />
 
-      {/* Two columns from lg, per C23. The single centred column put a 640px-tall video
-          below a centred headline, which is 1250px of hero before anything else — and it
-          wasted the whole right half of a 1920 viewport. Text left, product right, both
-          vertically centred: the asymmetry is the point, and it halves the fold. Still one
-          centred column below lg, where two would be 180px wide each. */}
-      <div className="mx-auto grid max-w-container-xl items-center gap-space-12 lg:grid-cols-2 lg:gap-space-14">
-        {/* LEFT: the argument. */}
-        <div className="text-center lg:text-left">
-          {/* Capped in px, not ch. A `ch` is the width of a "0" in the current font, and in
-              an extrabold display face at 52px that is wide enough that a ch-based measure
-              read far narrower than it looked — the headline broke to four lines. Every
-              other measure on this page is in ch because it is prose at a reading size,
-              where ch is the right unit; a display headline is not prose. `text-balance`
-              evens the lines instead of filling the first and orphaning the last. */}
-          <h1
-            id="ugc-headline"
-            className="mx-auto text-balance font-display text-display-md font-extrabold text-content-primary lg:mx-0"
-          >
-            {HERO.headline} <span className="text-content-brand">{HERO.headlineAccent}</span>
-          </h1>
+      {/* THE COPY IS PINNED, NOT CENTRED, from `lg` up. Figma puts the first line of the
+          headline 430px down the page at 1025, 1280, 1440 and 1920 alike, and the cards
+          are placed against that — so centring the copy in the section instead moves it
+          relative to them. Measured: with this block centred, the 64px headline is 54px
+          taller than Figma's 56px one, which lifted it into the sunglasses card at 1025.
+          430px is a layout position off the drawing, which is why it is a literal; the
+          padding below `lg` is spacing, so it comes off the ramp. */}
+      <div className="oz-enter-hero relative z-10 px-space-6 pt-space-6 text-center sm:pt-space-14 md:pt-space-18 lg:pb-space-18 lg:pt-[430px]">
+        {/* Two measures, not one. Figma sets 56px type in a 768px column, which breaks to
+            two lines; `display-lg` tops out at 64px, which is the step this scale has for
+            the biggest line on a page and the closest one to the drawing — but at 64px a
+            768px column breaks to three. The headline gets the wider measure so the
+            design's two-line silhouette survives the type step, and the sub-headline
+            keeps Figma's 768 exactly. Capped in px rather than ch for the reason the old
+            hero recorded: a ch is the width of a "0", and in a display face it measures
+            far wider than the text it is meant to be sizing.
 
-          <p className="mx-auto mt-space-6 max-w-[58ch] text-body-lg text-content-secondary lg:mx-0">
-            {HERO.sub}
-          </p>
+            `font-semibold` is Figma's weight. It was extrabold here, which is a heavier
+            face than the design specifies at every size on the page. */}
+        <h1
+          id="ugc-headline"
+          className="mx-auto max-w-[880px] text-balance font-display text-display-lg font-semibold text-content-primary"
+        >
+          {HERO.headline} <span className="text-content-brand">{HERO.headlineAccent}</span>
+        </h1>
 
-          {/* The sticky bottom bar watches this id — see UgcStickyCta. */}
-          <div
-            id="ugc-hero-cta"
-            className="mt-space-9 flex flex-col items-center gap-space-4 sm:flex-row sm:justify-center lg:justify-start"
-          >
-            <Button variant="primary" size="lg" shape="pill" trailingIcon={<ArrowRightIcon />}>
-              {CTA_PRIMARY}
-            </Button>
-            {/* Outline, not a second primary. A secondary CTA that looks primary splits the
-                click rather than capturing a different intent. */}
-            <Button variant="outline" size="lg" shape="pill" leadingIcon={<PlayIcon />}>
-              {CTA_SECONDARY}
-            </Button>
-          </div>
+        {/* space-3 between an 8px-gapped headline and sub is Figma's, and it is tighter
+            than this page's other heading/lede pairs on purpose: the two lines are one
+            statement here, not a heading and its section. */}
+        <p className="mx-auto mt-space-3 max-w-container-md text-body-lg text-content-secondary">
+          {HERO.sub}
+        </p>
 
-          {/* E39: the sub-copy belongs under the button whose objection it removes, not in
-              the footer. One muted line. */}
-          <p className="mt-space-5 text-body-sm text-content-tertiary">
-            No credit card required · Cancel anytime
-          </p>
-
-          <SocialProof />
+        <div className="mt-space-5 flex justify-center">
+          <HeroCta />
         </div>
 
-        {/* RIGHT: the product, in a frame. */}
-        <HeroShowcase />
+        <SocialProof />
       </div>
+
+      <HeroStills />
     </section>
   );
 }
