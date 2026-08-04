@@ -49,7 +49,7 @@ export function WhyChoose() {
           </ul>
 
           <div className="mt-space-11">
-            <Button variant="primary" size="lg" shape="pill" trailingIcon={<ArrowRightIcon />}>
+            <Button variant="primary" size="lg" shape="rect" trailingIcon={<ArrowRightIcon />}>
               {CTA_PRIMARY}
             </Button>
           </div>
@@ -59,7 +59,10 @@ export function WhyChoose() {
             weight the brief says the grey box lacked — elevation in light, and in dark
             the surface rung does that job because a drop shadow on a near-black page
             barely reads. */}
-        <div className="mx-auto w-full max-w-[420px] overflow-hidden rounded-8 border-2 border-border-secondary bg-surface-elevated shadow-large">
+        {/* rounded-10 (24px), which is the radius the hero's four stills carry. Media is
+            the one place this page has a radius of its own, and it should be one radius —
+            the frames draw every photograph at 24 and every control at 12 or 16. */}
+        <div className="mx-auto w-full max-w-[420px] overflow-hidden rounded-10 border-2 border-border-secondary bg-surface-elevated shadow-large">
           {/* Ratio only — see the note on the hero video for why max-h cannot coexist
               with it. */}
           <div className="aspect-[9/16]">
@@ -338,7 +341,7 @@ export function HowItWorks() {
                 <div className="flex gap-space-6">
                   <span
                     aria-hidden="true"
-                    className="w-[3ch] shrink-0 select-none font-display text-display-sm font-extrabold tabular-nums text-content-brand"
+                    className="w-[3ch] shrink-0 select-none font-display text-display-sm font-semibold tabular-nums text-content-brand"
                   >
                     {String(i + 1).padStart(2, '0')}
                   </span>
@@ -354,7 +357,7 @@ export function HowItWorks() {
               </div>
 
               <figure className={mediaFirst ? 'lg:order-1' : ''}>
-                <div className="overflow-hidden rounded-8 border-2 border-border-secondary bg-surface-elevated shadow-large">
+                <div className="overflow-hidden rounded-10 border-2 border-border-secondary bg-surface-elevated shadow-large">
                   <img
                     src={s.media}
                     alt={`${s.title} — ${s.callout}`}
@@ -375,7 +378,7 @@ export function HowItWorks() {
 
       {/* Moved from the top of the section, where it duplicated the hero's. */}
       <div className="mt-space-14 flex justify-center">
-        <Button variant="primary" size="lg" shape="pill" trailingIcon={<ArrowRightIcon />}>
+        <Button variant="primary" size="lg" shape="rect" trailingIcon={<ArrowRightIcon />}>
           {CTA_PRIMARY}
         </Button>
       </div>

@@ -31,7 +31,10 @@ export function Pricing() {
       <div
         role="radiogroup"
         aria-label="Billing period"
-        className="mx-auto mt-space-11 flex w-fit gap-space-1 rounded-full border-2 border-border-secondary bg-background p-space-1"
+        /* rounded-8 with rounded-6 segments rather than a capsule. The frames have no
+           pill anywhere — every control is a rounded rectangle at 12 or 16 — and a
+           segmented control is the one place a stray capsule reads loudest. */
+        className="mx-auto mt-space-11 flex w-fit gap-space-1 rounded-8 border-2 border-border-secondary bg-background p-space-1"
       >
         {[
           { key: false, label: 'Monthly' },
@@ -43,7 +46,7 @@ export function Pricing() {
             role="radio"
             aria-checked={annual === key}
             onClick={() => setAnnual(key)}
-            className={`rounded-full px-space-6 py-space-3 text-label-md transition-colors duration-effects-fast ease-effects-fast focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus ${
+            className={`rounded-6 px-space-6 py-space-3 text-label-md transition-colors duration-effects-fast ease-effects-fast focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus ${
               annual === key
                 ? 'bg-fill-brand font-medium text-content-on-brand'
                 : 'text-content-secondary hover:text-content-primary'
@@ -92,7 +95,7 @@ export function Pricing() {
 
           <div className="mt-space-8 flex items-baseline justify-between gap-space-5 border-t-2 border-border-primary pt-space-6">
             <span className="text-body-lg font-medium text-content-primary">Estimated total</span>
-            <span className="font-display text-heading-md font-extrabold tabular-nums text-content-primary">
+            <span className="font-display text-heading-md font-semibold tabular-nums text-content-primary">
               {PRICING.traditionalTotal}
               <span className="text-body-md font-normal text-content-tertiary">/mo</span>
             </span>
@@ -114,7 +117,7 @@ export function Pricing() {
           </div>
 
           <p className="mt-space-6 flex items-baseline gap-space-3">
-            <span className="font-display text-display-sm font-extrabold tabular-nums text-content-primary">
+            <span className="font-display text-display-sm font-semibold tabular-nums text-content-primary">
               {price}
             </span>
             <span className="text-body-md text-content-secondary">/month</span>
@@ -140,7 +143,7 @@ export function Pricing() {
             <Button
               variant="primary"
               size="lg"
-              shape="pill"
+              shape="rect"
               className="w-full"
               trailingIcon={<ArrowRightIcon />}
             >
@@ -273,9 +276,34 @@ export function Faq() {
  * ------------------------------------------------------------------------- */
 export function FinalCta() {
   return (
-    <section id="get-started" className="bg-fill-inverse py-space-17">
+    <section
+      id="get-started"
+      className="relative isolate overflow-hidden bg-fill-inverse py-space-17"
+    >
+      {/* The hero's gesture, once more and quieter. Same token and the same two-coat
+          construction, centred just below the block rather than 882px down a page.
+          It is what makes the page close on the note it opened with instead of ending on a
+          flat panel.
+
+          IT SITS ON `fill/inverse`, WHICH FLIPS POLARITY BETWEEN MODES — #070605 in light
+          and #F7F5F4 in dark — so this coat is a deep burnt orange on one and a pale coral
+          on the other, with the text roles inverting alongside it. That is two grounds, not
+          one, and it is exactly the "gate one member of a family" trap in rule 4. Both are
+          swept by scripts/verify-glow.ts; the tighter of the two measures 7.74:1. If this
+          gradient is retuned, retune the copy of it in that file too — the check reads its
+          own model of these stacks and cannot see an edit made only here. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10"
+        style={{
+          backgroundImage: [
+            'radial-gradient(112.5% 80% at 50% 118%, var(--oz-color-gradient-halo) 0%, transparent 100%)',
+            'radial-gradient(112.5% 80% at 50% 118%, var(--oz-color-gradient-halo) 0%, transparent 100%)',
+          ].join(', '),
+        }}
+      />
       <div className="mx-auto max-w-container-xl px-space-6 text-center">
-        <h2 className="mx-auto max-w-[28ch] font-display text-display-sm font-extrabold text-content-on-inverse">
+        <h2 className="mx-auto max-w-[28ch] font-display text-display-sm font-semibold text-content-on-inverse">
           {FINAL_CTA.heading}
         </h2>
         <p className="mx-auto mt-space-6 max-w-[52ch] text-body-lg text-content-inverse-secondary">
@@ -285,7 +313,7 @@ export function FinalCta() {
           {/* `inverse` rather than `primary`: on the dark block the brand fill and the
               surface are both saturated, and the inverse button is the pairing the recipe
               gates for a control sitting on fill/inverse. */}
-          <Button variant="inverse" size="lg" shape="pill" trailingIcon={<ArrowRightIcon />}>
+          <Button variant="inverse" size="lg" shape="rect" trailingIcon={<ArrowRightIcon />}>
             {CTA_PRIMARY}
           </Button>
         </div>
