@@ -1,7 +1,7 @@
 'use client';
 
 import { ThemeProvider, useTheme, type ThemePreference } from '@/components/showcase/ThemeProvider';
-import { UgcFooter, UgcHeader, UgcStickyCta } from './UgcChrome';
+import { UgcFooter, UgcHeader } from './UgcChrome';
 import { UgcHero } from './UgcHero';
 import { HowItWorks, KeyFeatures, UseCases, WhyChoose } from './UgcBody';
 import { Faq, FinalCta, Pricing, RelatedTools } from './UgcClose';
@@ -20,6 +20,20 @@ import { Faq, FinalCta, Pricing, RelatedTools } from './UgcClose';
  * "Create UGC Ads", one CTA phrase instead of five, a real video where the placeholder
  * box was, a monthly/annual toggle, grouped FAQs, and a closing block on the inverse
  * surface so the page ends somewhere different from where it started.
+ *
+ * THE HERO AND THE HEADER ARE NOW DRAWN, and where the drawing and the brief disagree
+ * the drawing wins, because a drawing is a decision and the brief was a list of concerns.
+ * Nine frames arrived for them — node 4442:80522 plus 375, 430, 768, 1025, 1280 and 1440
+ * — and UgcHero.tsx and UgcChrome.tsx record what each one changed and what it retired.
+ *
+ * ONE OF THOSE RETIREMENTS IS A PRODUCT CHANGE AND IS EASY TO REVERSE. `UgcStickyCta`,
+ * the floating bottom bar, is gone. It existed because the old header gave up its CTA and
+ * something had to carry a persistent one; the Figma header carries "Get Started" at
+ * every width, so keeping the bar would put two always-visible primaries on the screen —
+ * the exact redundancy the bar's own comment said it was avoiding. Its reassurance line
+ * ("No credit card required · Cancel anytime") is not lost: the pricing card states it
+ * beside its own button, which is where the objection is actually raised. If the bar is
+ * wanted back, the header CTA is the thing to reconsider first, not the bar.
  *
  * BOTH MODES, from one implementation. The Figma has no dark variant, so dark is an
  * extrapolation — but a nearly free one, because every colour here is a semantic token
@@ -64,10 +78,6 @@ export function AiUgc() {
         </main>
 
         <UgcFooter />
-
-        {/* Outside <main> so it is not inside the skip-link target, and last so it paints
-            above the page. It decides for itself when to appear. */}
-        <UgcStickyCta />
       </div>
 
       <ModeSwitcher />

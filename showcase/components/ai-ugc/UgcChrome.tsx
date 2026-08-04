@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Button, Input } from '@/components/ui';
-import { ArrowRightIcon, SocialIcon } from './icons';
-import { CTA_PRIMARY, FOOTER_COLUMNS, FOOTER_SUPPORT, FOOTER_TAGLINE, NAV, SOCIALS } from './content';
+import { useEffect, useRef, useState } from 'react';
+import { Button, IconButton, Input } from '@/components/ui';
+import { CloseIcon, MenuIcon, OzMark, SocialIcon } from './icons';
+import { FOOTER_COLUMNS, FOOTER_SUPPORT, FOOTER_TAGLINE, NAV, SOCIALS } from './content';
 
 /* ---------------------------------------------------------------------------
  * Page chrome and the vertical rhythm every section shares.
@@ -72,7 +72,7 @@ export function BandHead({
         </p>
       )}
       <h2
-        className={`${eyebrow ? 'mt-space-3' : ''} font-display text-heading-xl font-extrabold text-content-primary`}
+        className={`${eyebrow ? 'mt-space-3' : ''} font-display text-heading-xl font-semibold text-content-primary`}
       >
         {title}
       </h2>
@@ -88,100 +88,162 @@ export function BandHead({
 /* ---------------------------------------------------------------------------
  * Header.
  *
- * A thin floating pill. The persistent primary CTA is NOT here any more — it moved to
- * UgcStickyCta below, which is what E40 asks for and which is the better place for it: a
- * bottom bar can carry the reassurance line beside the button, and a header cannot
- * without becoming two rows tall.
+ * BUILT FROM FIGMA node 4467:144888 and its four narrower siblings. A full-bleed bar,
+ * not the floating pill that was here: mark and wordmark left, anchors centre, the brand
+ * CTA right, and below `lg` the anchors collapse behind a disclosure button — the ladder
+ * the frames draw at 1920, 1440, 1280, 1025, 768 and 375.
+ *
+ * TRANSPARENT AT REST, A SURFACE ONCE SCROLLED. Figma draws the bar over the hero's glow
+ * with nothing behind it but a 2.5px blur, which is right for the top of the page and
+ * unreadable anywhere else — the frames only ever show the bar against the hero. So the
+ * surface arrives on scroll. It arrives as a surface and a shadow and NOT as a bottom
+ * border: a rule under a header does `separation`, which rule 1c makes a build error,
+ * and the answer 1c points at is exactly this pair.
+ *
+ * WHERE THIS DEPARTS FROM THE FRAMES, both times because the frames describe a site this
+ * page is not:
+ *
+ *   - Seven marketing menus with dropdown chevrons become the five in-page anchors
+ *     content.ts already declares. A chevron is a promise of a submenu, and there are no
+ *     submenus here to open.
+ *   - No "More" overflow menu at `lg`. The 1025 frame needs one because seven menus do
+ *     not fit; five short anchors do, measured, so collapsing them would be a dropdown
+ *     that exists to imitate a dropdown.
+ *
+ * The 1280 frame also drops the wordmark and keeps the mark alone. Not reproduced: it
+ * only holds for the 1280–1439 band, and a wordmark that vanishes for one window size
+ * reads as a bug to everyone who has not seen the file.
  * ------------------------------------------------------------------------- */
-export function UgcHeader() {
-  return (
-    /* C25, as far as the token set allows. Thinner (py-space-3, not -4) and a floating
-       rounded-full pill rather than a full-bleed bar. NOT glass: a frosted panel needs a
-       translucent surface token, and the preset has no <alpha-value> slot, so
-       `bg-background/70` would emit nothing at all. surface/elevated with a stroke and a
-       shadow is the in-system way to say "floating". */
-    <div className="sticky top-space-4 z-sticky px-space-4">
-      <header className="mx-auto flex max-w-container-lg items-center gap-space-6 rounded-full border-2 border-border-secondary bg-surface-elevated px-space-6 py-space-3 shadow-medium">
-        <a
-          href="#ugc-main"
-          className="font-display text-heading-xs font-extrabold text-content-primary focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
-        >
-          HeyOz
-        </a>
 
-        <nav aria-label="On this page" className="hidden lg:block">
-          <ul className="flex items-center gap-space-6">
-            {NAV.map((n) => (
-              <li key={n.label}>
-                <a
-                  href={n.href}
-                  className="text-body-sm text-content-secondary transition-colors duration-effects-fast ease-effects-fast hover:text-content-primary focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
-                >
-                  {n.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        {/* The header keeps a quiet CTA at all times; the loud one lives in the bottom
-            bar. Two primaries on screen at once was the redundancy worth avoiding, not the
-            presence of a header action. */}
-        <div className="ml-auto">
-          <Button variant="ghost" size="sm" shape="pill">
-            Sign in
-          </Button>
-        </div>
-      </header>
-    </div>
-  );
-}
-
-/** E40: the floating micro-bar.
+/** True once the page has left the top. Drives the bar's surface, nothing else.
  *
- *  Appears once the hero's own CTA has scrolled out, which is what makes it a capture
- *  rather than a duplicate. It carries the sub-copy too, so the reassurance travels with
- *  the button instead of living only in the hero.
- *
- *  `translate-y` is written through --oz-motion-spatial-scale, because it is decorative
- *  travel: reduced motion collapses the slide and keeps the fade, which is exactly the
- *  graded behaviour CLAUDE.md describes. It is not a state transform — the bar's position
- *  carries no meaning that its presence does not already carry — so it does not belong in
- *  the STATE_TRANSFORMS exemption list. */
-export function UgcStickyCta() {
-  const [show, setShow] = useState(false);
+ *  A sentinel and an IntersectionObserver rather than a scroll listener: the observer
+ *  fires twice per crossing instead of on every frame of a scroll, and it needs no
+ *  passive-listener or rAF handling to stay off the main thread. */
+function useScrolled() {
+  const [scrolled, setScrolled] = useState(false);
+  const sentinel = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const hero = document.getElementById('ugc-hero-cta');
-    if (!hero) return;
-    const io = new IntersectionObserver(([e]) => setShow(!e.isIntersecting), {
-      rootMargin: '-120px 0px 0px 0px',
-    });
-    io.observe(hero);
+    const el = sentinel.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setScrolled(!e.isIntersecting));
+    io.observe(el);
     return () => io.disconnect();
   }, []);
 
+  return { scrolled, sentinel };
+}
+
+export function UgcHeader() {
+  const { scrolled, sentinel } = useScrolled();
+  const [open, setOpen] = useState(false);
+
+  /* Escape closes it. A disclosure that can only be dismissed by the button that opened
+     it strands a keyboard user who tabbed past that button. */
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+
   return (
-    <div
-      aria-hidden={!show}
-      className={`fixed inset-x-0 bottom-space-5 z-sticky flex justify-center px-space-5 transition-opacity duration-effects-default ease-effects-default ${
-        show ? 'opacity-100' : 'pointer-events-none opacity-0'
-      }`}
-      style={{
-        transform: show
-          ? undefined
-          : 'translateY(calc(var(--oz-space-6) * var(--oz-motion-spatial-scale)))',
-      }}
-    >
-      <div className="flex flex-wrap items-center justify-center gap-x-space-6 gap-y-space-3 rounded-full border-2 border-border-secondary bg-surface-elevated px-space-6 py-space-4 shadow-large">
-        <p className="text-body-sm text-content-secondary">
-          No credit card required · Cancel anytime
-        </p>
-        <Button variant="primary" size="sm" shape="pill" trailingIcon={<ArrowRightIcon />}>
-          {CTA_PRIMARY}
-        </Button>
-      </div>
-    </div>
+    <>
+      {/* Zero-height and at the very top of the page, so "scrolled" is a fact about the
+          document rather than a pixel threshold guessed at in a handler. */}
+      <div ref={sentinel} aria-hidden="true" className="absolute top-0 h-px w-full" />
+
+      <header
+        className={`sticky top-0 z-sticky backdrop-blur-[2.5px] transition-shadow duration-effects-default ease-effects-default ${
+          scrolled || open ? 'bg-surface-elevated shadow-medium' : ''
+        }`}
+      >
+        <div className="flex items-center justify-between gap-space-6 px-space-4 py-space-5 md:px-space-14">
+          {/* Mark and wordmark. `fill/brand` for the plate, where Figma binds
+              `content/brand` — a content role used as a background is the one binding in
+              the file that cannot come across, because it would put the mark on a ground
+              no gate covers. fill/brand is the role for a brand plate and it is the pair
+              verify:contrast already measures the mark's colour against. */}
+          <a
+            href="#ugc-main"
+            className="flex shrink-0 items-center gap-space-1 rounded-6 focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
+          >
+            <span className="grid h-space-11 w-space-11 place-items-center rounded-5 bg-fill-brand text-content-on-brand">
+              <OzMark />
+            </span>
+            <span className="font-display text-heading-md font-semibold text-content-primary">
+              Heyoz
+            </span>
+          </a>
+
+          <nav aria-label="On this page" className="hidden lg:block">
+            <ul className="flex items-center gap-space-6">
+              {NAV.map((n) => (
+                <li key={n.label}>
+                  <a
+                    href={n.href}
+                    className="block rounded-6 px-space-4 py-[9px] text-body-md font-medium text-content-primary transition-colors duration-effects-fast ease-effects-fast hover:bg-fill-secondary-hover focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
+                  >
+                    {n.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className="flex shrink-0 items-center gap-space-4">
+            {/* size md shape rect is the Figma button exactly: 40px tall, 12px padding,
+                12px radius, 16px medium label. */}
+            <Button variant="primary" size="md" shape="rect">
+              Get Started
+            </Button>
+            <span className="lg:hidden">
+              <IconButton
+                variant="ghost"
+                size="md"
+                shape="rect"
+                label={open ? 'Close menu' : 'Open menu'}
+                aria-expanded={open}
+                aria-controls="ugc-nav-panel"
+                onClick={() => setOpen((v) => !v)}
+                icon={open ? <CloseIcon /> : <MenuIcon />}
+              />
+            </span>
+          </div>
+        </div>
+
+        {/* The disclosure panel. Rendered only when open rather than hidden with a class,
+            so its links are out of the tab order when it is shut without needing
+            `inert` — which Safari only shipped recently. */}
+        {open && (
+          <nav
+            id="ugc-nav-panel"
+            aria-label="On this page"
+            /* No rule between the bar and the panel. They are one surface while it is
+               open, which is the separation — and a stroke here would be a `separation`
+               border, which rule 1c makes a build error rather than a style choice. */
+            className="oz-enter-rise px-space-4 pb-space-6 pt-space-2 lg:hidden"
+          >
+            <ul className="oz-stack oz-stack-1">
+              {NAV.map((n) => (
+                <li key={n.label}>
+                  <a
+                    href={n.href}
+                    onClick={() => setOpen(false)}
+                    className="block rounded-6 px-space-4 py-space-4 text-body-lg font-medium text-content-primary transition-colors duration-effects-fast ease-effects-fast hover:bg-fill-secondary-hover focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
+                  >
+                    {n.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+      </header>
+    </>
   );
 }
 
@@ -210,7 +272,7 @@ export function UgcFooter() {
           <div className="lg:col-span-1">
             {/* No leading- utility: every step in this scale ships its own line-height,
                 so adding one replaces a token with a literal. */}
-            <p className="font-display text-heading-lg font-extrabold">
+            <p className="font-display text-heading-lg font-semibold">
               {FOOTER_TAGLINE.map((line) => (
                 <span key={line} className="block">
                   {line}
@@ -231,7 +293,7 @@ export function UgcFooter() {
                 message="One email a month. Unsubscribe in one click."
               />
               <div className="mt-space-4">
-                <Button type="submit" variant="inverse" size="sm" shape="pill" className="w-full">
+                <Button type="submit" variant="inverse" size="sm" shape="rect" className="w-full">
                   Subscribe
                 </Button>
               </div>
@@ -245,7 +307,7 @@ export function UgcFooter() {
                   <a
                     href="#ugc-main"
                     aria-label={s}
-                    className="grid min-h-target min-w-target place-items-center rounded-full border-2 border-border-inverse text-content-on-inverse transition-colors duration-effects-fast ease-effects-fast hover:bg-fill-inverse-hover focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus-inverse"
+                    className="grid min-h-target min-w-target place-items-center rounded-6 border-2 border-border-inverse text-content-on-inverse transition-colors duration-effects-fast ease-effects-fast hover:bg-fill-inverse-hover focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus-inverse"
                   >
                     <SocialIcon name={s} />
                   </a>
