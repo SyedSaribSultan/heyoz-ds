@@ -128,24 +128,29 @@ const GROUNDS: Ground[] = [
      * identical in all nine responsive frames, which is why they are px and not relative
      * to the section.
      *
-     * EVERY y HERE IS FIGMA'S MINUS 70 — coats and bands alike — because the component
-     * measures from the top of its section and Figma measures from the top of the page,
-     * whose hero frame includes the 70px nav band. The verdict is unaffected by the shift
-     * (both the coats and the copy move by the same amount, so every distance between them
-     * is unchanged) but the numbers have to match the component or this file is measuring a
-     * ground that is not on screen. So: 812 not 882, -264 not -194, and the headline band
-     * starts at the 360px `lg:pt` rather than at Figma's page-relative 430. */
+     * EVERY y HERE IS MEASURED FROM THE CENTRE OF THE COPY, signed, because that is how the
+     * component places them. The section centres its text block from `lg` up so the hero sits
+     * in the middle of any screen, and both coats are `calc(50% ± Npx)` so the wash travels
+     * with the words — a top-anchored glow would put a different ground under the headline on
+     * every viewport height, and a different contrast verdict with it. Centre-relative, there
+     * is one verdict and it holds everywhere.
+     *
+     * The coats are Figma's distances from its text centre (page y 562): the warm ellipse at
+     * 882 is +320, the cap at -194 is -756. The bands are the rendered block, which is 272px
+     * tall and therefore spans -136..+136: a 2-line 64px headline is -136..0, the sub is
+     * +8..+64 after an 8px gap, and the CTA is a filled control carrying its own gated pair,
+     * so it is not swept. */
     where: 'ai-ugc hero',
     base: 'color-background',
     coats: [
-      { ...HALO, cy: 812, ry: 711 },
-      { ...HALO, cy: 812, ry: 711 },
-      { token: 'color-gradient-mesh-base', cy: -264, ry: 1024 },
+      { ...HALO, cy: 320, ry: 711 },
+      { ...HALO, cy: 320, ry: 711 },
+      { token: 'color-gradient-mesh-base', cy: -756, ry: 1024 },
     ],
     bands: [
-      { label: 'headline', role: 'color-content-primary', from: 360, to: 496 },
-      { label: 'headline accent', role: 'color-content-brand', from: 360, to: 496 },
-      { label: 'sub-headline', role: 'color-content-secondary', from: 504, to: 560 },
+      { label: 'headline', role: 'color-content-primary', from: -136, to: 0 },
+      { label: 'headline accent', role: 'color-content-brand', from: -136, to: 0 },
+      { label: 'sub-headline', role: 'color-content-secondary', from: 8, to: 64 },
     ],
   },
   {

@@ -74,12 +74,22 @@ export const HERO = {
  * frame. Both were checked against the sub-headline and the CTA at the ends of their
  * ranges.
  *
- * TOPS ARE FIGMA'S MINUS 70, because they are px from the top of the *section* and Figma
- * measures from the top of the *page* — its hero frame contains the 70px nav band, where
- * here the header is a separate element in the flow ahead of the section. Applying the page
- * values directly counted that band twice and put the whole hero one header-height low; the
- * same correction applies to `lg:pt` and to both glow coats in UgcHero.tsx, and all three
- * have to move together or the cards stop lining up with the words.
+ * TOPS ARE CENTRE-RELATIVE FOR THE SAME REASON THE LEFTS ARE, one axis later. They were px
+ * from the top of the section, taken off Figma's page coordinates, and that failed twice
+ * over. First it counted the nav band twice — Figma draws the nav inside the hero frame and
+ * measures from the top of the document, where here the header is its own element ahead of
+ * the section — which put the whole hero one header-height low. Then, once the section
+ * started centring its copy so the hero would sit in the middle of any screen, a top-anchored
+ * card stopped tracking the words at all: the copy moved with the viewport height and the
+ * cards did not.
+ *
+ * So each top is now Figma's distance from the *text block's* centre — the file puts the text
+ * at 430–694, centre 562, so a card drawn at 217 is `calc(50% - 345px)`. The copy is centred
+ * on that same line, which makes the whole composition invariant to viewport height: it holds
+ * its shape on an 857px laptop and on a 1400px monitor, and at around 1200px of viewport it
+ * reproduces the 1920 frame to within a pixel or two. Both glow coats in UgcHero.tsx are
+ * placed the same way and have to stay in step with these, or the wash slides out from under
+ * the headline.
  *
  * The stills are the Figma assets re-encoded to webp at 2× their drawn box — 5.4MB of
  * PNG became 56KB, which matters on the one image set on this page that cannot be
@@ -91,7 +101,7 @@ export const HERO_CARDS = [
     tilt: 'rotate-[-15deg]',
     collage: 'left-[-22.5%] top-[24px] h-[424px] w-[239px]',
     scattered:
-      'lg:left-[calc(50%-413px)] lg:top-[610px] lg:h-[300px] lg:w-[169px] xl:left-[calc(50%-664px)] xl:top-[484px]',
+      'lg:left-[calc(50%-413px)] lg:top-[calc(50%+118px)] lg:h-[300px] lg:w-[169px] xl:left-[calc(50%-664px)] xl:top-[calc(50%-8px)]',
   },
   {
     src: '/ai-ugc/hero-wide.webp',
@@ -99,7 +109,7 @@ export const HERO_CARDS = [
     tilt: 'rotate-[-5deg]',
     collage: 'left-[37.9%] top-[117px] h-[238px] w-[424px]',
     scattered:
-      'lg:left-[calc(50%-419px)] lg:top-[160px] lg:h-[168px] lg:w-[300px] xl:left-[calc(50%-523px)] xl:top-[147px]',
+      'lg:left-[calc(50%-419px)] lg:top-[calc(50%-332px)] lg:h-[168px] lg:w-[300px] xl:left-[calc(50%-523px)] xl:top-[calc(50%-345px)]',
   },
   {
     src: '/ai-ugc/hero-square.webp',
@@ -107,7 +117,7 @@ export const HERO_CARDS = [
     tilt: 'rotate-[10deg]',
     collage: 'left-[9.2%] top-[75px] h-[322px] w-[257px]',
     scattered:
-      'lg:left-[calc(50%+273px)] lg:top-[104px] lg:h-[228px] lg:w-[182px] xl:left-[calc(50%+366px)] xl:top-[82px]',
+      'lg:left-[calc(50%+273px)] lg:top-[calc(50%-388px)] lg:h-[228px] lg:w-[182px] xl:left-[calc(50%+366px)] xl:top-[calc(50%-410px)]',
   },
   {
     /* The card the 375 frame drops. Hidden below `sm` rather than reordered, so the three
@@ -117,7 +127,7 @@ export const HERO_CARDS = [
     tilt: 'rotate-[15deg]',
     collage: 'hidden sm:block left-[91.7%] top-[24px] h-[424px] w-[238px]',
     scattered:
-      'lg:left-[calc(50%+350px)] lg:top-[575px] lg:h-[300px] lg:w-[168px] xl:left-[calc(50%+505px)] xl:top-[466px]',
+      'lg:left-[calc(50%+350px)] lg:top-[calc(50%+83px)] lg:h-[300px] lg:w-[168px] xl:left-[calc(50%+505px)] xl:top-[calc(50%-26px)]',
   },
 ] as const;
 

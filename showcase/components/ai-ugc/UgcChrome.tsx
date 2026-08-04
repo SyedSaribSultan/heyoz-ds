@@ -135,8 +135,49 @@ function useScrolled() {
   return { scrolled, sentinel };
 }
 
+/** Publish the bar's measured height as `--ugc-nav`.
+ *
+ *  The hero centres itself in the space this bar leaves — `100svh` minus this — and that
+ *  subtraction needs a real number, not a guess. The guess was already wrong twice over: the
+ *  drawn nav is 70px, a comment here said 72, and the thing actually renders at 74, because
+ *  the Button's stroke adds a pixel per edge. A literal would have been a fourth place for
+ *  the same value to be wrong, which is the argument globals.css already makes for
+ *  `--showcase-header`; this is the same device for a route that does not have the showcase
+ *  Chrome to write it.
+ *
+ *  Measured with a ResizeObserver rather than read once: the bar wraps at narrow widths and
+ *  grows when the disclosure opens, and a hero centred against a stale height is a hero that
+ *  jumps on rotate.
+ *
+ *  Only the height of the *bar* is published, not of the bar plus an open disclosure panel —
+ *  `barRef` is on the row, not on the <header> — because the panel is transient and the hero
+ *  should not resize behind it. */
+function useNavHeight() {
+  const barRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = barRef.current;
+    if (!el) return;
+    const write = () =>
+      document.documentElement.style.setProperty(
+        '--ugc-nav',
+        `${Math.round(el.getBoundingClientRect().height)}px`,
+      );
+    write();
+    const ro = new ResizeObserver(write);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      document.documentElement.style.removeProperty('--ugc-nav');
+    };
+  }, []);
+
+  return barRef;
+}
+
 export function UgcHeader() {
   const { scrolled, sentinel } = useScrolled();
+  const barRef = useNavHeight();
   const [open, setOpen] = useState(false);
 
   /* Escape closes it. A disclosure that can only be dismissed by the button that opened
@@ -161,7 +202,10 @@ export function UgcHeader() {
           scrolled || open ? 'bg-surface-elevated shadow-medium' : ''
         }`}
       >
-        <div className="flex items-center justify-between gap-space-6 px-space-4 py-space-5 md:px-space-14">
+        <div
+          ref={barRef}
+          className="flex items-center justify-between gap-space-6 px-space-4 py-space-5 md:px-space-14"
+        >
           {/* Mark and wordmark. `fill/brand` for the plate, where Figma binds
               `content/brand` — a content role used as a background is the one binding in
               the file that cannot come across, because it would put the mark on a ground

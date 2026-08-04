@@ -145,18 +145,21 @@ function SocialProof() {
  *
  *  FIGMA DRAWS THIS as one ellipse filled with a radial gradient: `#FF3D00` at 50% alpha
  *  in the centre falling to 0 at the edge, with radii of 1.125× the frame width and a
- *  flat 711px, centred 882px down the page. Those last two numbers are identical in all
- *  nine frames — the glow is pinned to the top of the document, not scaled to the
- *  section — so they are px here too. Reproducing that as a percentage of the section's
- *  height would make the glow grow with the hero and stop matching any frame.
+ *  flat 711px, centred 882px down the page. The radii are identical in all nine frames, so
+ *  they are px here too — expressing them as a percentage of the section's height would make
+ *  the glow grow with the hero and stop matching any frame.
  *
- *  EVERY PINNED NUMBER IN THIS FILE IS FIGMA'S MINUS 70, and that is the whole reason the
- *  section-origin note at the bottom of this file exists. Figma draws the nav *inside* the
- *  hero frame, occupying its first 70px, so a y in the file is measured from the top of the
- *  page. Here the header is a real element in the flow ahead of this section, so the section
- *  already starts below it and a page-relative y applied to it counts the nav band twice.
- *  It did: measured in the browser, every part of this hero sat exactly one header-height
- *  too low. So the glow's centre is 812 and not 882, and the cap's is -264 and not -194.
+ *  BOTH COATS ARE PLACED FROM THE SECTION'S CENTRE LINE, not from its top, because the copy
+ *  is centred there and a glow pinned to the top would slide out from under the words as the
+ *  screen height changed — a different ground under the headline on every laptop, and the
+ *  contrast verdict along with it. Centre-relative, the whole composition is invariant to
+ *  viewport height.
+ *
+ *  The offsets are Figma's distances from the *text block's* centre rather than its page
+ *  coordinates: the file puts the text at 430–694 (centre 562) and the warm ellipse at 882,
+ *  so +320; the cap at -194, so -756. Using page coordinates directly is what put this hero
+ *  one header-height low before — Figma draws the nav inside the hero frame and measures from
+ *  the top of the document, where here the header is its own element ahead of the section.
  *
  *  THE COLOUR IS `gradient/halo`, which is brand at 30% alpha and is the only token that
  *  carries alpha for this job — and alpha is the whole point of the layer, because at 50%
@@ -178,9 +181,9 @@ function SocialProof() {
  *  text band, `content/brand` on the uncapped glow came to 4.39:1 in dark — under the 4.5
  *  floor, and failing in the one place on this page where the accent is the whole point.
  *  Nothing about the floor was negotiated: the missing layer was found and added, and the
- *  pair now measures 4.93:1 in dark and 5.20:1 in light, worst row of the swept band in
- *  each. The two quieter roles clear it wider — `content/primary` at 12.44:1 and
- *  `content/secondary` at 7.26:1 in dark. This is CLAUDE.md rule 4 arriving through a background
+ *  pair now measures 4.96:1 in dark and 5.22:1 in light, worst row of the swept band in
+ *  each. The two quieter roles clear it wider — `content/primary` at 12.51:1 and
+ *  `content/secondary` at 7.30:1 in dark. This is CLAUDE.md rule 4 arriving through a background
  *  instead of a token — the glow created a pairing no gate could see, because both gate
  *  suites measure a foreground against an opaque token and this ground is a composite.
  *
@@ -207,9 +210,9 @@ function HeroGlow() {
         /* First listed paints on top. Cap over glow over page. */
         backgroundImage: [
           'linear-gradient(to bottom, transparent 78%, var(--oz-color-background) 100%)',
-          'radial-gradient(50% 1024px at 50% -264px, var(--oz-color-gradient-mesh-base) 0%, transparent 100%)',
-          'radial-gradient(112.5% 711px at 50% 812px, var(--oz-color-gradient-halo) 0%, transparent 100%)',
-          'radial-gradient(112.5% 711px at 50% 812px, var(--oz-color-gradient-halo) 0%, transparent 100%)',
+          'radial-gradient(50% 1024px at 50% calc(50% - 756px), var(--oz-color-gradient-mesh-base) 0%, transparent 100%)',
+          'radial-gradient(112.5% 711px at 50% calc(50% + 320px), var(--oz-color-gradient-halo) 0%, transparent 100%)',
+          'radial-gradient(112.5% 711px at 50% calc(50% + 320px), var(--oz-color-gradient-halo) 0%, transparent 100%)',
         ].join(', '),
       }}
     />
@@ -319,35 +322,32 @@ export function UgcHero() {
          the clip they were drawn against. `isolate` keeps the glow's negative z-index
          inside the section instead of behind the page.
 
-         The min-heights are Figma's hero at each step MINUS the 70px nav band it draws
-         inside that height — 1024 and 1054 in the file, 954 and 984 here, because the
-         header is its own element ahead of this section. They only apply from `lg`; below
-         that the section is as tall as its contents. */
-      className="relative isolate overflow-hidden bg-background lg:min-h-[954px] xl:min-h-[984px]"
+         FROM `lg` THE HERO IS THE SCREEN, AND THE COPY IS CENTRED IN IT. This replaced a
+         fixed 984px section with the copy pinned 360px down, which is what the frames draw
+         and which does not survive contact with a real laptop: the file's hero is 1054px
+         tall, so on an 857px viewport the copy had 434px of air above it and 151px below and
+         read as sitting near the bottom of the screen. Percentages do not fix that — a `%`
+         padding resolves against the section's own height, so it is still one fixed ratio,
+         failing short screens and tall ones in opposite directions.
+
+         `100svh` minus the bar, and `svh` rather than `vh` deliberately: on mobile `vh` is
+         the *largest* viewport, so a `vh`-sized hero hides its own bottom edge behind the
+         browser toolbars. The bar's height is measured and published by UgcHeader rather
+         than written here — see useNavHeight — because this file guessing it is how the copy
+         ended up one header-height low in the first place. The 74px fallback is for first
+         paint and for no-JS.
+
+         `min-h`, not `h`: if the copy ever needs more room than the screen it takes it. */
+      className="relative isolate overflow-hidden bg-background lg:grid lg:min-h-[calc(100svh-var(--ugc-nav,74px))] lg:content-center"
     >
       <HeroGlow />
 
-      {/* THE COPY IS PINNED, NOT CENTRED, from `lg` up. Figma places `hero-text` 360px down
-          its `content` frame at 1025, 1280, 1440 and 1920 alike, and the cards are placed
-          against that — so centring the copy in the section instead moves it relative to
-          them. Measured: with this block centred, the 64px headline is 54px taller than
-          Figma's 56px one, which lifted it into the sunglasses card at 1025.
-
-          360 IS THE `content`-FRAME VALUE, NOT THE PAGE VALUE, and getting that wrong is the
-          one bug this hero shipped with. It was 430 — the same position measured from the top
-          of the page, i.e. 360 plus the 70px nav band Figma draws inside the hero frame. But
-          the header here is a real 74px element in the flow ahead of this section, so the
-          section already begins below it and 430 counted the nav twice: measured in the
-          browser, the headline landed at 504 against a drawn 430, and every card and the glow
-          were the same 74px low with it. It is 360 now, which is the number the file states.
-
-          The 4px that remains — a 74px header against a 70px nav band — is the honest
-          residue of a real control being 2px taller than the drawn one on each edge. It is
-          uniform, so nothing inside the composition shifts relative to anything else.
-
-          These are layout positions off a drawing, which is why they are literals; the
-          padding below `lg` is spacing, so it comes off the ramp. */}
-      <div className="oz-enter-hero relative z-10 px-space-6 pt-space-6 text-center sm:pt-space-14 md:pt-space-18 lg:pb-space-18 lg:pt-[360px]">
+      {/* No vertical padding from `lg` up — the section centres this block, and every card
+          and both glow coats are placed as offsets from that same centre line. That is what
+          makes the composition hold its shape at any screen height instead of being pushed
+          down by a fixed pad. The padding below `lg` is spacing on a page that scrolls, so it
+          comes off the ramp. */}
+      <div className="oz-enter-hero relative z-10 px-space-6 pt-space-6 text-center sm:pt-space-14 md:pt-space-18 lg:py-0">
         {/* Two measures, not one. Figma sets 56px type in a 768px column, which breaks to
             two lines; `display-lg` tops out at 64px, which is the step this scale has for
             the biggest line on a page and the closest one to the drawing — but at 64px a
