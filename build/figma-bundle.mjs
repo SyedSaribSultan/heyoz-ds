@@ -36,10 +36,15 @@
  *    shipped as strings that would import as meaningless text. They live in `dist/tokens.css`
  *    and the showcase; a designer does not bind them to anything.
  *
- * 4. NO COMPOSITE STYLES FROM ATOMIC TOKENS. Atomic size/leading/tracking variables give a
- *    designer four numbers to set by hand. So this also emits 75 `typography` tokens — every
- *    step × every weight — which Tokens Studio turns into 75 Figma TEXT STYLES. That is the
- *    difference between a usable type system and a pile of numbers.
+ * 4. NO COMPOSITE TEXT STYLES, AND THAT IS THE INTENT. This system binds VARIABLES to text
+ *    layers rather than applying styles, so the bundle carries the atomic tokens only —
+ *    font-family, font-style, font-size, line-height, letter-spacing — and no `typography`
+ *    tokens. On the export screen that means **Styles → Typography stays UNTICKED**.
+ *
+ *    A style bakes five properties into one object, so step and weight stop being
+ *    independent — which is exactly what spec.mjs refuses to do when it declines to bake a
+ *    weight into a type step. Note 2 above is unaffected: a line height bound as a variable
+ *    still has to be px, and a font size still cannot be a clamp() string.
  *
  * ==================================================================================
  * NAMING
@@ -179,29 +184,31 @@ export function buildFigmaBundle({ PRIM, NUMBERS, numberName, resolved, FOUNDATI
     put(T, `default weight/${key}`, 'other', val);
   }
 
-  /* -- 5. Typography: the composite text styles ----------------------------------- *
+  /* -- 5. NO COMPOSITE TEXT STYLES, deliberately ---------------------------------- *
    *
-   * Every step × every weight. 15 × 5 = 75, and all of them, because the system's own rule is
-   * that a step does not own a weight — `CLAUDE.md`: "Weight is deliberately NOT baked in —
-   * every step accepts every weight." Shipping only the default weight per family would be this
-   * emitter making a decision the token layer refused to make.
+   * An earlier version of this emitter produced 75 `typography` tokens — 15 steps × 5 weights —
+   * which Tokens Studio turns into 75 Figma Text Styles. They are gone, because this system
+   * binds VARIABLES to text layers rather than applying styles.
    *
-   * fontFamily is chosen by the step's ROLE: display and heading are Bricolage, body and label
-   * are Geist. That mapping already exists as the `font family` group keyed by role, and a step
-   * name begins with its role. */
-  const roleOf = (step) => step.split(' ')[0];
-  for (const step of Object.keys(TYPOGRAPHY['font size'])) {
-    const role = roleOf(step);
-    for (const weight of Object.keys(TYPOGRAPHY['font style'])) {
-      put(T, `text/${step}/${weight}`, 'typography', {
-        fontFamily: ref(`font family/${role}`),
-        fontWeight: ref(`font style/${weight}`),
-        fontSize: ref(`font size/${step}`),
-        lineHeight: ref(`line height/${step}`),
-        letterSpacing: ref(`letter spacing/${step}`),
-      });
-    }
-  }
+   * That is a real decision and not a shortcut. A text style bakes five properties into one
+   * object, so a step and a weight stop being independent: `text/body-md/medium` is a different
+   * style from `text/body-md/bold`, and the two share nothing a designer can retune in one
+   * place. Binding the five variables keeps them independent, which is the same reason
+   * `spec.mjs` refuses to bake weight into a type step — CLAUDE.md: "Weight is deliberately NOT
+   * baked in — every step accepts every weight."
+   *
+   * The consequence for the export screen is the part worth knowing: **Styles → Typography must
+   * be UNTICKED.** With no composite tokens there is nothing for it to build, and ticking it
+   * would create nothing while implying styles exist. The atomic tokens below are the whole
+   * type system, and they export as Number and String variables.
+   *
+   * The px conversions above still matter and are not affected by this. A line height bound as
+   * a variable still has to be a number in px — 1.0625 would bind as 1.0625px — and a font size
+   * still cannot be a clamp() string. Those two fixes were never about text styles.
+   *
+   * If styles are ever wanted, this is ~12 lines: put a `typography` token per step × weight
+   * whose five fields reference the atomic tokens, and tick the box.
+   * ------------------------------------------------------------------------------- */
 
   /* -- 6. Semantic, one set per mode ---------------------------------------------- */
   for (const [mode, setName] of [['light', SET.light], ['dark', SET.dark]]) {

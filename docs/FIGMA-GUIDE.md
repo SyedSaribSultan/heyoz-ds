@@ -22,9 +22,10 @@ value. They differ in **format**, and the difference is not cosmetic:
 Pointing Tokens Studio at `tokens/` produces colour tokens it cannot resolve. That is the
 mistake the old wording invited.
 
-**Path A also gives you three things Path B cannot:** 75 Text Styles, usable numeric font sizes
-instead of `clamp()` strings, and Light/Dark as two modes of one collection without importing
-twice.
+**Path A also gives you two things Path B cannot:** usable numeric font sizes instead of
+`clamp()` strings, and Light/Dark as two modes of one collection without importing twice.
+
+Neither path ships text styles — see *Type*.
 
 ---
 
@@ -37,12 +38,13 @@ Full step-by-step — the export checkboxes, what to verify, and the two manual 
 
 ```
 Plugins → Tokens Studio → JSON toggle { } → paste the whole file → Save
-Export  → Variables: Color ✓ Number ✓ String ✓ · Styles: Typography ✓ (others ✗)
+Export  → Variables: Color ✓ Number ✓ String ✓ · Styles: ALL UNTICKED
 Themes  → Select All (6) → Export to Figma
 ```
 
-You get **5 collections** and **75 Text Styles**, with `Colors & Elevations Tokens` carrying
-**HeyOz Light** and **HeyOz Dark** as two modes of one collection.
+You get **5 collections**, with `Colors & Elevations Tokens` carrying **HeyOz Light** and
+**HeyOz Dark** as two modes of one collection. **No text styles** — this system binds variables
+to text layers, so Styles stays off. See *Type* below.
 
 ### One file, not a folder — and that is deliberate
 
@@ -63,12 +65,12 @@ Four things, each converted or deliberately dropped rather than shipped broken:
 | **Fluid type** | A variable is one number, so `clamp(40px … 64px)` would import as a String and could not be applied to a text layer. Every fluid step ships its **desktop ceiling** — `display-lg` = 64. |
 | **Unitless line height** | Authored as a ratio so it survives the clamp; Figma text styles need px. Converted: `display-lg` = 68, which is 1.0625 × 64. Letter spacing likewise em → px. |
 | **Motion** | There is no duration or easing variable type in Figma. All 25 motion tokens are **absent** rather than shipped as meaningless strings. They live in `dist/tokens.css`. |
-| **Composite styles** | Atomic size/leading/tracking variables leave a designer setting four numbers by hand. So the bundle also carries **75 `typography` tokens** — 15 steps × 5 weights — which become 75 Figma **Text Styles**. |
+| **Composite styles** | Not shipped, and that is a choice rather than a limitation — see *Type*. A style bakes five properties into one object and stops step and weight being independent, which is what `spec.mjs` declines to do when it refuses to bake a weight into a type step. |
 
 ### What is guaranteed
 
-- Every non-typography set matches its DTCG source **token for token**: 655 / 29 / 64 / 208 / 208.
-- All **825 references** resolve. The build fails if one does not — a dangling reference is
+- Every set matches its DTCG source **token for token**: 655 / 29 / 64 / 64 / 208 / 208.
+- All **450 references** resolve. The build fails if one does not — a dangling reference is
   otherwise silent, because the plugin simply never creates that variable while `dist/` stays
   correct.
 - Ten elevation tokens stay **literal** rather than aliased. Figma discards a variable's local
@@ -143,18 +145,18 @@ Interactive → `fill`, and then `-hover` / `-active` / `-disabled` exist.
 
 ## Type
 
-**Path A gives you 75 Text Styles** — `text/<step>/<weight>`, every one of the fifteen steps ×
-five weights. Apply the style. That is the whole workflow, and it is why Typography ✓ is checked
-on the export screen.
+**Variables, not text styles — on both paths.** Weight is bound as its own variable, so all five
+weights are available on all fifteen steps without 75 styles to maintain.
 
-This section used to argue the opposite — "all five weights available on all fifteen steps
-**without** 75 text styles" — and told you to bind five variables by hand per text layer. That
-was the atomic-tokens-only era. The atomic variables still exist and still work; the composite
-styles are simply better, because setting five properties correctly on every text layer is a
-thing nobody does consistently.
+A style would bake family, weight, size, leading and tracking into one object, which makes step
+and weight stop being independent: `text/body-md/medium` and `text/body-md/bold` would share
+nothing retunable in one place. That is the same reason `spec.mjs` refuses to bake a weight into
+a type step — CLAUDE.md: "Weight is deliberately NOT baked in — every step accepts every weight."
 
-**Path B (native import) has no text styles** — Figma's native Variables importer creates
-variables, not styles. There, bind the five per layer:
+So **Styles → Typography stays unticked** on the export screen, and there are no composite
+`typography` tokens in the bundle for it to build.
+
+Bind five variables per text layer:
 
 ```
 font family      →  Typography / font-family / {display|heading|body|label|mono}

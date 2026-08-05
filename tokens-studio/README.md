@@ -29,11 +29,12 @@ Hit **Export** and match this exactly:
 | | |
 |---|---|
 | **Variables** | Color ✓ · Number ✓ · String ✓ · Boolean — doesn't matter |
-| **Styles** | **Typography ✓** · Color ✗ · Effects ✗ · Gradients ✗ |
+| **Styles** | **all unticked** — Typography ✗ · Color ✗ · Effects ✗ · Gradients ✗ |
 | **Toggles** | *Update existing style and variable names* → **ON**. Everything else **OFF**. |
 
-Typography ✓ is what turns the 75 composite tokens into Figma **Text Styles**. Without it you
-get loose numbers and no styles.
+**Styles stay off.** This system binds **variables** to text layers, not text styles — so there
+are no composite typography tokens in the file and nothing for that box to build. Ticking it
+would create nothing while implying styles exist.
 
 Leave *Remove unconnected variables* **OFF** unless this file is the only thing in your Figma
 file.
@@ -56,15 +57,38 @@ file.
 | `Typography Tokens` | Mode 1 | 64 |
 | `Colors & Elevations Tokens` | **HeyOz Light**, **HeyOz Dark** | 208 each |
 
-**75 Text Styles** — `text/<step>/<weight>`, every one of the 15 type steps × 5 weights.
+**No text styles** — by design. See *Styling text* below.
 
 ### Check three things
 
 1. A colour in `Colors & Elevations Tokens` shows an **alias** — `fill/brand → solid/brand/60`
    — not a raw hex. Same for `Numbers Tokens` → `_Number Primitives`.
 2. `Colors & Elevations Tokens` has **two modes**, not two collections.
-3. Open a text style. `text/display-lg/extrabold` should read **64px / 68 line height /
-   −1.28 letter spacing**, Bricolage Grotesque ExtraBold.
+3. `Typography Tokens → font-size → display-lg` reads **64** — a number, not a `clamp()` string.
+   And `line-height → display-lg` reads **68**, not 1.0625.
+
+---
+
+## Styling text
+
+Bind five variables per text layer, all from `Typography Tokens`:
+
+| Figma field | Variable |
+|---|---|
+| Font | `font-family/{display\|heading\|body\|label\|mono}` |
+| Weight / style | `font-style/{regular\|medium\|semibold\|bold\|extrabold}` |
+| Size | `font-size/{step}` |
+| Line height | `line-height/{step}` |
+| Letter spacing | `letter-spacing/{step}` |
+
+15 steps: `display-lg/md/sm`, `heading-xl/lg/md/sm/xs`, `body-lg/md/sm/xs`, `label-md/sm/xs`.
+
+Suggested pairings — guidance, not a rule: `display → extrabold`, `heading → semibold`,
+`body → regular`, `label → medium`. Those are in `default-weight/*` if you want them bound.
+
+**Two weight groups exist on purpose.** `font-weight` is numeric (400–800) and is what the CSS
+consumes. `font-style` is a string (`SemiBold`) and is what Figma's weight field actually binds
+to. Same five weights, two representations, because neither end can use the other's.
 
 ---
 
@@ -99,14 +123,15 @@ Aliases still resolve — the primitives just stop appearing in the picker.
 **Re-exporting reverts the two manual steps.** *Hide from publishing* and the Effect Styles live
 only in Figma, not in this file. After a future re-export, redo them.
 
-**Four things are deliberately not here**, because Figma cannot hold them:
+**Five things are deliberately not here.** Four because Figma cannot hold them, and one because you do not want it:
 
 | | Why |
 |---|---|
 | **Motion** — durations, easings, springs | Figma variables are Color / Number / String / Boolean. There is no duration type and no easing type. They'd import as meaningless strings. Values are in `dist/tokens.css`. |
 | **Fluid type** | A variable is one number. Display and heading ship their **desktop ceiling** in px — `display-lg` is 64, not `clamp(40px … 64px)`. Small-frame mockups need manual down-scaling. |
 | **`container/measure`** (`65ch`) | `ch` has no Figma equivalent. Code only. |
-| **Unitless line height** | The code authors leading as a ratio so it survives the fluid clamp; Figma text styles need px. Converted here — `display-lg` is 68px, which is 1.0625 × 64. |
+| **Text Styles** | Not a limitation — a choice. This system binds variables to text layers, so there are no composite `typography` tokens and Styles → Typography stays unticked on export. A style would bake five properties into one object and stop step and weight being independent, which is exactly what `spec.mjs` refuses to do. |
+| **Unitless line height** | The code authors leading as a ratio so it survives the fluid clamp; a Figma variable bound to a line-height field needs px. Converted here — `display-lg` is 68px, which is 1.0625 × 64. |
 
 ---
 
@@ -128,7 +153,7 @@ where a colour's value is an object. Tokens Studio needs a string and its own ty
 **cannot parse the object form** — pointing it at `tokens/` gives you colours it can't resolve.
 
 Both folders are generated from one resolved map by `build/build.mjs`, so they can't disagree
-about a value. The build also asserts that all **825 references** in this file resolve, because a
+about a value. The build also asserts that all **450 references** in this file resolve, because a
 dangling one is silent: the plugin just never creates that variable.
 
 ## The one exception to the alias chain
