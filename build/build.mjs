@@ -25,6 +25,7 @@ import {
   LAYER_LITERALS,
   FOUNDATION_STRINGS,
   LITERAL_GROUPS,
+  FLUID_RANGE,
   MOTION,
   MOTION_ASSERTIONS,
   SURFACE_LADDER,
@@ -43,6 +44,7 @@ import {
 /* harnessHtml is archived — see the note where test/index.html used to be emitted.
  * The module now lives at archive/harness.mjs and is imported by nothing. */
 import { SHIPPED } from './shipped.mjs';
+import { buildFigmaBundle } from './figma-bundle.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const out = (p, s) => {
@@ -205,6 +207,8 @@ const cssVars = { root: [], light: [], dark: [] };
 /* Reported in the build summary; filled by the tokens-studio reference check in validate(). */
 let tsRefCount = 0;
 let tsTokenCount = 0;
+const tsRefs = [];
+const tsNames = new Set();
 const seenNames = new Set();
 
 function declare(bucket, path, value) {
@@ -1207,49 +1211,21 @@ function validate() {
     }
   }
 
-  /* Every reference in tokens-studio/ must resolve to a token that exists in an EARLIER set.
+  /* Every reference in the Figma bundle must resolve to a token that exists.
    *
    * A dangling reference is the one failure mode of that format that is completely silent: the
-   * plugin imports the set, the token shows as unresolved in its own panel, and the Figma
-   * variable is simply never created — so a designer gets a library that is quietly missing
-   * whatever depended on it, and dist/ is correct the whole time. Same class as the alias-alpha
-   * bug above, and the same reason it needs a gate rather than a note: only the designer's half
-   * of the pipeline breaks, which is the half nobody re-checks.
+   * plugin imports the set, the token shows unresolved in its own panel, and the Figma variable
+   * is simply never created — so the designer gets a library quietly missing whatever depended
+   * on it, while dist/ is correct the whole time. Same class as the alias-alpha bug above, and
+   * the same reason it needs a gate: only the designer's half of the pipeline breaks, which is
+   * the half nobody re-checks.
    *
-   * `tokenSetOrder` is resolution order, so a reference is only legal if its target appears in a
-   * set at or before the referring one. Checking against the union would pass a forward
-   * reference that the plugin cannot actually resolve. */
-  {
-    const meta = JSON.parse(readFileSync(join(ROOT, 'tokens-studio/$metadata.json'), 'utf8'));
-    const known = new Set();
-    let refCount = 0;
-
-    const walk = (node, path, set) => {
-      if (node && typeof node === 'object' && node.$type) {
-        known.add(path);
-        if (typeof node.$value === 'string' && node.$value.startsWith('{')) {
-          refCount += 1;
-          const target = node.$value.slice(1, -1);
-          /* Recorded against `known` as it stands, which is every token in every earlier set
-           * plus the ones already read from this one. */
-          if (!known.has(target))
-            errors.push(
-              `TOKENS STUDIO DANGLING REF: ${set} '${path}' -> {${target}} resolves to nothing`
-            );
-        }
-        return;
-      }
-      for (const [k, v] of Object.entries(node)) {
-        if (k.startsWith('$')) continue;
-        walk(v, path ? `${path}.${k}` : k, set);
-      }
-    };
-
-    for (const set of meta.tokenSetOrder) {
-      walk(JSON.parse(readFileSync(join(ROOT, `tokens-studio/${set}.json`), 'utf8')), '', set);
-    }
-    tsRefCount = refCount;
-    tsTokenCount = known.size;
+   * `tsRefs` and `tsNames` are collected by emitTokensStudio as it walks the finished bundle, so
+   * this checks what was actually written rather than what the emitter meant to write. Composite
+   * typography tokens contribute five references each and are covered by the same pass. */
+  for (const [path, target] of tsRefs) {
+    if (!tsNames.has(target))
+      errors.push(`FIGMA BUNDLE DANGLING REF: '${path}' -> {${target}} resolves to nothing`);
   }
 
   /* Elevation has to be perceptible. The dark drop shadows shipped at ΔL
@@ -1449,180 +1425,56 @@ function validate() {
 }
 
 /* ================================================================== *
- * Tokens Studio
+ * Tokens Studio — the designer leg
  *
- * A SECOND set of token files, in the format the Tokens Studio plugin reads.
+ * ONE bundled document, because the plugin cannot open a folder: its local paths are "load a
+ * single JSON file" and "paste into the JSON editor", and a directory of sets is only readable
+ * through a sync provider the designer may not have. Everything — the sets, `$themes`,
+ * `$metadata` — is inline.
  *
- * WHY A SECOND SET AND NOT ONE SHARED SET. `tokens/*.json` is DTCG-2024, where a colour's
- * `$value` is an OBJECT — `{ colorSpace, components, alpha, hex }`. That is what Figma's own
- * Variables importer takes, and it is what those files were built and verified against.
- * Tokens Studio does not parse that shape: it wants `$value` as a STRING, either a literal
- * (`"#FFFFFF"`, `"#FFFFFF80"`) or a reference (`"{solid.neutral.white}"`).
- *
- * So the two importers want genuinely different documents, and for a while `docs/FIGMA-GUIDE.md`
- * claimed "either path works" off the one set. It did not — a Tokens Studio import of the
- * DTCG-2024 files yields colours it cannot read. Emitting both from the same resolved map is
- * the only arrangement where they cannot disagree.
- *
- * WHAT THIS SET ADDS that the native one cannot: real alias chains. Every semantic colour is
- * emitted as a REFERENCE to its primitive, so a designer changing `solid/brand/60` in Figma
- * sees it flow through `fill/brand`, `border/brand` and the rest. The native path binds
- * aliases through `com.figma.aliasData`; this path expresses them as first-class references,
- * which is the thing Tokens Studio is actually good at.
- *
- * THE TEN ELEVATION TOKENS STAY LITERAL, for exactly the reason recorded in `emitSemantic` and
- * in CLAUDE.md: Figma discards a variable's local value once it is bound to an alias, and those
- * carry alpha 0.08–0.90, so a reference would import them opaque — a modal scrim as a solid
- * black rectangle. `resolved[mode][path].aliased` already records which ones may be referenced;
- * this reads the same flag rather than re-deriving it, so the two emitters cannot drift on it.
+ * The construction lives in build/figma-bundle.mjs, which documents the four things Figma
+ * cannot represent (fluid type, unitless leading, motion, composite styles) and what each one
+ * becomes here. It is handed the SAME resolved maps `tokens/` was written from, so the two legs
+ * cannot disagree about a value.
  * ================================================================== */
 
-/** `solid/neutral/white` -> `{solid.neutral.white}`. Tokens Studio resolves dot paths. */
-const tsRef = (target) => `{${target.replace(/\//g, '.')}}`;
-
-/** A literal colour. 8-digit hex when translucent — Tokens Studio reads `#RRGGBBAA`, and it
- *  round-trips into Figma with the alpha intact, which `rgba()` also does but less legibly. */
-function tsColor(hex, alpha = 1) {
-  if (alpha >= 1) return hex;
-  const a = Math.round(alpha * 255)
-    .toString(16)
-    .padStart(2, '0')
-    .toUpperCase();
-  return `${hex}${a}`;
-}
-
-/** deep-set, but writing Tokens Studio's `{ $type, $value }` leaf. */
-function tsPut(root, path, $type, $value) {
-  const parts = path.split('/');
-  let o = root;
-  for (const p of parts.slice(0, -1)) o = o[p] ??= {};
-  o[parts.at(-1)] = { $type, $value };
-}
-
-/**
- * Convert one already-written DTCG document into Tokens Studio's shape.
- *
- * DERIVED FROM THE EMITTED FILE, not re-walked from `spec.mjs`. Re-walking would mean a second
- * traversal of FOUNDATIONS, TYPOGRAPHY, SPRINGS and the rest, each with its own idea of which
- * groups are literal and which alias a primitive — six more places to drift from the native
- * emitter, and drift here is invisible because both files would still be internally valid. One
- * traversal, one conversion, and the Tokens Studio set is a function of the DTCG set by
- * construction.
- *
- * The conversion is small because only two things actually differ:
- *   - a colour's `$value` is an object here and must be a string there
- *   - `aliasData` in `$extensions` becomes a first-class `{reference}`
- */
-function toTokensStudio(node) {
-  /* A leaf. DTCG marks it with $type. */
-  if (node && typeof node === 'object' && node.$type) {
-    const alias = node.$extensions?.['com.figma.aliasData']?.targetVariableName;
-
-    if (node.$type === 'color') {
-      const { hex, alpha = 1 } = node.$value;
-      /* The alias is emitted by emitSemantic ONLY when the alpha matches its primitive — the
-       * ten elevation tokens that carry their own alpha deliberately have none. So the presence
-       * of aliasData is already the correct test for "may be a reference", and reading it here
-       * means this emitter cannot disagree with that decision. */
-      return { $type: 'color', $value: alias ? tsRef(alias) : tsColor(hex, alpha) };
-    }
-
-    /* `string` is not a DTCG type and Tokens Studio files it under `other`. Everything else —
-     * number, dimension, duration, cubicBezier, fontFamily, fontWeight — passes through. */
-    const $type = node.$type === 'string' ? 'other' : node.$type;
-
-    /* Scalars carry aliases too, and they are worth keeping. `space/6` aliases the number
-     * primitive `number-20`, so referencing it means a designer who retunes the spacing scale
-     * in Figma sees every padding and gap that depends on it move — which is the whole reason
-     * the number primitives exist as their own collection. Emitting the literal 20 instead
-     * would flatten the chain and leave Figma with 64 unrelated magic numbers.
-     *
-     * Only when the target actually resolves: `emitFoundations` deliberately omits the alias on
-     * LITERAL_GROUPS, and `layer` substitutes its own value, so an unconditional reference here
-     * would dangle. The build asserts zero dangling references — see validate(). */
-    return { $type, $value: alias ? tsRef(alias) : node.$value };
-  }
-
-  /* A group. Drop the `$`-prefixed metadata: Tokens Studio treats an unknown `$key` at group
-   * level as a malformed token and warns on every import. */
-  const out = {};
-  for (const [k, v] of Object.entries(node)) {
-    if (k.startsWith('$')) continue;
-    out[k] = toTokensStudio(v);
-  }
-  return out;
-}
-
 function emitTokensStudio() {
-  const files = [];
-  const DIR = 'tokens-studio';
-  const read = (p) => JSON.parse(readFileSync(join(ROOT, p), 'utf8'));
+  const bundle = buildFigmaBundle({
+    PRIM,
+    NUMBERS,
+    numberName,
+    resolved,
+    FOUNDATIONS,
+    FOUNDATION_STRINGS,
+    TYPOGRAPHY,
+    FLUID_RANGE,
+    LITERAL_GROUPS,
+    LAYER_LITERALS,
+  });
 
-  /* Reads the files the native emitters just wrote — see the note on toTokensStudio. */
-  const SOURCE = [
-    ['primitives-colors', 'tokens/01-colors-primitives.tokens.json'],
-    ['primitives-numbers', 'tokens/02-number-primitives.tokens.json'],
-    ['foundations', 'tokens/03-foundations.tokens.json'],
-    ['motion', 'tokens/04-motion.tokens.json'],
-    ['typography', 'tokens/05-typography.tokens.json'],
-    ['semantic-light', 'tokens/06-heyoz-light.tokens.json'],
-    ['semantic-dark', 'tokens/07-heyoz-dark.tokens.json'],
-  ];
+  /* Counted for the build summary and for the reference check in validate(). */
+  const walk = (node, path) => {
+    if (node && typeof node === 'object' && 'value' in node && 'type' in node) {
+      tsTokenCount += 1;
+      const v = node.value;
+      const refs =
+        typeof v === 'string' ? (v.startsWith('{') ? [v] : []) : typeof v === 'object' && v ? Object.values(v).filter((x) => typeof x === 'string' && x.startsWith('{')) : [];
+      tsRefCount += refs.length;
+      for (const r of refs) tsRefs.push([path, r.slice(1, -1)]);
+      tsNames.add(path);
+      return;
+    }
+    for (const [k, val] of Object.entries(node)) {
+      if (k.startsWith('$')) continue;
+      walk(val, path ? `${path}.${k}` : k);
+    }
+  };
+  for (const set of bundle.$metadata.tokenSetOrder) walk(bundle[set], '');
 
-  for (const [set, src] of SOURCE) {
-    files.push(json(`${DIR}/${set}.json`, toTokensStudio(read(src))));
-  }
-
-  /* -- the two index files Tokens Studio needs ---------------------------------- *
-   *
-   * Without these, an import lands as a pile of unrelated sets and the designer has to
-   * reconstruct the order and the themes by hand — which is the step that gets done
-   * differently every time and is the reason a "just import the JSON" instruction is not
-   * enough on its own.
-   *
-   * `tokenSetOrder` is resolution order: later sets may reference earlier ones, so the
-   * primitives have to come first.
-   *
-   * In `$themes`, `source` means "resolve references from this set but do not create Figma
-   * variables for it", and `enabled` means "create variables". Two themes sharing a `group`
-   * become two MODES of one collection — which is how Light and Dark end up as modes of a
-   * single Semantic collection rather than two separate collections. */
-  const SETS = SOURCE.map(([set]) => set);
-  files.push(jsonRaw(`${DIR}/$metadata.json`, { tokenSetOrder: SETS }));
-
-  const pick = (enabled) =>
-    Object.fromEntries(SETS.map((s) => [s, enabled.includes(s) ? 'enabled' : 'source']));
-
-  files.push(
-    jsonRaw(`${DIR}/$themes.json`, [
-      {
-        id: 'primitives',
-        name: 'Primitives',
-        group: 'Primitives',
-        selectedTokenSets: pick(['primitives-colors', 'primitives-numbers']),
-      },
-      {
-        id: 'foundations',
-        name: 'Foundations',
-        group: 'Foundations',
-        selectedTokenSets: pick(['foundations', 'typography', 'motion']),
-      },
-      {
-        id: 'heyoz-light',
-        name: 'HeyOz Light',
-        group: 'Semantic',
-        selectedTokenSets: pick(['semantic-light']),
-      },
-      {
-        id: 'heyoz-dark',
-        name: 'HeyOz Dark',
-        group: 'Semantic',
-        selectedTokenSets: pick(['semantic-dark']),
-      },
-    ])
-  );
-
-  return files;
+  /* jsonRaw, not json: the bundle's shape is fixed by the plugin's schema and a stray
+   * `$generated` key at its root is a key that schema does not define. The warning lives in
+   * tokens-studio/README.md instead. */
+  return jsonRaw('tokens-studio/heyoz.tokens.json', bundle);
 }
 
 /* ================================================================== *
@@ -1636,7 +1488,7 @@ const written = [
   emitMotion(),
   emitTypography(),
   ...emitSemantic(),
-  ...emitTokensStudio(),
+  emitTokensStudio(),
   emitTokensCss(),
   emitLayoutCss(),
   emitBridge(),

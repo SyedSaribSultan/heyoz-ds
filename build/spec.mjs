@@ -323,8 +323,22 @@ export const MOTION_ASSERTIONS = {
  * TYPOGRAPHY
  * ================================================================== */
 
-const fluid = (min, max) =>
-  `clamp(${min}px, calc(${min}px + (${max} - ${min}) * (100vw - 360px) / 880), ${max}px)`;
+/**
+ * Every fluid size, keyed by the clamp string it produced, so a consumer can recover the
+ * endpoints without parsing CSS.
+ *
+ * Figma has no fluid type — a variable is one number — so the Figma emitter needs the DESKTOP
+ * CEILING. The alternative was a regex over the emitted `clamp(...)`, which is a parser for a
+ * string this file generates three lines below: it would work until someone changed the
+ * expression, and then it would return a number that was silently wrong rather than fail.
+ */
+export const FLUID_RANGE = new Map();
+
+const fluid = (min, max) => {
+  const s = `clamp(${min}px, calc(${min}px + (${max} - ${min}) * (100vw - 360px) / 880), ${max}px)`;
+  FLUID_RANGE.set(s, { min, max });
+  return s;
+};
 
 export const TYPOGRAPHY = {
   $description:

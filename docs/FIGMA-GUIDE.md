@@ -5,59 +5,75 @@
 This is the first thing to get right, and this document used to get it wrong. It said
 "either path works" off the same folder. It does not.
 
-| You are using | Import from | Why |
+| You are using | Import | |
 |---|---|---|
-| **Tokens Studio** plugin | **`tokens-studio/`** | recommended — sets, themes and alias chains all arrive wired up |
-| Figma **native** Variables import | `tokens/` | no plugin needed |
+| **Tokens Studio** plugin | **`tokens-studio/heyoz.tokens.json`** — one file | **recommended** |
+| Figma **native** Variables import | `tokens/` — seven files, in numeric order | no plugin needed |
 
-The two folders are generated from one resolved map by `build/build.mjs`, so they cannot
-disagree about a value. They differ only in **format**, and the difference is not cosmetic:
+Both are generated from one resolved map by `build/build.mjs`, so they cannot disagree about a
+value. They differ in **format**, and the difference is not cosmetic:
 
 - `tokens/` is DTCG-2024, where a colour's `$value` is an **object** —
   `{ colorSpace, components, alpha, hex }`. Figma's own importer reads this.
-- `tokens-studio/` gives `$value` as a **string** — `"#FFFFFF"`, or a reference
-  `"{solid.brand.60}"`. Tokens Studio reads this and **cannot** parse the object form.
+- `tokens-studio/` uses a **string** — `"#FFFFFF"`, or a reference `"{solid.brand.60}"` — plus
+  Tokens Studio's own type names (`fontSizes`, not `dimension`). It **cannot** parse the object
+  form.
 
 Pointing Tokens Studio at `tokens/` produces colour tokens it cannot resolve. That is the
 mistake the old wording invited.
+
+**Path A also gives you three things Path B cannot:** 75 Text Styles, usable numeric font sizes
+instead of `clamp()` strings, and Light/Dark as two modes of one collection without importing
+twice.
 
 ---
 
 ## Path A — Tokens Studio (recommended)
 
+**Everything is in one file: `tokens-studio/heyoz.tokens.json`.**
+
+Full step-by-step — the export checkboxes, what to verify, and the two manual steps — is in
+**`tokens-studio/README.md`**, next to the file. The short version:
+
 ```
-Plugins → Tokens Studio → ⚙ → Import → choose the tokens-studio/ FOLDER
+Plugins → Tokens Studio → JSON toggle { } → paste the whole file → Save
+Export  → Variables: Color ✓ Number ✓ String ✓ · Styles: Typography ✓ (others ✗)
+Themes  → Select All (6) → Export to Figma
 ```
 
-Import the folder, not the individual files. `$metadata.json` and `$themes.json` are what
-make that work:
+You get **5 collections** and **75 Text Styles**, with `Colors & Elevations Tokens` carrying
+**HeyOz Light** and **HeyOz Dark** as two modes of one collection.
 
-- **`$metadata.json`** carries `tokenSetOrder`. That is resolution order — the primitives
-  have to load before anything referencing them, and this is what tells the plugin so.
-- **`$themes.json`** defines four themes. Two of them share the group `Semantic`, which is
-  how **HeyOz Light** and **HeyOz Dark** become two *modes of one collection* rather than
-  two separate collections.
+### One file, not a folder — and that is deliberate
 
-Then **Export to Figma variables**.
+The plugin cannot open a folder. Its local paths are "load one JSON file" and "paste into the
+JSON editor"; a directory of separate sets is only readable through a **sync provider**
+(GitHub/GitLab/…), which is setup the designer may not have or may not be entitled to.
 
-### Why this path is better
+An earlier version of this document told you to "Import → choose the tokens-studio/ FOLDER".
+That UI does not exist. The bundle now carries the sets as top-level keys with `$themes` and
+`$metadata` inline, which needs nothing configured first.
 
-Every alias is a **real reference**, not a copied value. `fill/brand` is literally
-`{solid.brand.60}`, and `spacing/spacing-6` is `{number-20}`. Retune `solid/brand/60` in
-Figma and every fill, border and content token that depends on it moves with it.
+### What Figma cannot hold, and what happened to it
 
-**1045 tokens · 450 references.** The build asserts that every one of those references
-resolves to a token in an earlier set — a dangling reference is otherwise completely
-silent, because the plugin just never creates the variable and `dist/` stays correct the
-whole time.
+Four things, each converted or deliberately dropped rather than shipped broken:
 
-### The one exception
+| | |
+|---|---|
+| **Fluid type** | A variable is one number, so `clamp(40px … 64px)` would import as a String and could not be applied to a text layer. Every fluid step ships its **desktop ceiling** — `display-lg` = 64. |
+| **Unitless line height** | Authored as a ratio so it survives the clamp; Figma text styles need px. Converted: `display-lg` = 68, which is 1.0625 × 64. Letter spacing likewise em → px. |
+| **Motion** | There is no duration or easing variable type in Figma. All 25 motion tokens are **absent** rather than shipped as meaningless strings. They live in `dist/tokens.css`. |
+| **Composite styles** | Atomic size/leading/tracking variables leave a designer setting four numbers by hand. So the bundle also carries **75 `typography` tokens** — 15 steps × 5 weights — which become 75 Figma **Text Styles**. |
 
-Ten elevation tokens are emitted as **literal** 8-digit hex rather than references, and
-that is deliberate. Figma discards a variable's local value once it is bound to an alias,
-and these carry alpha 0.08–0.90 — so a reference would import them **opaque**, turning the
-modal scrim into a solid black rectangle. An alias that lies about alpha is worse than no
-alias. The build asserts the agreement.
+### What is guaranteed
+
+- Every non-typography set matches its DTCG source **token for token**: 655 / 29 / 64 / 208 / 208.
+- All **825 references** resolve. The build fails if one does not — a dangling reference is
+  otherwise silent, because the plugin simply never creates that variable while `dist/` stays
+  correct.
+- Ten elevation tokens stay **literal** rather than aliased. Figma discards a variable's local
+  value once bound to an alias, and these carry alpha 0.08–0.90, so a reference would import them
+  opaque — the modal scrim as a solid black rectangle.
 
 ---
 
@@ -125,17 +141,27 @@ Which family to reach for:
 value, it is whether the thing reacts to a pointer. Static → `surface`.
 Interactive → `fill`, and then `-hover` / `-active` / `-disabled` exist.
 
-## Type: variables, not text styles
+## Type
 
-Weight is bound as its own variable, so all five weights are available on all
-fifteen steps without 75 text styles. Bind four variables per text layer:
+**Path A gives you 75 Text Styles** — `text/<step>/<weight>`, every one of the fifteen steps ×
+five weights. Apply the style. That is the whole workflow, and it is why Typography ✓ is checked
+on the export screen.
+
+This section used to argue the opposite — "all five weights available on all fifteen steps
+**without** 75 text styles" — and told you to bind five variables by hand per text layer. That
+was the atomic-tokens-only era. The atomic variables still exist and still work; the composite
+styles are simply better, because setting five properties correctly on every text layer is a
+thing nobody does consistently.
+
+**Path B (native import) has no text styles** — Figma's native Variables importer creates
+variables, not styles. There, bind the five per layer:
 
 ```
-font family      →  Typography / font family / {display|heading|body|label|mono}
-font style       →  Typography / font style / {regular|medium|semibold|bold|extrabold}
-font size        →  Typography / font size / {step}
-line height      →  Typography / line height / {step}
-letter spacing   →  Typography / letter spacing / {step}
+font family      →  Typography / font-family / {display|heading|body|label|mono}
+font style       →  Typography / font-style / {regular|medium|semibold|bold|extrabold}
+font size        →  Typography / font-size / {step}
+line height      →  Typography / line-height / {step}
+letter spacing   →  Typography / letter-spacing / {step}
 ```
 
 Two weight groups exist on purpose. `font weight` is numeric (400–800) and is
@@ -152,9 +178,17 @@ Figma binds a bare family name, while CSS gets the full fallback stack from
 Default pairing — guidance, not a lock:
 `display → extrabold`, `heading → semibold`, `body → regular`, `label → medium`.
 
-`font size` for display and the three largest headings are `clamp()` strings.
-Figma will hold them as strings; set the frame-level size manually and treat the
-token as the spec for the dev.
+**Fluid sizes differ between the two paths, and this used to be a real defect.**
+
+Six steps — display lg/md/sm and heading xl/lg/md — are `clamp()` in CSS. Figma has no fluid
+type, so:
+
+- **Path A** ships the **desktop ceiling as a number**: `display-lg` is `64`. Usable, bindable,
+  applied by a text style. Small-frame mockups need manual down-scaling.
+- **Path B** holds the raw `clamp(...)` **string**, which Figma cannot apply to a text layer's
+  size at all. Set the size manually there and treat the token as the spec for the dev.
+
+That difference is the single strongest reason to use Path A.
 
 ## Naming
 

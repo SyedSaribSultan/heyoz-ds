@@ -1,62 +1,138 @@
-# tokens-studio/
+# HeyOz → Figma
 
-**GENERATED — DO NOT EDIT.** Overwritten by `node build/build.mjs`. Change
-`build/spec.mjs` or `build/palette.mjs` and rebuild.
+Everything in one file: **`heyoz.tokens.json`**.
 
-This note is a file rather than a `$generated` key inside the JSON, because two of these
-documents are read against a schema this repo does not control. `$themes.json` is an
-**array**, and prepending a key to it turns it into an object with keys `"0"`, `"1"`,
-`"2"` — which Tokens Studio rejects outright. That happened once, in the commit that added
-this folder, and the marker meant to prevent hand-editing was what broke it.
+**GENERATED — DO NOT EDIT.** Re-run `node build/build.mjs` and re-import.
 
-## How to import
+---
 
-```
-Plugins → Tokens Studio → ⚙ → Import → choose this FOLDER
-```
+## Import it
 
-Then **Export to Figma variables**.
+**1. Open the plugin**
 
-Import the folder, not the individual files — `$metadata.json` and `$themes.json` are what
-give you the set order and the Light/Dark themes without rebuilding them by hand.
+Figma → **Plugins → Tokens Studio for Figma**
 
-## What is in here
+**2. Load the file**
 
-| File | |
+Top-right **JSON toggle** (`{ }`) → select all → paste the entire contents of
+`heyoz.tokens.json` → **Save**.
+
+You should now see **6 token sets** in the left panel and **6 themes** under the Themes tab.
+
+> If pasting only loads one set, the file was truncated — paste the whole thing, including the
+> `$themes` and `$metadata` blocks at the bottom.
+
+**3. Set the export options**
+
+Hit **Export** and match this exactly:
+
+| | |
 |---|---|
-| `$metadata.json` | `tokenSetOrder` — resolution order. Primitives first, or references dangle. |
-| `$themes.json` | Four themes. Light and Dark share the group `Semantic`, so they import as two **modes of one collection**. |
-| `primitives-colors.json` | 655 literal colours. The root of every reference chain. |
-| `primitives-numbers.json` | 29 raw numbers. |
-| `foundations.json` | Spacing, radius, stroke, sizing — each a reference to a number primitive. |
-| `motion.json` | Durations, easings and the computed spring curves. |
-| `typography.json` | 15 steps × families, weights, sizes, leading, tracking. |
-| `semantic-light.json` | The semantic layer, every colour a reference. |
-| `semantic-dark.json` | The same names, resolved for dark. |
+| **Variables** | Color ✓ · Number ✓ · String ✓ · Boolean — doesn't matter |
+| **Styles** | **Typography ✓** · Color ✗ · Effects ✗ · Gradients ✗ |
+| **Toggles** | *Update existing style and variable names* → **ON**. Everything else **OFF**. |
+
+Typography ✓ is what turns the 75 composite tokens into Figma **Text Styles**. Without it you
+get loose numbers and no styles.
+
+Leave *Remove unconnected variables* **OFF** unless this file is the only thing in your Figma
+file.
+
+**4. Export**
+
+**Themes** tab → **Select All** (all 6) → **Export to Figma**.
+
+---
+
+## What you should end up with
+
+**5 collections:**
+
+| Collection | Modes | Tokens |
+|---|---|---|
+| `_Colors Primitives` | Mode 1 | 655 |
+| `_Number Primitives` | Mode 1 | 29 |
+| `Numbers Tokens` | Mode 1 | 64 |
+| `Typography Tokens` | Mode 1 | 64 |
+| `Colors & Elevations Tokens` | **HeyOz Light**, **HeyOz Dark** | 208 each |
+
+**75 Text Styles** — `text/<step>/<weight>`, every one of the 15 type steps × 5 weights.
+
+### Check three things
+
+1. A colour in `Colors & Elevations Tokens` shows an **alias** — `fill/brand → solid/brand/60`
+   — not a raw hex. Same for `Numbers Tokens` → `_Number Primitives`.
+2. `Colors & Elevations Tokens` has **two modes**, not two collections.
+3. Open a text style. `text/display-lg/extrabold` should read **64px / 68 line height /
+   −1.28 letter spacing**, Bricolage Grotesque ExtraBold.
+
+---
+
+## Two manual steps
+
+These can't come from the file. Both take a couple of minutes.
+
+### Shadows → Effect Styles
+
+Figma effect styles can't hold modes, so instead of baking them you bind their colour to the
+mode-aware shadow variable. For each of `shadow/small`, `shadow/medium`, `shadow/large`: create
+an Effect Style with **two Drop Shadow** layers, X = 0, Spread = 0, and bind **each layer's
+colour** to the matching variable in `Colors & Elevations Tokens → elevation/drop-shadow/*`.
+
+The Y and Blur values are in `dist/tokens.css` — search `--oz-shadow-`.
+
+### Hide the primitives
+
+So nobody binds a raw ramp value by accident:
+
+Variables editor → open **`_Colors Primitives`** → select all → right-click → **Hide from
+publishing**. Repeat for **`_Number Primitives`**. Re-publish the library.
+
+Aliases still resolve — the primitives just stop appearing in the picker.
+
+**Bind to `Colors & Elevations Tokens`, never to `_Colors Primitives` directly.**
+
+---
+
+## Honest caveats
+
+**Re-exporting reverts the two manual steps.** *Hide from publishing* and the Effect Styles live
+only in Figma, not in this file. After a future re-export, redo them.
+
+**Four things are deliberately not here**, because Figma cannot hold them:
+
+| | Why |
+|---|---|
+| **Motion** — durations, easings, springs | Figma variables are Color / Number / String / Boolean. There is no duration type and no easing type. They'd import as meaningless strings. Values are in `dist/tokens.css`. |
+| **Fluid type** | A variable is one number. Display and heading ship their **desktop ceiling** in px — `display-lg` is 64, not `clamp(40px … 64px)`. Small-frame mockups need manual down-scaling. |
+| **`container/measure`** (`65ch`) | `ch` has no Figma equivalent. Code only. |
+| **Unitless line height** | The code authors leading as a ratio so it survives the fluid clamp; Figma text styles need px. Converted here — `display-lg` is 68px, which is 1.0625 × 64. |
+
+---
+
+## Why one file and not a folder
+
+The plugin can't open a folder. Its local options are "load one JSON file" and "paste into the
+JSON editor" — a directory of separate token sets is only readable through a **sync provider**
+(GitHub/GitLab/…), which is setup you may not have.
+
+So this is one document with the sets as top-level keys and `$themes` / `$metadata` inline.
+Paste, export, done.
+
+If you *do* wire up GitHub sync later, this same file works unchanged.
 
 ## Why this is not `tokens/`
 
-Same resolved map, different format, and the difference is not cosmetic:
+Same values, different format. `tokens/` is DTCG-2024 for Figma's **native** Variables importer,
+where a colour's value is an object. Tokens Studio needs a string and its own type names, and
+**cannot parse the object form** — pointing it at `tokens/` gives you colours it can't resolve.
 
-- `tokens/` is DTCG-2024 — a colour's `$value` is an **object**
-  (`{ colorSpace, components, alpha, hex }`). Figma's **native** Variables import reads that.
-- Here, `$value` is a **string**: a literal (`"#FFFFFF"`, `"#FC664526"`) or a reference
-  (`"{solid.brand.60}"`). Tokens Studio reads that and **cannot** parse the object form.
+Both folders are generated from one resolved map by `build/build.mjs`, so they can't disagree
+about a value. The build also asserts that all **825 references** in this file resolve, because a
+dangling one is silent: the plugin just never creates that variable.
 
-Pointing Tokens Studio at `tokens/` gives you colours it cannot resolve.
+## The one exception to the alias chain
 
-These files are derived from the emitted `tokens/` documents rather than re-walked from
-`spec.mjs`, so the two sets cannot drift apart on a value.
-
-## The advantage, and the one exception
-
-Every alias here is a **real reference**. `fill/brand` is `{solid.brand.60}`;
-`spacing/spacing-6` is `{number-20}`. Retune a primitive in Figma and everything depending
-on it moves. The build asserts that all 450 references resolve to a token in an earlier set
-— a dangling one is otherwise silent, because the plugin just never creates the variable
-while `dist/` stays correct.
-
-**Ten elevation tokens are literal 8-digit hex, not references, and that is deliberate.**
-Figma discards a variable's local value once it is bound to an alias, and these carry alpha
-0.08–0.90 — so a reference would import them opaque, turning the modal scrim into a solid
-black rectangle. An alias that lies about alpha is worse than no alias.
+Ten elevation tokens are literal 8-digit hex, not references, on purpose. Figma discards a
+variable's local value once it's bound to an alias, and these carry alpha 0.08–0.90 — so a
+reference would import them **opaque**, turning the modal scrim into a solid black rectangle.
