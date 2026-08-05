@@ -1058,29 +1058,68 @@ registry.register({
     );
   },
   Live: function ListboxLive() {
+    /* Stateful, and it was not.
+     *
+     * The first version of this demo rendered the rows with a literal `selected` and no
+     * handler, so hover worked — that is CSS — and clicking did nothing. The rows looked
+     * interactive and were not, which is the one thing a live demo must never be: the whole
+     * argument for rendering the real component here is that a broken state shows up on the
+     * same screen as its own documentation, and a demo that cannot be operated hides exactly
+     * that. `ListboxOption` was fine throughout; it spreads `onClick` and Select has always
+     * passed one. Only the specimen was inert. */
+    const [picked, setPicked] = useState('4-5');
+    const OPTIONS = [
+      { value: '9-16', label: 'Vertical 9:16', description: 'TikTok, Reels, Shorts', group: 'Vertical' },
+      { value: '4-5', label: 'Portrait 4:5', description: 'Feed posts', group: 'Vertical' },
+      { value: '1-1', label: 'Square 1:1', group: 'Other' },
+      { value: '16-9', label: 'Landscape 16:9', description: 'YouTube pre-roll', group: 'Other' },
+      { value: '21-9', label: 'Cinematic 21:9', description: 'Not yet supported', disabled: true, group: 'Other' },
+    ];
+
     return (
       /* position: static overrides the panel's own fixed positioning so the rows can be read
          in place. In use, useAnchor supplies position, top, left, maxHeight and the width
          floor — this demo is the panel without its anchor. */
-      <div className="max-w-[360px]">
-        <ListboxPanel style={{ position: 'static' }}>
-          <ListboxGroup label="Vertical" labelId="lb-demo-vertical">
-            <ListboxOption selected={false} description="TikTok, Reels, Shorts">
-              Vertical 9:16
-            </ListboxOption>
-            <ListboxOption selected description="Feed posts">
-              Portrait 4:5
-            </ListboxOption>
-          </ListboxGroup>
-          <ListboxGroup label="Other" labelId="lb-demo-other">
+      <div className="oz-stack oz-stack-6 max-w-[360px]">
+        <ListboxPanel style={{ position: 'static' }} role="listbox" aria-label="Aspect ratio">
+          {['Vertical', 'Other'].map((g) => (
+            <ListboxGroup key={g} label={g} labelId={`lb-demo-${g.toLowerCase()}`}>
+              {OPTIONS.filter((o) => o.group === g).map((o) => (
+                <ListboxOption
+                  key={o.value}
+                  selected={o.value === picked}
+                  disabled={o.disabled}
+                  description={o.description}
+                  /* A disabled row stays in the DOM and stays announced — it just does not
+                     commit. Removing it would make unavailable indistinguishable from absent. */
+                  onClick={() => !o.disabled && setPicked(o.value)}
+                >
+                  {o.label}
+                </ListboxOption>
+              ))}
+            </ListboxGroup>
+          ))}
+        </ListboxPanel>
+
+        {/* The forced-hover row, kept but moved out of the interactive panel. Inside it, a row
+            frozen in `hover` while the pointer is elsewhere reads as a bug rather than as a
+            specimen — which is what it looked like next to four rows that now respond. */}
+        <div>
+          <p className="pb-space-2 font-mono text-label-sm text-content-tertiary">
+            forced states — not interactive
+          </p>
+          <ListboxPanel style={{ position: 'static' }}>
             <ListboxOption selected={false} forceState="hover">
-              Square 1:1 — forced hover
+              hover
+            </ListboxOption>
+            <ListboxOption selected forceState="selected">
+              selected
             </ListboxOption>
             <ListboxOption selected={false} disabled description="Not yet supported">
-              Cinematic 21:9
+              disabled
             </ListboxOption>
-          </ListboxGroup>
-        </ListboxPanel>
+          </ListboxPanel>
+        </div>
       </div>
     );
   },
@@ -1521,16 +1560,24 @@ registry.register({
             that has not moved. Hover one and its timer pauses; switch tabs and they all do. */}
         <ToastDemo />
 
-        {/* Every variant, frozen, so the paint can be read without racing a timer. */}
-        <div className="oz-stack oz-stack-3 max-w-[400px]">
-          {toastRecipe.variants.map((v) => (
-            <Toast
-              key={v}
-              frozen
-              toast={{ id: 0, variant: v, title: toastRecipe.sampleFor(v) }}
-              onDismiss={() => {}}
-            />
-          ))}
+        {/* Every variant, frozen, so the paint can be read without racing a timer.
+            Labelled as inert because the ✕ on each is a real button that deliberately does
+            nothing here — an unlabelled dead control is the same defect as a chip that says
+            "Toggles" and does not. */}
+        <div>
+          <p className="pb-space-2 font-mono text-label-sm text-content-tertiary">
+            frozen — no timer, and the dismiss button is inert
+          </p>
+          <div className="oz-stack oz-stack-3 max-w-[400px]">
+            {toastRecipe.variants.map((v) => (
+              <Toast
+                key={v}
+                frozen
+                toast={{ id: 0, variant: v, title: toastRecipe.sampleFor(v) }}
+                onDismiss={() => {}}
+              />
+            ))}
+          </div>
         </div>
 
         <p className="max-w-[58ch] text-body-sm text-content-tertiary">
@@ -1671,6 +1718,30 @@ registry.register({
 
 /* -- Chip ------------------------------------------------------------------ */
 
+/** Three filter chips that actually toggle, so `aria-pressed` can be seen changing. */
+function ChipToggleDemo() {
+  const [on, setOn] = useState<string[]>(['9:16']);
+  const toggle = (v: string) =>
+    setOn((prev) => (prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]));
+
+  return (
+    <div className={row}>
+      {['9:16', '1:1', '16:9'].map((v) => (
+        <Chip
+          key={v}
+          variant={on.includes(v) ? 'selected' : 'neutral'}
+          onClick={() => toggle(v)}
+        >
+          {v}
+        </Chip>
+      ))}
+      <span className="font-mono text-label-sm text-content-tertiary">
+        press them — aria-pressed follows
+      </span>
+    </div>
+  );
+}
+
 function ChipDemo() {
   const [tags, setTags] = useState(['Skincare', 'Vertical 9:16', 'Seedance 2']);
   return (
@@ -1713,14 +1784,18 @@ registry.register({
         <ChipDemo />
 
         {/* Clickable: the WHOLE chip is a button, with aria-pressed. Both together is
-            deliberately unsupported — a button inside a button is invalid HTML. */}
+            deliberately unsupported — a button inside a button is invalid HTML.
+
+            It really toggles. It used to be `onClick={() => {}}` under a label reading
+            "Toggles", which is the same defect the Listbox demo had: a control that looks
+            interactive, is announced as a toggle button, and does nothing when pressed. */}
+        <ChipToggleDemo />
         <div className={row}>
-          <Chip variant="selected" onClick={() => {}}>
-            Toggles — aria-pressed
-          </Chip>
           <Chip icon={<Glyph />} size="sm">
             sm, with an icon
           </Chip>
+          {/* A no-op handler is correct here and only here — the chip is disabled, so nothing
+              should happen, and passing one is what makes the ✕ render at all. */}
           <Chip disabled onRemove={() => {}}>
             Disabled
           </Chip>
