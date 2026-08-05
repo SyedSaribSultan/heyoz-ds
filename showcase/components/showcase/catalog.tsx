@@ -1181,10 +1181,15 @@ registry.register({
           maxSize={50_000_000}
           size="lg"
         />
-        {/* Every variant, forced, so the active state can be read without a file in hand. */}
-        <div className="oz-stack oz-stack-4">
+        {/* Every variant, forced, so `active` can be read without a file in hand.
+            Three-up rather than stacked: six full-width dropzones put this specimen at
+            1354px against the suite's 1200px ceiling, and that ceiling is a real guard —
+            it is what catches a specimen that has quietly become the whole page. Widening
+            the exemption for one component would have removed the guard from the other
+            twenty. A grid is the honest fix. */}
+        <div className="grid gap-space-4 md:grid-cols-3">
           {dropzoneRecipe.variants.map((v) => (
-            <Dropzone key={v} forceVariant={v} title={`forced: ${v}`} accept="image/*" />
+            <Dropzone key={v} forceVariant={v} title={`forced: ${v}`} />
           ))}
         </div>
         <Dropzone label="Brand assets" hint="Locked on the free plan." disabled />

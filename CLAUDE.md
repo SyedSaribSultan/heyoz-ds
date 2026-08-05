@@ -102,6 +102,26 @@ set is large, generate the assertions in `build.mjs` rather than listing them �
 the disabled-fill sweep in `validate()`, which exists because a hand-written list
 failed three times in a row.
 
+**4b. Accent text on a surface you do not paint takes the `-hover` step.** A component
+that renders text without also painting its background — a field's error message, a
+status line, a link — can land on any rung of the surface ladder, and the top two rungs
+are the light ones. In dark, on `surface/elevated` and `surface/overlay`, all six accent
+content tokens are **under** 4.5:1: `content/critical` and `content/info` at 3.89,
+`content/warning` 3.93, `content/brand` and `content/link` 4.02, `content/success` 4.08.
+Those two surfaces are Dialog and Card/`overlay`, which is where forms live. The `-hover`
+step of each clears every rung in both modes — 4.54 at worst — so `content/critical-hover`
+is the correct token for an error message even though the name reads oddly. `button/tonal`
+already does this for its active label. The same applies over a translucent fill, which is
+worse: `fill/selected` composites differently on every surface, so `content/selected` on it
+is 6.08:1 over the page and 3.55:1 over a dialog.
+
+`verify:contrast` **cannot see any of this** — it measures a foreground token against a
+background *token*, skips any binding with no `bg`, and flattens alpha over the page.
+`verify:composite` is the gate that does, across 276 pairings; the 18 that fail today are
+recorded in it with their measured values and argued in `docs/DECISIONS.md` §G. Do not add
+a new one to `KNOWN` to make the build pass — that list is a ratchet, and it fails on a new
+failure, on a regression, and on an entry that has been fixed but left listed.
+
 **5. Verify numbers, do not restate them.** If you write a ratio in a comment or a
 doc, compute it first. Several previously-shipped figures were wrong, including one
 in the section a procurement reviewer would read. `reports/audit.json` has every
