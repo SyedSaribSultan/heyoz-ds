@@ -50,7 +50,10 @@ for (const path of Object.keys(audit.light)) {
  *  itself a failure, so the list cannot rot. */
 const EXEMPT: Record<string, string> = {
   background: 'the page itself — every screenshot is a specimen of it',
-  sidebar: 'demonstrated by the Assembled screen, which is a real sidebar rather than a swatch',
+  /* `sidebar` was listed here and has been deleted, along with the eight tokens it covered —
+   * see the deletion note in spec.mjs. The self-cleaning half of this check is what reported it:
+   * the entry survived the token group by exactly one build, and the gate named it rather than
+   * leaving a dead exemption behind. */
 };
 
 const SOURCE_DIRS = ['components', 'app', 'lib'];

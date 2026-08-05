@@ -66,7 +66,7 @@ export function StudioSidebar({ current = 'Content Studio' }: { current?: string
        comment naming the pattern fails the gate exactly as loudly as the bug would —
        which is how this comment's first draft kept the build red after the code was
        already fixed. */
-    <aside className="oz-stack oz-stack-5 border-b-2 border-sidebar-border bg-sidebar-background p-space-4 lg:sticky lg:top-0 lg:h-screen lg:border-b-0 lg:border-r-2">
+    <aside className="oz-stack oz-stack-5 border-b-2 border-border-secondary bg-surface-secondary p-space-4 lg:sticky lg:top-0 lg:h-screen lg:border-b-0 lg:border-r-2">
       {/* Wordmark. The tile is fill/fixed with a content/fixed-primary glyph — the two
           tokens that mean the same thing in both modes — because a logo that inverts
           with the theme is a logo somebody will eventually have to explain. It is the
@@ -75,22 +75,22 @@ export function StudioSidebar({ current = 'Content Studio' }: { current?: string
         <span className="grid h-space-8 w-space-8 place-items-center rounded-4 bg-fill-fixed text-content-fixed-primary">
           <OzMarkIcon />
         </span>
-        <span className="font-display text-heading-xs font-bold text-sidebar-content">HeyOz</span>
+        <span className="font-display text-heading-xs font-bold text-content-primary">HeyOz</span>
       </div>
 
       {/* Workspace switcher. A button, not a link: it opens a picker, and the chevron
           is the only thing saying so. */}
       <button
         type="button"
-        className="flex w-full items-center gap-space-3 rounded-5 border-2 border-sidebar-border bg-fill-elevated px-space-3 py-space-2 text-left transition-colors duration-effects-fast ease-effects-fast hover:bg-fill-elevated-hover focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
+        className="flex w-full items-center gap-space-3 rounded-5 border-2 border-border-secondary bg-fill-elevated px-space-3 py-space-2 text-left transition-colors duration-effects-fast ease-effects-fast hover:bg-fill-elevated-hover focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
         aria-label="Switch workspace, currently Apple"
       >
         <span
           aria-hidden="true"
           className="h-space-6 w-space-6 shrink-0 rounded-3 bg-fill-inverse"
         />
-        <span className="min-w-0 flex-1 truncate text-label-md text-sidebar-content">Apple</span>
-        <span className="text-sidebar-content-muted">
+        <span className="min-w-0 flex-1 truncate text-label-md text-content-primary">Apple</span>
+        <span className="text-content-secondary">
           <ChevronRightIcon />
         </span>
       </button>
@@ -120,18 +120,18 @@ export function StudioSidebar({ current = 'Content Studio' }: { current?: string
                      * below, so the same argument applies with more force.
                      *
                      * REVERTIBLE IN ONE LINE: swap for
-                     * `bg-sidebar-item-selected font-medium text-sidebar-content-selected`.
+                     * `bg-fill-selected font-medium text-content-selected`.
                      * Both pairs are gated; this one is quieter and matches the mock. */
                     on
-                      ? 'bg-sidebar-item-active font-medium text-sidebar-content'
-                      : 'text-sidebar-content-muted hover:bg-sidebar-item-hover hover:text-sidebar-content'
+                      ? 'bg-fill-secondary-active font-medium text-content-primary'
+                      : 'text-content-secondary hover:bg-fill-secondary-hover hover:text-content-primary'
                   }`}
                 >
                   <Icon />
                   <span className="min-w-0 flex-1 truncate">{label}</span>
                   {isNew && <Badge variant="brand">NEW</Badge>}
                   {expandable && (
-                    <span aria-hidden="true" className="text-sidebar-content-muted">
+                    <span aria-hidden="true" className="text-content-secondary">
                       <ChevronRightIcon />
                     </span>
                   )}
@@ -147,13 +147,13 @@ export function StudioSidebar({ current = 'Content Studio' }: { current?: string
       </Button>
 
       <div>
-        <p className="px-space-1 pb-space-2 font-mono text-label-xs uppercase text-sidebar-content-muted">
+        <p className="px-space-1 pb-space-2 font-mono text-label-xs uppercase text-content-secondary">
           Recent chats
         </p>
         {/* An empty state that states the fact and stops. There is no action to offer
             that the New Chat button above does not already carry, and an empty state
             repeating the button beside it is an empty state apologising. */}
-        <p className="px-space-1 text-body-sm text-sidebar-content-muted">No conversations yet</p>
+        <p className="px-space-1 text-body-sm text-content-secondary">No conversations yet</p>
       </div>
 
       {/* Account. mt-auto rather than a fixed offset, so the rail's own content decides
@@ -161,7 +161,7 @@ export function StudioSidebar({ current = 'Content Studio' }: { current?: string
       <div className="mt-auto flex items-center gap-space-2">
         <button
           type="button"
-          className="flex min-w-0 flex-1 items-center gap-space-3 rounded-5 border-2 border-sidebar-border bg-fill-elevated px-space-2 py-space-2 text-left transition-colors duration-effects-fast ease-effects-fast hover:bg-fill-elevated-hover focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
+          className="flex min-w-0 flex-1 items-center gap-space-3 rounded-5 border-2 border-border-secondary bg-fill-elevated px-space-2 py-space-2 text-left transition-colors duration-effects-fast ease-effects-fast hover:bg-fill-elevated-hover focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
           aria-label="Account: Syed Sarib S"
         >
           <span
@@ -169,8 +169,8 @@ export function StudioSidebar({ current = 'Content Studio' }: { current?: string
             className="h-space-7 w-space-7 shrink-0 rounded-full bg-fill-brand-secondary"
           />
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-label-md text-sidebar-content">Syed Sarib S…</span>
-            <span className="block truncate text-label-sm text-sidebar-content-muted">
+            <span className="block truncate text-label-md text-content-primary">Syed Sarib S…</span>
+            <span className="block truncate text-label-sm text-content-secondary">
               sadakhan2002…
             </span>
           </span>

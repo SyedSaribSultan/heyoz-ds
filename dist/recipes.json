@@ -1,7 +1,7 @@
 {
   "$generated": "by showcase/scripts/emit-recipes.ts — do not edit",
   "$description": "The HeyOz component contract. One entry per component: variants, states, the token each state binds per role, and the value that token resolves to in each mode. Generated from the same recipe objects the components compile from, so this cannot describe a component that does not exist.",
-  "generatedAt": "2026-08-05T11:03:06.033Z",
+  "generatedAt": "2026-08-05T11:55:57.848Z",
   "components": [
     {
       "id": "button",
@@ -1805,12 +1805,12 @@
                   "path": "color/fill/critical",
                   "values": {
                     "light": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     }
@@ -1846,12 +1846,12 @@
                   "path": "color/fill/critical-hover",
                   "values": {
                     "light": {
-                      "value": "#C52450",
+                      "value": "#C72734",
                       "primitive": "solid/error/70",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#EE5071",
+                      "value": "#F05255",
                       "primitive": "solid/error/55",
                       "alpha": 1
                     }
@@ -1887,12 +1887,12 @@
                   "path": "color/fill/critical-active",
                   "values": {
                     "light": {
-                      "value": "#9D183E",
+                      "value": "#9E1A26",
                       "primitive": "solid/error/80",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#F5617D",
+                      "value": "#F76363",
                       "primitive": "solid/error/50",
                       "alpha": 1
                     }
@@ -4488,12 +4488,12 @@
                   "path": "color/fill/critical",
                   "values": {
                     "light": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     }
@@ -4577,12 +4577,12 @@
                   "path": "color/fill/critical-secondary",
                   "values": {
                     "light": {
-                      "value": "#F5617D26",
+                      "value": "#F7636326",
                       "primitive": "opacity-15/error/50",
                       "alpha": 0.15
                     },
                     "dark": {
-                      "value": "#E63C6526",
+                      "value": "#E83E4726",
                       "primitive": "opacity-15/error/60",
                       "alpha": 0.15
                     }
@@ -4595,12 +4595,12 @@
                   "path": "color/content/critical",
                   "values": {
                     "light": {
-                      "value": "#9D183E",
+                      "value": "#9E1A26",
                       "primitive": "solid/error/80",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#F5617D",
+                      "value": "#F76363",
                       "primitive": "solid/error/50",
                       "alpha": 1
                     }
@@ -4618,12 +4618,12 @@
                   "path": "color/fill/critical-secondary-disabled",
                   "values": {
                     "light": {
-                      "value": "#F5617D14",
+                      "value": "#F7636314",
                       "primitive": "opacity-8/error/50",
                       "alpha": 0.08
                     },
                     "dark": {
-                      "value": "#E63C6514",
+                      "value": "#E83E4714",
                       "primitive": "opacity-8/error/60",
                       "alpha": 0.08
                     }
@@ -4636,12 +4636,12 @@
                   "path": "color/content/critical-disabled",
                   "values": {
                     "light": {
-                      "value": "#9D183E80",
+                      "value": "#9E1A2680",
                       "primitive": "opacity-50/error/80",
                       "alpha": 0.5
                     },
                     "dark": {
-                      "value": "#F5617D80",
+                      "value": "#F7636380",
                       "primitive": "opacity-50/error/50",
                       "alpha": 0.5
                     }
@@ -5019,12 +5019,12 @@
                   "path": "color/content/critical-hover",
                   "values": {
                     "light": {
-                      "value": "#75112D",
+                      "value": "#77131B",
                       "primitive": "solid/error/90",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FE8597",
+                      "value": "#FF8783",
                       "primitive": "solid/error/40",
                       "alpha": 1
                     }
@@ -5826,12 +5826,12 @@
                   "path": "color/border/critical",
                   "values": {
                     "light": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     }
@@ -5885,12 +5885,12 @@
                   "path": "color/border/critical-hover",
                   "values": {
                     "light": {
-                      "value": "#C52450",
+                      "value": "#C72734",
                       "primitive": "solid/error/70",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#F5617D",
+                      "value": "#F76363",
                       "primitive": "solid/error/50",
                       "alpha": 1
                     }
@@ -6314,12 +6314,12 @@
                   "path": "color/content/critical-hover",
                   "values": {
                     "light": {
-                      "value": "#75112D",
+                      "value": "#77131B",
                       "primitive": "solid/error/90",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FE8597",
+                      "value": "#FF8783",
                       "primitive": "solid/error/40",
                       "alpha": 1
                     }
@@ -6337,12 +6337,12 @@
                   "path": "color/fill/critical-secondary",
                   "values": {
                     "light": {
-                      "value": "#F5617D26",
+                      "value": "#F7636326",
                       "primitive": "opacity-15/error/50",
                       "alpha": 0.15
                     },
                     "dark": {
-                      "value": "#E63C6526",
+                      "value": "#E83E4726",
                       "primitive": "opacity-15/error/60",
                       "alpha": 0.15
                     }
@@ -6355,12 +6355,12 @@
                   "path": "color/content/critical-active",
                   "values": {
                     "light": {
-                      "value": "#520C1E",
+                      "value": "#520D12",
                       "primitive": "solid/error/100",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FFB0B9",
+                      "value": "#FFB2AD",
                       "primitive": "solid/error/30",
                       "alpha": 1
                     }
@@ -6651,12 +6651,12 @@
                   "path": "color/surface/critical-flat",
                   "values": {
                     "light": {
-                      "value": "#FFEAEC",
+                      "value": "#FFEBE9",
                       "primitive": "solid/error/10",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#520C1E",
+                      "value": "#520D12",
                       "primitive": "solid/error/100",
                       "alpha": 1
                     }
@@ -7003,12 +7003,12 @@
                   "path": "color/fill/critical-secondary",
                   "values": {
                     "light": {
-                      "value": "#F5617D26",
+                      "value": "#F7636326",
                       "primitive": "opacity-15/error/50",
                       "alpha": 0.15
                     },
                     "dark": {
-                      "value": "#E63C6526",
+                      "value": "#E83E4726",
                       "primitive": "opacity-15/error/60",
                       "alpha": 0.15
                     }
@@ -7021,12 +7021,12 @@
                   "path": "color/content/critical-hover",
                   "values": {
                     "light": {
-                      "value": "#75112D",
+                      "value": "#77131B",
                       "primitive": "solid/error/90",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FE8597",
+                      "value": "#FF8783",
                       "primitive": "solid/error/40",
                       "alpha": 1
                     }
@@ -9057,12 +9057,12 @@
                   "path": "color/content/critical-hover",
                   "values": {
                     "light": {
-                      "value": "#75112D",
+                      "value": "#77131B",
                       "primitive": "solid/error/90",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FE8597",
+                      "value": "#FF8783",
                       "primitive": "solid/error/40",
                       "alpha": 1
                     }
@@ -9358,12 +9358,12 @@
                   "path": "color/fill/critical",
                   "values": {
                     "light": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     }
@@ -9394,12 +9394,12 @@
                   "path": "color/border/critical",
                   "values": {
                     "light": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     }
@@ -9674,12 +9674,12 @@
                   "path": "color/border/critical",
                   "values": {
                     "light": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     }
@@ -9733,12 +9733,12 @@
                   "path": "color/border/critical-hover",
                   "values": {
                     "light": {
-                      "value": "#C52450",
+                      "value": "#C72734",
                       "primitive": "solid/error/70",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#F5617D",
+                      "value": "#F76363",
                       "primitive": "solid/error/50",
                       "alpha": 1
                     }
@@ -9792,12 +9792,12 @@
                   "path": "color/border/critical-disabled",
                   "values": {
                     "light": {
-                      "value": "#E63C6580",
+                      "value": "#E83E4780",
                       "primitive": "opacity-50/error/60",
                       "alpha": 0.5
                     },
                     "dark": {
-                      "value": "#E63C6580",
+                      "value": "#E83E4780",
                       "primitive": "opacity-50/error/60",
                       "alpha": 0.5
                     }
@@ -10072,12 +10072,12 @@
                   "path": "color/border/critical",
                   "values": {
                     "light": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     }
@@ -10131,12 +10131,12 @@
                   "path": "color/border/critical-hover",
                   "values": {
                     "light": {
-                      "value": "#C52450",
+                      "value": "#C72734",
                       "primitive": "solid/error/70",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#F5617D",
+                      "value": "#F76363",
                       "primitive": "solid/error/50",
                       "alpha": 1
                     }
@@ -10190,12 +10190,12 @@
                   "path": "color/border/critical-disabled",
                   "values": {
                     "light": {
-                      "value": "#E63C6580",
+                      "value": "#E83E4780",
                       "primitive": "opacity-50/error/60",
                       "alpha": 0.5
                     },
                     "dark": {
-                      "value": "#E63C6580",
+                      "value": "#E83E4780",
                       "primitive": "opacity-50/error/60",
                       "alpha": 0.5
                     }
@@ -10470,12 +10470,12 @@
                   "path": "color/border/critical",
                   "values": {
                     "light": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#E63C65",
+                      "value": "#E83E47",
                       "primitive": "solid/error/60",
                       "alpha": 1
                     }
@@ -10529,12 +10529,12 @@
                   "path": "color/border/critical-hover",
                   "values": {
                     "light": {
-                      "value": "#C52450",
+                      "value": "#C72734",
                       "primitive": "solid/error/70",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#F5617D",
+                      "value": "#F76363",
                       "primitive": "solid/error/50",
                       "alpha": 1
                     }
@@ -10588,12 +10588,12 @@
                   "path": "color/border/critical-disabled",
                   "values": {
                     "light": {
-                      "value": "#E63C6580",
+                      "value": "#E83E4780",
                       "primitive": "opacity-50/error/60",
                       "alpha": 0.5
                     },
                     "dark": {
-                      "value": "#E63C6580",
+                      "value": "#E83E4780",
                       "primitive": "opacity-50/error/60",
                       "alpha": 0.5
                     }
@@ -11514,12 +11514,12 @@
                   "path": "color/surface/critical",
                   "values": {
                     "light": {
-                      "value": "#FFEAEC",
+                      "value": "#FFEBE9",
                       "primitive": "solid/error/10",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#E63C6526",
+                      "value": "#E83E4726",
                       "primitive": "opacity-15/error/60",
                       "alpha": 0.15
                     }

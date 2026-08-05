@@ -22,7 +22,7 @@
  *
  * WHY IT RECORDS RATHER THAN FAILS, for now. It found twelve real failures on its first
  * run: all six accent content tokens are under 4.5:1 on `surface/elevated` and
- * `surface/overlay` in dark, 3.89–4.08:1. Fixing them means moving six tokens one ramp step
+ * `surface/overlay` in dark, 3.91–4.08:1. Fixing them means moving six tokens one ramp step
  * in `spec.mjs`, which repaints every accent in dark — including `content/brand`, which is
  * the accent word in the `/ai-ugc` headline and the tightest margin in `verify-glow` at
  * 5.01:1. That is a deliberate design decision with a real blast radius, not a drive-by, and
@@ -160,12 +160,12 @@ const ALPHA_FILLS: Array<{ fill: string; on: readonly string[] }> = [
   /* All five status washes, each carrying the matching `-hover` content step.
    *
    * These are Avatar's five initials grounds and Menu's destructive hover row, and they are
-   * the tightest family in the system: over `surface/elevated` in dark they land at 4.51 to
+   * the tightest family in the system: over `surface/elevated` in dark they land at 4.54 to
    * 4.88, so four of the five sit within 0.4 of the floor. None of that is visible to
    * `verify:contrast`, which flattens the wash over the page and reports 6–8:1.
    *
    * `content/critical-active` is listed alongside `critical-hover` because Menu's hover row
-   * needs the extra step — `critical-hover` there is 4.51:1, over the floor by 0.01, which is
+   * needs the extra step — `critical-hover` there is 4.54:1, over the floor by 0.04, which is
    * a coincidence and not a margin. Listing both keeps the tight one on the report. */
   { fill: 'fill/brand-secondary', on: ['content/brand-hover', 'content/primary'] },
   { fill: 'fill/success-secondary', on: ['content/success-hover', 'content/primary'] },
@@ -204,8 +204,8 @@ const KNOWN: Record<string, number> = {
   'dark content/success on surface/overlay': 4.08,
   'dark content/warning on surface/elevated': 3.93,
   'dark content/warning on surface/overlay': 3.93,
-  'dark content/critical on surface/elevated': 3.89,
-  'dark content/critical on surface/overlay': 3.89,
+  'dark content/critical on surface/elevated': 3.91,
+  'dark content/critical on surface/overlay': 3.91,
   'dark content/info on surface/elevated': 3.89,
   'dark content/info on surface/overlay': 3.89,
   'dark content/link on surface/elevated': 4.02,

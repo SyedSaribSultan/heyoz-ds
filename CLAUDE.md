@@ -106,7 +106,7 @@ failed three times in a row.
 that renders text without also painting its background — a field's error message, a
 status line, a link — can land on any rung of the surface ladder, and the top two rungs
 are the light ones. In dark, on `surface/elevated` and `surface/overlay`, all six accent
-content tokens are **under** 4.5:1: `content/critical` and `content/info` at 3.89,
+content tokens are **under** 4.5:1: `content/info` at 3.89, `content/critical` 3.91,
 `content/warning` 3.93, `content/brand` and `content/link` 4.02, `content/success` 4.08.
 Those two surfaces are Dialog and Card/`overlay`, which is where forms live. The `-hover`
 step of each clears every rung in both modes — 4.54 at worst — so `content/critical-hover`

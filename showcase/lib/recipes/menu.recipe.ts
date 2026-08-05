@@ -22,7 +22,7 @@ class MenuRecipe extends ComponentRecipe<MenuVariant, MenuSize> {
       'Arrow keys move focus and commit NOTHING. That is the opposite of RadioGroup, where selection follows focus, and the difference is that a radio group holds a value while a menu fires actions. A menu where arrowing down triggered each item would delete a file on the way past — so the two use the same useRovingFocus hook with `onFocusChange` deliberately unwired.',
       'Disabled items stay in the arrow sequence, which is also the opposite of RadioGroup. useRovingFocus takes `skipDisabled: false` here on purpose: a screen-reader user looking for "Duplicate" needs to find it and hear that it is unavailable, where an unreachable item is indistinguishable from one that was never there. A radio group skips instead, because stopping on an unselectable option while selection follows focus would mean arrowing onto it and silently failing.',
       'destructive is a variant rather than a colour prop because of its hover. A red row that hovers to the same neutral grey as every other row stops being red in the one instant the pointer is on it and the click is imminent — so it hovers to a red wash instead, and the warning survives the moment it exists for.',
-      'The destructive row is content/critical-hover, not content/critical. The menu panel is surface/overlay, where content/critical measures 3.89:1 in dark — under the floor. CLAUDE.md rule 4b, and the same step Field\'s error message reaches for.',
+      'The destructive row is content/critical-hover, not content/critical. The menu panel is surface/overlay, where content/critical measures 3.91:1 in dark — under the floor. CLAUDE.md rule 4b, and the same step Field\'s error message reaches for.',
       'A menu item is a <button> in a <div role="menu">, and the roles are set explicitly rather than left to the native semantics: role="menuitem" is what makes a screen reader announce "menu, 5 items" and read the position, which a list of bare buttons does not. The element stays a button so Enter, Space and the click target come for free.',
       'MenuCheckItem is role="menuitemcheckbox" and keeps the menu OPEN when toggled, where a plain item closes it. Toggling three view options should not mean reopening the menu three times — and the check mark moving in place is the confirmation, so nothing is lost by staying.',
       'The separator is role="separator" and is presentational. A group with a heading is MenuGroup, which is role="group" with aria-labelledby — a separator is not a substitute for a label, because it says "these are different" without ever saying how.',
@@ -65,15 +65,15 @@ class MenuRecipe extends ComponentRecipe<MenuVariant, MenuSize> {
     destructive: {
       intent: 'Deletes something. Never the first item, and never adjacent to a common one.',
       /* content/critical-hover at rest — rule 4b. The panel is surface/overlay, where
-       * content/critical is 3.89:1 in dark. */
+       * content/critical is 3.91:1 in dark. */
       base: { bg: 'surface-overlay', fg: 'content-critical-hover' },
       /* Hovers to a red wash, not to neutral grey — see the note; this is the whole reason
        * destructive is a variant rather than a colour prop.
        *
        * The LABEL moves with the wash, and it has to. Keeping `content/critical-hover` on
-       * `fill/critical-secondary` over `surface/overlay` measures 4.51:1 in dark — it clears
-       * the floor by 0.01, which is not a margin, it is a coincidence that the next ramp
-       * move deletes. `content/critical-active` is the next step out and measures 6.09:1 on
+       * `fill/critical-secondary` over `surface/overlay` measures 4.54:1 in dark — it clears
+       * the floor by 0.04, which is not a margin, it is a coincidence that the next ramp
+       * move deletes. `content/critical-active` is the next step out and measures 6.14:1 on
        * the same ground. Same trade `button/tonal` makes on its active state, and the same
        * reason: when the ground moves toward the text, the text has to move away from it. */
       hover: { bg: 'fill-critical-secondary', fg: 'content-critical-active' },

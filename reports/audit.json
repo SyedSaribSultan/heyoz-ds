@@ -1,20 +1,20 @@
 {
   "$generated": "GENERATED FILE — DO NOT EDIT. Overwritten by `node build/build.mjs`. Change build/spec.mjs or build/palette.mjs and rebuild. See CLAUDE.md.",
-  "generatedAt": "2026-08-05T11:04:42.863Z",
+  "generatedAt": "2026-08-05T11:50:33.898Z",
   "sources": {
-    "build/palette.mjs": 1785759350845.3977,
+    "build/palette.mjs": 1785930559895.844,
     "build/motion.mjs": 1785509597309.4634,
     "build/layout.mjs": 1785739856175.4363,
-    "build/spec.mjs": 1785759403231.3635,
-    "build/build.mjs": 1785791244296.3965
+    "build/spec.mjs": 1785930595733.5884,
+    "build/build.mjs": 1785930624669.3223
   },
   "namespace": "oz",
   "counts": {
     "colorPrimitives": 655,
     "numberPrimitives": 29,
-    "semanticPerMode": 210,
+    "semanticPerMode": 202,
     "typeSteps": 15,
-    "unusedPrimitives": 503
+    "unusedPrimitives": 504
   },
   "contrast": [
     {
@@ -113,7 +113,7 @@
       "mode": "light",
       "fg": "color/content/critical",
       "bg": "color/background",
-      "ratio": 7.97,
+      "ratio": 7.99,
       "min": 4.5,
       "pass": true
     },
@@ -123,7 +123,7 @@
       "mode": "light",
       "fg": "color/content/critical",
       "bg": "color/surface/secondary",
-      "ratio": 6.83,
+      "ratio": 6.84,
       "min": 4.5,
       "pass": true
     },
@@ -133,7 +133,7 @@
       "mode": "light",
       "fg": "color/content/critical",
       "bg": "color/surface/tertiary",
-      "ratio": 5.72,
+      "ratio": 5.73,
       "min": 4.5,
       "pass": true
     },
@@ -201,16 +201,6 @@
       "kind": "contrast",
       "metric": "wcag",
       "mode": "light",
-      "fg": "color/sidebar/content",
-      "bg": "color/sidebar/background",
-      "ratio": 17.35,
-      "min": 4.5,
-      "pass": true
-    },
-    {
-      "kind": "contrast",
-      "metric": "wcag",
-      "mode": "light",
       "fg": "color/content/primary",
       "bg": "color/surface/brand-flat",
       "ratio": 17.74,
@@ -223,7 +213,7 @@
       "mode": "light",
       "fg": "color/content/primary",
       "bg": "color/surface/critical-flat",
-      "ratio": 17.58,
+      "ratio": 17.65,
       "min": 4.5,
       "pass": true
     },
@@ -371,19 +361,9 @@
       "kind": "contrast",
       "metric": "wcag",
       "mode": "light",
-      "fg": "color/sidebar/content-selected",
-      "bg": "color/sidebar/background",
+      "fg": "color/content/selected",
+      "bg": "color/surface/secondary",
       "ratio": 6.1,
-      "min": 4.5,
-      "pass": true
-    },
-    {
-      "kind": "contrast",
-      "metric": "wcag",
-      "mode": "light",
-      "fg": "color/sidebar/content-selected",
-      "bg": "color/sidebar/item-selected",
-      "ratio": 6.07,
       "min": 4.5,
       "pass": true
     },
@@ -633,7 +613,7 @@
       "mode": "light",
       "fg": "color/content/critical-inverse",
       "bg": "color/surface/inverse",
-      "ratio": 6.64,
+      "ratio": 6.67,
       "min": 4.5,
       "pass": true
     },
@@ -773,7 +753,7 @@
       "mode": "dark",
       "fg": "color/content/critical",
       "bg": "color/background",
-      "ratio": 6.64,
+      "ratio": 6.67,
       "min": 4.5,
       "pass": true
     },
@@ -783,7 +763,7 @@
       "mode": "dark",
       "fg": "color/content/critical",
       "bg": "color/surface/secondary",
-      "ratio": 5.39,
+      "ratio": 5.41,
       "min": 4.5,
       "pass": true
     },
@@ -793,7 +773,7 @@
       "mode": "dark",
       "fg": "color/content/critical",
       "bg": "color/surface/tertiary",
-      "ratio": 4.56,
+      "ratio": 4.58,
       "min": 4.5,
       "pass": true
     },
@@ -861,16 +841,6 @@
       "kind": "contrast",
       "metric": "wcag",
       "mode": "dark",
-      "fg": "color/sidebar/content",
-      "bg": "color/sidebar/background",
-      "ratio": 16.72,
-      "min": 4.5,
-      "pass": true
-    },
-    {
-      "kind": "contrast",
-      "metric": "wcag",
-      "mode": "dark",
       "fg": "color/content/primary",
       "bg": "color/surface/brand-flat",
       "ratio": 12.16,
@@ -883,7 +853,7 @@
       "mode": "dark",
       "fg": "color/content/primary",
       "bg": "color/surface/critical-flat",
-      "ratio": 12.58,
+      "ratio": 12.63,
       "min": 4.5,
       "pass": true
     },
@@ -1031,19 +1001,9 @@
       "kind": "contrast",
       "metric": "wcag",
       "mode": "dark",
-      "fg": "color/sidebar/content-selected",
-      "bg": "color/sidebar/background",
-      "ratio": 6.62,
-      "min": 4.5,
-      "pass": true
-    },
-    {
-      "kind": "contrast",
-      "metric": "wcag",
-      "mode": "dark",
-      "fg": "color/sidebar/content-selected",
-      "bg": "color/sidebar/item-selected",
-      "ratio": 6.08,
+      "fg": "color/content/selected",
+      "bg": "color/surface/secondary",
+      "ratio": 5.57,
       "min": 4.5,
       "pass": true
     },
@@ -1293,7 +1253,7 @@
       "mode": "dark",
       "fg": "color/content/critical-inverse",
       "bg": "color/surface/inverse",
-      "ratio": 7.34,
+      "ratio": 7.35,
       "min": 4.5,
       "pass": true
     },
@@ -1381,16 +1341,6 @@
       "kind": "visibility",
       "metric": "wcag",
       "mode": "light",
-      "fg": "color/sidebar/border",
-      "bg": "color/sidebar/background",
-      "ratio": 1.12,
-      "min": 1.1,
-      "pass": true
-    },
-    {
-      "kind": "visibility",
-      "metric": "wcag",
-      "mode": "light",
       "fg": "color/surface/primary",
       "bg": "color/background",
       "ratio": 1.09,
@@ -1435,16 +1385,6 @@
       "bg": "color/surface/primary",
       "ratio": 4.33,
       "min": 1.6,
-      "pass": true
-    },
-    {
-      "kind": "visibility",
-      "metric": "wcag",
-      "mode": "dark",
-      "fg": "color/sidebar/border",
-      "bg": "color/sidebar/background",
-      "ratio": 1.19,
-      "min": 1.1,
       "pass": true
     },
     {
@@ -1553,7 +1493,7 @@
       "mode": "light",
       "fg": "color/content/on-critical",
       "bg": "color/fill/critical",
-      "ratio": 71.77,
+      "ratio": 71.66,
       "min": 60,
       "pass": true
     },
@@ -1563,7 +1503,7 @@
       "mode": "light",
       "fg": "color/content/on-critical",
       "bg": "color/fill/critical-hover",
-      "ratio": 81.72,
+      "ratio": 81.52,
       "min": 60,
       "pass": true
     },
@@ -1573,7 +1513,7 @@
       "mode": "light",
       "fg": "color/content/on-critical",
       "bg": "color/fill/critical-active",
-      "ratio": 90.82,
+      "ratio": 90.84,
       "min": 60,
       "pass": true
     },
@@ -1703,7 +1643,7 @@
       "mode": "dark",
       "fg": "color/content/on-critical",
       "bg": "color/fill/critical",
-      "ratio": 71.77,
+      "ratio": 71.66,
       "min": 60,
       "pass": true
     },
@@ -1713,7 +1653,7 @@
       "mode": "dark",
       "fg": "color/content/on-critical",
       "bg": "color/fill/critical-hover",
-      "ratio": 66.86,
+      "ratio": 66.7,
       "min": 60,
       "pass": true
     },
@@ -1723,7 +1663,7 @@
       "mode": "dark",
       "fg": "color/content/on-critical",
       "bg": "color/fill/critical-active",
-      "ratio": 61.86,
+      "ratio": 61.66,
       "min": 60,
       "pass": true
     },
@@ -2518,7 +2458,7 @@
       "target": "solid/warning/10"
     },
     "color/surface/critical": {
-      "hex": "#FFEAEC",
+      "hex": "#FFEBE9",
       "alpha": 1,
       "target": "solid/error/10"
     },
@@ -2543,7 +2483,7 @@
       "target": "solid/warning/10"
     },
     "color/surface/critical-flat": {
-      "hex": "#FFEAEC",
+      "hex": "#FFEBE9",
       "alpha": 1,
       "target": "solid/error/10"
     },
@@ -2773,17 +2713,17 @@
       "target": "solid/neutral/25"
     },
     "color/fill/critical": {
-      "hex": "#E63C65",
+      "hex": "#E83E47",
       "alpha": 1,
       "target": "solid/error/60"
     },
     "color/fill/critical-hover": {
-      "hex": "#C52450",
+      "hex": "#C72734",
       "alpha": 1,
       "target": "solid/error/70"
     },
     "color/fill/critical-active": {
-      "hex": "#9D183E",
+      "hex": "#9E1A26",
       "alpha": 1,
       "target": "solid/error/80"
     },
@@ -2873,22 +2813,22 @@
       "target": "opacity-8/warning/50"
     },
     "color/fill/critical-secondary": {
-      "hex": "#F5617D",
+      "hex": "#F76363",
       "alpha": 0.15,
       "target": "opacity-15/error/50"
     },
     "color/fill/critical-secondary-hover": {
-      "hex": "#F5617D",
+      "hex": "#F76363",
       "alpha": 0.3,
       "target": "opacity-30/error/50"
     },
     "color/fill/critical-secondary-active": {
-      "hex": "#E63C65",
+      "hex": "#E83E47",
       "alpha": 0.3,
       "target": "opacity-30/error/60"
     },
     "color/fill/critical-secondary-disabled": {
-      "hex": "#F5617D",
+      "hex": "#F76363",
       "alpha": 0.08,
       "target": "opacity-8/error/50"
     },
@@ -3063,17 +3003,17 @@
       "target": "opacity-50/warning/60"
     },
     "color/border/critical": {
-      "hex": "#E63C65",
+      "hex": "#E83E47",
       "alpha": 1,
       "target": "solid/error/60"
     },
     "color/border/critical-hover": {
-      "hex": "#C52450",
+      "hex": "#C72734",
       "alpha": 1,
       "target": "solid/error/70"
     },
     "color/border/critical-disabled": {
-      "hex": "#E63C65",
+      "hex": "#E83E47",
       "alpha": 0.5,
       "target": "opacity-50/error/60"
     },
@@ -3268,22 +3208,22 @@
       "target": "opacity-50/warning/80"
     },
     "color/content/critical": {
-      "hex": "#9D183E",
+      "hex": "#9E1A26",
       "alpha": 1,
       "target": "solid/error/80"
     },
     "color/content/critical-hover": {
-      "hex": "#75112D",
+      "hex": "#77131B",
       "alpha": 1,
       "target": "solid/error/90"
     },
     "color/content/critical-active": {
-      "hex": "#520C1E",
+      "hex": "#520D12",
       "alpha": 1,
       "target": "solid/error/100"
     },
     "color/content/critical-disabled": {
-      "hex": "#9D183E",
+      "hex": "#9E1A26",
       "alpha": 0.5,
       "target": "opacity-50/error/80"
     },
@@ -3323,7 +3263,7 @@
       "target": "solid/warning/50"
     },
     "color/content/critical-inverse": {
-      "hex": "#F5617D",
+      "hex": "#F76363",
       "alpha": 1,
       "target": "solid/error/50"
     },
@@ -3411,46 +3351,6 @@
       "hex": "#A97F00",
       "alpha": 1,
       "target": "solid/spectrum-yellow/60"
-    },
-    "color/sidebar/background": {
-      "hex": "#EFEDEC",
-      "alpha": 1,
-      "target": "solid/neutral/20"
-    },
-    "color/sidebar/border": {
-      "hex": "#E3E1E0",
-      "alpha": 1,
-      "target": "solid/neutral/30"
-    },
-    "color/sidebar/item-hover": {
-      "hex": "#E9E7E6",
-      "alpha": 1,
-      "target": "solid/neutral/25"
-    },
-    "color/sidebar/item-active": {
-      "hex": "#D5D3D2",
-      "alpha": 1,
-      "target": "solid/neutral/40"
-    },
-    "color/sidebar/item-selected": {
-      "hex": "#FC6645",
-      "alpha": 0.15,
-      "target": "opacity-15/brand/50"
-    },
-    "color/sidebar/content": {
-      "hex": "#070605",
-      "alpha": 1,
-      "target": "solid/neutral/150"
-    },
-    "color/sidebar/content-muted": {
-      "hex": "#2E2C2B",
-      "alpha": 1,
-      "target": "solid/neutral/110"
-    },
-    "color/sidebar/content-selected": {
-      "hex": "#A92500",
-      "alpha": 1,
-      "target": "solid/brand/80"
     },
     "color/gradient/mesh-1": {
       "hex": "#FF8A6F",
@@ -3605,7 +3505,7 @@
       "target": "opacity-15/warning/60"
     },
     "color/surface/critical": {
-      "hex": "#E63C65",
+      "hex": "#E83E47",
       "alpha": 0.15,
       "target": "opacity-15/error/60"
     },
@@ -3630,7 +3530,7 @@
       "target": "solid/warning/100"
     },
     "color/surface/critical-flat": {
-      "hex": "#520C1E",
+      "hex": "#520D12",
       "alpha": 1,
       "target": "solid/error/100"
     },
@@ -3860,17 +3760,17 @@
       "target": "solid/neutral/115"
     },
     "color/fill/critical": {
-      "hex": "#E63C65",
+      "hex": "#E83E47",
       "alpha": 1,
       "target": "solid/error/60"
     },
     "color/fill/critical-hover": {
-      "hex": "#EE5071",
+      "hex": "#F05255",
       "alpha": 1,
       "target": "solid/error/55"
     },
     "color/fill/critical-active": {
-      "hex": "#F5617D",
+      "hex": "#F76363",
       "alpha": 1,
       "target": "solid/error/50"
     },
@@ -3960,22 +3860,22 @@
       "target": "opacity-8/warning/60"
     },
     "color/fill/critical-secondary": {
-      "hex": "#E63C65",
+      "hex": "#E83E47",
       "alpha": 0.15,
       "target": "opacity-15/error/60"
     },
     "color/fill/critical-secondary-hover": {
-      "hex": "#E63C65",
+      "hex": "#E83E47",
       "alpha": 0.3,
       "target": "opacity-30/error/60"
     },
     "color/fill/critical-secondary-active": {
-      "hex": "#F5617D",
+      "hex": "#F76363",
       "alpha": 0.3,
       "target": "opacity-30/error/50"
     },
     "color/fill/critical-secondary-disabled": {
-      "hex": "#E63C65",
+      "hex": "#E83E47",
       "alpha": 0.08,
       "target": "opacity-8/error/60"
     },
@@ -4150,17 +4050,17 @@
       "target": "opacity-50/warning/60"
     },
     "color/border/critical": {
-      "hex": "#E63C65",
+      "hex": "#E83E47",
       "alpha": 1,
       "target": "solid/error/60"
     },
     "color/border/critical-hover": {
-      "hex": "#F5617D",
+      "hex": "#F76363",
       "alpha": 1,
       "target": "solid/error/50"
     },
     "color/border/critical-disabled": {
-      "hex": "#E63C65",
+      "hex": "#E83E47",
       "alpha": 0.5,
       "target": "opacity-50/error/60"
     },
@@ -4355,22 +4255,22 @@
       "target": "opacity-50/warning/50"
     },
     "color/content/critical": {
-      "hex": "#F5617D",
+      "hex": "#F76363",
       "alpha": 1,
       "target": "solid/error/50"
     },
     "color/content/critical-hover": {
-      "hex": "#FE8597",
+      "hex": "#FF8783",
       "alpha": 1,
       "target": "solid/error/40"
     },
     "color/content/critical-active": {
-      "hex": "#FFB0B9",
+      "hex": "#FFB2AD",
       "alpha": 1,
       "target": "solid/error/30"
     },
     "color/content/critical-disabled": {
-      "hex": "#F5617D",
+      "hex": "#F76363",
       "alpha": 0.5,
       "target": "opacity-50/error/50"
     },
@@ -4410,7 +4310,7 @@
       "target": "solid/warning/80"
     },
     "color/content/critical-inverse": {
-      "hex": "#9D183E",
+      "hex": "#9E1A26",
       "alpha": 1,
       "target": "solid/error/80"
     },
@@ -4498,46 +4398,6 @@
       "hex": "#E6CA92",
       "alpha": 1,
       "target": "solid/spectrum-yellow/30"
-    },
-    "color/sidebar/background": {
-      "hex": "#0E0C0B",
-      "alpha": 1,
-      "target": "solid/neutral/140"
-    },
-    "color/sidebar/border": {
-      "hex": "#211F1D",
-      "alpha": 1,
-      "target": "solid/neutral/120"
-    },
-    "color/sidebar/item-hover": {
-      "hex": "#110F0E",
-      "alpha": 1,
-      "target": "solid/neutral/135"
-    },
-    "color/sidebar/item-active": {
-      "hex": "#2E2C2B",
-      "alpha": 1,
-      "target": "solid/neutral/110"
-    },
-    "color/sidebar/item-selected": {
-      "hex": "#FF3D01",
-      "alpha": 0.15,
-      "target": "opacity-15/brand/60"
-    },
-    "color/sidebar/content": {
-      "hex": "#EFEDEC",
-      "alpha": 1,
-      "target": "solid/neutral/20"
-    },
-    "color/sidebar/content-muted": {
-      "hex": "#C2C0BF",
-      "alpha": 1,
-      "target": "solid/neutral/50"
-    },
-    "color/sidebar/content-selected": {
-      "hex": "#FC6645",
-      "alpha": 1,
-      "target": "solid/brand/50"
     },
     "color/gradient/mesh-1": {
       "hex": "#D53100",
@@ -4655,13 +4515,13 @@
     "chart-3": "color/chart/3",
     "chart-4": "color/chart/4",
     "chart-5": "color/chart/5",
-    "sidebar": "color/sidebar/background",
-    "sidebar-foreground": "color/sidebar/content",
+    "sidebar": "color/surface/secondary",
+    "sidebar-foreground": "color/content/primary",
     "sidebar-primary": "color/fill/brand",
     "sidebar-primary-foreground": "color/content/on-brand",
-    "sidebar-accent": "color/sidebar/item-hover",
-    "sidebar-accent-foreground": "color/sidebar/content",
-    "sidebar-border": "color/sidebar/border",
+    "sidebar-accent": "color/fill/secondary-hover",
+    "sidebar-accent-foreground": "color/content/primary",
+    "sidebar-border": "color/border/secondary",
     "sidebar-ring": "color/border/focus"
   },
   "typography": {

@@ -217,16 +217,6 @@ module.exports = {
           "4": "var(--oz-color-chart-4)",
           "5": "var(--oz-color-chart-5)"
         },
-        "sidebar": {
-          "background": "var(--oz-color-sidebar-background)",
-          "border": "var(--oz-color-sidebar-border)",
-          "item-hover": "var(--oz-color-sidebar-item-hover)",
-          "item-active": "var(--oz-color-sidebar-item-active)",
-          "item-selected": "var(--oz-color-sidebar-item-selected)",
-          "content": "var(--oz-color-sidebar-content)",
-          "content-muted": "var(--oz-color-sidebar-content-muted)",
-          "content-selected": "var(--oz-color-sidebar-content-selected)"
-        },
         "gradient": {
           "mesh-1": "var(--oz-color-gradient-mesh-1)",
           "mesh-2": "var(--oz-color-gradient-mesh-2)",

@@ -32,9 +32,9 @@
     --muted-foreground: 20 3.37% 17.45%;
     --accent: 20 3.45% 82.94%;
     --accent-foreground: 30 16.67% 2.35%;
-    --destructive: 345.53 77.27% 56.86%;
+    --destructive: 356.82 78.7% 57.65%;
     --destructive-foreground: 0 0% 100%;
-    --destructive-soft: 354.29 100% 95.88%;
+    --destructive-soft: 5.45 100% 95.69%;
     --success: 149.48 66.67% 34.12%;
     --success-foreground: 0 0% 100%;
     --success-soft: 137.14 41.18% 93.33%;
@@ -56,9 +56,9 @@
     --sidebar-foreground: 30 16.67% 2.35%;
     --sidebar-primary: 14.17 100% 50.2%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 20 6.38% 90.78%;
+    --sidebar-accent: 20 5.08% 88.43%;
     --sidebar-accent-foreground: 30 16.67% 2.35%;
-    --sidebar-border: 20 5.08% 88.43%;
+    --sidebar-border: 15 3.77% 79.22%;
     --sidebar-ring: 13.51 100% 37.45%;
     --radius: var(--oz-radius-5);
   }
@@ -79,9 +79,9 @@
     --muted-foreground: 20 2.4% 75.49%;
     --accent: 20 2.26% 26.08%;
     --accent-foreground: 20 8.57% 93.14%;
-    --destructive: 345.53 77.27% 56.86%;
+    --destructive: 356.82 78.7% 57.65%;
     --destructive-foreground: 0 0% 100%;
-    --destructive-soft: 344.57 74.47% 18.43%;
+    --destructive-soft: 355.65 72.63% 18.63%;
     --success: 149.48 66.67% 34.12%;
     --success-foreground: 0 0% 100%;
     --success-soft: 148.75 96% 9.8%;
@@ -99,13 +99,13 @@
     --chart-3: 180 55.75% 55.69%;
     --chart-4: 258.79 42.13% 53.92%;
     --chart-5: 40 62.69% 73.73%;
-    --sidebar: 20 12% 4.9%;
+    --sidebar: 30 6.45% 12.16%;
     --sidebar-foreground: 20 8.57% 93.14%;
     --sidebar-primary: 14.17 100% 50.2%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 20 9.68% 6.08%;
+    --sidebar-accent: 20 3.37% 17.45%;
     --sidebar-accent-foreground: 20 8.57% 93.14%;
-    --sidebar-border: 30 6.45% 12.16%;
+    --sidebar-border: 20 1.6% 36.67%;
     --sidebar-ring: 10.98 98.8% 67.45%;
   }
 
@@ -125,9 +125,9 @@
     --muted-foreground: 20 3.37% 17.45%;
     --accent: 20 3.45% 82.94%;
     --accent-foreground: 30 16.67% 2.35%;
-    --destructive: 345.53 77.27% 56.86%;
+    --destructive: 356.82 78.7% 57.65%;
     --destructive-foreground: 0 0% 100%;
-    --destructive-soft: 354.29 100% 95.88%;
+    --destructive-soft: 5.45 100% 95.69%;
     --success: 149.48 66.67% 34.12%;
     --success-foreground: 0 0% 100%;
     --success-soft: 137.14 41.18% 93.33%;
@@ -149,9 +149,9 @@
     --sidebar-foreground: 30 16.67% 2.35%;
     --sidebar-primary: 14.17 100% 50.2%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 20 6.38% 90.78%;
+    --sidebar-accent: 20 5.08% 88.43%;
     --sidebar-accent-foreground: 30 16.67% 2.35%;
-    --sidebar-border: 20 5.08% 88.43%;
+    --sidebar-border: 15 3.77% 79.22%;
     --sidebar-ring: 13.51 100% 37.45%;
   }
 }

@@ -150,8 +150,8 @@ export function Assembled({ index }: { index: string }) {
         <div className="grid grid-cols-1 lg:grid-cols-app">
           {/* Sidebar. Uses the sidebar/* token group, which exists so a sidebar is
               not a special case of a card. */}
-          <aside className="border-b-2 border-sidebar-border bg-sidebar-background p-space-4 lg:border-b-0 lg:border-r-2">
-            <p className="px-space-3 pb-space-5 font-display text-heading-xs font-bold text-sidebar-content">
+          <aside className="border-b-2 border-border-secondary bg-surface-secondary p-space-4 lg:border-b-0 lg:border-r-2">
+            <p className="px-space-3 pb-space-5 font-display text-heading-xs font-bold text-content-primary">
               HeyOz
             </p>
             <nav className="flex gap-space-1 lg:flex-col">
@@ -162,8 +162,8 @@ export function Assembled({ index }: { index: string }) {
                   aria-current={i === 0 ? 'page' : undefined}
                   className={`flex min-h-target items-center gap-space-3 rounded-4 px-space-3 text-body-sm transition-colors duration-fast ease-standard focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus ${
                     i === 0
-                      ? 'bg-sidebar-item-selected font-medium text-sidebar-content-selected'
-                      : 'text-sidebar-content-muted hover:bg-sidebar-item-hover active:bg-sidebar-item-active'
+                      ? 'bg-fill-selected font-medium text-content-selected'
+                      : 'text-content-secondary hover:bg-fill-secondary-hover active:bg-fill-secondary-active'
                   }`}
                 >
                   <NavIcon path={n.path} />

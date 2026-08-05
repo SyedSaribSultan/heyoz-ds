@@ -376,7 +376,9 @@ function flattenSemantic() {
   for (const [k, [l, d]] of Object.entries(SEMANTIC.CONTENT_ON)) add(`color/content/${k}`, l, d);
 
   for (const [k, [l, d]] of Object.entries(SEMANTIC.CHART)) add(`color/chart/${k}`, l, d);
-  for (const [k, [l, d]] of Object.entries(SEMANTIC.SIDEBAR)) add(`color/sidebar/${k}`, l, d);
+  /* SIDEBAR was flattened here and no longer exists — see the deletion note in spec.mjs. Four
+   * of its eight tokens were aliases of tier-2 roles; the other four made the sidebar the one
+   * region exempt from the elevation ladder. It uses the ladder now. */
   for (const [k, [l, d]] of Object.entries(SEMANTIC.GRADIENT)) add(`color/gradient/${k}`, l, d);
 
   return map;

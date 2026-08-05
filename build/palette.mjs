@@ -279,12 +279,38 @@ const FAMILIES = {
   },
 
   /**
-   * error keeps the shipped --destructive exactly (#E63C65). Note this puts
-   * error/60 at L 62.1 while success/warning/info sit at L 58.1. Preserved
-   * deliberately: zero visual regression on a colour already in production.
+   * error is RED, at hue 23.0, and it used to be pink.
+   *
+   * It was hue 11.9, and that was never a decision — it was measured off the shipped
+   * `--destructive` (#E63C65) so the migration could claim zero visual regression on a colour
+   * already in production. The hue came along with the hex. Nobody argued for it.
+   *
+   * 11.9 sits below the entire band that every mainstream system calls error red, measured in
+   * this engine's own OKLCH:
+   *
+   *   Bootstrap  #DC3545   21.2      Tailwind red-600  #DC2626   27.3
+   *   Radix red-9 #E5484D  23.0      Apple systemRed   #FF3B30   28.7
+   *   Material   #D32F2F   26.4      sRGB pure red     #FF0000   29.2
+   *
+   * So the shipped value was 9 degrees cooler than the coolest conventional red, which is why
+   * it read as crimson in light and frankly pink in dark — error/50 was #F5617D.
+   *
+   * 23.0 is Radix red-9's measured hue exactly. It is chosen at the COOL end of the
+   * conventional band on purpose: brand is hue 34.0, so 23 keeps 11 degrees of separation,
+   * where 27 leaves 7 and 29 leaves 5. Past 25 the light steps start converging on brand —
+   * error/50 at hue 29 is #F76555, a coral nobody would read as a failure. Being conventional
+   * and being distinct from brand pull in opposite directions here; 23 is the point where both
+   * still hold.
+   *
+   * L and C are untouched, so every APCA gate that passed before still passes: white on
+   * error/60 measures Lc 71.7 and on error/50 Lc 61.7, against a floor of 60.
+   *
+   * error/60 remains at L 62.1 while success/warning/info sit at 58.1. That asymmetry is
+   * inherited from the same shipped value and is left alone — it is a lightness relationship
+   * the whole ramp is built around, and moving it is a separate change from fixing the hue.
    */
   error: {
-    hue: 11.9,
+    hue: 23.0,
     peak: 0.2056,
     mid: '60',
     steps: {
@@ -292,11 +318,11 @@ const FAMILIES = {
       20: [0.9080, 0.0520],
       30: [0.8350, 0.1000],
       40: [0.7550, 0.1480],
-      50: [0.6880, 0.1820], // -> #F5617D  dark active,  white Lc 61.9
-      55: [0.6543, 0.1938], // -> #EE5071  NEW - dark hover, white Lc 66.9
-      60: [0.6206, 0.2056], // -> #E63C65 (shipped --destructive), white Lc 71.8
-      70: [0.5400, 0.1940], // -> #C52450  light hover
-      80: [0.4550, 0.1660], // -> #9D183E  light active
+      50: [0.6880, 0.1820], // -> #F76363  dark active,  white Lc 61.7
+      55: [0.6543, 0.1938], // -> #F05155  dark hover
+      60: [0.6206, 0.2056], // -> #E83E47  the base red,  white Lc 71.7
+      70: [0.5400, 0.1940], // -> #C72734  light hover
+      80: [0.4550, 0.1660], // -> #9E1A26  light active
       90: [0.3700, 0.1330],
       100: [0.2900, 0.1000],
     },

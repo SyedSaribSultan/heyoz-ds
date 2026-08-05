@@ -93,7 +93,7 @@ class DropzoneRecipe extends ComponentRecipe<DropzoneVariant, DropzoneSize> {
 
   /** A rejection. `content/critical-hover`, the step that clears every rung of the surface
    *  ladder — the same choice Field's error message makes, and for the same reason: this
-   *  text can sit in a dialog, where `content/critical` measures 3.89:1 in dark. */
+   *  text can sit in a dialog, where `content/critical` measures 3.91:1 in dark. */
   rejectionClasses(): string {
     return 'text-body-sm text-content-critical-hover';
   }

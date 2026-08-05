@@ -55,7 +55,7 @@ old file had `--success` with no matching text colour, so components hardcoded
 used to claim the bridge lifted it from "white on orange, 3.55:1, fails AA" to
 `content/on-brand` at 5.71:1, and `--destructive-foreground` from 3.35:1 to
 5.01:1. Both numbers were invented: `content/on-brand` *is* `#FFFFFF`, so it
-measures exactly the same 3.55:1 it always did (destructive 4.04:1). The claim also
+measures exactly the same 3.55:1 it always did (destructive 4.03:1). The claim also
 contradicted `DECISIONS.md` A5/H1, which formally **withdrew** white-on-orange as a
 bug and records why the WCAG-2 number is the wrong instrument for those pairs.
 Nothing about those five variables changed; only the reasoning did. See

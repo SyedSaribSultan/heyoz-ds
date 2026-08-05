@@ -1037,26 +1037,46 @@ const CHART = {
   '5': [S('spectrum-yellow/60'), S('spectrum-yellow/30')], //   62 / 85
 };
 
-/** Tier 3 — sidebar. The shipped file gave the sidebar nine component tokens
- *  while no other surface got any, and light --sidebar-border was BRIGHTER
- *  than the sidebar it divided. Rebuilt off the same ramp as everything else. */
-const SIDEBAR = {
-  background: [S('neutral/20'), S('neutral/140')],
-  border: [S('neutral/30'), S('neutral/120')],
-  // item-hover used to equal border exactly, in BOTH modes (30 / 120), so
-  // hovering an item erased the sidebar's own divider across that item's height.
-  // The half-steps give it its own rung one notch off the background: 25 in
-  // light, 135 in dark. Both now clear border and background.
-  'item-hover': [S('neutral/25'), S('neutral/135')],
-  'item-active': [S('neutral/40'), S('neutral/110')],
-  'item-selected': [A15('brand/50'), A15('brand/60')],
-  content: [S('neutral/150'), S('neutral/20')],
-  'content-muted': [S('neutral/110'), S('neutral/50')],
-  // content-selected is a selected nav LABEL, so it needs 4.5:1 on both the
-  // sidebar background and the selected item tint. brand/70 measured 4.22:1 on
-  // both in light — ungated and failing. brand/80 clears it at 6.09:1.
-  'content-selected': [S('brand/80'), S('brand/50')],
-};
+/* Tier 3 — sidebar: DELETED, and the deletion is the point.
+ *
+ * There were eight tokens here: background, border, item-hover, item-active, item-selected,
+ * content, content-muted, content-selected. They came across from the shipped shadcn setup,
+ * which ships a `--sidebar-*` group by convention, and the migration rebuilt their VALUES off
+ * the neutral ramp without ever asking whether the namespace should exist. The old comment on
+ * this block said as much — "the shipped file gave the sidebar nine component tokens while no
+ * other surface got any" — and then kept all nine anyway.
+ *
+ * Four of the eight resolved to the same primitive and alpha as an existing tier-2 token, in
+ * BOTH modes. They were aliases with a second name:
+ *
+ *   sidebar/content           == content/primary
+ *   sidebar/content-muted     == content/secondary
+ *   sidebar/item-selected     == fill/selected
+ *   sidebar/content-selected  == content/selected
+ *
+ * The other four encoded one real decision — that in dark the sidebar sat BELOW the page
+ * instead of above it (background neutral/140 against a neutral/150 page) so the nav receded
+ * and the content column read as lit. That is a defensible idea and it is not what the rest of
+ * the system does: every other surface goes lighter as it comes forward, which is the whole
+ * elevation ladder. Keeping it meant one region permanently exempt from the ladder, expressed
+ * as a private namespace rather than as a stated rule, with nothing to tell the next reader
+ * that was the intent.
+ *
+ * So the sidebar now uses the ladder like everything else:
+ *
+ *   sidebar/background   -> surface/secondary        exact in light, one rung UP in dark
+ *   sidebar/border       -> border/secondary
+ *   sidebar/item-hover   -> fill/secondary-hover
+ *   sidebar/item-active  -> fill/secondary-active    exact in light
+ *
+ * The visible consequence is in dark only: the sidebar goes #0E0C0B -> #211F1D, so it is
+ * lighter than the page rather than nearly identical to it. That is the ladder being applied
+ * rather than an accident.
+ *
+ * PRECEDENT: `fill/selected` was already promoted out of this namespace for the same reason —
+ * see the SELECTED comment above, which notes a combobox option "had no token and had to reach
+ * into the sidebar's tier-3 namespace or hardcode". This finishes that move.
+ */
 
 /** Tier 3 — gradient and mesh stops. Replaces the hardcoded rgb() literals in
  *  .onboarding-gradient, .brand-mesh-border, .brand-mesh-thumb and
@@ -1141,7 +1161,6 @@ export const SEMANTIC = {
   CONTENT_ROLE_INVERSE,
   CONTENT_ON,
   CHART,
-  SIDEBAR,
   GRADIENT,
   ELEVATION,
 };
@@ -1209,13 +1228,13 @@ export const SHADCN_BRIDGE = {
   'chart-3': 'color/chart/3',
   'chart-4': 'color/chart/4',
   'chart-5': 'color/chart/5',
-  sidebar: 'color/sidebar/background',
-  'sidebar-foreground': 'color/sidebar/content',
+  sidebar: 'color/surface/secondary',
+  'sidebar-foreground': 'color/content/primary',
   'sidebar-primary': 'color/fill/brand',
   'sidebar-primary-foreground': 'color/content/on-brand',
-  'sidebar-accent': 'color/sidebar/item-hover',
-  'sidebar-accent-foreground': 'color/sidebar/content',
-  'sidebar-border': 'color/sidebar/border',
+  'sidebar-accent': 'color/fill/secondary-hover',
+  'sidebar-accent-foreground': 'color/content/primary',
+  'sidebar-border': 'color/border/secondary',
   'sidebar-ring': 'color/border/focus',
 };
 
@@ -1261,7 +1280,6 @@ export const CONTRAST_ASSERTIONS = [
   ['color/content/warning', 'color/surface/tertiary', 4.5],
   ['color/content/info', 'color/background', 4.5],
   ['color/content/info', 'color/surface/tertiary', 4.5],
-  ['color/sidebar/content', 'color/sidebar/background', 4.5],
   ['color/content/primary', 'color/surface/brand-flat', 4.5],
   ['color/content/primary', 'color/surface/critical-flat', 4.5],
 
@@ -1293,8 +1311,7 @@ export const CONTRAST_ASSERTIONS = [
   ['color/content/link-visited', 'color/surface/tertiary', 4.5],
   // Selected row / tab label on its own tint, tier 2 and tier 3.
   ['color/content/selected', 'color/fill/selected', 4.5],
-  ['color/sidebar/content-selected', 'color/sidebar/background', 4.5],
-  ['color/sidebar/content-selected', 'color/sidebar/item-selected', 4.5],
+  ['color/content/selected', 'color/surface/secondary', 4.5],
   // Secondary text on the surfaces, not just the page.
   ['color/content/secondary', 'color/surface/secondary', 4.5],
   ['color/content/secondary', 'color/surface/tertiary', 4.5],
@@ -1419,7 +1436,6 @@ export const VISIBILITY_ASSERTIONS = [
   ['color/border/primary', 'color/background', 1.1],
   ['color/border/secondary', 'color/surface/primary', 1.3],
   ['color/border/tertiary', 'color/surface/primary', 1.6],
-  ['color/sidebar/border', 'color/sidebar/background', 1.1],
   ['color/surface/primary', 'color/background', 1.02],
 ];
 
@@ -1432,7 +1448,6 @@ export const VISIBILITY_ASSERTIONS = [
 export const COLLISION_ASSERTIONS = [
   ['color/border/primary', 'color/surface/primary'],
   ['color/border/primary', 'color/background'],
-  ['color/sidebar/border', 'color/sidebar/background'],
   ['color/surface/primary', 'color/background'],
   // A popover on a card needs an edge. Both were neutral/120 in dark, so there
   // was no boundary at all. DARK ONLY: in light both are correctly neutral/white,
@@ -1467,9 +1482,6 @@ export const COLLISION_ASSERTIONS = [
   // directly rather than assumed from "nothing else occupies 105".
   ['color/fill/brand-disabled', 'color/surface/elevated'],
   ['color/fill/brand-disabled', 'color/surface/overlay'],
-  // A hovered sidebar item must not erase the sidebar's divider. Both 30 / 120.
-  ['color/sidebar/item-hover', 'color/sidebar/border'],
-  ['color/sidebar/item-hover', 'color/sidebar/background'],
   // A border must not vanish against the muted surface it is drawn on.
   ['color/border/primary', 'color/surface/tertiary'],
   ['color/border/secondary', 'color/fill/tertiary-hover'],
