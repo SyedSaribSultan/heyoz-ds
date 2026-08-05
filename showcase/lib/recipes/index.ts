@@ -12,6 +12,15 @@ import { tooltipRecipe as tooltip } from './tooltip.recipe';
 import { popoverRecipe as popover } from './popover.recipe';
 import { menuRecipe as menu } from './menu.recipe';
 import { toastRecipe as toast } from './toast.recipe';
+import { separatorRecipe as separator } from './separator.recipe';
+import { avatarRecipe as avatar } from './avatar.recipe';
+import { progressRecipe as progress } from './progress.recipe';
+import { chipRecipe as chip } from './chip.recipe';
+import { segmentedRecipe as segmented } from './segmented.recipe';
+import { accordionRecipe as accordion } from './accordion.recipe';
+import { breadcrumbRecipe as breadcrumb } from './breadcrumb.recipe';
+import { emptyStateRecipe as emptyState } from './emptyState.recipe';
+import { stepperRecipe as stepper } from './stepper.recipe';
 import { radioRecipe as radio } from './radio.recipe';
 import { inputRecipe as input } from './input.recipe';
 import { textareaRecipe as textarea } from './textarea.recipe';
@@ -47,6 +56,15 @@ export const allRecipes: ComponentRecipe<string, string, string>[] = [
   popover,
   menu,
   toast,
+  separator,
+  avatar,
+  progress,
+  chip,
+  segmented,
+  accordion,
+  breadcrumb,
+  emptyState,
+  stepper,
   input,
   textarea,
   select,
@@ -110,3 +128,12 @@ export { tooltipRecipe, type TooltipVariant, type TooltipSize } from './tooltip.
 export { popoverRecipe, type PopoverVariant, type PopoverSize } from './popover.recipe';
 export { menuRecipe, type MenuVariant, type MenuSize } from './menu.recipe';
 export { toastRecipe, type ToastVariant, type ToastSize } from './toast.recipe';
+export { separatorRecipe, type SeparatorVariant, type SeparatorSize } from './separator.recipe';
+export { avatarRecipe, type AvatarTone, type AvatarSize } from './avatar.recipe';
+export { progressRecipe, type ProgressVariant, type ProgressSize } from './progress.recipe';
+export { chipRecipe, type ChipVariant, type ChipSize } from './chip.recipe';
+export { segmentedRecipe, type SegmentedVariant, type SegmentedSize } from './segmented.recipe';
+export { accordionRecipe, type AccordionVariant, type AccordionSize } from './accordion.recipe';
+export { breadcrumbRecipe, type BreadcrumbVariant, type BreadcrumbSize } from './breadcrumb.recipe';
+export { emptyStateRecipe, type EmptyStateVariant, type EmptyStateSize } from './emptyState.recipe';
+export { stepperRecipe, type StepperVariant, type StepperSize } from './stepper.recipe';

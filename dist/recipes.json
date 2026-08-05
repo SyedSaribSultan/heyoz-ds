@@ -1,7 +1,7 @@
 {
   "$generated": "by showcase/scripts/emit-recipes.ts — do not edit",
   "$description": "The HeyOz component contract. One entry per component: variants, states, the token each state binds per role, and the value that token resolves to in each mode. Generated from the same recipe objects the components compile from, so this cannot describe a component that does not exist.",
-  "generatedAt": "2026-08-05T10:16:45.241Z",
+  "generatedAt": "2026-08-05T11:03:06.033Z",
   "components": [
     {
       "id": "button",
@@ -6787,6 +6787,2651 @@
         "surface-info-flat",
         "surface-success-flat",
         "surface-warning-flat"
+      ]
+    },
+    {
+      "id": "separator",
+      "title": "Separator",
+      "tag": "Separator",
+      "description": "A line between two groups of content, for the rare case where space cannot do it. Rule 1c makes separation a build error for a BORDER; this is the deliberate exception, drawn as a filled box and argued for per use.",
+      "variants": [
+        {
+          "name": "rule",
+          "intent": "The only kind. Reach for it when space has genuinely failed, not before.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "border-secondary",
+                  "path": "color/border/secondary",
+                  "values": {
+                    "light": {
+                      "value": "#CCC9C8",
+                      "primitive": "solid/neutral/45",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "sizes": [
+        "md"
+      ],
+      "motion": {
+        "transition": "effects-fast",
+        "properties": "none",
+        "enter": "none",
+        "intent": "None, and it is the only component in the system that declares `properties: none` alongside Skeleton. A rule has no states — nothing hovers it, nothing focuses it, and it never changes — so a transition here would be a declaration with nothing to animate. Stating that explicitly is what the required `motion` field is for: the absence is a decision rather than an omission."
+      },
+      "tokensUsed": [
+        "border-secondary"
+      ]
+    },
+    {
+      "id": "avatar",
+      "title": "Avatar",
+      "tag": "Avatar",
+      "description": "A person or a brand, as an image with a deterministic initials fallback. The fallback is the real component — an avatar that renders nothing when an image 404s is the state it will be in most often.",
+      "variants": [
+        {
+          "name": "brand",
+          "intent": "One of five. Assigned by hash, never chosen.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-brand-secondary",
+                  "path": "color/fill/brand-secondary",
+                  "values": {
+                    "light": {
+                      "value": "#FC664526",
+                      "primitive": "opacity-15/brand/50",
+                      "alpha": 0.15
+                    },
+                    "dark": {
+                      "value": "#FF3D0126",
+                      "primitive": "opacity-15/brand/60",
+                      "alpha": 0.15
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-brand-hover",
+                  "path": "color/content/brand-hover",
+                  "values": {
+                    "light": {
+                      "value": "#7F1900",
+                      "primitive": "solid/brand/90",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FF8A6F",
+                      "primitive": "solid/brand/40",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "success",
+          "intent": "One of five.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-success-secondary",
+                  "path": "color/fill/success-secondary",
+                  "values": {
+                    "light": {
+                      "value": "#4DA97226",
+                      "primitive": "opacity-15/success/50",
+                      "alpha": 0.15
+                    },
+                    "dark": {
+                      "value": "#1D915626",
+                      "primitive": "opacity-15/success/60",
+                      "alpha": 0.15
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-success-hover",
+                  "path": "color/content/success-hover",
+                  "values": {
+                    "light": {
+                      "value": "#004725",
+                      "primitive": "solid/success/90",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#7AC394",
+                      "primitive": "solid/success/40",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "warning",
+          "intent": "One of five.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-warning-secondary",
+                  "path": "color/fill/warning-secondary",
+                  "values": {
+                    "light": {
+                      "value": "#BF8B3926",
+                      "primitive": "opacity-15/warning/50",
+                      "alpha": 0.15
+                    },
+                    "dark": {
+                      "value": "#A36E0726",
+                      "primitive": "opacity-15/warning/60",
+                      "alpha": 0.15
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-warning-hover",
+                  "path": "color/content/warning-hover",
+                  "values": {
+                    "light": {
+                      "value": "#4F3300",
+                      "primitive": "solid/warning/90",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#D9A75E",
+                      "primitive": "solid/warning/40",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "critical",
+          "intent": "One of five. Carries no failure meaning here — it is a colour, not a status.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-critical-secondary",
+                  "path": "color/fill/critical-secondary",
+                  "values": {
+                    "light": {
+                      "value": "#F5617D26",
+                      "primitive": "opacity-15/error/50",
+                      "alpha": 0.15
+                    },
+                    "dark": {
+                      "value": "#E63C6526",
+                      "primitive": "opacity-15/error/60",
+                      "alpha": 0.15
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-critical-hover",
+                  "path": "color/content/critical-hover",
+                  "values": {
+                    "light": {
+                      "value": "#75112D",
+                      "primitive": "solid/error/90",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FE8597",
+                      "primitive": "solid/error/40",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "info",
+          "intent": "One of five.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-info-secondary",
+                  "path": "color/fill/info-secondary",
+                  "values": {
+                    "light": {
+                      "value": "#5292FD26",
+                      "primitive": "opacity-15/info/50",
+                      "alpha": 0.15
+                    },
+                    "dark": {
+                      "value": "#2C74EA26",
+                      "primitive": "opacity-15/info/60",
+                      "alpha": 0.15
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-info-hover",
+                  "path": "color/content/info-hover",
+                  "values": {
+                    "light": {
+                      "value": "#09367C",
+                      "primitive": "solid/info/90",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#7DAEFF",
+                      "primitive": "solid/info/40",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "sizes": [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ],
+      "motion": {
+        "transition": "effects-fast",
+        "properties": "colors",
+        "enter": "none",
+        "intent": "Colour only, and in practice almost nothing animates — an avatar has no interaction states of its own. The transition exists for the case where an avatar sits inside something that does have them, a menu row or a table row, so its tint moves with the row rather than a beat behind it. No entrance: a grid of twelve avatars fading in one at a time is a loading state pretending to be a flourish."
+      },
+      "tokensUsed": [
+        "content-brand-hover",
+        "content-critical-hover",
+        "content-info-hover",
+        "content-success-hover",
+        "content-warning-hover",
+        "fill-brand-secondary",
+        "fill-critical-secondary",
+        "fill-info-secondary",
+        "fill-success-secondary",
+        "fill-warning-secondary"
+      ]
+    },
+    {
+      "id": "progress",
+      "title": "Progress",
+      "tag": "Progress",
+      "description": "How much of a known amount of work is done. If the amount is not known, it is indeterminate — and an indeterminate bar that pretends to advance is worse than a spinner.",
+      "variants": [
+        {
+          "name": "brand",
+          "intent": "Work in progress. The default and almost always the right one.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-tertiary",
+                  "path": "color/fill/tertiary",
+                  "values": {
+                    "light": {
+                      "value": "#E3E1E0",
+                      "primitive": "solid/neutral/30",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#2E2C2B",
+                      "primitive": "solid/neutral/110",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "disabled",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-tertiary-disabled",
+                  "path": "color/fill/tertiary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#E3E1E080",
+                      "primitive": "opacity-50/neutral/30",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#2E2C2B80",
+                      "primitive": "opacity-50/neutral/110",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "success",
+          "intent": "Finished. Worth colouring only where the completion is itself the news.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-tertiary",
+                  "path": "color/fill/tertiary",
+                  "values": {
+                    "light": {
+                      "value": "#E3E1E0",
+                      "primitive": "solid/neutral/30",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#2E2C2B",
+                      "primitive": "solid/neutral/110",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "disabled",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-tertiary-disabled",
+                  "path": "color/fill/tertiary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#E3E1E080",
+                      "primitive": "opacity-50/neutral/30",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#2E2C2B80",
+                      "primitive": "opacity-50/neutral/110",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "critical",
+          "intent": "Stopped part-way. Keeps its value — where it failed is the useful part.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-tertiary",
+                  "path": "color/fill/tertiary",
+                  "values": {
+                    "light": {
+                      "value": "#E3E1E0",
+                      "primitive": "solid/neutral/30",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#2E2C2B",
+                      "primitive": "solid/neutral/110",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "disabled",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-tertiary-disabled",
+                  "path": "color/fill/tertiary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#E3E1E080",
+                      "primitive": "opacity-50/neutral/30",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#2E2C2B80",
+                      "primitive": "opacity-50/neutral/110",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "sizes": [
+        "sm",
+        "md"
+      ],
+      "motion": {
+        "transition": "effects-default",
+        "properties": "colors",
+        "enter": "none",
+        "ambient": true,
+        "intent": "The fill moves its width on the DEFAULT effects spring, and the family choice is a deliberate exception to rule 1b. A width is a size and sizes belong on spatial springs — but a spatial spring overshoots, and a progress fill that springs past its value has told the user the work is further along than it is. So it takes the curve that cannot overshoot, at the default tier rather than the fast one: 240ms, because a bar that snaps between values reads as jumping while one that eases reads as filling."
+      },
+      "tokensUsed": [
+        "fill-tertiary",
+        "fill-tertiary-disabled"
+      ]
+    },
+    {
+      "id": "chip",
+      "title": "Chip",
+      "tag": "Chip",
+      "description": "A value the user put there and can take away — a filter, a tag, an uploaded file. The distinction from Badge is not visual: a Badge reports state the system decided, a Chip holds an input the user owns.",
+      "variants": [
+        {
+          "name": "neutral",
+          "intent": "An unselected filter, or a tag that is simply present.",
+          "focus": "outline",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "surface-secondary",
+                  "path": "color/surface/secondary",
+                  "values": {
+                    "light": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#211F1D",
+                      "primitive": "solid/neutral/120",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "border",
+                  "token": "border-secondary",
+                  "path": "color/border/secondary",
+                  "values": {
+                    "light": {
+                      "value": "#CCC9C8",
+                      "primitive": "solid/neutral/45",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "hover",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-secondary-hover",
+                  "path": "color/fill/secondary-hover",
+                  "values": {
+                    "light": {
+                      "value": "#E3E1E0",
+                      "primitive": "solid/neutral/30",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#2E2C2B",
+                      "primitive": "solid/neutral/110",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                },
+                {
+                  "role": "border",
+                  "token": "border-secondary-hover",
+                  "path": "color/border/secondary-hover",
+                  "values": {
+                    "light": {
+                      "value": "#C2C0BF",
+                      "primitive": "solid/neutral/50",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#7C7A78",
+                      "primitive": "solid/neutral/80",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "active",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-secondary-active",
+                  "path": "color/fill/secondary-active",
+                  "values": {
+                    "light": {
+                      "value": "#D5D3D2",
+                      "primitive": "solid/neutral/40",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#444241",
+                      "primitive": "solid/neutral/100",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                },
+                {
+                  "role": "border",
+                  "token": "border-secondary",
+                  "path": "color/border/secondary",
+                  "values": {
+                    "light": {
+                      "value": "#CCC9C8",
+                      "primitive": "solid/neutral/45",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                }
+              ]
+            },
+            {
+              "name": "disabled",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-secondary-disabled",
+                  "path": "color/fill/secondary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#EFEDEC80",
+                      "primitive": "opacity-50/neutral/20",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#211F1D80",
+                      "primitive": "opacity-50/neutral/120",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary-disabled",
+                  "path": "color/content/primary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#07060580",
+                      "primitive": "opacity-50/neutral/150",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#EFEDEC80",
+                      "primitive": "opacity-50/neutral/20",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "border",
+                  "token": "border-primary-disabled",
+                  "path": "color/border/primary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#E3E1E080",
+                      "primitive": "opacity-50/neutral/30",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#514F4E80",
+                      "primitive": "opacity-50/neutral/95",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "selected",
+          "intent": "A filter that is currently applied. The border is the state, not the affordance.",
+          "focus": "outline",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-selected",
+                  "path": "color/fill/selected",
+                  "values": {
+                    "light": {
+                      "value": "#FC664526",
+                      "primitive": "opacity-15/brand/50",
+                      "alpha": 0.15
+                    },
+                    "dark": {
+                      "value": "#FF3D0126",
+                      "primitive": "opacity-15/brand/60",
+                      "alpha": 0.15
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "border",
+                  "token": "border-brand",
+                  "path": "color/border/brand",
+                  "values": {
+                    "light": {
+                      "value": "#FF3D01",
+                      "primitive": "solid/brand/60",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FF3D01",
+                      "primitive": "solid/brand/60",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "hover",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-selected-hover",
+                  "path": "color/fill/selected-hover",
+                  "values": {
+                    "light": {
+                      "value": "#FC66454D",
+                      "primitive": "opacity-30/brand/50",
+                      "alpha": 0.3
+                    },
+                    "dark": {
+                      "value": "#FF3D014D",
+                      "primitive": "opacity-30/brand/60",
+                      "alpha": 0.3
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                },
+                {
+                  "role": "border",
+                  "token": "border-brand-hover",
+                  "path": "color/border/brand-hover",
+                  "values": {
+                    "light": {
+                      "value": "#D53100",
+                      "primitive": "solid/brand/70",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FC6645",
+                      "primitive": "solid/brand/50",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "active",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-selected-active",
+                  "path": "color/fill/selected-active",
+                  "values": {
+                    "light": {
+                      "value": "#FF3D014D",
+                      "primitive": "opacity-30/brand/60",
+                      "alpha": 0.3
+                    },
+                    "dark": {
+                      "value": "#FC66454D",
+                      "primitive": "opacity-30/brand/50",
+                      "alpha": 0.3
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                },
+                {
+                  "role": "border",
+                  "token": "border-brand",
+                  "path": "color/border/brand",
+                  "values": {
+                    "light": {
+                      "value": "#FF3D01",
+                      "primitive": "solid/brand/60",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FF3D01",
+                      "primitive": "solid/brand/60",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                }
+              ]
+            },
+            {
+              "name": "disabled",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-selected-disabled",
+                  "path": "color/fill/selected-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#FC664514",
+                      "primitive": "opacity-8/brand/50",
+                      "alpha": 0.08
+                    },
+                    "dark": {
+                      "value": "#FF3D0114",
+                      "primitive": "opacity-8/brand/60",
+                      "alpha": 0.08
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary-disabled",
+                  "path": "color/content/primary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#07060580",
+                      "primitive": "opacity-50/neutral/150",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#EFEDEC80",
+                      "primitive": "opacity-50/neutral/20",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "border",
+                  "token": "border-brand-disabled",
+                  "path": "color/border/brand-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#FF3D0180",
+                      "primitive": "opacity-50/brand/60",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#FF3D0180",
+                      "primitive": "opacity-50/brand/60",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "brand",
+          "intent": "A chip that is itself the brand accent — a plan name, an active model.",
+          "focus": "outline",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-brand-secondary",
+                  "path": "color/fill/brand-secondary",
+                  "values": {
+                    "light": {
+                      "value": "#FC664526",
+                      "primitive": "opacity-15/brand/50",
+                      "alpha": 0.15
+                    },
+                    "dark": {
+                      "value": "#FF3D0126",
+                      "primitive": "opacity-15/brand/60",
+                      "alpha": 0.15
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-brand-hover",
+                  "path": "color/content/brand-hover",
+                  "values": {
+                    "light": {
+                      "value": "#7F1900",
+                      "primitive": "solid/brand/90",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FF8A6F",
+                      "primitive": "solid/brand/40",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "border",
+                  "token": "border-brand-secondary",
+                  "path": "color/border/brand-secondary",
+                  "values": {
+                    "light": {
+                      "value": "#FC66454D",
+                      "primitive": "opacity-30/brand/50",
+                      "alpha": 0.3
+                    },
+                    "dark": {
+                      "value": "#FF3D014D",
+                      "primitive": "opacity-30/brand/60",
+                      "alpha": 0.3
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "hover",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-brand-secondary-hover",
+                  "path": "color/fill/brand-secondary-hover",
+                  "values": {
+                    "light": {
+                      "value": "#FC66454D",
+                      "primitive": "opacity-30/brand/50",
+                      "alpha": 0.3
+                    },
+                    "dark": {
+                      "value": "#FF3D014D",
+                      "primitive": "opacity-30/brand/60",
+                      "alpha": 0.3
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-brand-hover",
+                  "path": "color/content/brand-hover",
+                  "values": {
+                    "light": {
+                      "value": "#7F1900",
+                      "primitive": "solid/brand/90",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FF8A6F",
+                      "primitive": "solid/brand/40",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                },
+                {
+                  "role": "border",
+                  "token": "border-brand-secondary",
+                  "path": "color/border/brand-secondary",
+                  "values": {
+                    "light": {
+                      "value": "#FC66454D",
+                      "primitive": "opacity-30/brand/50",
+                      "alpha": 0.3
+                    },
+                    "dark": {
+                      "value": "#FF3D014D",
+                      "primitive": "opacity-30/brand/60",
+                      "alpha": 0.3
+                    }
+                  },
+                  "inherited": true
+                }
+              ]
+            },
+            {
+              "name": "active",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-brand-secondary-active",
+                  "path": "color/fill/brand-secondary-active",
+                  "values": {
+                    "light": {
+                      "value": "#FF3D014D",
+                      "primitive": "opacity-30/brand/60",
+                      "alpha": 0.3
+                    },
+                    "dark": {
+                      "value": "#FC66454D",
+                      "primitive": "opacity-30/brand/50",
+                      "alpha": 0.3
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-brand-hover",
+                  "path": "color/content/brand-hover",
+                  "values": {
+                    "light": {
+                      "value": "#7F1900",
+                      "primitive": "solid/brand/90",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FF8A6F",
+                      "primitive": "solid/brand/40",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                },
+                {
+                  "role": "border",
+                  "token": "border-brand-secondary",
+                  "path": "color/border/brand-secondary",
+                  "values": {
+                    "light": {
+                      "value": "#FC66454D",
+                      "primitive": "opacity-30/brand/50",
+                      "alpha": 0.3
+                    },
+                    "dark": {
+                      "value": "#FF3D014D",
+                      "primitive": "opacity-30/brand/60",
+                      "alpha": 0.3
+                    }
+                  },
+                  "inherited": true
+                }
+              ]
+            },
+            {
+              "name": "disabled",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-secondary-disabled",
+                  "path": "color/fill/secondary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#EFEDEC80",
+                      "primitive": "opacity-50/neutral/20",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#211F1D80",
+                      "primitive": "opacity-50/neutral/120",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary-disabled",
+                  "path": "color/content/primary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#07060580",
+                      "primitive": "opacity-50/neutral/150",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#EFEDEC80",
+                      "primitive": "opacity-50/neutral/20",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "border",
+                  "token": "border-primary-disabled",
+                  "path": "color/border/primary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#E3E1E080",
+                      "primitive": "opacity-50/neutral/30",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#514F4E80",
+                      "primitive": "opacity-50/neutral/95",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "sizes": [
+        "sm",
+        "md"
+      ],
+      "motion": {
+        "transition": "effects-fast",
+        "properties": "colors",
+        "enter": "pop",
+        "intent": "Colour on the fastest effects spring, and it scales in on `pop` — which for once is the entrance carrying real information. A chip almost always appears because the user just added it, so they are already looking at the spot where it lands, and a scale from the centre confirms the action took effect. Reduced motion collapses the scale and keeps the fade, so the confirmation survives without the movement."
+      },
+      "tokensUsed": [
+        "border-brand",
+        "border-brand-disabled",
+        "border-brand-hover",
+        "border-brand-secondary",
+        "border-primary-disabled",
+        "border-secondary",
+        "border-secondary-hover",
+        "content-brand-hover",
+        "content-primary",
+        "content-primary-disabled",
+        "fill-brand-secondary",
+        "fill-brand-secondary-active",
+        "fill-brand-secondary-hover",
+        "fill-secondary-active",
+        "fill-secondary-disabled",
+        "fill-secondary-hover",
+        "fill-selected",
+        "fill-selected-active",
+        "fill-selected-disabled",
+        "fill-selected-hover",
+        "surface-secondary"
+      ]
+    },
+    {
+      "id": "segmented",
+      "title": "Segmented control",
+      "tag": "SegmentedControl",
+      "description": "Two to four mutually exclusive options, all visible, changing a value rather than a view. If it swaps the content below it, that is Tabs — and if the options have descriptions, it is a RadioGroup.",
+      "variants": [
+        {
+          "name": "segment",
+          "intent": "One option. Selected is a raised surface, never a brand fill — see the notes.",
+          "focus": "outline",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "transparent",
+                  "path": "transparent",
+                  "values": {
+                    "light": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    },
+                    "dark": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-secondary",
+                  "path": "color/content/secondary",
+                  "values": {
+                    "light": {
+                      "value": "#2E2C2B",
+                      "primitive": "solid/neutral/110",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#C2C0BF",
+                      "primitive": "solid/neutral/50",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "hover",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "transparent",
+                  "path": "transparent",
+                  "values": {
+                    "light": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    },
+                    "dark": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    }
+                  },
+                  "inherited": true
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "selected",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "surface-elevated",
+                  "path": "color/surface/elevated",
+                  "values": {
+                    "light": {
+                      "value": "#FFFFFF",
+                      "primitive": "solid/neutral/white",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#393735",
+                      "primitive": "solid/neutral/105",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "shadow",
+                  "token": "x-small",
+                  "path": "elevation/drop shadow/x-small",
+                  "values": {
+                    "light": {
+                      "value": "#A9A7A614",
+                      "primitive": "solid/neutral/60",
+                      "alpha": 0.08
+                    },
+                    "dark": {
+                      "value": "#00000073",
+                      "primitive": "solid/neutral/black",
+                      "alpha": 0.45
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "disabled",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "transparent",
+                  "path": "transparent",
+                  "values": {
+                    "light": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    },
+                    "dark": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    }
+                  },
+                  "inherited": true
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary-disabled",
+                  "path": "color/content/primary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#07060580",
+                      "primitive": "opacity-50/neutral/150",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#EFEDEC80",
+                      "primitive": "opacity-50/neutral/20",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "sizes": [
+        "sm",
+        "md"
+      ],
+      "motion": {
+        "transition": "effects-fast",
+        "properties": "colors",
+        "enter": "none",
+        "intent": "Colour and shadow on the fastest effects spring, and deliberately no travel. A sliding indicator is the obvious flourish here and it was declined: it needs an absolutely-positioned element measured from the DOM, so it is a layout read on every render and it is visibly wrong for a frame whenever the labels reflow. The selected segment simply becomes the raised one, which is instantaneous and correct at every width."
+      },
+      "tokensUsed": [
+        "content-primary",
+        "content-primary-disabled",
+        "content-secondary",
+        "surface-elevated",
+        "transparent",
+        "x-small"
+      ]
+    },
+    {
+      "id": "accordion",
+      "title": "Accordion",
+      "tag": "Accordion",
+      "description": "Sections the reader opens one at a time. Only for content most readers will skip — anything most of them need is content you have hidden, and a page that hides what it is about is shorter and worse.",
+      "variants": [
+        {
+          "name": "row",
+          "intent": "A stack of rows in one container. The default, and right far more often.",
+          "focus": "outline",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "transparent",
+                  "path": "transparent",
+                  "values": {
+                    "light": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    },
+                    "dark": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "hover",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-secondary",
+                  "path": "color/fill/secondary",
+                  "values": {
+                    "light": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#211F1D",
+                      "primitive": "solid/neutral/120",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                }
+              ]
+            },
+            {
+              "name": "active",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-secondary-hover",
+                  "path": "color/fill/secondary-hover",
+                  "values": {
+                    "light": {
+                      "value": "#E3E1E0",
+                      "primitive": "solid/neutral/30",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#2E2C2B",
+                      "primitive": "solid/neutral/110",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "disabled",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "transparent",
+                  "path": "transparent",
+                  "values": {
+                    "light": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    },
+                    "dark": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    }
+                  },
+                  "inherited": true
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary-disabled",
+                  "path": "color/content/primary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#07060580",
+                      "primitive": "opacity-50/neutral/150",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#EFEDEC80",
+                      "primitive": "opacity-50/neutral/20",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "card",
+          "intent": "Each section its own surface. For sections that are genuinely independent.",
+          "focus": "outline",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "surface-primary",
+                  "path": "color/surface/primary",
+                  "values": {
+                    "light": {
+                      "value": "#F7F5F4",
+                      "primitive": "solid/neutral/10",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#151312",
+                      "primitive": "solid/neutral/130",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "border",
+                  "token": "border-secondary",
+                  "path": "color/border/secondary",
+                  "values": {
+                    "light": {
+                      "value": "#CCC9C8",
+                      "primitive": "solid/neutral/45",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "hover",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-elevated-hover",
+                  "path": "color/fill/elevated-hover",
+                  "values": {
+                    "light": {
+                      "value": "#F7F5F4",
+                      "primitive": "solid/neutral/10",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#2E2C2B",
+                      "primitive": "solid/neutral/110",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                },
+                {
+                  "role": "border",
+                  "token": "border-secondary-hover",
+                  "path": "color/border/secondary-hover",
+                  "values": {
+                    "light": {
+                      "value": "#C2C0BF",
+                      "primitive": "solid/neutral/50",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#7C7A78",
+                      "primitive": "solid/neutral/80",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "active",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-elevated-active",
+                  "path": "color/fill/elevated-active",
+                  "values": {
+                    "light": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#444241",
+                      "primitive": "solid/neutral/100",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "border",
+                  "token": "border-secondary",
+                  "path": "color/border/secondary",
+                  "values": {
+                    "light": {
+                      "value": "#CCC9C8",
+                      "primitive": "solid/neutral/45",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                }
+              ]
+            },
+            {
+              "name": "disabled",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "surface-primary",
+                  "path": "color/surface/primary",
+                  "values": {
+                    "light": {
+                      "value": "#F7F5F4",
+                      "primitive": "solid/neutral/10",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#151312",
+                      "primitive": "solid/neutral/130",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary-disabled",
+                  "path": "color/content/primary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#07060580",
+                      "primitive": "opacity-50/neutral/150",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#EFEDEC80",
+                      "primitive": "opacity-50/neutral/20",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "border",
+                  "token": "border-primary-disabled",
+                  "path": "color/border/primary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#E3E1E080",
+                      "primitive": "opacity-50/neutral/30",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#514F4E80",
+                      "primitive": "opacity-50/neutral/95",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "sizes": [
+        "md"
+      ],
+      "motion": {
+        "transition": "effects-fast",
+        "properties": "colors",
+        "enter": "fade",
+        "intent": "The trigger transitions colour on the fastest effects spring and the panel fades in — nothing animates height, which is the decision worth defending. A height transition needs a measured scrollHeight, so it forces layout on every open and it is wrong for the whole duration whenever the content reflows underneath it: an image finishing, a webfont arriving, a list wrapping. The failure it produces is the panel clipping its own last line, which is worse than the 40ms of smoothness it buys. The chevron rotates on the same spring, and rotation is an orientation change rather than travel, so it keeps its full value under reduced motion."
+      },
+      "tokensUsed": [
+        "border-primary-disabled",
+        "border-secondary",
+        "border-secondary-hover",
+        "content-primary",
+        "content-primary-disabled",
+        "fill-elevated-active",
+        "fill-elevated-hover",
+        "fill-secondary",
+        "fill-secondary-hover",
+        "surface-primary",
+        "transparent"
+      ]
+    },
+    {
+      "id": "breadcrumb",
+      "title": "Breadcrumb",
+      "tag": "Breadcrumb",
+      "description": "Where this page sits in a hierarchy that actually exists. Not a history trail — if the path changes depending on how the user arrived, it is telling them about their session rather than about the product.",
+      "variants": [
+        {
+          "name": "link",
+          "intent": "An ancestor. Quieter than the current page, deliberately.",
+          "focus": "outline",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "transparent",
+                  "path": "transparent",
+                  "values": {
+                    "light": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    },
+                    "dark": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-secondary",
+                  "path": "color/content/secondary",
+                  "values": {
+                    "light": {
+                      "value": "#2E2C2B",
+                      "primitive": "solid/neutral/110",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#C2C0BF",
+                      "primitive": "solid/neutral/50",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "hover",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "transparent",
+                  "path": "transparent",
+                  "values": {
+                    "light": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    },
+                    "dark": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    }
+                  },
+                  "inherited": true
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "active",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "transparent",
+                  "path": "transparent",
+                  "values": {
+                    "light": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    },
+                    "dark": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    }
+                  },
+                  "inherited": true
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "current",
+          "intent": "This page. Not a link, and the heaviest item in the row.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "transparent",
+                  "path": "transparent",
+                  "values": {
+                    "light": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    },
+                    "dark": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "sizes": [
+        "md"
+      ],
+      "motion": {
+        "transition": "effects-fast",
+        "properties": "colors",
+        "enter": "none",
+        "intent": "Colour only on the fastest effects spring, and only on the links — the current page has no states because it is not a control. No entrance: a breadcrumb is part of the page chrome and is present the moment the page is, so animating it in would be animating the frame rather than the content."
+      },
+      "tokensUsed": [
+        "content-primary",
+        "content-secondary",
+        "transparent"
+      ]
+    },
+    {
+      "id": "empty-state",
+      "title": "Empty state",
+      "tag": "EmptyState",
+      "description": "The screen when there is nothing to show. Four variants because there are four different reasons for nothing, and they need different copy — the commonest bug in an empty state is using the wrong one.",
+      "variants": [
+        {
+          "name": "first-run",
+          "intent": "Never made one. The best onboarding surface most products have.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "transparent",
+                  "path": "transparent",
+                  "values": {
+                    "light": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    },
+                    "dark": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-brand-hover",
+                  "path": "color/content/brand-hover",
+                  "values": {
+                    "light": {
+                      "value": "#7F1900",
+                      "primitive": "solid/brand/90",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FF8A6F",
+                      "primitive": "solid/brand/40",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "no-results",
+          "intent": "Has plenty; this filter matched none. The copy must offer a way back.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "transparent",
+                  "path": "transparent",
+                  "values": {
+                    "light": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    },
+                    "dark": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-tertiary",
+                  "path": "color/content/tertiary",
+                  "values": {
+                    "light": {
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#A9A7A6",
+                      "primitive": "solid/neutral/60",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "error",
+          "intent": "Could not load. The emptiness IS the error, so it explains itself here.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "transparent",
+                  "path": "transparent",
+                  "values": {
+                    "light": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    },
+                    "dark": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-critical-hover",
+                  "path": "color/content/critical-hover",
+                  "values": {
+                    "light": {
+                      "value": "#75112D",
+                      "primitive": "solid/error/90",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FE8597",
+                      "primitive": "solid/error/40",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "success",
+          "intent": "Deliberately empty and that is good news — an inbox cleared, no failures.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "transparent",
+                  "path": "transparent",
+                  "values": {
+                    "light": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    },
+                    "dark": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-success-hover",
+                  "path": "color/content/success-hover",
+                  "values": {
+                    "light": {
+                      "value": "#004725",
+                      "primitive": "solid/success/90",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#7AC394",
+                      "primitive": "solid/success/40",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "sizes": [
+        "sm",
+        "md"
+      ],
+      "motion": {
+        "transition": "effects-fast",
+        "properties": "colors",
+        "enter": "fade",
+        "intent": "It fades in, on the effects family, with nothing spatial. An empty state replaces content that was there a moment ago — a list, a grid, a table — so travel would read as the new thing arriving from somewhere, which invites the user to look for where it came from. A fade reads as the container changing what it holds, which is what happened. Rule 1b keeps opacity on the curve that cannot overshoot."
+      },
+      "tokensUsed": [
+        "content-brand-hover",
+        "content-critical-hover",
+        "content-success-hover",
+        "content-tertiary",
+        "transparent"
+      ]
+    },
+    {
+      "id": "stepper",
+      "title": "Stepper",
+      "tag": "Stepper",
+      "description": "Where the user is in a sequence with a known number of steps. If the number is not known, or the steps can be done in any order, it is lying about both — that is a checklist.",
+      "variants": [
+        {
+          "name": "upcoming",
+          "intent": "Not reached. The boundary is what says a step exists here at all.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "transparent",
+                  "path": "transparent",
+                  "values": {
+                    "light": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    },
+                    "dark": {
+                      "value": "#00000000",
+                      "primitive": "—",
+                      "alpha": 0
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-tertiary",
+                  "path": "color/content/tertiary",
+                  "values": {
+                    "light": {
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#A9A7A6",
+                      "primitive": "solid/neutral/60",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "border",
+                  "token": "border-secondary",
+                  "path": "color/border/secondary",
+                  "values": {
+                    "light": {
+                      "value": "#CCC9C8",
+                      "primitive": "solid/neutral/45",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "current",
+          "intent": "Where the user is now. The border is the state, not the affordance.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-brand-secondary",
+                  "path": "color/fill/brand-secondary",
+                  "values": {
+                    "light": {
+                      "value": "#FC664526",
+                      "primitive": "opacity-15/brand/50",
+                      "alpha": 0.15
+                    },
+                    "dark": {
+                      "value": "#FF3D0126",
+                      "primitive": "opacity-15/brand/60",
+                      "alpha": 0.15
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-brand-hover",
+                  "path": "color/content/brand-hover",
+                  "values": {
+                    "light": {
+                      "value": "#7F1900",
+                      "primitive": "solid/brand/90",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FF8A6F",
+                      "primitive": "solid/brand/40",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "border",
+                  "token": "border-brand",
+                  "path": "color/border/brand",
+                  "values": {
+                    "light": {
+                      "value": "#FF3D01",
+                      "primitive": "solid/brand/60",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FF3D01",
+                      "primitive": "solid/brand/60",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "complete",
+          "intent": "Done. Shows a tick rather than its numeral — see the notes.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-brand",
+                  "path": "color/fill/brand",
+                  "values": {
+                    "light": {
+                      "value": "#FF3D01",
+                      "primitive": "solid/brand/60",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FF3D01",
+                      "primitive": "solid/brand/60",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-on-brand",
+                  "path": "color/content/on-brand",
+                  "values": {
+                    "light": {
+                      "value": "#FFFFFF",
+                      "primitive": "solid/neutral/white",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FFFFFF",
+                      "primitive": "solid/neutral/white",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "border",
+                  "token": "border-brand",
+                  "path": "color/border/brand",
+                  "values": {
+                    "light": {
+                      "value": "#FF3D01",
+                      "primitive": "solid/brand/60",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FF3D01",
+                      "primitive": "solid/brand/60",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "failed",
+          "intent": "Errored. The state most steppers are missing, and the one a retry needs.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-critical",
+                  "path": "color/fill/critical",
+                  "values": {
+                    "light": {
+                      "value": "#E63C65",
+                      "primitive": "solid/error/60",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#E63C65",
+                      "primitive": "solid/error/60",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-on-critical",
+                  "path": "color/content/on-critical",
+                  "values": {
+                    "light": {
+                      "value": "#FFFFFF",
+                      "primitive": "solid/neutral/white",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FFFFFF",
+                      "primitive": "solid/neutral/white",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "border",
+                  "token": "border-critical",
+                  "path": "color/border/critical",
+                  "values": {
+                    "light": {
+                      "value": "#E63C65",
+                      "primitive": "solid/error/60",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#E63C65",
+                      "primitive": "solid/error/60",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "sizes": [
+        "md"
+      ],
+      "motion": {
+        "transition": "effects-default",
+        "properties": "colors",
+        "enter": "none",
+        "intent": "Colour on the default effects spring rather than the fast one, and nothing else. A step changing state is not a hover — it happens because work finished, the user is not waiting on the pointer, and 240ms reads as a state settling where 120ms reads as a flicker. No travel and no filling line: a connector that animates its width needs a measured layout and is wrong for a frame every time the labels reflow."
+      },
+      "tokensUsed": [
+        "border-brand",
+        "border-critical",
+        "border-secondary",
+        "content-brand-hover",
+        "content-on-brand",
+        "content-on-critical",
+        "content-tertiary",
+        "fill-brand",
+        "fill-brand-secondary",
+        "fill-critical",
+        "transparent"
       ]
     },
     {

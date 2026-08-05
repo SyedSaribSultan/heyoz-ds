@@ -72,3 +72,16 @@ export {
   type ToastProps,
   type ToastOptions,
 } from './Toast';
+export { Separator, type SeparatorProps } from './Separator';
+export { Avatar, AvatarGroup, type AvatarProps, type AvatarGroupProps } from './Avatar';
+export { Progress, type ProgressProps } from './Progress';
+export { Chip, type ChipProps } from './Chip';
+export {
+  SegmentedControl,
+  type SegmentedControlProps,
+  type SegmentedOption,
+} from './SegmentedControl';
+export { Accordion, type AccordionProps, type AccordionSection } from './Accordion';
+export { Breadcrumb, type BreadcrumbProps, type Crumb } from './Breadcrumb';
+export { EmptyState, type EmptyStateProps } from './EmptyState';
+export { Stepper, type StepperProps, type Step } from './Stepper';

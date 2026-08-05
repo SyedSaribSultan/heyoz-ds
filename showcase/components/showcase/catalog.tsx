@@ -22,6 +22,15 @@ import {
   popoverRecipe,
   toastRecipe,
   tooltipRecipe,
+  separatorRecipe,
+  avatarRecipe,
+  progressRecipe,
+  chipRecipe,
+  segmentedRecipe,
+  accordionRecipe,
+  breadcrumbRecipe,
+  emptyStateRecipe,
+  stepperRecipe,
   textareaRecipe,
   pricingCardRecipe,
   skeletonRecipe,
@@ -38,6 +47,10 @@ import {
   type IconButtonVariant,
   type InputVariant,
   type MenuVariant,
+  type AvatarTone,
+  type ChipVariant,
+  type AccordionVariant,
+  type StepperVariant,
   type SkeletonVariant,
   type SwitchVariant,
   type TabVariant,
@@ -74,6 +87,16 @@ import {
   ToastProvider,
   Tooltip,
   useToast,
+  Separator,
+  Avatar,
+  AvatarGroup,
+  Progress,
+  Chip,
+  SegmentedControl,
+  Accordion,
+  Breadcrumb,
+  EmptyState,
+  Stepper,
   SkeletonGroup,
   Switch,
   Table,
@@ -1517,6 +1540,483 @@ registry.register({
           whose colour cannot be known.
         </p>
       </div>
+    );
+  },
+});
+
+/* -- Separator ------------------------------------------------------------- */
+
+registry.register({
+  recipe: separatorRecipe,
+  Preview: function SeparatorPreview() {
+    return (
+      <div className="w-[200px] oz-stack oz-stack-4">
+        <span className="text-body-sm text-content-secondary">Above</span>
+        <Separator />
+        <span className="text-body-sm text-content-secondary">Below</span>
+      </div>
+    );
+  },
+  Live: function SeparatorLive() {
+    return (
+      <div className="oz-stack oz-stack-7 max-w-[440px]">
+        <div className="oz-stack oz-stack-5">
+          <span className="text-body-md text-content-primary">Horizontal — role=&quot;separator&quot;</span>
+          <Separator />
+          <span className="text-body-md text-content-secondary">
+            Announced, because it divides two blocks of content.
+          </span>
+        </div>
+
+        {/* Vertical is aria-hidden: a rule between inline items is punctuation, and
+            "separator" read between every pair is noise a sighted reader never gets. */}
+        <div className="flex items-center gap-space-4 text-body-sm text-content-secondary">
+          <span>Draft</span>
+          <Separator orientation="vertical" />
+          <span>Edited 2h ago</span>
+          <Separator orientation="vertical" />
+          <span>Sara Malik</span>
+        </div>
+      </div>
+    );
+  },
+});
+
+/* -- Avatar ---------------------------------------------------------------- */
+
+const PEOPLE = [
+  { name: 'Sara Malik' },
+  { name: 'Bilal Ahmed' },
+  { name: 'Priya Nair' },
+  { name: 'Tom Okafor' },
+  { name: 'Lena Fischer' },
+  { name: 'Yusuf Demir' },
+];
+
+registry.register({
+  recipe: avatarRecipe,
+  Preview: function AvatarPreview() {
+    return (
+      <div className={row}>
+        <Avatar name="Sara Malik" label="Sara Malik" />
+        <AvatarGroup people={PEOPLE} label={`${PEOPLE.length} collaborators`} />
+      </div>
+    );
+  },
+  Live: function AvatarLive() {
+    return (
+      <div className="oz-stack oz-stack-7">
+        {/* The tone is derived from the name, so the same person is the same colour on every
+            screen — nothing stores an avatar colour. */}
+        <div className={row}>
+          {PEOPLE.map((p) => (
+            <Avatar key={p.name} name={p.name} label={p.name} />
+          ))}
+        </div>
+
+        <div className={row}>
+          {avatarRecipe.sizes.map((s) => (
+            <Avatar key={s} name="Sara Malik" size={s} label={`Sara Malik, ${s}`} />
+          ))}
+          <span className="font-mono text-label-sm text-content-tertiary">
+            xs has no initials — 2 characters at 20px is 9px type
+          </span>
+        </div>
+
+        {/* A src that 404s falls back to the initials, because it is a real img with onError.
+            A CSS background-image cannot report failure and would leave an empty disc. */}
+        <div className={row}>
+          <Avatar name="Sara Malik" src="/does-not-exist.png" size="lg" label="Broken image" />
+          <span className="font-mono text-label-sm text-content-tertiary">
+            broken src → initials
+          </span>
+        </div>
+
+        <AvatarGroup people={PEOPLE} max={4} label={`${PEOPLE.length} collaborators`} />
+      </div>
+    );
+  },
+  Cell: function AvatarCell({ variant }) {
+    return <Avatar name="Sara Malik" tone={variant as AvatarTone} label="Sara Malik" />;
+  },
+});
+
+/* -- Progress -------------------------------------------------------------- */
+
+registry.register({
+  recipe: progressRecipe,
+  Preview: function ProgressPreview() {
+    return (
+      <div className="w-[200px]">
+        <Progress label="Rendering" value={62} showLabel />
+      </div>
+    );
+  },
+  Live: function ProgressLive() {
+    return (
+      <div className="oz-stack oz-stack-7 max-w-[440px]">
+        <Progress label="Rendering" value={62} showLabel format={(v) => `${v} of 100 frames`} />
+        <Progress label="Uploading" value={100} variant="success" showLabel />
+        <Progress label="Upload stopped" value={60} variant="critical" showLabel />
+        {/* No value = indeterminate. It pulses rather than sweeping, because the token layer
+            ships no traversing keyframe and a hand-written one would sit outside the
+            reduced-motion switch. Under reduced motion it rests FILLED, not empty. */}
+        <Progress label="Analysing the product page" showLabel />
+        <Progress label="Rendering" value={38} size="sm" />
+        <Progress label="Rendering" value={38} disabled showLabel />
+      </div>
+    );
+  },
+});
+
+/* -- Chip ------------------------------------------------------------------ */
+
+function ChipDemo() {
+  const [tags, setTags] = useState(['Skincare', 'Vertical 9:16', 'Seedance 2']);
+  return (
+    <div className={row}>
+      {tags.map((t) => (
+        <Chip key={t} onRemove={() => setTags((x) => x.filter((y) => y !== t))}>
+          {t}
+        </Chip>
+      ))}
+      {tags.length === 0 && (
+        <span className="text-body-sm text-content-tertiary">All removed — reload to reset.</span>
+      )}
+    </div>
+  );
+}
+
+registry.register({
+  recipe: chipRecipe,
+  Preview: function ChipPreview() {
+    return (
+      <div className={row}>
+        <Chip variant="selected">Vertical 9:16</Chip>
+        <Chip onRemove={() => {}}>Skincare</Chip>
+      </div>
+    );
+  },
+  Live: function ChipLive() {
+    return (
+      <div className="oz-stack oz-stack-7">
+        <div className={row}>
+          {chipRecipe.variants.map((v) => (
+            <Chip key={v} variant={v}>
+              {chipRecipe.sampleFor(v)}
+            </Chip>
+          ))}
+        </div>
+
+        {/* Removable: the ✕ is the only hit target, not the chip. A chip that removes itself
+            when the user meant to read it is the worse of the two failures. */}
+        <ChipDemo />
+
+        {/* Clickable: the WHOLE chip is a button, with aria-pressed. Both together is
+            deliberately unsupported — a button inside a button is invalid HTML. */}
+        <div className={row}>
+          <Chip variant="selected" onClick={() => {}}>
+            Toggles — aria-pressed
+          </Chip>
+          <Chip icon={<Glyph />} size="sm">
+            sm, with an icon
+          </Chip>
+          <Chip disabled onRemove={() => {}}>
+            Disabled
+          </Chip>
+        </div>
+      </div>
+    );
+  },
+  Cell: function ChipCell({ variant, state, disabled }) {
+    return (
+      <Chip variant={variant as ChipVariant} forceState={state} disabled={disabled}>
+        {chipRecipe.sampleFor(variant as ChipVariant)}
+      </Chip>
+    );
+  },
+});
+
+/* -- Segmented control ----------------------------------------------------- */
+
+registry.register({
+  recipe: segmentedRecipe,
+  Preview: function SegmentedPreview() {
+    return (
+      <SegmentedControl
+        label="Billing period"
+        options={[
+          { value: 'monthly', label: 'Monthly' },
+          { value: 'annual', label: 'Annual' },
+        ]}
+      />
+    );
+  },
+  Live: function SegmentedLive() {
+    return (
+      <div className="oz-stack oz-stack-7 max-w-[440px]">
+        {/* One tab stop; arrows move AND commit, exactly like RadioGroup — because it IS a
+            radiogroup. The selected segment is a raised surface in a recessed track, not a
+            brand fill: this control is furniture. */}
+        <SegmentedControl
+          label="Billing period"
+          options={[
+            { value: 'monthly', label: 'Monthly' },
+            { value: 'annual', label: 'Annual' },
+          ]}
+        />
+        <SegmentedControl
+          label="Density"
+          size="sm"
+          options={[
+            { value: 'compact', label: 'Compact' },
+            { value: 'cosy', label: 'Cosy' },
+            { value: 'roomy', label: 'Roomy' },
+          ]}
+          defaultValue="cosy"
+        />
+        <SegmentedControl
+          label="Aspect ratio"
+          fullWidth
+          options={[
+            { value: '9-16', label: '9:16', icon: <Glyph /> },
+            { value: '1-1', label: '1:1', icon: <Glyph /> },
+            { value: '16-9', label: '16:9', icon: <Glyph /> },
+            { value: '21-9', label: '21:9', icon: <Glyph />, disabled: true },
+          ]}
+        />
+        <SegmentedControl
+          label="Disabled"
+          disabled
+          options={[
+            { value: 'a', label: 'Monthly' },
+            { value: 'b', label: 'Annual' },
+          ]}
+        />
+      </div>
+    );
+  },
+});
+
+/* -- Accordion ------------------------------------------------------------- */
+
+const FAQ = [
+  {
+    id: 'time',
+    title: 'How long does a render take?',
+    content: 'About four minutes for a 20-second vertical clip, and it queues behind nothing on a paid plan.',
+  },
+  {
+    id: 'rights',
+    title: 'Who owns the output?',
+    content: 'You do. The actors are licensed for commercial use and the licence travels with the export.',
+  },
+  {
+    id: 'langs',
+    title: 'Which languages are supported?',
+    content: 'Twenty-nine, with lip-sync on all of them. The script is translated before the voice is generated, not after.',
+  },
+];
+
+registry.register({
+  recipe: accordionRecipe,
+  Preview: function AccordionPreview() {
+    return (
+      <div className="w-[260px]">
+        <Accordion sections={FAQ.slice(0, 2)} defaultValue={['time']} />
+      </div>
+    );
+  },
+  Live: function AccordionLive() {
+    return (
+      <div className="oz-stack oz-stack-9 max-w-[560px]">
+        {/* `row` — one container, hairline-separated. The hairline is a real Separator, because
+            a rule between rows is `separation` and rule 1c makes that a build error as a
+            border. Multiple open at once is the default. */}
+        <Accordion sections={FAQ} defaultValue={['time']} />
+
+        {/* `card` — each section its own surface, for sections that are genuinely independent.
+            Right far less often than `row`. */}
+        <Accordion variant="card" sections={FAQ} defaultValue={['rights']} />
+
+        {/* single: opening one closes the last. Usually wrong — it makes the reader lose their
+            place to see something else. */}
+        <Accordion sections={FAQ} single defaultValue={['time']} />
+      </div>
+    );
+  },
+  Cell: function AccordionCell({ variant, state, disabled }) {
+    return (
+      <div className="w-[220px]">
+        <button
+          type="button"
+          disabled={disabled}
+          className={accordionRecipe.classes({
+            variant: variant as AccordionVariant,
+            force: state,
+            className: 'font-medium',
+          })}
+        >
+          {accordionRecipe.sampleFor(variant as AccordionVariant)}
+        </button>
+      </div>
+    );
+  },
+});
+
+/* -- Breadcrumb ------------------------------------------------------------ */
+
+registry.register({
+  recipe: breadcrumbRecipe,
+  Preview: function BreadcrumbPreview() {
+    return (
+      <Breadcrumb
+        items={[
+          { label: 'Projects', href: '#' },
+          { label: 'Spring campaign', href: '#' },
+          { label: 'Script' },
+        ]}
+      />
+    );
+  },
+  Live: function BreadcrumbLive() {
+    return (
+      <div className="oz-stack oz-stack-7">
+        {/* The last item is a span with aria-current="page", not a link — a link to the page
+            you are on does nothing and a screen reader cannot tell it apart from the ones that
+            do. It is also the heaviest item: the emphasis runs toward where you are. */}
+        <Breadcrumb
+          items={[
+            { label: 'Projects', href: '#' },
+            { label: 'Spring campaign', href: '#' },
+            { label: 'Ads', href: '#' },
+            { label: 'Script' },
+          ]}
+        />
+        <Breadcrumb items={[{ label: 'Projects', href: '#' }, { label: 'Spring campaign' }]} />
+        <p className="max-w-[58ch] text-body-sm text-content-tertiary">
+          It wraps rather than collapsing. An ellipsis in the middle of a path hides exactly the
+          part that says where you are — if a path is too deep for the screen, the hierarchy is
+          too deep.
+        </p>
+      </div>
+    );
+  },
+});
+
+/* -- Empty state ----------------------------------------------------------- */
+
+registry.register({
+  recipe: emptyStateRecipe,
+  Preview: function EmptyStatePreview() {
+    return (
+      <div className="w-[260px]">
+        <EmptyState
+          size="sm"
+          variant="first-run"
+          icon={<Glyph />}
+          title="Make your first ad"
+          body="Paste a product URL and we do the rest."
+        />
+      </div>
+    );
+  },
+  Live: function EmptyStateLive() {
+    return (
+      <div className="oz-stack oz-stack-7 max-w-[560px]">
+        {/* Four variants because there are four reasons for nothing. Showing "Create your
+            first project" to someone with forty projects and a bad filter is the bug this
+            component exists to prevent. */}
+        <div className="rounded-8 bg-surface-primary">
+          <EmptyState
+            variant="first-run"
+            icon={<Glyph />}
+            title="Make your first ad"
+            body="Paste a product URL or drop an image, and we read the brand, the benefits and the audience from it."
+            action={<Button variant="primary">Paste a product URL</Button>}
+            secondaryAction={<Button variant="ghost">See an example</Button>}
+          />
+        </div>
+        <div className="rounded-8 bg-surface-primary">
+          <EmptyState
+            size="sm"
+            variant="no-results"
+            icon={<Glyph />}
+            title="No ads match those filters"
+            body="Three filters are active."
+            action={<Button variant="outline">Clear filters</Button>}
+          />
+        </div>
+        {/* error and success two-up rather than stacked. Four full-height empty states put this
+            specimen at 1252px against the suite's 1200px ceiling, and that guard is what catches
+            a specimen that has become the whole page — widening it for one component would
+            remove it from the other thirty-three. `first-run` keeps the full width because it is
+            the variant with the most to say. */}
+        <div className="grid gap-space-5 md:grid-cols-2">
+          <div className="rounded-8 bg-surface-primary">
+            <EmptyState
+              size="sm"
+              variant="error"
+              icon={<Glyph />}
+              title="We could not load your ads"
+              body="The request timed out. Nothing has been lost."
+              action={<Button variant="outline">Try again</Button>}
+            />
+          </div>
+          <div className="rounded-8 bg-surface-primary">
+            <EmptyState
+              size="sm"
+              variant="success"
+              icon={<Glyph />}
+              title="Every render finished"
+              body="Nothing is queued."
+            />
+          </div>
+        </div>
+      </div>
+    );
+  },
+});
+
+/* -- Stepper --------------------------------------------------------------- */
+
+const FLOW = [
+  { id: 'upload', label: 'Upload product', href: '#' },
+  { id: 'script', label: 'Generate script' },
+  { id: 'creator', label: 'Pick a creator' },
+  { id: 'publish', label: 'Publish' },
+];
+
+registry.register({
+  recipe: stepperRecipe,
+  Preview: function StepperPreview() {
+    return (
+      <div className="w-[280px]">
+        <Stepper steps={FLOW.slice(0, 3)} current={1} label="Ad creation" />
+      </div>
+    );
+  },
+  Live: function StepperLive() {
+    return (
+      <div className="oz-stack oz-stack-9 max-w-[560px]">
+        {/* Completed steps show a tick rather than their numeral, so done vs not-done survives
+            greyscale instead of depending on a fill colour. */}
+        <Stepper steps={FLOW} current={2} label="Ad creation" />
+
+        {/* `failed` is the state most steppers are missing. Without it the stepper shows a tick
+            over work that did not happen, or leaves the user on a current step with no sign
+            anything went wrong. */}
+        <Stepper steps={FLOW} current={2} failed={['script']} label="Ad creation, with a failure" />
+
+        <Stepper steps={FLOW} current={1} orientation="vertical" label="Ad creation, vertical" />
+      </div>
+    );
+  },
+  Cell: function StepperCell({ variant }) {
+    return (
+      <span className={stepperRecipe.classes({ variant: variant as StepperVariant })}>
+        {variant === 'complete' ? '✓' : variant === 'failed' ? '!' : '2'}
+      </span>
     );
   },
 });

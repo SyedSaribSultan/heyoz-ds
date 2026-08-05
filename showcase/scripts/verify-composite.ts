@@ -157,11 +157,20 @@ const ALPHA_FILLS: Array<{ fill: string; on: readonly string[] }> = [
     ],
   },
   { fill: 'fill/elevated-hover', on: ['content/primary', 'content/secondary', 'content/tertiary'] },
+  /* All five status washes, each carrying the matching `-hover` content step.
+   *
+   * These are Avatar's five initials grounds and Menu's destructive hover row, and they are
+   * the tightest family in the system: over `surface/elevated` in dark they land at 4.51 to
+   * 4.88, so four of the five sit within 0.4 of the floor. None of that is visible to
+   * `verify:contrast`, which flattens the wash over the page and reports 6–8:1.
+   *
+   * `content/critical-active` is listed alongside `critical-hover` because Menu's hover row
+   * needs the extra step — `critical-hover` there is 4.51:1, over the floor by 0.01, which is
+   * a coincidence and not a margin. Listing both keeps the tight one on the report. */
   { fill: 'fill/brand-secondary', on: ['content/brand-hover', 'content/primary'] },
-  /* Menu's destructive hover row. Added when that variant was bound, and it earned its place
-   * immediately: `content/critical-hover` here is 4.51:1 in dark — over the floor by 0.01,
-   * which is a coincidence rather than a margin. The row binds `content/critical-active`
-   * instead, at 6.09:1. Both are listed so the tight one stays visible. */
+  { fill: 'fill/success-secondary', on: ['content/success-hover', 'content/primary'] },
+  { fill: 'fill/warning-secondary', on: ['content/warning-hover', 'content/primary'] },
+  { fill: 'fill/info-secondary', on: ['content/info-hover', 'content/primary'] },
   {
     fill: 'fill/critical-secondary',
     on: ['content/critical-hover', 'content/critical-active', 'content/primary'],
