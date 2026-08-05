@@ -2,6 +2,8 @@
 
 One source of truth. JSON in, Figma and CSS out.
 
+**New here?** Read **`docs/HANDOFF.md`** — how to run it, what is finished, and what is not.
+
 ```
 build/          the only files anyone edits
   palette.mjs   OKLCH colour engine + the authored ramps
@@ -11,46 +13,53 @@ build/          the only files anyone edits
   shipped.mjs   pre-migration globals.css values — for the diff only, delete after
   build.mjs     emitters + validation gates
 
-tokens/         GENERATED — import these into Figma, in numeric order
+tokens/         GENERATED — Figma's NATIVE Variables import, in numeric order
+tokens-studio/  GENERATED — the Tokens Studio plugin. Import the folder.
 dist/           GENERATED — the dev drops these into the app
 reports/        GENERATED — audit data, rendered by the showcase /verify route
+showcase/       the living reference: 34 components, 9 verification suites
 
 docs/
-  TESTING.md    ← start here for the test phase
-  FIGMA-GUIDE.md
-  DEV-GUIDE.md
-  DECISIONS.md  every problem found → how it is resolved → where it is enforced
+  HANDOFF.md    ← start here
+  FIGMA-GUIDE.md  the two import paths, and why they need different files
+  DEV-GUIDE.md    wiring it into an app; read the two footguns
+  TESTING.md      how to review a change
+  DECISIONS.md    every problem found → how it is resolved → where it is enforced
 ```
+
+The two token folders come from one resolved map, so they cannot disagree about a
+value. They differ in format: `tokens/` gives a colour's value as an object, which
+Figma's native importer reads; `tokens-studio/` gives it as a string or a
+reference, which the plugin reads and the object form breaks. See FIGMA-GUIDE.
 
 ## Run it
 
 ```bash
-node build/build.mjs
+node build/build.mjs        # the token layer. No dependencies, Node 18+.
 ```
 
-No dependencies. Node 18+. Takes under a second and rewrites `tokens/`, `dist/`,
-`reports/` and `test/`.
+Rewrites `tokens/`, `tokens-studio/`, `dist/` and `reports/` in under a second.
 
-The build **fails** if any gate regresses, any alias is unresolvable, any two
-tokens that must differ collide, any semantic token contains a literal, or light
-and dark stop declaring the same token names. That is the guarantee — the system
-cannot quietly rot.
-
-Current state:
-
+```bash
+cd showcase && npm run verify     # the component layer. 9 suites.
+cd showcase && npm run visual     # 75 visual tests. Needs a built server on :3000.
 ```
-colour primitives   655   (OKLCH-computed, solid + 4 alpha groups)
-semantic tokens     210 × 2 modes  (216 including elevation)
-type steps          15 × 5 weights
 
-contrast gates     118/118 pass   WCAG 2.x ratio
-APCA gates          30/30 pass    text on saturated fill, Lc 60 floor
-visibility gates    12/12 pass    decorative edges
-elevation gates      8/8  pass    shadow ΔL floor
-greyscale gates     20/20 pass    chart series separated without hue
-                   ─────────
-total              188/188 pass
-```
+The build **fails** if any gate regresses, any alias is unresolvable, any Tokens
+Studio reference dangles, any two tokens that must differ collide, any semantic
+token contains a literal, or light and dark stop declaring the same token names.
+That is the guarantee — the system cannot quietly rot.
+
+### Current state
+
+Deliberately not printed here. `node build/build.mjs` ends with the live counts and
+`cd showcase && npm run verify` ends with the component ones — read those.
+
+This section used to carry a hardcoded table, and by the time anyone noticed it was
+wrong in six places at once: 188 gates when the real figure was 246, 210 semantic
+tokens when it was 202, 118 contrast gates when it was 128. It is the first thing a
+reader sees and it was the least true thing in the repo. Same reason `CLAUDE.md`
+refuses to restate the border count — a number in prose is a number nobody rebuilds.
 
 ## The rules
 

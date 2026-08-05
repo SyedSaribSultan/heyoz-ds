@@ -1,0 +1,11 @@
+{
+  "tokenSetOrder": [
+    "primitives-colors",
+    "primitives-numbers",
+    "foundations",
+    "motion",
+    "typography",
+    "semantic-light",
+    "semantic-dark"
+  ]
+}

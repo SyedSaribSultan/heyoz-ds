@@ -15,9 +15,10 @@ build/spec.mjs      every decision: semantic map, gates, bridge  ← edit
 build/build.mjs     emitters + validation                        ← edit (rarely)
 build/shipped.mjs   pre-migration values, for the diff only      ← do not edit
 
-tokens/   GENERATED  DTCG JSON for Figma
-dist/     GENERATED  CSS + Tailwind preset + layout.css
-reports/  GENERATED  audit data, rendered by showcase /verify
+tokens/        GENERATED  DTCG-2024 JSON — Figma's NATIVE Variables import
+tokens-studio/ GENERATED  the same map in Tokens Studio's format — the PLUGIN path
+dist/          GENERATED  CSS + Tailwind preset + layout.css
+reports/       GENERATED  audit data, rendered by showcase /verify
 archive/  retired, wired to nothing — read archive/README.md first
 showcase/ the living reference. Two routes: / and /verify
 ```
@@ -47,9 +48,16 @@ offending token and measured value on any failure. No dependencies, Node 18+.
 
 ## Hard rules
 
-**1. Never edit `tokens/`, `dist/`, `reports/` or `test/`.** They are overwritten
-on every build. A change there looks like it worked and vanishes. If you want a
+**1. Never edit `tokens/`, `tokens-studio/`, `dist/` or `reports/`.** They are
+overwritten on every build. A change there looks like it worked and vanishes. If you want a
 different value in `dist/tokens.css`, change `build/spec.mjs` and rebuild.
+
+`tokens-studio/` is the same resolved map as `tokens/` in a second format, because the two
+Figma import paths genuinely need different documents: native reads a colour's `$value` as an
+object, Tokens Studio reads it as a string or a `{reference}` and cannot parse the object. It is
+derived from the emitted `tokens/` files rather than re-walked from `spec.mjs` — one traversal,
+so the two sets cannot drift. Its references are gated: a dangling one is silent in Figma, since
+the plugin simply never creates the variable while `dist/` stays correct.
 
 **1b. Never hand-type an easing curve either.** Springs are declared in
 `spec.mjs` as `{ settle, bounce }` and computed by `build/motion.mjs` into a

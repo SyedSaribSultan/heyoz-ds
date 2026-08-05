@@ -1,0 +1,277 @@
+{
+  "$generated": "GENERATED FILE — DO NOT EDIT. Overwritten by `node build/build.mjs`. Change build/spec.mjs or build/palette.mjs and rebuild. See CLAUDE.md.",
+  "spacing": {
+    "spacing-1": {
+      "$type": "number",
+      "$value": "{number-4}"
+    },
+    "spacing-2": {
+      "$type": "number",
+      "$value": "{number-6}"
+    },
+    "spacing-3": {
+      "$type": "number",
+      "$value": "{number-8}"
+    },
+    "spacing-4": {
+      "$type": "number",
+      "$value": "{number-12}"
+    },
+    "spacing-5": {
+      "$type": "number",
+      "$value": "{number-16}"
+    },
+    "spacing-6": {
+      "$type": "number",
+      "$value": "{number-20}"
+    },
+    "spacing-7": {
+      "$type": "number",
+      "$value": "{number-24}"
+    },
+    "spacing-8": {
+      "$type": "number",
+      "$value": "{number-28}"
+    },
+    "spacing-9": {
+      "$type": "number",
+      "$value": "{number-32}"
+    },
+    "spacing-10": {
+      "$type": "number",
+      "$value": "{number-36}"
+    },
+    "spacing-11": {
+      "$type": "number",
+      "$value": "{number-40}"
+    },
+    "spacing-12": {
+      "$type": "number",
+      "$value": "{number-48}"
+    },
+    "spacing-13": {
+      "$type": "number",
+      "$value": "{number-56}"
+    },
+    "spacing-14": {
+      "$type": "number",
+      "$value": "{number-64}"
+    },
+    "spacing-15": {
+      "$type": "number",
+      "$value": "{number-72}"
+    },
+    "spacing-16": {
+      "$type": "number",
+      "$value": "{number-80}"
+    },
+    "spacing-17": {
+      "$type": "number",
+      "$value": "{number-96}"
+    },
+    "spacing-18": {
+      "$type": "number",
+      "$value": "{number-120}"
+    }
+  },
+  "roundness": {
+    "radius-1": {
+      "$type": "number",
+      "$value": "{number-2}"
+    },
+    "radius-2": {
+      "$type": "number",
+      "$value": "{number-4}"
+    },
+    "radius-3": {
+      "$type": "number",
+      "$value": "{number-6}"
+    },
+    "radius-4": {
+      "$type": "number",
+      "$value": "{number-8}"
+    },
+    "radius-5": {
+      "$type": "number",
+      "$value": "{number-10}"
+    },
+    "radius-6": {
+      "$type": "number",
+      "$value": "{number-12}"
+    },
+    "radius-7": {
+      "$type": "number",
+      "$value": "{number-14}"
+    },
+    "radius-8": {
+      "$type": "number",
+      "$value": "{number-16}"
+    },
+    "radius-9": {
+      "$type": "number",
+      "$value": "{number-20}"
+    },
+    "radius-10": {
+      "$type": "number",
+      "$value": "{number-24}"
+    },
+    "radius-11": {
+      "$type": "number",
+      "$value": "{number-32}"
+    },
+    "radius-12": {
+      "$type": "number",
+      "$value": "{number-40}"
+    },
+    "radius-full": {
+      "$type": "number",
+      "$value": "{number-1000}"
+    }
+  },
+  "stroke width": {
+    "width-1": {
+      "$type": "number",
+      "$value": "{number-005}"
+    },
+    "width-2": {
+      "$type": "number",
+      "$value": "{number-1}"
+    },
+    "width-3": {
+      "$type": "number",
+      "$value": "{number-105}"
+    },
+    "width-4": {
+      "$type": "number",
+      "$value": "{number-2}"
+    },
+    "width-5": {
+      "$type": "number",
+      "$value": "{number-205}"
+    },
+    "width-6": {
+      "$type": "number",
+      "$value": "{number-4}"
+    }
+  },
+  "focus": {
+    "ring-width": {
+      "$type": "number",
+      "$value": "{number-2}"
+    },
+    "ring-offset": {
+      "$type": "number",
+      "$value": "{number-2}"
+    }
+  },
+  "size": {
+    "target-min": {
+      "$type": "number",
+      "$value": "{number-44}"
+    },
+    "target-comfortable": {
+      "$type": "number",
+      "$value": "{number-48}"
+    }
+  },
+  "icon": {
+    "size-sm": {
+      "$type": "number",
+      "$value": "{number-16}"
+    },
+    "size-md": {
+      "$type": "number",
+      "$value": "{number-20}"
+    },
+    "size-lg": {
+      "$type": "number",
+      "$value": "{number-24}"
+    },
+    "size-xl": {
+      "$type": "number",
+      "$value": "{number-32}"
+    },
+    "stroke": {
+      "$type": "number",
+      "$value": "{number-2}"
+    }
+  },
+  "layer": {
+    "base": {
+      "$type": "number",
+      "$value": 0
+    },
+    "dropdown": {
+      "$type": "number",
+      "$value": 1000
+    },
+    "sticky": {
+      "$type": "number",
+      "$value": 1100
+    },
+    "overlay": {
+      "$type": "number",
+      "$value": 1200
+    },
+    "modal": {
+      "$type": "number",
+      "$value": 1300
+    },
+    "popover": {
+      "$type": "number",
+      "$value": 1400
+    },
+    "toast": {
+      "$type": "number",
+      "$value": 1500
+    },
+    "tooltip": {
+      "$type": "number",
+      "$value": 1600
+    }
+  },
+  "breakpoint": {
+    "sm": {
+      "$type": "number",
+      "$value": 480
+    },
+    "md": {
+      "$type": "number",
+      "$value": 768
+    },
+    "lg": {
+      "$type": "number",
+      "$value": 1024
+    },
+    "xl": {
+      "$type": "number",
+      "$value": 1280
+    }
+  },
+  "container": {
+    "sm": {
+      "$type": "number",
+      "$value": 640
+    },
+    "md": {
+      "$type": "number",
+      "$value": 768
+    },
+    "lg": {
+      "$type": "number",
+      "$value": 1024
+    },
+    "xl": {
+      "$type": "number",
+      "$value": 1280
+    },
+    "gutter": {
+      "$type": "number",
+      "$value": 24
+    },
+    "measure": {
+      "$type": "other",
+      "$value": "65ch"
+    }
+  }
+}
