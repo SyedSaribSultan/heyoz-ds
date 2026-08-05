@@ -18,6 +18,10 @@ import {
   radioRecipe,
   selectRecipe,
   sliderRecipe,
+  menuRecipe,
+  popoverRecipe,
+  toastRecipe,
+  tooltipRecipe,
   textareaRecipe,
   pricingCardRecipe,
   skeletonRecipe,
@@ -33,6 +37,7 @@ import {
   type DialogVariant,
   type IconButtonVariant,
   type InputVariant,
+  type MenuVariant,
   type SkeletonVariant,
   type SwitchVariant,
   type TabVariant,
@@ -58,7 +63,17 @@ import {
   RadioGroup,
   Select,
   Skeleton,
+  Menu,
+  MenuCheckItem,
+  MenuGroup,
+  MenuItem,
+  MenuSeparator,
+  Popover,
   Slider,
+  Toast,
+  ToastProvider,
+  Tooltip,
+  useToast,
   SkeletonGroup,
   Switch,
   Table,
@@ -1193,6 +1208,314 @@ registry.register({
           ))}
         </div>
         <Dropzone label="Brand assets" hint="Locked on the free plan." disabled />
+      </div>
+    );
+  },
+});
+
+/* -- Tooltip --------------------------------------------------------------- */
+
+registry.register({
+  recipe: tooltipRecipe,
+  /* One variant and no states — a forced grid would be a single cell. The behaviour is the
+     component, and it can only be read by hovering the Live demo. */
+  gridSuppressed: true,
+  Preview: function TooltipPreview() {
+    return (
+      <Tooltip content={tooltipRecipe.sampleFor('default')}>
+        <Button variant="outline">Hover me</Button>
+      </Tooltip>
+    );
+  },
+  Live: function TooltipLive() {
+    return (
+      <div className="oz-stack oz-stack-7">
+        {/* Hover one, then move straight to its neighbour: the second opens instantly. That is
+            the warm window — the first 400ms wait establishes that you are reading tooltips. */}
+        <div className={row}>
+          {(['top', 'right', 'bottom', 'left'] as const).map((side) => (
+            <Tooltip key={side} content={`Anchored ${side}. Flips when there is no room.`} side={side}>
+              <Button variant="outline">{side}</Button>
+            </Tooltip>
+          ))}
+        </div>
+
+        {/* Tab to this one — focus opens with no delay. Then press Escape without moving the
+            pointer: WCAG 1.4.13 "dismissible". Then hover it and move onto the tooltip
+            itself; it stays open, which is "hoverable". */}
+        <div className={row}>
+          <Tooltip content="Focus opens instantly. Escape closes it. Moving onto this tooltip keeps it open.">
+            <Button variant="primary">Keyboard and 1.4.13</Button>
+          </Tooltip>
+          <Tooltip content="Never rendered" disabled>
+            <Button variant="ghost">disabled — no tooltip</Button>
+          </Tooltip>
+        </div>
+
+        <p className="max-w-[58ch] text-body-sm text-content-tertiary">
+          A tooltip is unavailable on touch and cannot be tabbed into, so nothing inside one may
+          be information the user needs. Interactive content belongs in a Popover.
+        </p>
+      </div>
+    );
+  },
+});
+
+/* -- Popover --------------------------------------------------------------- */
+
+registry.register({
+  recipe: popoverRecipe,
+  gridSuppressed: true,
+  Preview: function PopoverPreview() {
+    return (
+      <Popover
+        title="Rename project"
+        content={<Input label="Name" labelHidden defaultValue="Spring campaign" />}
+      >
+        <Button variant="outline">Rename</Button>
+      </Popover>
+    );
+  },
+  Live: function PopoverLive() {
+    return (
+      <div className="oz-stack oz-stack-7">
+        {/* Open it and Tab: focus moves in, then straight out through the page. Nothing is
+            trapped, nothing is locked, there is no scrim — that is what non-modal means. */}
+        <div className={row}>
+          <Popover
+            title="Rename project"
+            content={
+              <>
+                <Input label="Name" defaultValue="Spring campaign" />
+                <div className={row}>
+                  <Button variant="primary" size="sm">
+                    Save
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    Cancel
+                  </Button>
+                </div>
+              </>
+            }
+          >
+            <Button variant="outline">Interactive content</Button>
+          </Popover>
+
+          <Popover
+            size="sm"
+            side="right"
+            title="Credits"
+            content={
+              <p className="text-body-sm text-content-secondary">
+                Each render costs one credit. Regenerating a single hook costs nothing.
+              </p>
+            }
+          >
+            <Button variant="ghost">sm · right</Button>
+          </Popover>
+
+          <Popover
+            title="Hidden name"
+            titleHidden
+            content={
+              <p className="text-body-sm text-content-secondary">
+                The heading is in the accessibility tree only, so the panel still has a name.
+              </p>
+            }
+          >
+            <Button variant="ghost">titleHidden</Button>
+          </Popover>
+        </div>
+
+        <p className="max-w-[58ch] text-body-sm text-content-tertiary">
+          Escape closes it and returns focus to the trigger. A press outside closes it and does
+          not — the pointer has already chosen where attention goes.
+        </p>
+      </div>
+    );
+  },
+});
+
+/* -- Menu ------------------------------------------------------------------ */
+
+registry.register({
+  recipe: menuRecipe,
+  /* Rows can be forced, so the grid is meaningful — but the panel is portalled and the
+     roving focus cannot be shown statically, so the Live demo is where it is read. */
+  Preview: function MenuPreview() {
+    return (
+      <Menu
+        label="Project actions"
+        items={
+          <>
+            <MenuItem>Duplicate</MenuItem>
+            <MenuItem variant="destructive">Delete project</MenuItem>
+          </>
+        }
+      >
+        <Button variant="outline">Actions</Button>
+      </Menu>
+    );
+  },
+  Live: function MenuLive() {
+    return (
+      <div className="oz-stack oz-stack-7">
+        {/* Open it and arrow down through everything: nothing fires, including on the
+            disabled row, which stays reachable so it can say why it is unavailable. That is
+            the opposite of RadioGroup on both counts, from the same hook. */}
+        <div className={row}>
+          <Menu
+            label="Project actions"
+            items={
+              <>
+                <MenuGroup label="This project">
+                  <MenuItem icon={<Glyph />} shortcut="⌘D">
+                    Duplicate
+                  </MenuItem>
+                  <MenuItem icon={<Glyph />} shortcut="⌘⇧E">
+                    Export all clips
+                  </MenuItem>
+                  <MenuItem icon={<Glyph />} disabled>
+                    Publish — connect a channel first
+                  </MenuItem>
+                </MenuGroup>
+                <MenuSeparator />
+                <MenuGroup label="View">
+                  {/* Toggling these keeps the menu open. */}
+                  <MenuCheckItem checked>Show captions</MenuCheckItem>
+                  <MenuCheckItem checked={false}>Show safe areas</MenuCheckItem>
+                </MenuGroup>
+                <MenuSeparator />
+                <MenuItem variant="destructive" icon={<Glyph />} shortcut="⌫">
+                  Delete project
+                </MenuItem>
+              </>
+            }
+          >
+            <Button variant="outline">Everything at once</Button>
+          </Menu>
+
+          <Menu
+            label="Short menu"
+            align="end"
+            items={
+              <>
+                <MenuItem>Rename</MenuItem>
+                <MenuItem variant="destructive">Delete</MenuItem>
+              </>
+            }
+          >
+            <Button variant="ghost">align end</Button>
+          </Menu>
+        </div>
+
+        {/* Both row variants at rest and hovered, without needing the panel open. The
+            destructive row hovers to a red wash rather than to neutral grey — a red row that
+            greys out under the pointer stops being red at the exact moment the click lands. */}
+        <div className="max-w-[280px] rounded-6 bg-surface-overlay p-space-1 shadow-large">
+          {menuRecipe.variants.map((v) => (
+            <div key={v}>
+              <MenuItem variant={v}>{menuRecipe.sampleFor(v)}</MenuItem>
+              <MenuItem variant={v} forceState="hover">
+                {menuRecipe.sampleFor(v)} — forced hover
+              </MenuItem>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  },
+  Cell: function MenuCell({ variant, state, disabled }) {
+    return (
+      <div className="w-[180px] rounded-4 bg-surface-overlay p-space-1">
+        <MenuItem variant={variant as MenuVariant} forceState={state} disabled={disabled}>
+          {menuRecipe.sampleFor(variant as MenuVariant)}
+        </MenuItem>
+      </div>
+    );
+  },
+});
+
+/* -- Toast ----------------------------------------------------------------- */
+
+/** The Live demo needs the provider, and the provider portals a fixed region — so the demo
+ *  renders frozen toasts inline for the variant row and uses a real provider for the button
+ *  row. Both are the real component; only the timer differs. */
+function ToastDemo() {
+  return (
+    <ToastProvider>
+      <ToastTriggers />
+    </ToastProvider>
+  );
+}
+
+function ToastTriggers() {
+  const { show } = useToast();
+  return (
+    <div className={row}>
+      {toastRecipe.variants.map((v) => (
+        <Button
+          key={v}
+          variant={v === 'critical' ? 'destructive' : 'outline'}
+          size="sm"
+          onClick={() =>
+            show({
+              variant: v,
+              title: toastRecipe.sampleFor(v),
+              description:
+                v === 'neutral' ? undefined : 'Hover it to pause the timer; it resumes where it left off.',
+              action: v === 'critical' ? { label: 'Retry now', onClick: () => {} } : undefined,
+            })
+          }
+        >
+          {v}
+        </Button>
+      ))}
+    </div>
+  );
+}
+
+registry.register({
+  recipe: toastRecipe,
+  /* The real thing is a portalled fixed region on a timer. A forced-state cell can show the
+     row's paint, which is all the grid would ever have shown. */
+  gridSuppressed: true,
+  Preview: function ToastPreview() {
+    return (
+      <div className="w-[280px]">
+        <Toast
+          frozen
+          toast={{ id: 0, variant: 'success', title: 'Video exported' }}
+          onDismiss={() => {}}
+        />
+      </div>
+    );
+  },
+  Live: function ToastLive() {
+    return (
+      <div className="oz-stack oz-stack-7">
+        {/* Fire several: they stack newest-first at the bottom right, so the newest is the one
+            that has not moved. Hover one and its timer pauses; switch tabs and they all do. */}
+        <ToastDemo />
+
+        {/* Every variant, frozen, so the paint can be read without racing a timer. */}
+        <div className="oz-stack oz-stack-3 max-w-[400px]">
+          {toastRecipe.variants.map((v) => (
+            <Toast
+              key={v}
+              frozen
+              toast={{ id: 0, variant: v, title: toastRecipe.sampleFor(v) }}
+              onDismiss={() => {}}
+            />
+          ))}
+        </div>
+
+        <p className="max-w-[58ch] text-body-sm text-content-tertiary">
+          It disappears on a timer, so nothing in one may be information the user needs. If they
+          must read it, that is an Alert; if they must act on it, a Dialog. The flat status
+          surfaces are used rather than the tinted ones because a toast floats over content
+          whose colour cannot be known.
+        </p>
       </div>
     );
   },

@@ -8,6 +8,10 @@ import { badgeRecipe as badge } from './badge.recipe';
 import { fieldRecipe as field } from './field.recipe';
 import { sliderRecipe as slider } from './slider.recipe';
 import { dropzoneRecipe as dropzone } from './dropzone.recipe';
+import { tooltipRecipe as tooltip } from './tooltip.recipe';
+import { popoverRecipe as popover } from './popover.recipe';
+import { menuRecipe as menu } from './menu.recipe';
+import { toastRecipe as toast } from './toast.recipe';
 import { radioRecipe as radio } from './radio.recipe';
 import { inputRecipe as input } from './input.recipe';
 import { textareaRecipe as textarea } from './textarea.recipe';
@@ -39,6 +43,10 @@ export const allRecipes: ComponentRecipe<string, string, string>[] = [
   radio,
   slider,
   dropzone,
+  tooltip,
+  popover,
+  menu,
+  toast,
   input,
   textarea,
   select,
@@ -98,3 +106,7 @@ export { selectRecipe, type SelectVariant, type SelectSize } from './select.reci
 export { radioRecipe, type RadioVariant, type RadioSize } from './radio.recipe';
 export { sliderRecipe, type SliderVariant, type SliderSize } from './slider.recipe';
 export { dropzoneRecipe, type DropzoneVariant, type DropzoneSize } from './dropzone.recipe';
+export { tooltipRecipe, type TooltipVariant, type TooltipSize } from './tooltip.recipe';
+export { popoverRecipe, type PopoverVariant, type PopoverSize } from './popover.recipe';
+export { menuRecipe, type MenuVariant, type MenuSize } from './menu.recipe';
+export { toastRecipe, type ToastVariant, type ToastSize } from './toast.recipe';

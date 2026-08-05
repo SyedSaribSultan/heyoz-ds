@@ -1,7 +1,7 @@
 {
   "$generated": "by showcase/scripts/emit-recipes.ts — do not edit",
   "$description": "The HeyOz component contract. One entry per component: variants, states, the token each state binds per role, and the value that token resolves to in each mode. Generated from the same recipe objects the components compile from, so this cannot describe a component that does not exist.",
-  "generatedAt": "2026-08-05T09:39:39.231Z",
+  "generatedAt": "2026-08-05T10:16:45.241Z",
   "components": [
     {
       "id": "button",
@@ -5926,6 +5926,867 @@
         "fill-secondary-disabled",
         "fill-secondary-hover",
         "surface-secondary"
+      ]
+    },
+    {
+      "id": "tooltip",
+      "title": "Tooltip",
+      "tag": "Tooltip",
+      "description": "A short label for a control whose purpose is not obvious from its icon. It is unavailable on touch and unavailable to anyone who never hovers, so nothing inside one may be information the user needs.",
+      "variants": [
+        {
+          "name": "default",
+          "intent": "The only kind. A tooltip with variants is a tooltip carrying meaning it should not.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-inverse",
+                  "path": "color/fill/inverse",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#F7F5F4",
+                      "primitive": "solid/neutral/10",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-inverse-primary",
+                  "path": "color/content/inverse-primary",
+                  "values": {
+                    "light": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "shadow",
+                  "token": "medium",
+                  "path": "elevation/drop shadow/medium",
+                  "values": {
+                    "light": {
+                      "value": "#A9A7A629",
+                      "primitive": "solid/neutral/60",
+                      "alpha": 0.16
+                    },
+                    "dark": {
+                      "value": "#000000BF",
+                      "primitive": "solid/neutral/black",
+                      "alpha": 0.75
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "sizes": [
+        "md"
+      ],
+      "motion": {
+        "transition": "effects-fast",
+        "properties": "colors",
+        "enter": "fade",
+        "intent": "A fade in on the effects family and nothing spatial at all. The tooltip arrives beside a pointer that has deliberately stopped moving, and any travel would slide it under that stationary cursor — the one case where an entrance actively fights the interaction that triggered it. Rule 1b keeps the opacity on a curve that cannot overshoot, which matters because an overshooting opacity clips at 1 and stalls, and a stalled tooltip reads as the app hanging."
+      },
+      "tokensUsed": [
+        "content-inverse-primary",
+        "fill-inverse",
+        "medium"
+      ]
+    },
+    {
+      "id": "popover",
+      "title": "Popover",
+      "tag": "Popover",
+      "description": "A non-modal panel anchored to the control that opened it, for content the user may interact with. Everything behind it stays live — if it must not, that is a Dialog.",
+      "variants": [
+        {
+          "name": "default",
+          "intent": "The only kind. Its content decides what it is; the panel is always the panel.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "surface-overlay",
+                  "path": "color/surface/overlay",
+                  "values": {
+                    "light": {
+                      "value": "#FFFFFF",
+                      "primitive": "solid/neutral/white",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#393735",
+                      "primitive": "solid/neutral/105",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "shadow",
+                  "token": "large",
+                  "path": "elevation/drop shadow/large",
+                  "values": {
+                    "light": {
+                      "value": "#A9A7A633",
+                      "primitive": "solid/neutral/60",
+                      "alpha": 0.2
+                    },
+                    "dark": {
+                      "value": "#000000E6",
+                      "primitive": "solid/neutral/black",
+                      "alpha": 0.9
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "sizes": [
+        "sm",
+        "md"
+      ],
+      "motion": {
+        "transition": "effects-fast",
+        "properties": "colors",
+        "enter": "pop",
+        "intent": "It scales in from its own centre on the spatial family, which is what `pop` is, and that is correct here for a reason the other entrances are not: a popover has a definite origin — the control that opened it — and pop is the only entrance in the set that reads as emerging from something rather than arriving from a direction. Reduced motion collapses the scale and keeps the fade, so the panel still announces itself without moving."
+      },
+      "tokensUsed": [
+        "content-primary",
+        "large",
+        "surface-overlay"
+      ]
+    },
+    {
+      "id": "menu",
+      "title": "Menu",
+      "tag": "Menu",
+      "description": "A list of actions fired from a button. Not a Select — a menu DOES things and holds no value, which is why moving the caret through one must never commit anything.",
+      "variants": [
+        {
+          "name": "item",
+          "intent": "An action. Fires and closes the menu.",
+          "focus": "outline",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "surface-overlay",
+                  "path": "color/surface/overlay",
+                  "values": {
+                    "light": {
+                      "value": "#FFFFFF",
+                      "primitive": "solid/neutral/white",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#393735",
+                      "primitive": "solid/neutral/105",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "hover",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-elevated-hover",
+                  "path": "color/fill/elevated-hover",
+                  "values": {
+                    "light": {
+                      "value": "#F7F5F4",
+                      "primitive": "solid/neutral/10",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#2E2C2B",
+                      "primitive": "solid/neutral/110",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                }
+              ]
+            },
+            {
+              "name": "selected",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-selected",
+                  "path": "color/fill/selected",
+                  "values": {
+                    "light": {
+                      "value": "#FC664526",
+                      "primitive": "opacity-15/brand/50",
+                      "alpha": 0.15
+                    },
+                    "dark": {
+                      "value": "#FF3D0126",
+                      "primitive": "opacity-15/brand/60",
+                      "alpha": 0.15
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                }
+              ]
+            },
+            {
+              "name": "disabled",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "surface-overlay",
+                  "path": "color/surface/overlay",
+                  "values": {
+                    "light": {
+                      "value": "#FFFFFF",
+                      "primitive": "solid/neutral/white",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#393735",
+                      "primitive": "solid/neutral/105",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary-disabled",
+                  "path": "color/content/primary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#07060580",
+                      "primitive": "opacity-50/neutral/150",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#EFEDEC80",
+                      "primitive": "opacity-50/neutral/20",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "destructive",
+          "intent": "Deletes something. Never the first item, and never adjacent to a common one.",
+          "focus": "outline",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "surface-overlay",
+                  "path": "color/surface/overlay",
+                  "values": {
+                    "light": {
+                      "value": "#FFFFFF",
+                      "primitive": "solid/neutral/white",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#393735",
+                      "primitive": "solid/neutral/105",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-critical-hover",
+                  "path": "color/content/critical-hover",
+                  "values": {
+                    "light": {
+                      "value": "#75112D",
+                      "primitive": "solid/error/90",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FE8597",
+                      "primitive": "solid/error/40",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "hover",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "fill-critical-secondary",
+                  "path": "color/fill/critical-secondary",
+                  "values": {
+                    "light": {
+                      "value": "#F5617D26",
+                      "primitive": "opacity-15/error/50",
+                      "alpha": 0.15
+                    },
+                    "dark": {
+                      "value": "#E63C6526",
+                      "primitive": "opacity-15/error/60",
+                      "alpha": 0.15
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-critical-active",
+                  "path": "color/content/critical-active",
+                  "values": {
+                    "light": {
+                      "value": "#520C1E",
+                      "primitive": "solid/error/100",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#FFB0B9",
+                      "primitive": "solid/error/30",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            },
+            {
+              "name": "disabled",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "surface-overlay",
+                  "path": "color/surface/overlay",
+                  "values": {
+                    "light": {
+                      "value": "#FFFFFF",
+                      "primitive": "solid/neutral/white",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#393735",
+                      "primitive": "solid/neutral/105",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": true
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary-disabled",
+                  "path": "color/content/primary-disabled",
+                  "values": {
+                    "light": {
+                      "value": "#07060580",
+                      "primitive": "opacity-50/neutral/150",
+                      "alpha": 0.5
+                    },
+                    "dark": {
+                      "value": "#EFEDEC80",
+                      "primitive": "opacity-50/neutral/20",
+                      "alpha": 0.5
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "sizes": [
+        "md"
+      ],
+      "motion": {
+        "transition": "effects-fast",
+        "properties": "colors",
+        "enter": "none",
+        "intent": "Colour only on the fastest effects spring, exactly as the listbox row. A pointer crossing a six-item menu fires six of these, so the transition has to be short enough that a fast pass reads as one highlight following the cursor rather than six overlapping fades. Nothing spatial: a row that moves under the pointer changes which row the next click lands on, and in a menu that click deletes something."
+      },
+      "tokensUsed": [
+        "content-critical-active",
+        "content-critical-hover",
+        "content-primary",
+        "content-primary-disabled",
+        "fill-critical-secondary",
+        "fill-elevated-hover",
+        "fill-selected",
+        "surface-overlay"
+      ]
+    },
+    {
+      "id": "toast",
+      "title": "Toast",
+      "tag": "Toast",
+      "description": "Confirmation that something the user already did has finished. It disappears on a timer, so nothing in one may be information they need — if they must read it, it is an Alert, and if they must act on it, it is a Dialog.",
+      "variants": [
+        {
+          "name": "neutral",
+          "intent": "Something finished. The default and the commonest by a long way.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "surface-elevated",
+                  "path": "color/surface/elevated",
+                  "values": {
+                    "light": {
+                      "value": "#FFFFFF",
+                      "primitive": "solid/neutral/white",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#393735",
+                      "primitive": "solid/neutral/105",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "shadow",
+                  "token": "large",
+                  "path": "elevation/drop shadow/large",
+                  "values": {
+                    "light": {
+                      "value": "#A9A7A633",
+                      "primitive": "solid/neutral/60",
+                      "alpha": 0.2
+                    },
+                    "dark": {
+                      "value": "#000000E6",
+                      "primitive": "solid/neutral/black",
+                      "alpha": 0.9
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "success",
+          "intent": "Something finished and the outcome is worth colouring. Rare — most are neutral.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "surface-success-flat",
+                  "path": "color/surface/success-flat",
+                  "values": {
+                    "light": {
+                      "value": "#E7F5EB",
+                      "primitive": "solid/success/10",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#013118",
+                      "primitive": "solid/success/100",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "shadow",
+                  "token": "large",
+                  "path": "elevation/drop shadow/large",
+                  "values": {
+                    "light": {
+                      "value": "#A9A7A633",
+                      "primitive": "solid/neutral/60",
+                      "alpha": 0.2
+                    },
+                    "dark": {
+                      "value": "#000000E6",
+                      "primitive": "solid/neutral/black",
+                      "alpha": 0.9
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "warning",
+          "intent": "Finished, with a caveat the user does not have to act on now.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "surface-warning-flat",
+                  "path": "color/surface/warning-flat",
+                  "values": {
+                    "light": {
+                      "value": "#FDF0DE",
+                      "primitive": "solid/warning/10",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#362200",
+                      "primitive": "solid/warning/100",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "shadow",
+                  "token": "large",
+                  "path": "elevation/drop shadow/large",
+                  "values": {
+                    "light": {
+                      "value": "#A9A7A633",
+                      "primitive": "solid/neutral/60",
+                      "alpha": 0.2
+                    },
+                    "dark": {
+                      "value": "#000000E6",
+                      "primitive": "solid/neutral/black",
+                      "alpha": 0.9
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "critical",
+          "intent": "A transient failure that is already being handled. Almost always the wrong choice — see the notes.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "surface-critical-flat",
+                  "path": "color/surface/critical-flat",
+                  "values": {
+                    "light": {
+                      "value": "#FFEAEC",
+                      "primitive": "solid/error/10",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#520C1E",
+                      "primitive": "solid/error/100",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "shadow",
+                  "token": "large",
+                  "path": "elevation/drop shadow/large",
+                  "values": {
+                    "light": {
+                      "value": "#A9A7A633",
+                      "primitive": "solid/neutral/60",
+                      "alpha": 0.2
+                    },
+                    "dark": {
+                      "value": "#000000E6",
+                      "primitive": "solid/neutral/black",
+                      "alpha": 0.9
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "info",
+          "intent": "Something changed that the user did not cause.",
+          "focus": "none",
+          "states": [
+            {
+              "name": "base",
+              "bindings": [
+                {
+                  "role": "bg",
+                  "token": "surface-info-flat",
+                  "path": "color/surface/info-flat",
+                  "values": {
+                    "light": {
+                      "value": "#E7F0FF",
+                      "primitive": "solid/info/10",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#062457",
+                      "primitive": "solid/info/100",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "fg",
+                  "token": "content-primary",
+                  "path": "color/content/primary",
+                  "values": {
+                    "light": {
+                      "value": "#070605",
+                      "primitive": "solid/neutral/150",
+                      "alpha": 1
+                    },
+                    "dark": {
+                      "value": "#EFEDEC",
+                      "primitive": "solid/neutral/20",
+                      "alpha": 1
+                    }
+                  },
+                  "inherited": false
+                },
+                {
+                  "role": "shadow",
+                  "token": "large",
+                  "path": "elevation/drop shadow/large",
+                  "values": {
+                    "light": {
+                      "value": "#A9A7A633",
+                      "primitive": "solid/neutral/60",
+                      "alpha": 0.2
+                    },
+                    "dark": {
+                      "value": "#000000E6",
+                      "primitive": "solid/neutral/black",
+                      "alpha": 0.9
+                    }
+                  },
+                  "inherited": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "sizes": [
+        "md"
+      ],
+      "motion": {
+        "transition": "effects-default",
+        "properties": "colors",
+        "enter": "rise",
+        "intent": "It rises in on the spatial family, which is the one entrance in this system where travel carries meaning rather than decoration: a toast has no anchor, so movement from off-screen is what distinguishes new information arriving from content that was always there. The colour transition is on the effects family and a tier slower than a button's, because a toast is not being interacted with — nobody is waiting on its hover, so 240ms reads as considered where 120ms would read as twitchy on something that just flew in."
+      },
+      "tokensUsed": [
+        "content-primary",
+        "large",
+        "surface-critical-flat",
+        "surface-elevated",
+        "surface-info-flat",
+        "surface-success-flat",
+        "surface-warning-flat"
       ]
     },
     {

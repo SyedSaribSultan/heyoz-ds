@@ -158,6 +158,14 @@ const ALPHA_FILLS: Array<{ fill: string; on: readonly string[] }> = [
   },
   { fill: 'fill/elevated-hover', on: ['content/primary', 'content/secondary', 'content/tertiary'] },
   { fill: 'fill/brand-secondary', on: ['content/brand-hover', 'content/primary'] },
+  /* Menu's destructive hover row. Added when that variant was bound, and it earned its place
+   * immediately: `content/critical-hover` here is 4.51:1 in dark — over the floor by 0.01,
+   * which is a coincidence rather than a margin. The row binds `content/critical-active`
+   * instead, at 6.09:1. Both are listed so the tight one stays visible. */
+  {
+    fill: 'fill/critical-secondary',
+    on: ['content/critical-hover', 'content/critical-active', 'content/primary'],
+  },
 ];
 
 const FLOOR = 4.5;
