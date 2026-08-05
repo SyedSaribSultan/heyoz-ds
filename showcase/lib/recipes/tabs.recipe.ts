@@ -9,6 +9,7 @@ export type TabSize = 'md';
 class TabsRecipe extends ComponentRecipe<TabVariant, TabSize> {
   readonly meta: RecipeMeta = {
     id: 'tabs',
+    group: 'navigation',
     title: 'Tabs',
     tag: 'Tabs',
     blurb:

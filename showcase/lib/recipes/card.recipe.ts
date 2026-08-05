@@ -7,6 +7,7 @@ export type CardSize = 'md' | 'lg';
 class CardRecipe extends ComponentRecipe<CardVariant, CardSize> {
   readonly meta: RecipeMeta = {
     id: 'card',
+    group: 'containers',
     title: 'Card',
     tag: 'Card',
     blurb: 'A surface that groups content. The rung of the surface ladder it sits on is the decision.',

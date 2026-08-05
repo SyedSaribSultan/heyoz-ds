@@ -101,6 +101,22 @@ export function ComponentIndex({ index }: { index: string }) {
   const needle = query.trim().toLowerCase();
   const shown = needle ? catalogue.filter((c) => c.haystack.includes(needle)) : catalogue;
 
+  /* The surviving matches, arranged by family.
+   *
+   * Joined onto `registry.byGroup` rather than grouped from `shown` directly, so the group
+   * ORDER and the alphabetical order inside each group come from the registry — the same
+   * accessor both nav rails read — instead of being re-derived here from whatever sequence the
+   * filter happened to leave behind. `total` travels with each group so the heading can say
+   * "3 of 11" without a second lookup, and an empty group is dropped so a filter never renders
+   * a heading claiming the system has none of something. */
+  const byId = new Map(shown.map((c) => [c.entry.recipe.id, c]));
+  const shownGroups = registry.byGroup
+    .map(({ group, entries }) => ({
+      group: { ...group, total: entries.length },
+      entries: entries.map((e) => byId.get(e.recipe.id)).filter((c): c is (typeof shown)[number] => Boolean(c)),
+    }))
+    .filter((g) => g.entries.length > 0);
+
   return (
     <Section
       id="components"
@@ -199,14 +215,44 @@ export function ComponentIndex({ index }: { index: string }) {
             </div>
           </div>
         ) : (
-          /* oz-grid, from dist/layout.css. Container-aware and gapped, so it reflows on
-             its own box rather than on the viewport — the primitive doing the job it
-             was built for rather than a hand-written grid-cols-N ladder. */
-          <div className="oz-grid" style={{ '--grid-min': '17rem' } as React.CSSProperties}>
-            {shown.map(({ entry, definition }) => {
-              const { recipe, Preview } = entry;
+          /* One grid per family, not one grid of thirty-four.
+           *
+           * The tiles used to be a single `oz-grid` in registration order — the order the
+           * components were BUILT in — so a reader scanning for a form control found them
+           * scattered across four batches. Grouping comes from `registry.byGroup`, which is the
+           * same accessor both nav rails read: two orderings of one catalogue is the drift the
+           * registry exists to prevent.
+           *
+           * Under a filter, a group with no surviving match is dropped rather than rendered
+           * empty — an "Overlays 0" heading is a claim that the system has no overlays, when
+           * what happened is that none of them matched "slider". */
+          <div className="oz-stack oz-stack-11">
+            {shownGroups.map(({ group, entries: inGroup }) => (
+              <div key={group.id} className="oz-stack oz-stack-6">
+                <div className="oz-stack oz-stack-1">
+                  <h3 className="flex items-baseline gap-space-3 font-display text-heading-xs font-bold text-content-primary">
+                    {group.label}
+                    {/* The count is the group's OWN size, not the number matching the filter.
+                        A heading that renumbers itself as you type makes the shape of the
+                        system look like it is changing — the match count lives beside the
+                        field that caused it, which is where the live region already is. */}
+                    <span className="font-mono text-label-sm font-normal text-content-tertiary">
+                      {inGroup.length === group.total
+                        ? group.total
+                        : `${inGroup.length} of ${group.total}`}
+                    </span>
+                  </h3>
+                  <p className="text-body-sm text-content-secondary">{group.blurb}</p>
+                </div>
 
-              return (
+                {/* oz-grid, from dist/layout.css. Container-aware and gapped, so it reflows on
+                    its own box rather than on the viewport — the primitive doing the job it
+                    was built for rather than a hand-written grid-cols-N ladder. */}
+                <div className="oz-grid" style={{ '--grid-min': '17rem' } as React.CSSProperties}>
+                  {inGroup.map(({ entry, definition }) => {
+                    const { recipe, Preview } = entry;
+
+                    return (
                 <a
                   key={recipe.id}
                   href={`/c/${recipe.id}`}
@@ -241,8 +287,11 @@ export function ComponentIndex({ index }: { index: string }) {
                     </p>
                   </div>
                 </a>
-              );
-            })}
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

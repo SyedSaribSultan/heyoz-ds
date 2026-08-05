@@ -14,6 +14,7 @@ export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 class AvatarRecipe extends ComponentRecipe<AvatarTone, AvatarSize> {
   readonly meta: RecipeMeta = {
     id: 'avatar',
+    group: 'identity',
     title: 'Avatar',
     tag: 'Avatar',
     blurb:

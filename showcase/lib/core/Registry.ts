@@ -1,4 +1,4 @@
-import type { ComponentRecipe } from './Recipe';
+import { GROUP_ORDER, type ComponentRecipe } from './Recipe';
 import type { StateName } from './types';
 
 /* ---------------------------------------------------------------------------
@@ -96,6 +96,55 @@ class ComponentRegistry {
     const seen = new Set<string>();
     for (const e of this.all) for (const t of e.recipe.tokensUsed) seen.add(t);
     return [...seen].sort();
+  }
+
+  /**
+   * Every entry, in `GROUP_ORDER`, alphabetical within each group.
+   *
+   * THIS IS WHAT THE RAIL AND THE INDEX BOTH READ, and that is the point — two orderings of
+   * the same catalogue is the drift this class exists to prevent, and it would show up as a
+   * rail whose sequence disagrees with the page it is navigating.
+   *
+   * `registry.all` is deliberately left alone and still returns REGISTRATION order. It is
+   * what `verify-contrast` and the visual suite iterate, and both should keep seeing the
+   * catalogue in the order it was declared: a sweep that reordered itself when somebody
+   * retitled a component would produce a diff nobody asked for.
+   *
+   * Registration order was what the rail used to show, and it was showing the order the
+   * components were BUILT in — so Icon Button and Button Link sat tenth and eleventh instead
+   * of beside Button, and the four form controls added in one batch appeared before the three
+   * they were built to sit with. Chronology is information about the repository, not about
+   * the system.
+   *
+   * Alphabetical within a group rather than curated: a curated sequence has to be maintained
+   * next to the registry and will fall out of step with it. Inside a group of three to eleven,
+   * alphabetical is also simply the most findable.
+   */
+  get byGroup(): Array<{
+    group: (typeof GROUP_ORDER)[number];
+    entries: RegistryEntry[];
+  }> {
+    return GROUP_ORDER.map((group) => ({
+      group,
+      entries: this.all
+        .filter((e) => e.recipe.meta.group === group.id)
+        .sort((a, b) => a.recipe.meta.title.localeCompare(b.recipe.meta.title)),
+    })).filter((g) => g.entries.length > 0);
+  }
+
+  /**
+   * Groups declared in GROUP_ORDER that no component belongs to.
+   *
+   * An empty group is not rendered — `byGroup` filters it out — so without this it would be
+   * invisible: a heading nobody sees, describing a family that does not exist, kept alive
+   * because deleting it never became anybody's job. `verify:coverage` fails on a non-empty
+   * result. Same self-cleaning check `STATE_TRANSFORMS`, `TALL_SPECIMENS` and the composite
+   * gate's `KNOWN` list all carry, for the same reason: a stale exemption is worse than none.
+   */
+  get emptyGroups(): string[] {
+    return GROUP_ORDER.filter((g) => !this.all.some((e) => e.recipe.meta.group === g.id)).map(
+      (g) => g.id,
+    );
   }
 }
 

@@ -7,6 +7,7 @@ export type ToastSize = 'md';
 class ToastRecipe extends ComponentRecipe<ToastVariant, ToastSize> {
   readonly meta: RecipeMeta = {
     id: 'toast',
+    group: 'feedback',
     title: 'Toast',
     tag: 'Toast',
     blurb:

@@ -17,6 +17,7 @@ export type TextareaSize = 'md' | 'lg';
 class TextareaRecipe extends InputRecipe {
   override readonly meta: RecipeMeta = {
     id: 'textarea',
+    group: 'forms',
     title: 'Textarea',
     tag: 'Textarea',
     blurb:

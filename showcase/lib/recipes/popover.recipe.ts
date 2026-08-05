@@ -7,6 +7,7 @@ export type PopoverSize = 'sm' | 'md';
 class PopoverRecipe extends ComponentRecipe<PopoverVariant, PopoverSize> {
   readonly meta: RecipeMeta = {
     id: 'popover',
+    group: 'overlays',
     title: 'Popover',
     tag: 'Popover',
     blurb:

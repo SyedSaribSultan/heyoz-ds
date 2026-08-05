@@ -116,16 +116,31 @@ export function Showcase({ staleSources = [] }: { staleSources?: string[] }) {
    * That sentence read "all nine" while the catalogue held fourteen. The list is
    * `entries`, so it should never have carried a numeral at all — see the note in
    * ComponentPage.tsx for how far that particular figure spread before anyone counted. */
+  /* One rail group per component family, rather than one flat list of every component.
+   *
+   * It was one flat list, and the list was in REGISTRATION order — which is the order the
+   * components were built in. So Icon Button and Button Link sat tenth and eleventh instead of
+   * beside Button, and the form controls added in one batch appeared before the three they
+   * exist to sit with. Chronology is information about this repository, not about the system,
+   * and at fourteen items it was merely odd; at thirty-four it was the only thing wrong with
+   * the rail that a reader would actually notice.
+   *
+   * `registry.byGroup` supplies both the grouping and the ordering, and the index reads the
+   * same accessor — two orderings of one catalogue is the drift the registry exists to
+   * prevent, and it would surface as a rail whose sequence disagreed with the page under it.
+   *
+   * The count on each label is doing real work: `Forms 11` tells a first-time reader the shape
+   * of the system in a way that thirty-four names in a column cannot. */
   const navGroups: NavGroup[] = [
     { label: 'foundations', items: FOUNDATION_SECTIONS },
-    {
-      label: 'components',
-      items: entries.map((e) => ({
+    ...registry.byGroup.map(({ group, entries: inGroup }) => ({
+      label: `${group.label} · ${inGroup.length}`,
+      items: inGroup.map((e) => ({
         id: e.recipe.id,
         label: e.recipe.meta.title,
         href: `/c/${e.recipe.id}`,
       })),
-    },
+    })),
     { label: 'in context', items: [{ id: 'assembled', label: 'Assembled' }] },
   ];
 

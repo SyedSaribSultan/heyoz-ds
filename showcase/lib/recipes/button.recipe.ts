@@ -36,6 +36,7 @@ export type ButtonShape = 'rect' | 'pill';
 class ButtonRecipe extends ComponentRecipe<ButtonVariant, ButtonSize, ButtonShape> {
   readonly meta: RecipeMeta = {
     id: 'button',
+    group: 'actions',
     title: 'Button',
     tag: 'Button',
     blurb:

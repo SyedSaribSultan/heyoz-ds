@@ -10,6 +10,7 @@ export type EmptyStateSize = 'sm' | 'md';
 class EmptyStateRecipe extends ComponentRecipe<EmptyStateVariant, EmptyStateSize> {
   readonly meta: RecipeMeta = {
     id: 'empty-state',
+    group: 'feedback',
     title: 'Empty state',
     tag: 'EmptyState',
     blurb:

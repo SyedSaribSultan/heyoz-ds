@@ -27,6 +27,7 @@ export type ListboxSize = 'md' | 'lg';
 class ListboxRecipe extends ComponentRecipe<ListboxVariant, ListboxSize> {
   readonly meta: RecipeMeta = {
     id: 'listbox',
+    group: 'forms',
     title: 'Listbox option',
     tag: 'ListboxOption',
     blurb:

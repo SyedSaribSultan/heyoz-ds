@@ -7,6 +7,7 @@ export type SkeletonSize = 'md';
 class SkeletonRecipe extends ComponentRecipe<SkeletonVariant, SkeletonSize> {
   readonly meta: RecipeMeta = {
     id: 'skeleton',
+    group: 'feedback',
     title: 'Skeleton',
     tag: 'Skeleton',
     blurb: 'Loading, shaped like the thing that is loading. Never a spinner in a layout slot.',

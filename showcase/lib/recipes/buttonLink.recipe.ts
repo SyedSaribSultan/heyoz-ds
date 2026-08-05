@@ -13,6 +13,7 @@ export type ButtonLinkSize = 'md';
 class ButtonLinkRecipe extends ComponentRecipe<ButtonLinkVariant, ButtonLinkSize> {
   readonly meta: RecipeMeta = {
     id: 'button-link',
+    group: 'actions',
     title: 'Button Link',
     tag: 'ButtonLink',
     blurb:

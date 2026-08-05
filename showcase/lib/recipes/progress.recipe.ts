@@ -7,6 +7,7 @@ export type ProgressSize = 'sm' | 'md';
 class ProgressRecipe extends ComponentRecipe<ProgressVariant, ProgressSize> {
   readonly meta: RecipeMeta = {
     id: 'progress',
+    group: 'feedback',
     title: 'Progress',
     tag: 'Progress',
     blurb:

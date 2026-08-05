@@ -33,6 +33,7 @@ export type BadgeSize = 'md';
 class BadgeRecipe extends ComponentRecipe<BadgeVariant, BadgeSize> {
   readonly meta: RecipeMeta = {
     id: 'badge',
+    group: 'identity',
     title: 'Badge',
     tag: 'Badge',
     blurb:

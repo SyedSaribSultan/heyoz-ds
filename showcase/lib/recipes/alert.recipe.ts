@@ -7,6 +7,7 @@ export type AlertSize = 'md';
 class AlertRecipe extends ComponentRecipe<AlertVariant, AlertSize> {
   readonly meta: RecipeMeta = {
     id: 'alert',
+    group: 'feedback',
     title: 'Alert',
     tag: 'Alert',
     blurb: 'Something happened. The copy carries the weight; the colour only sorts it.',

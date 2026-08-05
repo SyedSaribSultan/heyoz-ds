@@ -10,6 +10,7 @@ export type DialogSize = 'md';
 class DialogRecipe extends ComponentRecipe<DialogVariant, DialogSize> {
   readonly meta: RecipeMeta = {
     id: 'dialog',
+    group: 'overlays',
     title: 'Dialog',
     tag: 'Dialog',
     blurb:

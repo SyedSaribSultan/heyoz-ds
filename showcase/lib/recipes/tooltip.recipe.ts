@@ -7,6 +7,7 @@ export type TooltipSize = 'md';
 class TooltipRecipe extends ComponentRecipe<TooltipVariant, TooltipSize> {
   readonly meta: RecipeMeta = {
     id: 'tooltip',
+    group: 'overlays',
     title: 'Tooltip',
     tag: 'Tooltip',
     blurb:

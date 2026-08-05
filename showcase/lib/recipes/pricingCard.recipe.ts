@@ -51,6 +51,7 @@ export type PricingCardSize = 'panel' | 'wide';
 class PricingCardRecipe extends ComponentRecipe<PricingTier, PricingCardSize> {
   readonly meta: RecipeMeta = {
     id: 'pricing-card',
+    group: 'containers',
     title: 'Pricing Card',
     tag: 'PricingCard',
     blurb:

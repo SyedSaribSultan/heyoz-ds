@@ -23,6 +23,7 @@ export type FieldSize = 'sm' | 'md' | 'lg';
 class FieldRecipe extends ComponentRecipe<FieldTextRole, FieldSize> {
   readonly meta: RecipeMeta = {
     id: 'field',
+    group: 'forms',
     title: 'Field',
     tag: 'Field',
     blurb:

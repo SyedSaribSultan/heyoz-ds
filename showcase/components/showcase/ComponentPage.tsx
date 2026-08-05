@@ -112,12 +112,25 @@ export function ComponentPage({ id, staleSources = [] }: { id: string; staleSour
 
   /* The rail lists every component, not this component's sections — on a page that
    * is one component, the useful next move is a different component. Position in the
-   * catalogue is shown rather than hidden so the set still reads as a set. */
+   * catalogue is shown rather than hidden so the set still reads as a set.
+   *
+   * Grouped by family and ordered by `registry.byGroup`, which is the same accessor the index
+   * rail reads. Both used to build their own list from `registry.all`, so both showed the
+   * catalogue in registration order — i.e. the order things were built — and they would have
+   * drifted the moment one of them was changed. One accessor, two consumers.
+   *
+   * Grouping earns more here than on the index, because this rail is the ONLY navigation on
+   * the page: a reader who has landed on Slider and wants Switch should be able to see that
+   * the two are siblings without reading thirty-four names to find out. */
   const navGroups: NavGroup[] = [
-    {
-      label: 'components',
-      items: all.map((e) => ({ id: e.recipe.id, label: e.recipe.meta.title, href: `/c/${e.recipe.id}` })),
-    },
+    ...registry.byGroup.map(({ group, entries: inGroup }) => ({
+      label: `${group.label} · ${inGroup.length}`,
+      items: inGroup.map((e) => ({
+        id: e.recipe.id,
+        label: e.recipe.meta.title,
+        href: `/c/${e.recipe.id}`,
+      })),
+    })),
     {
       label: 'foundations',
       items: [

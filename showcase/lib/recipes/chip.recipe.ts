@@ -7,6 +7,7 @@ export type ChipSize = 'sm' | 'md';
 class ChipRecipe extends ComponentRecipe<ChipVariant, ChipSize> {
   readonly meta: RecipeMeta = {
     id: 'chip',
+    group: 'identity',
     title: 'Chip',
     tag: 'Chip',
     blurb:

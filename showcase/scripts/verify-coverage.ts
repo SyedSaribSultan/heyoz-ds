@@ -26,6 +26,8 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { report } from './report';
+import { allRecipes } from '../lib/recipes';
+import { GROUP_ORDER } from '../lib/core/Recipe';
 
 const audit = JSON.parse(readFileSync('../reports/audit.json', 'utf8')) as {
   light: Record<string, unknown>;
@@ -152,6 +154,41 @@ for (const [group, reason] of Object.entries(EXEMPT)) {
   }
 }
 
+/* ---------------------------------------------------------------------------
+ * Component families: every group in GROUP_ORDER has at least one member.
+ *
+ * `registry.byGroup` drops an empty group rather than rendering a heading with nothing under
+ * it, which is right for the page and is exactly what makes the rot invisible: a family that
+ * has been renamed, or emptied by its last component moving elsewhere, leaves a live entry in
+ * GROUP_ORDER that nobody ever sees and so nobody deletes.
+ *
+ * Checked here against the RECIPES rather than the registry, for the same reason
+ * verify-contrast iterates `allRecipes`: pointing a Node script at the registry would drag the
+ * JSX demos into it, and would only check families whose components somebody remembered to
+ * register. The typed `ComponentGroup` union already guarantees the other direction — a
+ * component cannot carry a family that does not exist, because it would not compile.
+ *
+ * Same self-cleaning shape as STATE_TRANSFORMS in verify-motion, TALL_SPECIMENS in the visual
+ * suite, and KNOWN in verify-composite. A stale entry is a failure, not dead weight.
+ * ------------------------------------------------------------------------- */
+const declared = GROUP_ORDER.map((g) => g.id);
+const claimed = new Set(allRecipes.map((r) => r.meta.group));
+
+for (const id of declared) {
+  if (!claimed.has(id)) {
+    FAIL.push(
+      `GROUP_ORDER declares the '${id}' family and no component belongs to it — ` +
+        `byGroup drops it silently, so delete the entry or give it a member`,
+    );
+  }
+}
+
+const families = declared
+  .map((id) => `${id} ${allRecipes.filter((r) => r.meta.group === id).length}`)
+  .join(' · ');
+console.log(`\n${declared.length} component families · ${allRecipes.length} components\n`);
+console.log(`  ${families}`);
+
 console.log(`\n${groups.size} semantic colour groups · ${covered.length} demonstrated\n`);
 console.log(`  ${covered.join(', ')}`);
 if (exempted.length) {
@@ -161,25 +198,33 @@ if (exempted.length) {
 report({
   suite: 'coverage',
   blurb:
-    'Every semantic colour group the build ships is drawn somewhere. A gated token nobody ' +
-    'renders is a gate nobody can falsify.',
+    'Every semantic colour group the build ships is drawn somewhere, every layout primitive is ' +
+    'used where one exists, and every declared component family has a member. A gated token ' +
+    'nobody renders is a gate nobody can falsify.',
   passed: covered.length,
   total: groups.size,
   detail: [
     `${groups.size} semantic colour groups · ${covered.length} demonstrated`,
+    `${declared.length} component families · ${allRecipes.length} components`,
     exempted.length ? `exempt: ${exempted.join(', ')}` : 'no exemptions',
   ],
   ok: FAIL.length === 0,
 });
 
 if (FAIL.length) {
-  console.error(`\nFAILED — ${FAIL.length} group${FAIL.length === 1 ? '' : 's'} with no specimen:\n`);
+  /* Deliberately generic. This suite checks three unrelated things now — token specimens,
+   * raw layout, and empty component families — and they share one FAIL array. The summary
+   * used to read "N groups with no specimen" and print token advice underneath, which was
+   * confidently wrong the first time a families failure came through it: the message named
+   * the wrong problem and prescribed a fix that did not apply. Each entry already carries its
+   * own remedy, so the header should count problems and get out of the way. */
+  console.error(`\nFAILED — ${FAIL.length} problem${FAIL.length === 1 ? '' : 's'}:\n`);
   for (const f of FAIL) console.error(`  x ${f}`);
-  console.error(
-    '\n  A gated token nobody draws is a gate nobody can falsify. Add a specimen, or\n' +
-      '  add the group to EXEMPT with the reason.\n',
-  );
+  console.error('');
   process.exit(1);
 }
 
-console.log('\nOK — every semantic group the build ships is demonstrated somewhere.\n');
+console.log(
+  '\nOK — every semantic group is demonstrated, every primitive-shaped layout uses its\n' +
+    '     primitive, and every declared component family has a member.\n',
+);

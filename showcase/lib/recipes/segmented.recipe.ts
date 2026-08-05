@@ -7,6 +7,7 @@ export type SegmentedSize = 'sm' | 'md';
 class SegmentedRecipe extends ComponentRecipe<SegmentedVariant, SegmentedSize> {
   readonly meta: RecipeMeta = {
     id: 'segmented',
+    group: 'forms',
     title: 'Segmented control',
     tag: 'SegmentedControl',
     blurb:

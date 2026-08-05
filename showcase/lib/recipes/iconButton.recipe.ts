@@ -27,6 +27,7 @@ class IconButtonRecipe extends ComponentRecipe<
 > {
   readonly meta: RecipeMeta = {
     id: 'icon-button',
+    group: 'actions',
     title: 'Icon Button',
     tag: 'IconButton',
     blurb:

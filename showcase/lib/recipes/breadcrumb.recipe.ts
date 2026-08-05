@@ -7,6 +7,7 @@ export type BreadcrumbSize = 'md';
 class BreadcrumbRecipe extends ComponentRecipe<BreadcrumbVariant, BreadcrumbSize> {
   readonly meta: RecipeMeta = {
     id: 'breadcrumb',
+    group: 'navigation',
     title: 'Breadcrumb',
     tag: 'Breadcrumb',
     blurb:

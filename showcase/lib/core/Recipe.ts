@@ -89,9 +89,59 @@ export type ClassArgs<V extends string, S extends string, C extends string = str
   className?: string;
 };
 
+/**
+ * Which family a component belongs to, for the nav rail and the index.
+ *
+ * WHY THIS IS ON THE RECIPE and not on the registry entry: the recipe is the single
+ * description of a component, and its family is a property of the component rather than of
+ * how it happens to be registered. Putting it here also means it lands in
+ * `dist/recipes.json` for free, so a consumer grouping its own docs does not have to invent
+ * the taxonomy again.
+ *
+ * WHY IT IS A UNION and not a string: a typo would silently create an eighth group of one.
+ * As a union it is a compile error, and a new component cannot be added without answering
+ * the question — the same device `focus`, `motion` and `borderJob` all use.
+ *
+ * The list is short on purpose. Every group added is a group a reader has to hold in their
+ * head before they can find anything, and at 34 components seven is already the point where
+ * the headings are doing more work than the names.
+ */
+export type ComponentGroup =
+  | 'actions'
+  | 'forms'
+  | 'overlays'
+  | 'feedback'
+  | 'navigation'
+  | 'containers'
+  | 'identity';
+
+/**
+ * Display order for the groups, and the labels.
+ *
+ * Ordered by how early a reader needs them rather than alphabetically: `actions` first
+ * because a button is what everyone looks for, `forms` second because it is the largest and
+ * the most consulted, `identity` last because those three are the smallest things in the
+ * system and nobody arrives looking for them.
+ *
+ * Sorting WITHIN a group is alphabetical and derived — see `sortedByGroup`. A curated order
+ * inside each group would have to be maintained beside the registry and would drift from it,
+ * which is the failure this whole layer is built to prevent.
+ */
+export const GROUP_ORDER: ReadonlyArray<{ id: ComponentGroup; label: string; blurb: string }> = [
+  { id: 'actions', label: 'Actions', blurb: 'Committing something, or going somewhere.' },
+  { id: 'forms', label: 'Forms', blurb: 'Collecting a value. All of them are built on Field.' },
+  { id: 'overlays', label: 'Overlays', blurb: 'Floating above the page, anchored or centred.' },
+  { id: 'feedback', label: 'Feedback', blurb: 'What happened, what is happening, what is missing.' },
+  { id: 'navigation', label: 'Navigation', blurb: 'Where you are in something larger.' },
+  { id: 'containers', label: 'Containers', blurb: 'Holding and dividing other content.' },
+  { id: 'identity', label: 'Identity & status', blurb: 'Small inline things that stand for something else.' },
+];
+
 export type RecipeMeta = {
   /** Anchor id and registry key. Kebab-case. */
   id: string;
+  /** Which family this belongs to. See ComponentGroup. */
+  group: ComponentGroup;
   /** Section heading. */
   title: string;
   /** One sentence: what this component is for. Shown under the heading. */

@@ -7,6 +7,7 @@ export type StepperSize = 'md';
 class StepperRecipe extends ComponentRecipe<StepperVariant, StepperSize> {
   readonly meta: RecipeMeta = {
     id: 'stepper',
+    group: 'navigation',
     title: 'Stepper',
     tag: 'Stepper',
     blurb:

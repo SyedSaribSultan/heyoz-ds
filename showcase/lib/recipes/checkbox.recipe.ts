@@ -7,6 +7,7 @@ export type CheckboxSize = 'md';
 class CheckboxRecipe extends ComponentRecipe<CheckboxVariant, CheckboxSize> {
   readonly meta: RecipeMeta = {
     id: 'checkbox',
+    group: 'forms',
     title: 'Checkbox',
     tag: 'Checkbox',
     blurb: 'A choice that is submitted later. Selecting rows, accepting terms, multi-select.',

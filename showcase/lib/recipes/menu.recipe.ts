@@ -13,6 +13,7 @@ export type MenuSize = 'md';
 class MenuRecipe extends ComponentRecipe<MenuVariant, MenuSize> {
   readonly meta: RecipeMeta = {
     id: 'menu',
+    group: 'overlays',
     title: 'Menu',
     tag: 'Menu',
     blurb:

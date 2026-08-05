@@ -7,6 +7,7 @@ export type SwitchSize = 'md' | 'lg';
 class SwitchRecipe extends ComponentRecipe<SwitchVariant, SwitchSize> {
   readonly meta: RecipeMeta = {
     id: 'switch',
+    group: 'forms',
     title: 'Switch',
     tag: 'Switch',
     blurb: 'Takes effect immediately. If it needs a Save button next to it, use a checkbox.',

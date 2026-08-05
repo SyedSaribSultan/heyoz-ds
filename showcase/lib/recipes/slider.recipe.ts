@@ -7,6 +7,7 @@ export type SliderSize = 'md' | 'lg';
 class SliderRecipe extends ComponentRecipe<SliderVariant, SliderSize> {
   readonly meta: RecipeMeta = {
     id: 'slider',
+    group: 'forms',
     title: 'Slider',
     tag: 'Slider',
     blurb:

@@ -7,6 +7,7 @@ export type AccordionSize = 'md';
 class AccordionRecipe extends ComponentRecipe<AccordionVariant, AccordionSize> {
   readonly meta: RecipeMeta = {
     id: 'accordion',
+    group: 'containers',
     title: 'Accordion',
     tag: 'Accordion',
     blurb:

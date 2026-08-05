@@ -16,6 +16,7 @@ export type InputSize = 'md' | 'lg';
 export class InputRecipe extends ComponentRecipe<InputVariant, InputSize> {
   readonly meta: RecipeMeta = {
     id: 'input',
+    group: 'forms',
     title: 'Input',
     tag: 'Input',
     blurb: 'Text entry, and the one component where the type step is a hard requirement.',

@@ -7,6 +7,7 @@ export type TableSize = 'md';
 class TableRecipe extends ComponentRecipe<TableRowVariant, TableSize> {
   readonly meta: RecipeMeta = {
     id: 'table',
+    group: 'containers',
     title: 'Table',
     tag: 'Table',
     blurb: 'Rows of the same kind of thing. The row is the component; the table is a container.',

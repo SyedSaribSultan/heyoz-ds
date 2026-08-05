@@ -7,6 +7,7 @@ export type DropzoneSize = 'md' | 'lg';
 class DropzoneRecipe extends ComponentRecipe<DropzoneVariant, DropzoneSize> {
   readonly meta: RecipeMeta = {
     id: 'dropzone',
+    group: 'forms',
     title: 'Dropzone',
     tag: 'Dropzone',
     blurb:

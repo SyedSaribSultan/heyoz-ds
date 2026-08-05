@@ -20,6 +20,7 @@ export type SelectSize = 'md' | 'lg';
 class SelectRecipe extends InputRecipe {
   override readonly meta: RecipeMeta = {
     id: 'select',
+    group: 'forms',
     title: 'Select',
     tag: 'Select',
     blurb:

@@ -7,6 +7,7 @@ export type RadioSize = 'md';
 class RadioRecipe extends ComponentRecipe<RadioVariant, RadioSize> {
   readonly meta: RecipeMeta = {
     id: 'radio',
+    group: 'forms',
     title: 'Radio',
     tag: 'Radio',
     blurb:

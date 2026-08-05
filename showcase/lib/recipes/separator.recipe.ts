@@ -7,6 +7,7 @@ export type SeparatorSize = 'md';
 class SeparatorRecipe extends ComponentRecipe<SeparatorVariant, SeparatorSize> {
   readonly meta: RecipeMeta = {
     id: 'separator',
+    group: 'containers',
     title: 'Separator',
     tag: 'Separator',
     blurb:
