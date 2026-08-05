@@ -6,6 +6,8 @@ import { iconButtonRecipe as iconButton } from './iconButton.recipe';
 import { buttonLinkRecipe as buttonLink } from './buttonLink.recipe';
 import { badgeRecipe as badge } from './badge.recipe';
 import { fieldRecipe as field } from './field.recipe';
+import { sliderRecipe as slider } from './slider.recipe';
+import { dropzoneRecipe as dropzone } from './dropzone.recipe';
 import { radioRecipe as radio } from './radio.recipe';
 import { inputRecipe as input } from './input.recipe';
 import { textareaRecipe as textarea } from './textarea.recipe';
@@ -35,6 +37,8 @@ export const allRecipes: ComponentRecipe<string, string, string>[] = [
   badge,
   field,
   radio,
+  slider,
+  dropzone,
   input,
   textarea,
   select,
@@ -92,3 +96,5 @@ export { checkboxRecipe, type CheckboxVariant, type CheckboxSize } from './check
 export { listboxRecipe, type ListboxVariant, type ListboxSize } from './listbox.recipe';
 export { selectRecipe, type SelectVariant, type SelectSize } from './select.recipe';
 export { radioRecipe, type RadioVariant, type RadioSize } from './radio.recipe';
+export { sliderRecipe, type SliderVariant, type SliderSize } from './slider.recipe';
+export { dropzoneRecipe, type DropzoneVariant, type DropzoneSize } from './dropzone.recipe';

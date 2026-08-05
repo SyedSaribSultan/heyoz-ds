@@ -50,3 +50,5 @@ export {
   type RadioProps,
   type RadioOption,
 } from './RadioGroup';
+export { Slider, type SliderProps } from './Slider';
+export { Dropzone, type DropzoneProps, type Rejection } from './Dropzone';

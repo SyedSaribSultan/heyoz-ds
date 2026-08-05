@@ -14,8 +14,10 @@ import {
   iconButtonRecipe,
   inputRecipe,
   listboxRecipe,
+  dropzoneRecipe,
   radioRecipe,
   selectRecipe,
+  sliderRecipe,
   textareaRecipe,
   pricingCardRecipe,
   skeletonRecipe,
@@ -45,6 +47,7 @@ import {
   CardTitle,
   Checkbox,
   Dialog,
+  Dropzone,
   Field,
   IconButton,
   Input,
@@ -55,6 +58,7 @@ import {
   RadioGroup,
   Select,
   Skeleton,
+  Slider,
   SkeletonGroup,
   Switch,
   Table,
@@ -1095,6 +1099,95 @@ registry.register({
           disabled
           defaultValue="9-16"
         />
+      </div>
+    );
+  },
+});
+
+/* -- Slider ---------------------------------------------------------------- */
+
+registry.register({
+  recipe: sliderRecipe,
+  /* The track is the only thing on the variant axis, and its states are a hover and a
+     disabled — worth a grid. The thumb's focus ring is not forceable from the track's
+     classes, so the keyboard behaviour has to be read on the Live demo. */
+  Preview: function SliderPreview() {
+    return (
+      <div className="w-[240px]">
+        <Slider label="Clip length" min={5} max={60} defaultValue={20} format={(v) => `${v}s`} />
+      </div>
+    );
+  },
+  Live: function SliderLive() {
+    return (
+      <div className="oz-stack oz-stack-7 max-w-[440px]">
+        {/* Tab to the thumb, then try PageUp — ten steps, not one. */}
+        <Slider
+          label="Clip length"
+          hint="Arrows step by one, PageUp and PageDown by ten, Home and End go to the ends."
+          min={5}
+          max={60}
+          step={1}
+          defaultValue={20}
+          format={(v) => `${v}s`}
+        />
+        {/* A fractional step: the readout and aria-valuenow stay at one decimal rather than
+            drifting to 0.30000000000000004. */}
+        <Slider
+          label="Motion intensity"
+          size="lg"
+          min={0}
+          max={1}
+          step={0.1}
+          defaultValue={0.4}
+          format={(v) => `${Math.round(v * 100)}%`}
+        />
+        <Slider label="Upscale factor" min={1} max={4} defaultValue={2} format={(v) => `${v}×`} disabled />
+      </div>
+    );
+  },
+});
+
+/* -- Dropzone -------------------------------------------------------------- */
+
+registry.register({
+  recipe: dropzoneRecipe,
+  Preview: function DropzonePreview() {
+    return (
+      <div className="w-[240px]">
+        <Dropzone accept="image/*" title="Drop a product image" />
+      </div>
+    );
+  },
+  Live: function DropzoneLive() {
+    return (
+      <div className="oz-stack oz-stack-7 max-w-[520px]">
+        {/* Drag a file over it: `active` is a third variant rather than a hover, so the fill
+            and the border move together. Dragging across the icon inside does not make it
+            flicker — the depth counter is what stops that. */}
+        <Dropzone
+          label="Product image"
+          hint="Drag one over it, or tab to it and press Enter. We read the brand and packaging from it."
+          accept="image/png,image/jpeg,image/webp"
+          maxSize={5_000_000}
+          required
+        />
+        <Dropzone
+          label="Reference clips"
+          hint="Up to three. A fourth is refused with a reason rather than dropped silently."
+          accept="video/mp4,video/quicktime"
+          multiple
+          maxFiles={3}
+          maxSize={50_000_000}
+          size="lg"
+        />
+        {/* Every variant, forced, so the active state can be read without a file in hand. */}
+        <div className="oz-stack oz-stack-4">
+          {dropzoneRecipe.variants.map((v) => (
+            <Dropzone key={v} forceVariant={v} title={`forced: ${v}`} accept="image/*" />
+          ))}
+        </div>
+        <Dropzone label="Brand assets" hint="Locked on the free plan." disabled />
       </div>
     );
   },

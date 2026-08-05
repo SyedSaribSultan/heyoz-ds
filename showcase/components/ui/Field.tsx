@@ -23,6 +23,18 @@ import { cx } from '@/lib/core/cx';
 
 export type FieldControlProps = {
   id: string;
+  /**
+   * The id of the rendered `<label>` or `<legend>`.
+   *
+   * For anything a `<label for>` can actually point at — input, textarea, select, button —
+   * ignore this: the association is already made and `aria-labelledby` on top of it is
+   * redundant. It exists for controls that are NOT labelable elements, which in HTML means
+   * anything that is a div with a role: `role="slider"`, `role="listbox"`,
+   * `role="spinbutton"`. A `<label for>` pointing at one of those associates with nothing
+   * at all, silently — the label renders, the click does not focus, and a screen reader
+   * announces the control unnamed. Those controls take `aria-labelledby={labelId}`.
+   */
+  labelId: string | undefined;
   'aria-describedby': string | undefined;
   'aria-invalid': true | undefined;
   'aria-required': true | undefined;
@@ -74,6 +86,7 @@ export function Field({
   const id = useId();
   const hintId = `${id}-hint`;
   const errorId = `${id}-error`;
+  const labelId = `${id}-label`;
   const group = as === 'group';
 
   if (process.env.NODE_ENV !== 'production' && !label) {
@@ -89,6 +102,7 @@ export function Field({
 
   const control: FieldControlProps = {
     id,
+    labelId: label ? labelId : undefined,
     'aria-describedby': describedBy,
     'aria-invalid': error ? true : undefined,
     'aria-required': required ? true : undefined,
@@ -122,9 +136,11 @@ export function Field({
       {group ? (
         /* No htmlFor: a legend labels its fieldset by containment, and pointing one at
            the first radio would make the group's name read as that option's name. */
-        <legend className={text('label')}>{labelContent}</legend>
+        <legend id={labelId} className={text('label')}>
+          {labelContent}
+        </legend>
       ) : (
-        <label htmlFor={id} className={text('label')}>
+        <label id={labelId} htmlFor={id} className={text('label')}>
           {labelContent}
         </label>
       )}
