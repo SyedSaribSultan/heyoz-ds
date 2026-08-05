@@ -10,8 +10,13 @@ import {
   cardRecipe,
   checkboxRecipe,
   dialogRecipe,
+  fieldRecipe,
   iconButtonRecipe,
   inputRecipe,
+  listboxRecipe,
+  radioRecipe,
+  selectRecipe,
+  textareaRecipe,
   pricingCardRecipe,
   skeletonRecipe,
   switchRecipe,
@@ -40,14 +45,22 @@ import {
   CardTitle,
   Checkbox,
   Dialog,
+  Field,
   IconButton,
   Input,
+  ListboxGroup,
+  ListboxOption,
+  ListboxPanel,
   PricingCard,
+  RadioGroup,
+  Select,
   Skeleton,
   SkeletonGroup,
   Switch,
   Table,
   Tabs,
+  Textarea,
+  type SelectItem,
 } from '@/components/ui';
 import { STARTER, BASIC, PROFESSIONAL, ENTERPRISE } from './pricingFixtures';
 
@@ -211,10 +224,13 @@ registry.register({
         {inputRecipe.variants.map((v) => (
           <Input
             key={v}
+            /* `variant` is explicit so `invalid` renders its paint on the same row as
+               `default`. In an app, passing `error` alone is the ordinary way in and the
+               variant follows from it. */
             variant={v}
             label={inputRecipe.labelFor(v)}
             placeholder={inputRecipe.placeholderFor(v)}
-            message={inputRecipe.messageFor(v) ?? undefined}
+            error={inputRecipe.messageFor(v) ?? undefined}
             defaultValue={v === 'invalid' ? 'design@heyoz' : ''}
           />
         ))}
@@ -222,9 +238,27 @@ registry.register({
           label="Prompt (lg)"
           size="lg"
           placeholder={inputRecipe.placeholderFor('default')}
-          message="Up to 12 seconds at 1080p."
+          hint="Up to 12 seconds at 1080p."
         />
-        <Input label="Seed" disabled defaultValue="locked to 41827" message="Unlock to edit." />
+        <Input label="Seed" disabled defaultValue="locked to 41827" hint="Unlock to edit." />
+
+        {/* Both slots, and both halves of the required/optional pair. The error and the
+            hint render together on the invalid field above — that is the point of the
+            arrangement, not an oversight. */}
+        <Input
+          label="Brand name"
+          required
+          leading={<Glyph />}
+          placeholder="HeyOz"
+          hint="We read this off the product page when you paste one."
+        />
+        <Input
+          label="Campaign code"
+          optional
+          size="lg"
+          trailing={<Glyph />}
+          placeholder="SPRING-26"
+        />
       </div>
     );
   },
@@ -819,6 +853,248 @@ registry.register({
           <PricingCard {...PROFESSIONAL} />
         </div>
         <PricingCard {...ENTERPRISE} />
+      </div>
+    );
+  },
+});
+
+/* -- Field ----------------------------------------------------------------- */
+
+registry.register({
+  recipe: fieldRecipe,
+  /* The variant axis is the three TEXT ROLES rather than three looks of one thing, so the
+     forced-state grid stays on: it shows what each of the three does when its control is
+     disabled, which is the one state a reader would otherwise have to guess at. */
+  Preview: function FieldPreview() {
+    return (
+      <div className="w-[240px]">
+        <Field label="Product URL" hint="We read the brand from it.">
+          {(c) => <Input {...c} placeholder="heyoz.com/…" />}
+        </Field>
+      </div>
+    );
+  },
+  Live: function FieldLive() {
+    return (
+      <div className="oz-stack oz-stack-7 max-w-[520px]">
+        {/* The render prop used directly — the shape every other form component here uses
+            internally. */}
+        <Field label="Product URL" hint={fieldRecipe.sampleFor('hint')} required>
+          {(c) => <Input {...c} placeholder="heyoz.com/products/…" />}
+        </Field>
+
+        {/* Error AND hint together. That is the arrangement, not an oversight. */}
+        <Field
+          label="Product URL"
+          hint={fieldRecipe.sampleFor('hint')}
+          error={fieldRecipe.sampleFor('error')}
+        >
+          {(c) => <Input {...c} variant="invalid" defaultValue="htp://heyoz" />}
+        </Field>
+
+        <Field label="Seed" hint="Locked while a render is in flight." disabled>
+          {(c) => <Input {...c} defaultValue="41827" />}
+        </Field>
+
+        <Field label="Campaign code" optional labelAside={<Badge variant="neutral">beta</Badge>}>
+          {(c) => <Input {...c} placeholder="SPRING-26" />}
+        </Field>
+      </div>
+    );
+  },
+});
+
+/* -- Textarea -------------------------------------------------------------- */
+
+registry.register({
+  recipe: textareaRecipe,
+  Preview: function TextareaPreview() {
+    return (
+      <div className="w-[240px]">
+        <Textarea label="Brief" rows={2} placeholder="A 20-second hook for a matcha brand…" />
+      </div>
+    );
+  },
+  Live: function TextareaLive() {
+    return (
+      <div className="oz-stack oz-stack-7 max-w-[520px]">
+        {textareaRecipe.variants.map((v) => (
+          <Textarea
+            key={v}
+            variant={v}
+            label={textareaRecipe.labelFor(v)}
+            placeholder={textareaRecipe.placeholderFor(v)}
+            error={textareaRecipe.messageFor(v) ?? undefined}
+          />
+        ))}
+        {/* Type into this one: it grows to six lines and then scrolls itself. */}
+        <Textarea
+          label="Script"
+          size="lg"
+          rows={3}
+          maxRows={6}
+          limit={180}
+          hint="Grows to six lines, then scrolls. The counter is a soft limit — nothing is truncated."
+          defaultValue="Open on the jar, close on her face. She says the line about quitting coffee, then holds it up."
+        />
+        <Textarea label="Notes" disabled defaultValue="Locked while rendering." rows={2} />
+      </div>
+    );
+  },
+});
+
+/* -- Select ---------------------------------------------------------------- */
+
+const FORMATS: SelectItem[] = [
+  {
+    group: 'Vertical',
+    options: [
+      { value: '9-16', label: 'Vertical 9:16', description: 'TikTok, Reels, Shorts' },
+      { value: '4-5', label: 'Portrait 4:5', description: 'Feed posts' },
+    ],
+  },
+  {
+    group: 'Other',
+    options: [
+      { value: '1-1', label: 'Square 1:1' },
+      { value: '16-9', label: 'Landscape 16:9', description: 'YouTube pre-roll' },
+      { value: '21-9', label: 'Cinematic 21:9', description: 'Not yet supported', disabled: true },
+    ],
+  },
+];
+
+registry.register({
+  recipe: selectRecipe,
+  /* The panel is portalled to <body> and positioned against its trigger, so no forced-state
+     cell can contain it. The trigger's states are inherited from Input and shown there; the
+     panel is on the Live demo, where it can actually open. */
+  gridSuppressed: true,
+  Preview: function SelectPreview() {
+    return (
+      <div className="w-[240px]">
+        <Select items={FORMATS} label="Ad format" defaultValue="9-16" />
+      </div>
+    );
+  },
+  Live: function SelectLive() {
+    return (
+      <div className="oz-stack oz-stack-7 max-w-[440px]">
+        <Select
+          items={FORMATS}
+          label="Ad format"
+          hint="Open it and type “sq” — typeahead matches the label, and repeating a letter cycles."
+          defaultValue="9-16"
+        />
+        <Select
+          items={FORMATS}
+          label={selectRecipe.labelFor('invalid')}
+          placeholder={selectRecipe.placeholderFor('invalid')}
+          error={selectRecipe.messageFor('invalid') ?? undefined}
+        />
+        <Select items={FORMATS} label="Ad format (lg)" size="lg" defaultValue="16-9" />
+        <Select items={FORMATS} label="Ad format" disabled defaultValue="1-1" />
+        {/* No options. The empty state is a real state — without it the panel is an empty
+            box, which looks the same as one that failed to load. */}
+        <Select items={[]} label="Creators" placeholder="None connected yet" />
+      </div>
+    );
+  },
+});
+
+/* -- Listbox option -------------------------------------------------------- */
+
+registry.register({
+  recipe: listboxRecipe,
+  Preview: function ListboxPreview() {
+    return (
+      <div className="w-[240px]">
+        <ListboxPanel style={{ position: 'static' }}>
+          <ListboxOption selected={false}>Square 1:1</ListboxOption>
+          <ListboxOption selected>Vertical 9:16</ListboxOption>
+        </ListboxPanel>
+      </div>
+    );
+  },
+  Live: function ListboxLive() {
+    return (
+      /* position: static overrides the panel's own fixed positioning so the rows can be read
+         in place. In use, useAnchor supplies position, top, left, maxHeight and the width
+         floor — this demo is the panel without its anchor. */
+      <div className="max-w-[360px]">
+        <ListboxPanel style={{ position: 'static' }}>
+          <ListboxGroup label="Vertical" labelId="lb-demo-vertical">
+            <ListboxOption selected={false} description="TikTok, Reels, Shorts">
+              Vertical 9:16
+            </ListboxOption>
+            <ListboxOption selected description="Feed posts">
+              Portrait 4:5
+            </ListboxOption>
+          </ListboxGroup>
+          <ListboxGroup label="Other" labelId="lb-demo-other">
+            <ListboxOption selected={false} forceState="hover">
+              Square 1:1 — forced hover
+            </ListboxOption>
+            <ListboxOption selected={false} disabled description="Not yet supported">
+              Cinematic 21:9
+            </ListboxOption>
+          </ListboxGroup>
+        </ListboxPanel>
+      </div>
+    );
+  },
+});
+
+/* -- Radio group ----------------------------------------------------------- */
+
+const RATIOS = [
+  { value: '9-16', label: 'Vertical 9:16', description: 'TikTok, Reels, Shorts' },
+  { value: '1-1', label: 'Square 1:1', description: 'Feed posts and display' },
+  { value: '16-9', label: 'Landscape 16:9', description: 'YouTube pre-roll' },
+  { value: '21-9', label: 'Cinematic 21:9', description: 'Not yet supported', disabled: true },
+];
+
+registry.register({
+  recipe: radioRecipe,
+  /* The ring's hover comes from the row via `group-hover:` and its focus from a peer input.
+     A cell rendering the ring on its own can reproduce neither. */
+  gridSuppressed: true,
+  Preview: function RadioPreview() {
+    return (
+      <div className="w-[240px]">
+        <RadioGroup options={RATIOS.slice(0, 2)} label="Aspect ratio" defaultValue="9-16" />
+      </div>
+    );
+  },
+  Live: function RadioLive() {
+    return (
+      <div className="oz-stack oz-stack-9 max-w-[520px]">
+        {/* Tab into it: one stop for the whole group, landing on the checked option. Then
+            arrow — selection follows focus, it wraps, and it steps over the disabled row. */}
+        <RadioGroup
+          options={RATIOS}
+          label="Aspect ratio"
+          hint="One tab stop for the group. Arrows move and select, and skip the disabled row."
+          defaultValue="9-16"
+        />
+        <RadioGroup
+          options={RATIOS.slice(0, 3)}
+          label="Aspect ratio"
+          orientation="horizontal"
+          defaultValue="1-1"
+        />
+        {/* Nothing preselected, which is the default — see the note in RadioGroup. */}
+        <RadioGroup
+          options={RATIOS.slice(0, 2)}
+          label="Aspect ratio"
+          required
+          error="Pick a ratio before generating."
+        />
+        <RadioGroup
+          options={RATIOS.slice(0, 2)}
+          label="Aspect ratio"
+          disabled
+          defaultValue="9-16"
+        />
       </div>
     );
   },

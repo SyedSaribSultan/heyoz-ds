@@ -324,7 +324,7 @@ export function Primitives({ index }: { index: string }) {
                 placeholder="brand, #FF3D01, fill/critical…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                message="Matches path, hex, or the name of a consuming token."
+                hint="Matches path, hex, or the name of a consuming token."
               />
             </div>
             <Button

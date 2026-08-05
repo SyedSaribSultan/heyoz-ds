@@ -137,7 +137,7 @@ export function ComponentIndex({ index }: { index: string }) {
               placeholder="badge, surface, pricing…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              message="Matches the title and the definition printed under it."
+              hint="Matches the title and the definition printed under it."
             />
           </div>
           {/* The live region is this line, and it is rendered unconditionally.

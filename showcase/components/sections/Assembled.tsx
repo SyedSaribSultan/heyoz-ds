@@ -229,7 +229,7 @@ export function Assembled({ index }: { index: string }) {
                 <Input
                   label="Describe the shot"
                   defaultValue="A slow dolly through a rain-lit Karachi street at dusk"
-                  message="Specific camera language gives the model more to work with."
+                  hint="Specific camera language gives the model more to work with."
                 />
                 <div className="oz-cluster oz-cluster-6">
                   <Switch label="Upscale to 4K on export" defaultChecked />

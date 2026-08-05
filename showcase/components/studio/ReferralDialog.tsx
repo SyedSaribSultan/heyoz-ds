@@ -229,7 +229,10 @@ export function ReferralDialog() {
         {choice === 'other' && (
           <Input
             autoFocus
-            aria-label="Tell us how you found HeyOz"
+            /* A hidden real <label> rather than aria-label. Same announcement, and it
+               keeps click-to-focus, which aria-label throws away. */
+            label="Tell us how you found HeyOz"
+            labelHidden
             placeholder="Tell us how you found HeyOz..."
             value={otherText}
             /* Over the cap is ignored rather than truncated, matching the original's
@@ -238,12 +241,12 @@ export function ReferralDialog() {
             onChange={(e) => {
               if (e.target.value.length <= OTHER_MAX) setOtherText(e.target.value);
             }}
-            variant={otherTooShort ? 'invalid' : 'default'}
-            message={
-              otherTooShort
-                ? `Minimum ${OTHER_MIN} characters · ${otherText.length}/${OTHER_MAX}`
-                : `${otherText.length}/${OTHER_MAX}`
-            }
+            /* The counter is a hint and the minimum is an error, and they are now two
+               props rather than one string switched by `variant`. The count keeps
+               rendering while the error shows — Field stacks the error above the hint
+               precisely so the instruction survives the failure. */
+            hint={`${otherText.length}/${OTHER_MAX}`}
+            error={otherTooShort ? `Minimum ${OTHER_MIN} characters.` : undefined}
           />
         )}
       </div>

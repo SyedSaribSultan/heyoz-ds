@@ -334,7 +334,7 @@ export function UgcFooter() {
                 type="email"
                 label="Get the monthly roundup"
                 placeholder="you@company.com"
-                message="One email a month. Unsubscribe in one click."
+                hint="One email a month. Unsubscribe in one click."
               />
               <div className="mt-space-4">
                 <Button type="submit" variant="inverse" size="sm" shape="rect" className="w-full">
