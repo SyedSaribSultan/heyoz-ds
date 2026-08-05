@@ -168,6 +168,15 @@ const ALPHA_FILLS: Array<{ fill: string; on: readonly string[] }> = [
    * needs the extra step — `critical-hover` there is 4.54:1, over the floor by 0.04, which is
    * a coincidence and not a margin. Listing both keeps the tight one on the report. */
   { fill: 'fill/brand-secondary', on: ['content/brand-hover', 'content/primary'] },
+  /* Dropzone's "Hover on Dragging" ground — the 30% brand wash.
+   *
+   * Listed with `content/primary` only, because that is what the variant binds.
+   * `content/brand-hover` was the obvious choice and measures 3.87:1 here over
+   * `surface/elevated` in dark — worse than the 4.54:1 it manages on the 15% wash above,
+   * because the ground moved toward the text. It is deliberately NOT listed: a pairing no
+   * component ships does not belong in a known-failure list, which would make the gate report
+   * a defect nobody can see. The rejection is recorded in dropzone.recipe.ts instead. */
+  { fill: 'fill/brand-secondary-hover', on: ['content/primary'] },
   { fill: 'fill/success-secondary', on: ['content/success-hover', 'content/primary'] },
   { fill: 'fill/warning-secondary', on: ['content/warning-hover', 'content/primary'] },
   { fill: 'fill/info-secondary', on: ['content/info-hover', 'content/primary'] },

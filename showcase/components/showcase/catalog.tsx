@@ -1249,27 +1249,45 @@ registry.register({
           maxSize={5_000_000}
           required
         />
+        {/* The `lg` size, which the forced-state grid below cannot show — those are all md.
+            Dropped its own hint: with the 136px floor now on md and 180px on lg, this specimen
+            reached 1390px against the suite's 1200px ceiling, and the guard is worth more than
+            a second sentence. */}
         <Dropzone
-          label="Reference clips"
-          hint="Up to three. A fourth is refused with a reason rather than dropped silently."
+          label="Reference clips (lg)"
           accept="video/mp4,video/quicktime"
           multiple
           maxFiles={3}
           maxSize={50_000_000}
           size="lg"
         />
-        {/* Every variant, forced, so `active` can be read without a file in hand.
-            Three-up rather than stacked: six full-width dropzones put this specimen at
-            1354px against the suite's 1200px ceiling, and that ceiling is a real guard —
-            it is what catches a specimen that has quietly become the whole page. Widening
-            the exemption for one component would have removed the guard from the other
-            twenty. A grid is the honest fix. */}
+        {/* All six states from the Figma set, forced, so the two drag states can be read
+            without a file in hand. Three-up rather than stacked: six full-width dropzones put
+            this specimen at 1354px against the suite's 1200px ceiling, and that ceiling is what
+            catches a specimen that has quietly become the whole page. */}
         <div className="grid gap-space-4 md:grid-cols-3">
-          {dropzoneRecipe.variants.map((v) => (
-            <Dropzone key={v} forceVariant={v} title={`forced: ${v}`} />
-          ))}
+          <Dropzone forceVariant="idle" title="Default" />
+          <Dropzone forceVariant="idle" forceState="hover" title="Hover" />
+          <Dropzone disabled title="Disabled" />
+          <Dropzone forceVariant="invalid" title="Error" maxSize={50_000_000} />
+          <Dropzone forceVariant="active" title="Dragging" />
+          {/* Hover on Dragging — the 30% wash, where the label leaves the accent behind
+              because content/brand-hover measures 3.87:1 on it. */}
+          <Dropzone forceVariant="active" forceState="hover" title="Hover on Dragging" />
         </div>
-        <Dropzone label="Brand assets" hint="Locked on the free plan." disabled />
+
+        {/* Multiple, with the thumbnail strip, the + tile and two accept-kind glyphs. Drop a
+            couple of images in to see the strip — it replaces the filename rows the first
+            version used. `disabled` is in the forced grid above, so it is not repeated here. */}
+        <Dropzone
+          label="Reference images"
+          hint="Drop a couple in — they render as thumbnails with a + tile."
+          accept="image/png,image/jpeg,image/webp"
+          multiple
+          maxFiles={4}
+          maxSize={5_000_000}
+          icons={[<Glyph key="a" />, <Glyph key="b" />]}
+        />
       </div>
     );
   },
