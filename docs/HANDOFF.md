@@ -111,13 +111,18 @@ containers 5   Accordion · Card · Pricing Card · Separator · Table
 identity 3     Avatar · Badge · Chip
 ```
 
-Every one declares its motion, its focus treatment and the job of any border it draws. Nine
-suites verify the layer, including two that exist for gaps the others structurally cannot see:
-`verify:glow` (text over a gradient) and `verify:composite` (text over a translucent fill, and
-text on a surface the component does not paint).
+Every one declares its motion, its focus treatment and the job of any border it draws. The
+suites that verify this layer are listed in `showcase/package.json`; run `npm run verify` for
+the live set rather than trusting a count here. One of them exists for a gap the others
+structurally cannot see: `verify:composite` (text over a translucent fill, and text on a
+surface the component does not paint).
+
+There used to be a second such gate, `verify:glow`, for text over a gradient. It is retired —
+both of its grounds modelled `/ai-ugc`, and that route is gone. The retirement note in
+`showcase/package.json` says how to recover it and what would justify it.
 
 **The showcase.** `/` is the reference, `/verify` is the evidence, `/c/[component]` is a page
-per component. `/studio` and `/ai-ugc` are product screens built from the system.
+per component. `/studio` and `/static-ads` are product screens built from the system.
 
 ---
 
@@ -150,17 +155,23 @@ it fails on a new failure, on a regression, and on an entry that has been fixed 
 `text-content-critical-hover`.
 
 **Cost to fix properly:** move six tokens one ramp step in dark. That repaints every accent in
-dark mode including the `/ai-ugc` headline accent, so `verify-glow`'s hand-built gradient model
-must be re-checked with it and every dark baseline re-approved by eye. That is a design review,
-not a bug fix. One of the 18 is also a **light-mode** failure that this move would not touch —
-see §G.
+dark mode, including the `/static-ads` headline accent line, which sits on a composited
+gradient ground no gate now measures — so every dark baseline has to be re-approved by eye.
+That is a design review, not a bug fix. One of the 18 is also a **light-mode** failure that
+this move would not touch — see §G.
 
 To enforce instead of record: set `ENFORCING = true` in `showcase/scripts/verify-composite.ts`.
 
-### 3. The `/ai-ugc` application flow — not started
+### 3. The generation flow behind `/static-ads` — not started
 
-`/ai-ugc` today is the **marketing** page. The flow behind it — upload → AI analysis → creative
-brief → ad concepts → storyboard → script → signup gate — has not been built.
+`/static-ads` today is the **entry point**: a rail, a headline and a composer. Press Generate
+and nothing happens. The flow behind it — brief → product/template selection → generation →
+variant grid → refine → export/signup gate — has not been built.
+
+This section used to describe the same gap behind `/ai-ugc`, which was a marketing page with a
+CTA rather than a composer. That route is deleted and `/static-ads` replaced it; the gap did not
+change, only which screen leads into it. The composer's five pickers, stepper and two
+attachment tiles are the flow's inputs and they already hold state — nothing reads it yet.
 
 **This is the only substantive gap.** It was the original request; the component layer was the
 prerequisite and is now done. Nothing is missing to build it:
@@ -177,8 +188,9 @@ prerequisite and is now done. Nothing is missing to build it:
 Note the constraint: this repo has no backend, no auth and no AI. The flow can be built as a
 high-fidelity prototype — the way `/studio` is — but "authenticated free user", "credit cost"
 and "estimated generation time" can only be *represented*, not implemented. Do not invent
-figures for them; `showcase/components/ai-ugc/content.ts` marks every string LIVE, NEW or
-PLACEHOLDER for exactly this reason.
+figures for them. The retired `/ai-ugc` page kept a `content.ts` that marked every string LIVE,
+NEW or PLACEHOLDER for exactly this reason, and that convention is worth restoring the moment
+this flow carries a number anybody could mistake for real.
 
 ---
 

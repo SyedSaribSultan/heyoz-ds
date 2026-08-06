@@ -17,16 +17,19 @@
  *      is one of those answers and the most flattering one.
  *
  * `verify-glow.ts` was written for the third member of this family — text over a gradient —
- * and its header makes the same argument. This is that argument applied to the two cases a
- * gradient is not.
+ * and its header made the same argument. It is gone: both of its grounds modelled `/ai-ugc`,
+ * and that route was deleted. This file is now the only gate for a ground that is not a
+ * token, and it covers the two cases a gradient is not. `/static-ads` reintroduced a gradient
+ * ground under a display headline and an accent line, so the third case is live again and
+ * currently unmeasured — see the retirement note in package.json.
  *
  * WHY IT RECORDS RATHER THAN FAILS, for now. It found twelve real failures on its first
  * run: all six accent content tokens are under 4.5:1 on `surface/elevated` and
  * `surface/overlay` in dark, 3.91–4.08:1. Fixing them means moving six tokens one ramp step
- * in `spec.mjs`, which repaints every accent in dark — including `content/brand`, which is
- * the accent word in the `/ai-ugc` headline and the tightest margin in `verify-glow` at
- * 5.01:1. That is a deliberate design decision with a real blast radius, not a drive-by, and
- * it is recorded in DECISIONS.md §G.
+ * in `spec.mjs`, which repaints every accent in dark — including `content/brand`, whose
+ * tightest recorded margin was 5.01:1 against the old `/ai-ugc` hero glow. That is a
+ * deliberate design decision with a real blast radius, not a drive-by, and it is recorded in
+ * DECISIONS.md §G.
  *
  * So `ENFORCING = false` and the twelve known failures are listed in `KNOWN` with their
  * measured values. The gate still fails on:

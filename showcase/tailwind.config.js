@@ -90,6 +90,11 @@ module.exports = {
       gridTemplateColumns: {
         rail: '188px minmax(0, 1fr)',
         app: '200px minmax(0, 1fr)',
+        /* /static-ads. Its own key rather than reusing `app`, because the rail really is
+         * wider there and for a reason: thirteen grouped destinations with a heading over
+         * each group, against Content Studio's seven flat ones. "Competitors" truncates at
+         * 200px. */
+        ads: '240px minmax(0, 1fr)',
       },
 
       /* No keyframes here any more.

@@ -214,15 +214,19 @@ variable's local value when it is bound to an alias, and these carry alpha
 0.08–0.90, so an alias would import them opaque. An alias that lies about alpha is
 worse than no alias. The build asserts the agreement.
 
-**The `/ai-ugc` hero paints a dark ellipse *over* its warm glow.** It looks like a
-layer fighting the effect it sits on. It is the effect: the glow is two coats of
-`gradient/halo` blooming below the fold, and the cap is what keeps the headline band
-near-black so the copy has a ground. Take it out and `content/brand` — the accent word
-in the headline — measures 4.39:1 in dark, under the floor. `verify:glow` is the gate
-that catches it, and it exists because neither the token build nor `verify:contrast` can
-see a composited ground: both measure a foreground token against a background *token*,
-and a gradient's colour at a row is not a token. Read the comment on `HeroGlow` before
-retuning any coat, and retune the model in `showcase/scripts/verify-glow.ts` with it.
+**`verify:glow` is gone, and it was not relaxed away.** It measured contrast on a
+composited gradient ground — the one thing `verify:contrast` structurally cannot see,
+since that gate measures a foreground token against a background *token* and a
+gradient's colour at a row is not a token. Both of its `GROUNDS` entries modelled
+`/ai-ugc`, the hero and the closing CTA, and that route was deleted and replaced by
+`/static-ads`; the gate had no subject left to measure. Rule 3 is about not lowering a
+floor to pass — this is a model whose subject stopped existing. The retirement note in
+`showcase/package.json` says how to recover it (`git show` the deleted script) and what
+would justify doing so: `/static-ads` has a gradient ground of its own under a display
+headline and an accent line, so the gate is worth rebuilding the moment that wash is
+treated as load-bearing rather than decorative. `docs/DECISIONS.md` keeps the original
+finding — `content/brand` at 4.39:1 over the old hero glow, with all eight suites green
+— because that is why the accent roles are where they are.
 
 **492+ of the colour primitives are unused.** The alpha grid is generated, not
 curated. Decision D7.
