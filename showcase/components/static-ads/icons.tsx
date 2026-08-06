@@ -166,26 +166,33 @@ export const MinusIcon = ({ className }: IconProps) => (
   </Glyph>
 );
 
-/** The HeyOz mark. Filled, because it sits in a solid 28px tile where a stroked glyph
- *  would disappear. */
-export const OzMarkIcon = ({ className = 'h-space-5 w-space-5' }: IconProps) => (
+/* The circle-and-slash `OzMarkIcon` used to live here, and it is gone rather than kept
+ * around unused: the wordmark tile now takes SparkIcon, per the reference. It is still in
+ * components/studio/icons.tsx if the old mark is ever wanted back. */
+
+/* ── Composer controls ───────────────────────────────────────────────────── */
+
+/** Heart, filled — the Pricing pill.
+ *
+ *  Filled for the same reason SparkIcon is: at 14px a stroked heart is mostly counter, and
+ *  this one is accent-coloured on a tinted pill where the fill is what reads. */
+export const HeartIcon = ({ className = 'h-space-4 w-space-4' }: IconProps) => (
   <svg
     aria-hidden="true"
     viewBox="0 0 16 16"
     className={`${className} shrink-0`}
     fill="currentColor"
   >
-    <path d="M8 1.6a6.4 6.4 0 1 0 0 12.8A6.4 6.4 0 0 0 8 1.6Zm0 2.1a4.3 4.3 0 0 1 3.5 6.8L5.7 4.3A4.2 4.2 0 0 1 8 3.7Zm0 8.6a4.3 4.3 0 0 1-3.5-6.8l5.8 6.2a4.2 4.2 0 0 1-2.3.6Z" />
+    <path d="M8 13.8 2.9 8.9a3.35 3.35 0 0 1 0-4.8 3.5 3.5 0 0 1 4.85 0L8 4.35l.25-.25a3.5 3.5 0 0 1 4.85 0 3.35 3.35 0 0 1 0 4.8z" />
   </svg>
 );
 
-/* ── Composer controls ───────────────────────────────────────────────────── */
-
-/** Four-point star, filled — the Pro tier chip and the Pricing button.
+/** Four-point star, filled — the Pro tier chip and the wordmark tile.
  *
- *  Filled rather than stroked, and the one exception in this file. At 14px a stroked
- *  four-point star is mostly counter and reads as a smudge; the two places it appears
- *  are both accent-coloured, where the fill is doing the signalling. */
+ *  Filled rather than stroked, and one of the two exceptions in this file. At 14px a
+ *  stroked four-point star is mostly counter and reads as a smudge; in the wordmark tile it
+ *  is white on near-black at 16px, where a 1.5px stroke would read as an outline of a star
+ *  rather than a star. */
 export const SparkIcon = ({ className = 'h-space-4 w-space-4' }: IconProps) => (
   <svg
     aria-hidden="true"

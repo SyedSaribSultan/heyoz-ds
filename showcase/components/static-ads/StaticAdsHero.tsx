@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui';
 import { Composer } from './Composer';
-import { SparkIcon } from './icons';
+import { HeartIcon } from './icons';
 
 /* ---------------------------------------------------------------------------
  * The /static-ads hero.
@@ -80,7 +80,7 @@ export function StaticAdsHero() {
          behind the page background and disappearing. Padding, not a height: the headline
          wraps to three lines on a narrow column, and a pinned height would push the
          composer out through the bottom edge. */
-      className="relative isolate overflow-hidden pb-space-17"
+      className="relative isolate overflow-hidden pb-space-5"
     >
       {/* The glow is its own layer so the section keeps a solid base underneath it. One
           element carrying both would mean the transparent stops fade to nothing rather
@@ -95,20 +95,22 @@ export function StaticAdsHero() {
       {/* Account actions. In the rail on /studio, up here on this screen, because this one
           is reachable before sign-in — which is also why "Start for free" is the only
           brand-filled control above the composer. */}
-      <div className="flex justify-end gap-space-3 px-space-6 pt-space-5">
-        <Button variant="tonal" size="sm" shape="pill" leadingIcon={<SparkIcon />}>
+      <div className="flex justify-end gap-space-2 px-space-5 pt-space-4">
+        <Button variant="tonal" size="xs" shape="pill" leadingIcon={<HeartIcon />}>
           Pricing
         </Button>
-        <Button variant="primary" size="sm" shape="pill">
+        <Button variant="primary" size="xs" shape="pill">
           Start for free
         </Button>
       </div>
 
-      {/* An arbitrary top inset above lg, for the reason Studio.tsx gives about its composer
-          width: this is a measured distance off a reference, not a step on the spacing
-          scale, and the nearest steps are 120px and 96px — 32px and 56px out. Below lg it
-          falls back to the scale, since the reference says nothing about narrow widths. */}
-      <div className="px-space-6 pt-space-14 text-center lg:pt-[152px]">
+      {/* Back on the scale. This was `lg:pt-[152px]`, measured off the first reference — but
+          that reference was a short viewport where the block sat lower, and the second one
+          puts the eyebrow around 14% down a tall window with two content sections below the
+          fold. 96px is the step that lands there, so the arbitrary value is gone rather than
+          re-measured: a number on the scale that is right beats a measured one that was only
+          right for one window height. */}
+      <div className="px-space-6 pt-space-12 text-center lg:pt-space-17">
         <p className="font-mono text-label-sm uppercase tracking-[0.18em] text-content-tertiary">
           Content Studio
         </p>
@@ -119,12 +121,19 @@ export function StaticAdsHero() {
             which is a composition decision rather than a consequence of the measure — so
             it is stated.
 
-            display-sm (40px), not display-md. display-md clamps to 52px at this viewport
-            and sets "EVERYTHING YOU NEED FOR" about 200px wider than the reference draws
-            it — uppercase at the biggest step is not the same as the biggest step. */}
+            heading-xl (36px), and it is the third step tried here. display-md clamps to
+            52px, which sets this line about 200px wider than the reference draws it —
+            uppercase at the biggest step is not the same as the biggest step. display-sm
+            (40px) was closer and still read large against the two card sections below it,
+            which is the thing the first reference could not show: a headline is only as big
+            as what sits under it, and nothing sat under it then.
+
+            heading-xl rather than a display step is a deliberate role crossing on a hero
+            headline. It is the only 36px step in the set, and the alternative was an
+            arbitrary font-size, which loses the step's own leading and tracking. */}
         <h1
           id="static-ads-headline"
-          className="mt-space-6 font-display text-display-sm font-extrabold uppercase text-content-primary"
+          className="mt-space-5 font-display text-heading-xl font-extrabold uppercase text-content-primary"
         >
           <span className="block">Everything you need for</span>
           {/* content/brand-HOVER rather than content/brand, per CLAUDE.md 4b: this line

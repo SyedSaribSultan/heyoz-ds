@@ -1,8 +1,9 @@
 'use client';
 
-import { ThemeProvider, useTheme, type ThemePreference } from '@/components/showcase/ThemeProvider';
+import { ThemeProvider } from '@/components/showcase/ThemeProvider';
 import { StaticAdsSidebar } from './StaticAdsSidebar';
 import { StaticAdsHero } from './StaticAdsHero';
+import { Recents, TemplatesForYou } from './StaticAdsGallery';
 
 /* ---------------------------------------------------------------------------
  * /static-ads — the static-advertising Content Studio screen.
@@ -43,9 +44,13 @@ import { StaticAdsHero } from './StaticAdsHero';
  * No `dark:` variant in this folder except the two glow layers, which exist because an
  * inline style cannot carry one — see StaticAdsHero. The two modes are one implementation.
  *
- * The mode switcher at the bottom right is NOT part of the reference. It is scaffolding,
- * and it looks like scaffolding: the reference is dark-only, and there is no other way to
- * judge the light extrapolation.
+ * THERE IS NO MODE SWITCHER, and that is a removal rather than an omission. /studio and the
+ * old /ai-ugc both carried a three-way light/dark/system control pinned bottom-right, marked
+ * as scaffolding; this route was asked to drop it. ThemeProvider still wraps the tree, so
+ * the page follows the OS and the light extrapolation still renders — it just cannot be
+ * flipped from inside the page any more. The cost is real and worth knowing: judging light
+ * mode here now means changing the OS setting or emulating the media query in devtools.
+ * Restoring it is copying ModeSwitcher back out of Studio.tsx.
  * ------------------------------------------------------------------------- */
 
 export function StaticAds() {
@@ -65,52 +70,12 @@ export function StaticAds() {
             container that cannot hold focus moves the viewport and leaves the caret
             behind, which is the failure mode that makes people think skip links do not
             work. */}
-        <main id="static-ads-main" tabIndex={-1} className="min-w-0 focus:outline-none">
+        <main id="static-ads-main" tabIndex={-1} className="min-w-0 pb-space-14 focus:outline-none">
           <StaticAdsHero />
+          <Recents />
+          <TemplatesForYou />
         </main>
       </div>
-
-      <ModeSwitcher />
     </ThemeProvider>
-  );
-}
-
-const PREFERENCES: ThemePreference[] = ['light', 'dark', 'system'];
-
-/** Scaffolding, exactly as on /studio. Three-way rather than a binary toggle because
- *  ThemeProvider models a preference distinct from the resolved mode, and a two-state
- *  control cannot express "follow the OS" — the state this screen is in before anybody
- *  touches it. */
-function ModeSwitcher() {
-  const { preference, setPreference, mode } = useTheme();
-
-  return (
-    <div
-      role="group"
-      aria-label="Colour mode"
-      className="fixed bottom-space-5 right-space-5 z-sticky flex gap-space-1 rounded-full border-2 border-border-secondary bg-surface-elevated p-space-1 shadow-medium"
-    >
-      {PREFERENCES.map((p) => {
-        const on = preference === p;
-        return (
-          <button
-            key={p}
-            type="button"
-            aria-pressed={on}
-            onClick={() => setPreference(p)}
-            className={`rounded-full px-space-4 py-space-2 text-label-sm transition-colors duration-effects-fast ease-effects-fast focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus ${
-              on
-                ? 'bg-fill-brand font-medium text-content-on-brand'
-                : 'text-content-tertiary hover:text-content-primary'
-            }`}
-          >
-            {/* The resolved mode is appended to `system` so the control says what the OS
-                actually chose. "system" alone leaves the reader to infer it from the page,
-                which is the thing they are trying to check. */}
-            {p === 'system' ? `system · ${mode}` : p}
-          </button>
-        );
-      })}
-    </div>
   );
 }

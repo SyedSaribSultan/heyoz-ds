@@ -55,7 +55,7 @@ import {
 /** The four single-select pickers, as data.
  *
  *  `label` is what the closed chip reads when the option is active — deliberately shorter
- *  than `name`, because the chip is a status readout in a 28px row and "3840 × 2160" does
+ *  than `name`, because the chip is a status readout in a 24px row and "3840 × 2160" does
  *  not fit in one. */
 type Option = { label: string; name: string; hint?: string };
 
@@ -162,22 +162,22 @@ export function Composer() {
 
        The focus ring is on the WRAPPER via focus-within, not on the textarea, which is how
        the card reads as one control instead of nine. */
-    <div className="mx-auto mt-space-9 w-full max-w-[772px] rounded-8 border-2 border-border-secondary bg-surface-elevated p-space-3 text-left shadow-medium focus-within:outline focus-within:outline-ring focus-within:outline-offset-ring focus-within:outline-border-focus">
+    <div className="mx-auto mt-space-8 w-full max-w-[752px] rounded-8 border-2 border-border-secondary bg-surface-elevated p-space-3 text-left shadow-medium focus-within:outline focus-within:outline-ring focus-within:outline-offset-ring focus-within:outline-border-focus">
       {/* min-h, not a height, and it is on the ROW rather than on the card: the two
           attachment tiles and Generate are `self-stretch`, so whatever sets the row's
-          height sets theirs, and one number does the work of three. 100px is the
-          reference's 120px card less its two 10px paddings. */}
-      <div className="flex flex-col gap-space-3 sm:flex-row sm:items-stretch sm:min-h-[100px]">
+          height sets theirs, and one number does the work of three. 84px is the second
+          reference's 100px card less its two 8px paddings. */}
+      <div className="oz-stack oz-stack-3 sm:flex-row sm:items-stretch sm:min-h-[84px]">
         {/* The prompt and its controls. justify-between rather than a gap, so the chip row
             sits on the floor of the card at whatever height the tiles beside it set. */}
-        <div className="flex min-w-0 flex-1 flex-col justify-between gap-space-5">
+        <div className="oz-stack oz-stack-4 min-w-0 flex-1 justify-between">
           <div className="flex items-start gap-space-3">
             {/* A real button, not decoration: this is the attach affordance the tiles on
                 the right duplicate for two specific kinds of attachment. */}
             <button
               type="button"
               aria-label="Add a reference file"
-              className="grid h-space-8 w-space-8 shrink-0 place-items-center rounded-full border-2 border-border-secondary bg-fill-secondary text-content-secondary transition-colors duration-effects-fast ease-effects-fast hover:bg-fill-secondary-hover hover:text-content-primary focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
+              className="grid h-space-7 w-space-7 shrink-0 place-items-center rounded-full border-2 border-border-secondary bg-fill-secondary text-content-secondary transition-colors duration-effects-fast ease-effects-fast hover:bg-fill-secondary-hover hover:text-content-primary focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
             >
               <PlusIcon className="h-space-4 w-space-4" />
             </button>
@@ -189,14 +189,17 @@ export function Composer() {
               id={promptId}
               rows={1}
               placeholder="Describe your ad"
-              className="mt-space-1 block w-full resize-none bg-transparent text-body-md text-content-primary placeholder:text-content-placeholder focus:outline-none"
+              className="block w-full resize-none bg-transparent text-body-sm text-content-primary placeholder:text-content-placeholder focus:outline-none"
             />
           </div>
 
-          {/* wrap, because five chips plus a stepper do not fit the left column below sm
-              and a row that overflows horizontally is the one failure dist/layout.css
-              exists to prevent. */}
-          <div className="flex flex-wrap items-center gap-space-2">
+          {/* oz-cluster, whose whole point is that it wraps: five chips plus a stepper do
+              not fit the left column below sm, and with flex-wrap there is no width at which
+              the children have nowhere to go. It also sets align-items:center and
+              min-width:0 on each child, so the `items-center` this used to carry is
+              redundant. verify:coverage fails on the hand-rolled flex-wrap-plus-gap that
+              was here, and it is right to — that version left the children unshrinkable. */}
+          <div className="oz-cluster oz-cluster-2">
             {ROW.map((id) => {
               if (id === 'variations') {
                 return (
@@ -232,7 +235,7 @@ export function Composer() {
 
           <button
             type="button"
-            className="w-[116px] shrink-0 rounded-6 bg-fill-brand py-space-5 text-label-md font-semibold text-content-on-brand transition-colors duration-effects-fast ease-effects-fast hover:bg-fill-brand-hover active:bg-fill-brand-active focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
+            className="w-[108px] shrink-0 rounded-6 bg-fill-brand py-space-4 text-label-sm font-semibold text-content-on-brand transition-colors duration-effects-fast ease-effects-fast hover:bg-fill-brand-hover active:bg-fill-brand-active focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
           >
             Generate
           </button>
@@ -261,7 +264,7 @@ const ChipButton = forwardRef<
     <button
       ref={ref}
       type="button"
-      className={`inline-flex h-space-8 shrink-0 items-center gap-space-2 rounded-4 border-2 px-space-3 text-label-md transition-colors duration-effects-fast ease-effects-fast focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus ${
+      className={`inline-flex h-space-7 shrink-0 items-center gap-space-2 rounded-4 border-2 px-space-2 text-label-sm transition-colors duration-effects-fast ease-effects-fast focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus ${
         accent
           ? /* content/brand-HOVER, not content/brand, and this is CLAUDE.md rule 4b rather
              * than a hover state written in the wrong place. This chip sits on
@@ -366,7 +369,7 @@ function VariationStepper({
     onChange(Math.min(MAX_VARIATIONS, Math.max(1, value + delta)));
 
   return (
-    <div className="inline-flex h-space-8 shrink-0 items-center rounded-4 border-2 border-border-secondary bg-fill-secondary">
+    <div className="inline-flex h-space-7 shrink-0 items-center rounded-4 border-2 border-border-secondary bg-fill-secondary">
       <StepButton label="One fewer variation" disabled={value <= 1} onClick={() => step(-1)}>
         <MinusIcon className="h-space-4 w-space-4" />
       </StepButton>
@@ -391,7 +394,7 @@ function VariationStepper({
         /* tabular-nums for the reason stepper.recipe.ts gives: 1 and 4 have different
            widths in a proportional font, so the readout would shift by that difference on
            every press and drag the + button with it. */
-        className="min-w-[38px] text-center text-label-md tabular-nums text-content-primary focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
+        className="min-w-[34px] text-center text-label-sm tabular-nums text-content-primary focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
       >
         {value}/{MAX_VARIATIONS}
       </span>
@@ -424,7 +427,7 @@ function StepButton({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className="grid h-full w-space-7 place-items-center rounded-4 text-content-secondary transition-colors duration-effects-fast ease-effects-fast hover:text-content-primary focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus disabled:text-content-secondary-disabled disabled:hover:text-content-secondary-disabled"
+      className="grid h-full w-space-6 place-items-center rounded-4 text-content-secondary transition-colors duration-effects-fast ease-effects-fast hover:text-content-primary focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus disabled:text-content-secondary-disabled disabled:hover:text-content-secondary-disabled"
     >
       {children}
     </button>
@@ -455,7 +458,7 @@ function AttachTile({
       type="button"
       aria-pressed={on}
       onClick={onToggle}
-      className={`flex w-[92px] shrink-0 flex-col items-center justify-between rounded-6 border-2 px-space-2 py-space-4 transition-colors duration-effects-fast ease-effects-fast focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus ${
+      className={`flex w-[86px] shrink-0 flex-col items-center justify-between rounded-6 border-2 px-space-2 py-space-3 transition-colors duration-effects-fast ease-effects-fast focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus ${
         on
           ? 'border-border-brand bg-fill-brand-secondary text-content-brand-hover'
           : 'border-border-secondary bg-fill-secondary text-content-secondary hover:bg-fill-secondary-hover hover:text-content-primary'
