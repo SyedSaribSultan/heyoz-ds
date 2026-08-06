@@ -211,13 +211,102 @@ export const AspectIcon = ({ className = 'h-space-4 w-space-4' }: IconProps) => 
   </Glyph>
 );
 
-/** Faceted gem — the resolution chip. Higher resolution as more facets is arbitrary,
- *  but it is the mark the reference draws and a magnifier would read as zoom. */
-export const GemIcon = ({ className = 'h-space-4 w-space-4' }: IconProps) => (
+/** Droplet — the resolution chip and each row of the quality popover.
+ *
+ *  This replaced a faceted gem, which was a guess made before the component sheet arrived.
+ *  The sheet draws a droplet on both the chip and its three rows, so the chip and the
+ *  popover it opens now carry the same mark — which is the point of the change rather than
+ *  a coat of paint: a trigger whose glyph disagrees with its own panel reads as two
+ *  controls. */
+export const DropletIcon = ({ className = 'h-space-4 w-space-4' }: IconProps) => (
   <Glyph className={className}>
-    <path d="M8 2.6 13.6 6.4 8 13.4 2.4 6.4zM2.4 6.4h11.2M6 6.4 8 13.4l2-7" />
+    <path d="M8 2.2c2 2.5 4 4.7 4 7.1A4 4 0 0 1 8 13.4a4 4 0 0 1-4-4.1c0-2.4 2-4.6 4-7.1Z" />
   </Glyph>
 );
+
+/** Pencil — the edit badge on a filled Touchpoint. */
+export const PencilIcon = ({ className = 'h-space-3 w-space-3' }: IconProps) => (
+  <Glyph className={className}>
+    <path d="M11.1 2.6l2.3 2.3-8 8H3.1v-2.3zM9.6 4.1l2.3 2.3" />
+  </Glyph>
+);
+
+/** Magnifier — every search field in the pickers. */
+export const SearchIcon = ({ className = 'h-space-5 w-space-5' }: IconProps) => (
+  <Glyph className={className}>
+    <path d="M7.2 11.6a4.4 4.4 0 1 0 0-8.8 4.4 4.4 0 0 0 0 8.8ZM10.4 10.4l3 3" />
+  </Glyph>
+);
+
+/** Circling arrow — Recreate, on a result card's hover overlay. */
+export const RecreateIcon = ({ className = 'h-space-4 w-space-4' }: IconProps) => (
+  <Glyph className={className}>
+    <path d="M13.2 8a5.2 5.2 0 1 1-1.7-3.85M13.4 2.2v2.9h-2.9" />
+  </Glyph>
+);
+
+/** Two offset sheets — Copy Prompt. */
+export const CopyIcon = ({ className = 'h-space-4 w-space-4' }: IconProps) => (
+  <Glyph className={className}>
+    <path d="M6 6h7.2v7.4H6zM10.2 6V2.6H2.8v7.3h3.2" />
+  </Glyph>
+);
+
+/** A cross. Every modal's close control, and the remove control on a reference thumb. */
+export const CloseIcon = ({ className = 'h-space-4 w-space-4' }: IconProps) => (
+  <Glyph className={className}>
+    <path d="M4 4l8 8M12 4l-8 8" />
+  </Glyph>
+);
+
+/** A small diamond — the credit-cost badge on a model row. */
+export const CreditIcon = ({ className = 'h-space-3 w-space-3' }: IconProps) => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 16 16"
+    className={`${className} shrink-0`}
+    fill="currentColor"
+  >
+    <path d="M8 2 13 8l-5 6-5-6z" />
+  </svg>
+);
+
+/** Pushpin — the Pinned filter. */
+export const PinIcon = ({ className = 'h-space-4 w-space-4' }: IconProps) => (
+  <Glyph className={className}>
+    <path d="M6 2.6h4l-.6 4 2.2 2H4.4l2.2-2zM8 8.6v4.8" />
+  </Glyph>
+);
+
+/** Heart, stroked — the Favourites filter. The filled twin above is the Pricing pill's;
+ *  a filter that is not currently on should not be painted as though it were. */
+export const HeartOutlineIcon = ({ className = 'h-space-4 w-space-4' }: IconProps) => (
+  <Glyph className={className}>
+    <path d="M8 13.4 3.2 8.8a3.1 3.1 0 0 1 0-4.5 3.25 3.25 0 0 1 4.5 0l.3.3.3-.3a3.25 3.25 0 0 1 4.5 0 3.1 3.1 0 0 1 0 4.5z" />
+  </Glyph>
+);
+
+/** A frame whose proportions state the ratio it labels.
+ *
+ *  Every row of the aspect-ratio popover carries one, and the shape is COMPUTED from the
+ *  ratio rather than picked from a set of three. That is the whole reason this is not
+ *  `PortraitIcon`/`LandscapeIcon`/`SquareIcon`: the popover lists eleven ratios, and three
+ *  glyphs would mean 5:4 and 21:9 shared a mark while reading as very different crops. The
+ *  longer edge is pinned to 11px and the shorter one is derived, so the glyphs sit on a
+ *  common optical size the way a real icon set would. */
+export const RatioIcon = ({
+  w,
+  h,
+  className = 'h-space-4 w-space-4',
+}: IconProps & { w: number; h: number }) => {
+  const long = 11;
+  const [rw, rh] = w >= h ? [long, (long * h) / w] : [(long * w) / h, long];
+  return (
+    <Glyph className={className}>
+      <rect x={8 - rw / 2} y={8 - rh / 2} width={rw} height={rh} rx="1.4" />
+    </Glyph>
+  );
+};
 
 /** Ragged lines — the CTA chip. Text, in the shape of a caption block. */
 export const CtaIcon = ({ className = 'h-space-4 w-space-4' }: IconProps) => (

@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui';
-import { Composer } from './Composer';
+import { PromptBox } from './PromptBox';
 import { HeartIcon } from './icons';
 
 /* ---------------------------------------------------------------------------
@@ -144,7 +144,7 @@ export function StaticAdsHero() {
           <span className="block text-content-brand-hover">Static advertising</span>
         </h1>
 
-        <Composer />
+        <PromptBox />
       </div>
     </section>
   );
