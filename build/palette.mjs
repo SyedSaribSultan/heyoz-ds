@@ -216,6 +216,12 @@ const NEUTRAL_STEPS = [
   ['20', 0.9474], // -> #EFEDEC  (shipped: light --secondary / --sidebar)
   ['25', 0.9287], // -> #E9E7E6  NEW half-step - light sidebar item hover
   ['30', 0.9100], // -> #E3E1E0  (shipped #E2E1DF: light --muted / --accent)
+  // NEW half-step - light --input. Same squeeze as 102 below, one mode over: the
+  // light border ladder came down to ~dL 5 off its own surface (H5) and secondary
+  // wanted 35, which is surface/tertiary / --muted — an input inside a muted panel
+  // would have had no edge. 30 is fill/tertiary and 40 is fill/tertiary-hover /
+  // --accent, so both neighbours are fills a border must not vanish against.
+  ['32', 0.8990], // -> #DFDDDC NEW half-step - light --input, clears --muted
   ['35', 0.8890], // -> #DCDAD9  NEW half-step - light --muted, clears --border
   ['40', 0.8679], // -> #D5D3D2  (shipped #D5D3D1: Figma neutral/350)
   ['45', 0.8385], // -> #CBC9C8  NEW half-step - light --input, clears --accent
@@ -226,6 +232,13 @@ const NEUTRAL_STEPS = [
   ['90', 0.4800], // -> #5F5D5C  NEW - real dark hover/active headroom
   ['95', 0.4300], // -> #515050  NEW half-step - dark --border, clears --accent
   ['100', 0.3800], // -> #444241 NEW
+  // NEW half-step - dark --input. The dark border ladder came down to sit ~dL 13
+  // off its own surface (H5) and secondary landed on 100, which is
+  // fill/tertiary-hover / --accent: the gate that forbids exactly that pairing is
+  // in COLLISION_ASSERTIONS, so 100 is not available. 105 was taken by primary and
+  // 110 is surface/tertiary, also gated. The ladder ran out of room between 100 and
+  // 105, which is the same reason 25/35/45/95/105/115/135 exist.
+  ['102', 0.3640], // -> #403E3C NEW half-step - dark --input, clears --accent
   ['105', 0.3375], // -> #393735 NEW half-step - dark disabled fill, see below
   ['110', 0.2949], // -> #2E2C2B (shipped: light --muted-fg, dark --muted)
   ['115', 0.2673], // -> #272524 NEW half-step - dark --popover, clears --secondary

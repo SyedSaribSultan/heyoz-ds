@@ -744,31 +744,60 @@ const FILL_SOFT = {
  *  border/primary in dark is neutral/120 against a neutral/130 card — the
  *  shipped file had both at the same value, so card edges were invisible. */
 const BORDER = {
-  // Dark borders sit HIGHER on the ramp than any dark surface, and land heavier
-  // than their light counterparts (1.85:1 vs 1.20:1 against their own card).
-  // That asymmetry is deliberate: the dark surface steps are compressed, so a
-  // light-weight border disappears. neutral/100 (#444241) is the value that
-  // earlier dark-mode testing landed on after neutral/80 overshot at 4.32:1.
-  // Dark primary moved 100 -> 95. At 100 it was byte-identical to
-  // fill/tertiary-hover, which the bridge maps to --accent, so a hovered table
-  // row or dropdown item erased its own divider. That is the same failure as A6
-  // and it was live. 95 keeps the border heavier than every dark surface while
-  // clearing the hover fill.
+  // THE SURFACE-LADDER BORDERS ARE CALIBRATED, NOT PICKED. See DECISIONS.md H5.
+  //
+  // Every one of these three was too heavy — badly so in dark, where the whole
+  // ladder was running at dL 24-29 off its own surface and every nested panel read
+  // as an outlined box. Two pairings were approved by eye on the three-deep nesting
+  // (bg > primary > secondary > tertiary, each with its own border):
+  //
+  //     dark   neutral/95 on surface/tertiary neutral/110  ->  dL 13.4, 1.71:1
+  //     light  neutral/45 on surface/tertiary neutral/35   ->  dL  5.1, 1.18:1
+  //
+  // Those two fix the target separation per mode, and the rest of each ladder is
+  // the nearest legal rung to that same dL off ITS own surface. The light and dark
+  // targets differ by ~8 dL on purpose: the dark surface steps are compressed
+  // (ladder rungs 4.3-6.6 apart), so a border carrying the light mode's dL
+  // disappears there. That asymmetry is why the old comment here read "dark borders
+  // land heavier than their light counterparts" — that part was right, it was the
+  // magnitude that was wrong.
+  //
+  //                  surface        border      dL     ratio
+  //   light primary   neutral/10    neutral/25   4.3    1.13
+  //         secondary neutral/20    neutral/32   4.9    1.16
+  //         tertiary  neutral/35    neutral/45   5.1    1.18  <- approved
+  //   dark  primary   neutral/130   neutral/105 14.9    1.56
+  //         secondary neutral/120   neutral/102 12.4    1.54
+  //         tertiary  neutral/110   neutral/95  13.4    1.71  <- approved
+  //
+  // WHY 102 AND 32 ARE NEW RAMP STEPS rather than a snap to something existing.
+  // Both regions were full, and the gates — not taste — are what rejected the
+  // alternatives. Dark secondary wanted 100, which is fill/tertiary-hover /
+  // --accent and forbidden by COLLISION_ASSERTIONS: an input border must not vanish
+  // against a hovered row. 105 was taken by primary (--border === --input is a
+  // BRIDGE_COLLISIONS entry) and 110 is surface/tertiary, gated too. Light
+  // secondary wanted 35, which is surface/tertiary / --muted, so an input inside a
+  // muted panel would have had no edge — the defect the surface/tertiary comment
+  // records, one token over.
+  //
+  // These borders are NOT held to 1.4.11's 3:1. They never were: light secondary
+  // shipped at 1.41 for months. 1.4.11 governs the boundary of a control whose
+  // shape carries meaning, which is `borderJob: 'affordance'` — an input, an
+  // unchecked box, a secondary button. These three are the surface ladder's own
+  // edges, and a nested panel is not a control. Where a stroke IS the affordance
+  // the component reaches for a heavier token; that is the distinction rule 1c
+  // draws, and it is the reason lowering these is legal at all.
   primary: [
-    ['neutral/30', 'neutral/40'],
-    ['neutral/95', 'neutral/90'],
+    ['neutral/25', 'neutral/30'],
+    ['neutral/105', 'neutral/102'],
   ],
-  // Light secondary moved 40 -> 45, clearing --accent (fill/tertiary-hover,
-  // neutral/40). secondary is the shadcn --input target, so at 40 an input
-  // border vanished against a hovered row. 45 also lifts the input edge from
-  // 1.37:1 to 1.58:1 against a card, which is the direction 1.4.11 wants.
   secondary: [
-    ['neutral/45', 'neutral/50'],
-    ['neutral/90', 'neutral/80'],
+    ['neutral/32', 'neutral/45'],
+    ['neutral/102', 'neutral/95'],
   ],
   tertiary: [
-    ['neutral/50', 'neutral/60'],
-    ['neutral/80', 'neutral/70'],
+    ['neutral/45', 'neutral/50'],
+    ['neutral/95', 'neutral/90'],
   ],
   elevated: [
     ['neutral/30', 'neutral/40'],
@@ -1620,13 +1649,41 @@ export const APCA_ASSERTIONS = [
  * — forcing 3:1 on every card edge would change the brand. The bar here is only
  * "can a human see it at all", which is what the shipped dark theme failed:
  * --border and --card were the same value, so ratio was exactly 1.00.
+ *
+ * TWO FLOORS CAME DOWN WITH H5, and this is a floor moving rather than a gate being
+ * relaxed to make a build pass — the distinction rule 3 draws, so here is the
+ * argument.
+ *
+ * These numbers were never standards-derived. 1.4.11 does not govern a panel edge
+ * (see the note on BORDER), and the comment above says as much: the bar is
+ * perceptibility, and the defect it was built to catch is ratio 1.00. What 1.3 and
+ * 1.6 actually encoded was where the border ladder happened to sit when the gate was
+ * written — a ratchet on the shipped values. H5 moved that ladder deliberately, on
+ * the design owner's call, so the ratchet moves with it or it is asserting a shape
+ * the system no longer has.
+ *
+ *   border/secondary on surface/primary   1.3 -> 1.2   (measures 1.25)
+ *   border/tertiary  on surface/primary   1.6 -> 1.45  (measures 1.51)
+ *
+ * Coverage goes UP, not down. The old list gated all three borders against
+ * surface/primary and never against the surface each one is actually drawn on, which
+ * is the pairing that matters for a nested panel and the one a future change is
+ * likeliest to break. Those three are added below at a 1.1 perceptibility floor. So
+ * two floors dropped by ~0.1 and three assertions appeared.
  */
 export const VISIBILITY_ASSERTIONS = [
   ['color/border/primary', 'color/surface/primary', 1.1],
   ['color/border/primary', 'color/background', 1.1],
-  ['color/border/secondary', 'color/surface/primary', 1.3],
-  ['color/border/tertiary', 'color/surface/primary', 1.6],
+  ['color/border/secondary', 'color/surface/primary', 1.2],
+  ['color/border/tertiary', 'color/surface/primary', 1.45],
   ['color/surface/primary', 'color/background', 1.02],
+  // Each border against the surface it is actually drawn on — the H5 calibration
+  // itself. Rule 4: the family is "every border on the surface ladder", and gating
+  // one member against one background is how this list stayed silent while the
+  // nested-panel pairing went ungated for the life of the repo.
+  ['color/border/secondary', 'color/surface/secondary', 1.1],
+  ['color/border/tertiary', 'color/surface/tertiary', 1.1],
+  ['color/border/elevated', 'color/surface/elevated', 1.1],
 ];
 
 /**

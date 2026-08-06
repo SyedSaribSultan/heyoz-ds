@@ -360,6 +360,88 @@ No visual baseline moved, in either mode. No specimen renders a variant against 
 which is why 75 visual tests and nine suites never saw this and a designer opening the showcase
 did.
 
+### H5 — The surface-ladder borders came down. Two eyeballed pairings set the target; the rest is arithmetic.
+
+Reported from a three-deep nesting in Figma — background → `surface/primary` → `secondary` →
+`tertiary`, each painted with its own border. Light was "tolerable". Dark was not: the whole ladder
+was running at ΔL 24–29 off its own surface, so every nested panel read as an outlined box.
+
+Two pairings were approved by eye, one per mode, and they are what the rest is derived from:
+
+| | approved pairing | ΔL | ratio |
+|---|---|---|---|
+| dark | `neutral/95` on `surface/tertiary` `neutral/110` | 13.4 | 1.71 |
+| light | `neutral/45` on `surface/tertiary` `neutral/35` | 5.1 | 1.18 |
+
+Each border then takes the nearest legal rung to that same ΔL off **its own** surface:
+
+| | surface | border was | border now | ΔL | ratio |
+|---|---|---|---|---|---|
+| light primary | `neutral/10` | `neutral/30` | `neutral/25` | 4.2 | 1.13 |
+| light secondary | `neutral/20` | `neutral/45` | **`neutral/32`** | 4.9 | 1.16 |
+| light tertiary | `neutral/35` | `neutral/50` | `neutral/45` | 5.2 | 1.18 |
+| dark primary | `neutral/130` | `neutral/95` | `neutral/105` | 14.9 | 1.56 |
+| dark secondary | `neutral/120` | `neutral/90` | **`neutral/102`** | 12.4 | 1.54 |
+| dark tertiary | `neutral/110` | `neutral/80` | `neutral/95` | 13.4 | 1.71 |
+
+**The two modes target different ΔL on purpose** — ~5 light, ~13 dark. The dark surface ladder is
+compressed (rungs 4.3–6.6 apart, per the elevation-is-lightness note), so a border carrying light
+mode's ΔL vanishes there. The old comment on `BORDER` already said dark borders land heavier than
+light ones; that part was right, the magnitude was wrong.
+
+**Two new ramp steps, and the gates are what forced them.** Not taste — each alternative is
+explicitly illegal:
+
+- dark `secondary` wanted `neutral/100`, which is `fill/tertiary-hover` / `--accent`.
+  `COLLISION_ASSERTIONS` forbids that exact pair: an input border must not vanish against a hovered
+  row. `105` was taken by `primary` (`['border','input']` in `BRIDGE_COLLISIONS`) and `110` is
+  `surface/tertiary`, also gated. → **`neutral/102`**, L 0.3640.
+- light `secondary` wanted `neutral/35`, which is `surface/tertiary` / `--muted` — an input inside a
+  muted panel would have had no edge, the defect the `surface/tertiary` comment records, one token
+  over. Its neighbours `30` and `40` are `fill/tertiary` and `fill/tertiary-hover`, both fills a
+  border must not disappear into. → **`neutral/32`**, L 0.8990.
+
+Adding a rung when a ladder runs out of room is rule 2's stated remedy, and 25/35/45/95/105/115/135
+all exist for the same reason.
+
+**These borders are not held to 1.4.11's 3:1, and never were** — light `secondary` shipped at 1.41
+for months. 1.4.11 governs a control whose boundary carries meaning, which in this system is
+`borderJob: 'affordance'`. These three are the surface ladder's own edges and a nested panel is not
+a control. That distinction is rule 1c's, and it is what makes lowering them legal at all.
+
+#### Two visibility floors moved with it
+
+`border/secondary` on `surface/primary` 1.3 → **1.2**; `border/tertiary` on `surface/primary`
+1.6 → **1.45**.
+
+This is a floor moving, not a gate relaxed to make a build pass, and rule 3 is owed the argument.
+Those numbers were never standards-derived — the comment on `VISIBILITY_ASSERTIONS` says so
+outright: the bar is perceptibility and the defect it was built to catch is ratio 1.00, from the
+shipped dark theme where `--border` and `--card` were the same value. What 1.3 and 1.6 encoded was
+where the ladder happened to sit when the gate was written. H5 moved that ladder on the design
+owner's call, so the ratchet moves with it or it asserts a shape the system no longer has.
+
+**Coverage went up, not down.** The old list gated all three borders against `surface/primary` and
+never against the surface each is actually drawn on — the pairing that matters for a nested panel,
+and the one this change would most plausibly have broken. Three own-surface assertions were added
+at a 1.1 floor (`secondary`, `tertiary`, `elevated`). Net: two floors down ~0.1, three assertions
+added, visibility checks 10 → 16.
+
+`border/elevated` was deliberately left alone. It already measures ΔL 4.3 / 1.19 against
+`surface/elevated` in dark and 8.9 / 1.30 in light — it was never part of the heavy ladder, and it
+clears the new own-surface floor as-is.
+
+#### What the visual suite could not see
+
+**No baseline moved, and that is not evidence the change is right.** `maxDiffPixelRatio` is 0.002,
+and recolouring a 1px outline by ~6/255 falls under it. The 75 visual tests are structurally blind
+to this class of change — they catch a border *appearing or disappearing*, which is what they were
+built for, not a border changing shade.
+
+So the rendering was confirmed directly instead: `getComputedStyle` on a live input in the built
+page returns `rgb(223, 221, 220)` = `#DFDDDC` = `neutral/32`. Worth knowing for the next value-only
+change — a green visual run means nothing there.
+
 ## I. The 2026-07-31 audit
 
 The repo was audited end to end: the build re-run, every claim in these docs

@@ -1,20 +1,20 @@
 {
   "$generated": "GENERATED FILE — DO NOT EDIT. Overwritten by `node build/build.mjs`. Change build/spec.mjs or build/palette.mjs and rebuild. See CLAUDE.md.",
-  "generatedAt": "2026-08-06T12:52:27.507Z",
+  "generatedAt": "2026-08-06T13:53:59.185Z",
   "sources": {
-    "build/palette.mjs": 1785930559895.844,
+    "build/palette.mjs": 1786023628728.7793,
     "build/motion.mjs": 1785509597309.4634,
     "build/layout.mjs": 1785739856175.4363,
-    "build/spec.mjs": 1786015559833.3152,
+    "build/spec.mjs": 1786023628728.2793,
     "build/build.mjs": 1785945160730.952
   },
   "namespace": "oz",
   "counts": {
-    "colorPrimitives": 655,
+    "colorPrimitives": 665,
     "numberPrimitives": 29,
     "semanticPerMode": 202,
     "typeSteps": 15,
-    "unusedPrimitives": 506
+    "unusedPrimitives": 511
   },
   "contrast": [
     {
@@ -1313,7 +1313,7 @@
       "mode": "light",
       "fg": "color/border/primary",
       "bg": "color/surface/primary",
-      "ratio": 1.2,
+      "ratio": 1.13,
       "min": 1.1,
       "pass": true
     },
@@ -1323,6 +1323,66 @@
       "mode": "light",
       "fg": "color/border/primary",
       "bg": "color/background",
+      "ratio": 1.23,
+      "min": 1.1,
+      "pass": true
+    },
+    {
+      "kind": "visibility",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/border/secondary",
+      "bg": "color/surface/primary",
+      "ratio": 1.25,
+      "min": 1.2,
+      "pass": true
+    },
+    {
+      "kind": "visibility",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/border/tertiary",
+      "bg": "color/surface/primary",
+      "ratio": 1.51,
+      "min": 1.45,
+      "pass": true
+    },
+    {
+      "kind": "visibility",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/surface/primary",
+      "bg": "color/background",
+      "ratio": 1.09,
+      "min": 1.02,
+      "pass": true
+    },
+    {
+      "kind": "visibility",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/border/secondary",
+      "bg": "color/surface/secondary",
+      "ratio": 1.16,
+      "min": 1.1,
+      "pass": true
+    },
+    {
+      "kind": "visibility",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/border/tertiary",
+      "bg": "color/surface/tertiary",
+      "ratio": 1.18,
+      "min": 1.1,
+      "pass": true
+    },
+    {
+      "kind": "visibility",
+      "metric": "wcag",
+      "mode": "light",
+      "fg": "color/border/elevated",
+      "bg": "color/surface/elevated",
       "ratio": 1.3,
       "min": 1.1,
       "pass": true
@@ -1330,31 +1390,11 @@
     {
       "kind": "visibility",
       "metric": "wcag",
-      "mode": "light",
-      "fg": "color/border/secondary",
+      "mode": "dark",
+      "fg": "color/border/primary",
       "bg": "color/surface/primary",
-      "ratio": 1.51,
-      "min": 1.3,
-      "pass": true
-    },
-    {
-      "kind": "visibility",
-      "metric": "wcag",
-      "mode": "light",
-      "fg": "color/border/tertiary",
-      "bg": "color/surface/primary",
-      "ratio": 1.67,
-      "min": 1.6,
-      "pass": true
-    },
-    {
-      "kind": "visibility",
-      "metric": "wcag",
-      "mode": "light",
-      "fg": "color/surface/primary",
-      "bg": "color/background",
-      "ratio": 1.09,
-      "min": 1.02,
+      "ratio": 1.56,
+      "min": 1.1,
       "pass": true
     },
     {
@@ -1362,39 +1402,29 @@
       "metric": "wcag",
       "mode": "dark",
       "fg": "color/border/primary",
+      "bg": "color/background",
+      "ratio": 1.71,
+      "min": 1.1,
+      "pass": true
+    },
+    {
+      "kind": "visibility",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/border/secondary",
+      "bg": "color/surface/primary",
+      "ratio": 1.74,
+      "min": 1.2,
+      "pass": true
+    },
+    {
+      "kind": "visibility",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/border/tertiary",
       "bg": "color/surface/primary",
       "ratio": 2.27,
-      "min": 1.1,
-      "pass": true
-    },
-    {
-      "kind": "visibility",
-      "metric": "wcag",
-      "mode": "dark",
-      "fg": "color/border/primary",
-      "bg": "color/background",
-      "ratio": 2.49,
-      "min": 1.1,
-      "pass": true
-    },
-    {
-      "kind": "visibility",
-      "metric": "wcag",
-      "mode": "dark",
-      "fg": "color/border/secondary",
-      "bg": "color/surface/primary",
-      "ratio": 2.83,
-      "min": 1.3,
-      "pass": true
-    },
-    {
-      "kind": "visibility",
-      "metric": "wcag",
-      "mode": "dark",
-      "fg": "color/border/tertiary",
-      "bg": "color/surface/primary",
-      "ratio": 4.33,
-      "min": 1.6,
+      "min": 1.45,
       "pass": true
     },
     {
@@ -1405,6 +1435,36 @@
       "bg": "color/background",
       "ratio": 1.09,
       "min": 1.02,
+      "pass": true
+    },
+    {
+      "kind": "visibility",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/border/secondary",
+      "bg": "color/surface/secondary",
+      "ratio": 1.54,
+      "min": 1.1,
+      "pass": true
+    },
+    {
+      "kind": "visibility",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/border/tertiary",
+      "bg": "color/surface/tertiary",
+      "ratio": 1.71,
+      "min": 1.1,
+      "pass": true
+    },
+    {
+      "kind": "visibility",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/border/elevated",
+      "bg": "color/surface/elevated",
+      "ratio": 1.19,
+      "min": 1.1,
       "pass": true
     },
     {
@@ -2923,49 +2983,49 @@
       "target": "opacity-50/neutral/white"
     },
     "color/border/primary": {
+      "hex": "#E9E7E6",
+      "alpha": 1,
+      "target": "solid/neutral/25"
+    },
+    "color/border/primary-hover": {
       "hex": "#E3E1E0",
       "alpha": 1,
       "target": "solid/neutral/30"
     },
-    "color/border/primary-hover": {
-      "hex": "#D5D3D2",
-      "alpha": 1,
-      "target": "solid/neutral/40"
-    },
     "color/border/primary-disabled": {
-      "hex": "#E3E1E0",
+      "hex": "#E9E7E6",
       "alpha": 0.5,
-      "target": "opacity-50/neutral/30"
+      "target": "opacity-50/neutral/25"
     },
     "color/border/secondary": {
+      "hex": "#DFDDDC",
+      "alpha": 1,
+      "target": "solid/neutral/32"
+    },
+    "color/border/secondary-hover": {
       "hex": "#CCC9C8",
       "alpha": 1,
       "target": "solid/neutral/45"
     },
-    "color/border/secondary-hover": {
+    "color/border/secondary-disabled": {
+      "hex": "#DFDDDC",
+      "alpha": 0.5,
+      "target": "opacity-50/neutral/32"
+    },
+    "color/border/tertiary": {
+      "hex": "#CCC9C8",
+      "alpha": 1,
+      "target": "solid/neutral/45"
+    },
+    "color/border/tertiary-hover": {
       "hex": "#C2C0BF",
       "alpha": 1,
       "target": "solid/neutral/50"
     },
-    "color/border/secondary-disabled": {
+    "color/border/tertiary-disabled": {
       "hex": "#CCC9C8",
       "alpha": 0.5,
       "target": "opacity-50/neutral/45"
-    },
-    "color/border/tertiary": {
-      "hex": "#C2C0BF",
-      "alpha": 1,
-      "target": "solid/neutral/50"
-    },
-    "color/border/tertiary-hover": {
-      "hex": "#A9A7A6",
-      "alpha": 1,
-      "target": "solid/neutral/60"
-    },
-    "color/border/tertiary-disabled": {
-      "hex": "#C2C0BF",
-      "alpha": 0.5,
-      "target": "opacity-50/neutral/50"
     },
     "color/border/elevated": {
       "hex": "#E3E1E0",
@@ -3970,49 +4030,49 @@
       "target": "opacity-50/neutral/white"
     },
     "color/border/primary": {
+      "hex": "#393735",
+      "alpha": 1,
+      "target": "solid/neutral/105"
+    },
+    "color/border/primary-hover": {
+      "hex": "#403E3C",
+      "alpha": 1,
+      "target": "solid/neutral/102"
+    },
+    "color/border/primary-disabled": {
+      "hex": "#393735",
+      "alpha": 0.5,
+      "target": "opacity-50/neutral/105"
+    },
+    "color/border/secondary": {
+      "hex": "#403E3C",
+      "alpha": 1,
+      "target": "solid/neutral/102"
+    },
+    "color/border/secondary-hover": {
       "hex": "#514F4E",
       "alpha": 1,
       "target": "solid/neutral/95"
     },
-    "color/border/primary-hover": {
+    "color/border/secondary-disabled": {
+      "hex": "#403E3C",
+      "alpha": 0.5,
+      "target": "opacity-50/neutral/102"
+    },
+    "color/border/tertiary": {
+      "hex": "#514F4E",
+      "alpha": 1,
+      "target": "solid/neutral/95"
+    },
+    "color/border/tertiary-hover": {
       "hex": "#5F5D5C",
       "alpha": 1,
       "target": "solid/neutral/90"
     },
-    "color/border/primary-disabled": {
+    "color/border/tertiary-disabled": {
       "hex": "#514F4E",
       "alpha": 0.5,
       "target": "opacity-50/neutral/95"
-    },
-    "color/border/secondary": {
-      "hex": "#5F5D5C",
-      "alpha": 1,
-      "target": "solid/neutral/90"
-    },
-    "color/border/secondary-hover": {
-      "hex": "#7C7A78",
-      "alpha": 1,
-      "target": "solid/neutral/80"
-    },
-    "color/border/secondary-disabled": {
-      "hex": "#5F5D5C",
-      "alpha": 0.5,
-      "target": "opacity-50/neutral/90"
-    },
-    "color/border/tertiary": {
-      "hex": "#7C7A78",
-      "alpha": 1,
-      "target": "solid/neutral/80"
-    },
-    "color/border/tertiary-hover": {
-      "hex": "#949290",
-      "alpha": 1,
-      "target": "solid/neutral/70"
-    },
-    "color/border/tertiary-disabled": {
-      "hex": "#7C7A78",
-      "alpha": 0.5,
-      "target": "opacity-50/neutral/80"
     },
     "color/border/elevated": {
       "hex": "#444241",
