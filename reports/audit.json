@@ -1,11 +1,11 @@
 {
   "$generated": "GENERATED FILE — DO NOT EDIT. Overwritten by `node build/build.mjs`. Change build/spec.mjs or build/palette.mjs and rebuild. See CLAUDE.md.",
-  "generatedAt": "2026-08-05T16:11:20.762Z",
+  "generatedAt": "2026-08-06T11:22:13.127Z",
   "sources": {
     "build/palette.mjs": 1785930559895.844,
     "build/motion.mjs": 1785509597309.4634,
     "build/layout.mjs": 1785739856175.4363,
-    "build/spec.mjs": 1785945029072.5618,
+    "build/spec.mjs": 1786014215743.4558,
     "build/build.mjs": 1785945160730.952
   },
   "namespace": "oz",
@@ -14,7 +14,7 @@
     "numberPrimitives": 29,
     "semanticPerMode": 202,
     "typeSteps": 15,
-    "unusedPrimitives": 504
+    "unusedPrimitives": 505
   },
   "contrast": [
     {
@@ -33,7 +33,7 @@
       "mode": "light",
       "fg": "color/content/secondary",
       "bg": "color/background",
-      "ratio": 13.9,
+      "ratio": 6.55,
       "min": 4.5,
       "pass": true
     },
@@ -53,7 +53,7 @@
       "mode": "light",
       "fg": "color/content/secondary",
       "bg": "color/surface/primary",
-      "ratio": 12.78,
+      "ratio": 6.03,
       "min": 4.5,
       "pass": true
     },
@@ -81,17 +81,7 @@
       "kind": "contrast",
       "metric": "wcag",
       "mode": "light",
-      "fg": "color/content/brand",
-      "bg": "color/background",
-      "ratio": 7.11,
-      "min": 4.5,
-      "pass": true
-    },
-    {
-      "kind": "contrast",
-      "metric": "wcag",
-      "mode": "light",
-      "fg": "color/content/brand",
+      "fg": "color/content/brand-active",
       "bg": "color/surface/secondary",
       "ratio": 6.1,
       "min": 4.5,
@@ -101,7 +91,7 @@
       "kind": "contrast",
       "metric": "wcag",
       "mode": "light",
-      "fg": "color/content/brand",
+      "fg": "color/content/brand-active",
       "bg": "color/surface/tertiary",
       "ratio": 5.11,
       "min": 4.5,
@@ -233,8 +223,8 @@
       "mode": "light",
       "fg": "color/content/tertiary",
       "bg": "color/background",
-      "ratio": 6.55,
-      "min": 4.5,
+      "ratio": 4.28,
+      "min": 3,
       "pass": true
     },
     {
@@ -243,8 +233,8 @@
       "mode": "light",
       "fg": "color/content/tertiary",
       "bg": "color/surface/primary",
-      "ratio": 6.03,
-      "min": 4.5,
+      "ratio": 3.93,
+      "min": 3,
       "pass": true
     },
     {
@@ -253,8 +243,8 @@
       "mode": "light",
       "fg": "color/content/tertiary",
       "bg": "color/surface/secondary",
-      "ratio": 5.61,
-      "min": 4.5,
+      "ratio": 3.66,
+      "min": 3,
       "pass": true
     },
     {
@@ -263,8 +253,8 @@
       "mode": "light",
       "fg": "color/content/tertiary",
       "bg": "color/surface/tertiary",
-      "ratio": 4.7,
-      "min": 4.5,
+      "ratio": 3.07,
+      "min": 3,
       "pass": true
     },
     {
@@ -373,7 +363,7 @@
       "mode": "light",
       "fg": "color/content/secondary",
       "bg": "color/surface/secondary",
-      "ratio": 11.91,
+      "ratio": 5.61,
       "min": 4.5,
       "pass": true
     },
@@ -383,7 +373,7 @@
       "mode": "light",
       "fg": "color/content/secondary",
       "bg": "color/surface/tertiary",
-      "ratio": 9.97,
+      "ratio": 4.7,
       "min": 4.5,
       "pass": true
     },
@@ -413,7 +403,7 @@
       "mode": "light",
       "fg": "color/content/secondary",
       "bg": "color/surface/elevated",
-      "ratio": 13.9,
+      "ratio": 6.55,
       "min": 4.5,
       "pass": true
     },
@@ -423,7 +413,7 @@
       "mode": "light",
       "fg": "color/content/secondary",
       "bg": "color/surface/overlay",
-      "ratio": 13.9,
+      "ratio": 6.55,
       "min": 4.5,
       "pass": true
     },
@@ -433,8 +423,8 @@
       "mode": "light",
       "fg": "color/content/tertiary",
       "bg": "color/surface/elevated",
-      "ratio": 6.55,
-      "min": 4.5,
+      "ratio": 4.28,
+      "min": 3,
       "pass": true
     },
     {
@@ -443,8 +433,8 @@
       "mode": "light",
       "fg": "color/content/tertiary",
       "bg": "color/surface/overlay",
-      "ratio": 6.55,
-      "min": 4.5,
+      "ratio": 4.28,
+      "min": 3,
       "pass": true
     },
     {
@@ -673,7 +663,7 @@
       "mode": "dark",
       "fg": "color/content/secondary",
       "bg": "color/background",
-      "ratio": 11.17,
+      "ratio": 8.45,
       "min": 4.5,
       "pass": true
     },
@@ -693,7 +683,7 @@
       "mode": "dark",
       "fg": "color/content/secondary",
       "bg": "color/surface/primary",
-      "ratio": 10.22,
+      "ratio": 7.73,
       "min": 4.5,
       "pass": true
     },
@@ -714,6 +704,26 @@
       "fg": "color/content/primary",
       "bg": "color/surface/tertiary",
       "ratio": 11.91,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/content/brand-active",
+      "bg": "color/surface/secondary",
+      "ratio": 9.55,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "kind": "contrast",
+      "metric": "wcag",
+      "mode": "dark",
+      "fg": "color/content/brand-active",
+      "bg": "color/surface/tertiary",
+      "ratio": 8.08,
       "min": 4.5,
       "pass": true
     },
@@ -873,8 +883,8 @@
       "mode": "dark",
       "fg": "color/content/tertiary",
       "bg": "color/background",
-      "ratio": 8.45,
-      "min": 4.5,
+      "ratio": 6.53,
+      "min": 3,
       "pass": true
     },
     {
@@ -883,8 +893,8 @@
       "mode": "dark",
       "fg": "color/content/tertiary",
       "bg": "color/surface/primary",
-      "ratio": 7.73,
-      "min": 4.5,
+      "ratio": 5.97,
+      "min": 3,
       "pass": true
     },
     {
@@ -893,8 +903,8 @@
       "mode": "dark",
       "fg": "color/content/tertiary",
       "bg": "color/surface/secondary",
-      "ratio": 6.86,
-      "min": 4.5,
+      "ratio": 5.3,
+      "min": 3,
       "pass": true
     },
     {
@@ -903,8 +913,8 @@
       "mode": "dark",
       "fg": "color/content/tertiary",
       "bg": "color/surface/tertiary",
-      "ratio": 5.8,
-      "min": 4.5,
+      "ratio": 4.48,
+      "min": 3,
       "pass": true
     },
     {
@@ -1013,7 +1023,7 @@
       "mode": "dark",
       "fg": "color/content/secondary",
       "bg": "color/surface/secondary",
-      "ratio": 9.06,
+      "ratio": 6.86,
       "min": 4.5,
       "pass": true
     },
@@ -1023,7 +1033,7 @@
       "mode": "dark",
       "fg": "color/content/secondary",
       "bg": "color/surface/tertiary",
-      "ratio": 7.67,
+      "ratio": 5.8,
       "min": 4.5,
       "pass": true
     },
@@ -1053,7 +1063,7 @@
       "mode": "dark",
       "fg": "color/content/secondary",
       "bg": "color/surface/elevated",
-      "ratio": 6.54,
+      "ratio": 4.95,
       "min": 4.5,
       "pass": true
     },
@@ -1063,7 +1073,7 @@
       "mode": "dark",
       "fg": "color/content/secondary",
       "bg": "color/surface/overlay",
-      "ratio": 6.54,
+      "ratio": 4.95,
       "min": 4.5,
       "pass": true
     },
@@ -1073,8 +1083,8 @@
       "mode": "dark",
       "fg": "color/content/tertiary",
       "bg": "color/surface/elevated",
-      "ratio": 4.95,
-      "min": 4.5,
+      "ratio": 3.82,
+      "min": 3,
       "pass": true
     },
     {
@@ -1083,8 +1093,8 @@
       "mode": "dark",
       "fg": "color/content/tertiary",
       "bg": "color/surface/overlay",
-      "ratio": 4.95,
-      "min": 4.5,
+      "ratio": 3.82,
+      "min": 3,
       "pass": true
     },
     {
@@ -1395,6 +1405,36 @@
       "bg": "color/background",
       "ratio": 1.09,
       "min": 1.02,
+      "pass": true
+    },
+    {
+      "kind": "apca",
+      "metric": "apca",
+      "mode": "light",
+      "fg": "color/content/brand",
+      "bg": "color/background",
+      "ratio": 61.27,
+      "min": 60,
+      "pass": true
+    },
+    {
+      "kind": "apca",
+      "metric": "apca",
+      "mode": "light",
+      "fg": "color/content/brand",
+      "bg": "color/surface/elevated",
+      "ratio": 61.27,
+      "min": 60,
+      "pass": true
+    },
+    {
+      "kind": "apca",
+      "metric": "apca",
+      "mode": "light",
+      "fg": "color/content/brand",
+      "bg": "color/surface/overlay",
+      "ratio": 61.27,
+      "min": 60,
       "pass": true
     },
     {
@@ -3058,14 +3098,14 @@
       "target": "solid/neutral/150"
     },
     "color/content/secondary": {
-      "hex": "#2E2C2B",
-      "alpha": 1,
-      "target": "solid/neutral/110"
-    },
-    "color/content/tertiary": {
       "hex": "#5F5D5C",
       "alpha": 1,
       "target": "solid/neutral/90"
+    },
+    "color/content/tertiary": {
+      "hex": "#7C7A78",
+      "alpha": 1,
+      "target": "solid/neutral/80"
     },
     "color/content/placeholder": {
       "hex": "#5F5D5C",
@@ -3148,24 +3188,24 @@
       "target": "opacity-50/neutral/white"
     },
     "color/content/brand": {
+      "hex": "#FF3D01",
+      "alpha": 1,
+      "target": "solid/brand/60"
+    },
+    "color/content/brand-hover": {
+      "hex": "#D53100",
+      "alpha": 1,
+      "target": "solid/brand/70"
+    },
+    "color/content/brand-active": {
       "hex": "#A92500",
       "alpha": 1,
       "target": "solid/brand/80"
     },
-    "color/content/brand-hover": {
-      "hex": "#7F1900",
-      "alpha": 1,
-      "target": "solid/brand/90"
-    },
-    "color/content/brand-active": {
-      "hex": "#571002",
-      "alpha": 1,
-      "target": "solid/brand/100"
-    },
     "color/content/brand-disabled": {
-      "hex": "#A92500",
+      "hex": "#FF3D01",
       "alpha": 0.5,
-      "target": "opacity-50/brand/80"
+      "target": "opacity-50/brand/60"
     },
     "color/content/success": {
       "hex": "#006035",
@@ -3394,8 +3434,8 @@
     },
     "color/gradient/halo": {
       "hex": "#FF3D01",
-      "alpha": 0.3,
-      "target": "opacity-30/brand/60"
+      "alpha": 0.08,
+      "target": "opacity-8/brand/60"
     },
     "elevation/overlay/dimness": {
       "hex": "#070605",
@@ -4105,14 +4145,14 @@
       "target": "solid/neutral/20"
     },
     "color/content/secondary": {
-      "hex": "#C2C0BF",
-      "alpha": 1,
-      "target": "solid/neutral/50"
-    },
-    "color/content/tertiary": {
       "hex": "#A9A7A6",
       "alpha": 1,
       "target": "solid/neutral/60"
+    },
+    "color/content/tertiary": {
+      "hex": "#949290",
+      "alpha": 1,
+      "target": "solid/neutral/70"
     },
     "color/content/placeholder": {
       "hex": "#A9A7A6",

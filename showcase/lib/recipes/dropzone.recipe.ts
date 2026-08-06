@@ -80,7 +80,7 @@ class DropzoneRecipe extends ComponentRecipe<DropzoneVariant, DropzoneSize> {
     active: {
       borderJob: 'affordance',
       intent: 'A file is being carried over the zone and releasing it will drop it here.',
-      base: { bg: 'fill-brand-secondary', fg: 'content-brand-hover', border: 'border-brand' },
+      base: { bg: 'fill-brand-secondary', fg: 'content-brand-active', border: 'border-brand' },
       /* "Hover on Dragging" — the pointer is inside the zone while carrying a file, which is
        * the moment before release and the one the drop actually depends on. The wash deepens
        * from 15% to 30%.

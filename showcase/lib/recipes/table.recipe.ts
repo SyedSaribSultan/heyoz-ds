@@ -50,7 +50,7 @@ class TableRecipe extends ComponentRecipe<TableRowVariant, TableSize> {
     },
     header: {
       intent: 'Column labels. Not interactive unless the column sorts.',
-      base: { bg: 'surface-secondary', fg: 'content-tertiary' },
+      base: { bg: 'surface-secondary', fg: 'content-secondary' },
       focus: 'none',
     },
   };

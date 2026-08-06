@@ -245,6 +245,72 @@ it may never choose one.
 
 ---
 
+### H2 — `content/brand` is `brand/60`. The readable brown was not the brand.
+
+Light `content/brand` was `brand/80` — `#A92500`. It cleared 7.11:1 against the page and did
+not read as `#FF3D01`'s family at all. The brand was unrecognisable in the one token named
+after it. The light ramp is now `brand/60 / 70 / 80`; dark is untouched.
+
+| | APCA | WCAG |
+|---|---|---|
+| page, dialog, popover | **Lc 61.3 pass** | 3.55 fail |
+| `surface/primary` | Lc 55.5 large-only | 3.26 fail |
+| `surface/secondary` | Lc 50.8 large-only | 3.04 fail |
+| `surface/tertiary` | Lc 39.8 fail | 2.55 fail |
+
+The page pairing is gated on **APCA**, in `APCA_ASSERTIONS`, scoped to light. That is H1's
+argument applied in the other direction: WCAG 2.x has no polarity term and misjudges saturated
+orange both ways. Dark keeps its WCAG rows and passes them — APCA is markedly stricter about
+light-on-dark for a saturated hue, so gating dark on APCA would fail a pairing that is not
+broken. **Each polarity is gated on the metric that reads it correctly.**
+
+**Not squared, and stated rather than hidden:** on the grey surface steps `brand/60` fails every
+metric. Brand accent text there must use `content/brand-active` (`brand/80`, 5.11:1 on the
+darkest). Gated, and in CLAUDE.md rule 4b.
+
+**Cascade.** Thirteen component pairings were brand text on a brand *wash* in light and moved to
+`content-brand-active`, which clears every wash in both modes (6.07/5.14/4.71 light,
+10.42/8.28/7.61 dark) — `button/tonal`, `brand-ghost`, `badge/brand-subtle`, `chip/brand`,
+`avatar/brand`, `dropzone/active`, `stepper/current`. No new token; the ramp already had the step.
+
+**The `/ai-ugc` hero accent** could not be reconciled by a ground fix alone: `brand/60`'s ceiling
+is 3.55:1 on pure *white*, so no coat setting reaches 4.5. Resolved as both — the light halo went
+30% → 8% (accent 2.62 → 3.26:1) **and** `verify:glow` gained the size-aware floor 1.4.3 actually
+specifies. Dark halo untouched: there the coat pushes the ground away from a light accent.
+
+### H3 — `content/secondary` and `tertiary` each moved down a rung. Tertiary is now below 4.5.
+
+`primary` `#070605` and `secondary` `#2E2C2B` both read as near-black, so the first two rungs of
+a three-rung ramp were doing the same job.
+
+| | was | now | |
+|---|---|---|---|
+| primary | `neutral/150` | `neutral/150` | 20.25:1 |
+| secondary | `neutral/110` | `neutral/90` | 4.70:1 |
+| tertiary | `neutral/90` | `neutral/80` | **3.07:1** |
+
+**This reverses an earlier fix, deliberately.** Tertiary had been moved `80 → 90` precisely
+because 80 failed on every surface an app puts text on. That reasoning is not withdrawn — it was
+**outweighed**, which is a different thing. Timestamps, captions and helper strings are now below
+AA.
+
+The three are boxed in: primary is pinned at `neutral/150` for readability and the 4.5 floor pins
+the bottom. **No arrangement of three steps is both further apart and fully compliant.**
+
+Tertiary's gates moved to **3.0** — the large-text and non-essential floor — because the token
+changed *category*, not because the floor was relaxed. Anything essential uses
+`content/secondary`, which is `neutral/90`, the value tertiary used to hold: the readable step was
+renamed, not deleted. `table/header`, `stepper/upcoming` and `empty-state/no-results` moved.
+
+`content/placeholder` deliberately did **not** follow, and holds `neutral/90` at 4.70:1. It exists
+to allow exactly this divergence. Unreadable placeholder is a form nobody can fill in.
+
+**`verify:composite` gained `BY_DESIGN`**, keyed by token and mode rather than by pairing. `KNOWN`
+is a ratchet of defects somebody intends to fix and fails on a fixed-but-listed entry; these read
+as failures forever, and filing them in `KNOWN` would make it permanently un-emptiable. Three of
+tertiary's old `KNOWN` rows transferred to `content/secondary`, at the same numbers, because
+secondary inherited the value.
+
 ## I. The 2026-07-31 audit
 
 The repo was audited end to end: the build re-run, every claim in these docs

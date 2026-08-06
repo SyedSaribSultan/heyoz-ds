@@ -229,8 +229,18 @@ const KNOWN: Record<string, number> = {
   'dark content/selected on fill/selected over surface/tertiary': 4.07,
   'dark content/selected on fill/selected over surface/elevated': 3.55,
   'dark content/selected on fill/selected over surface/overlay': 3.55,
-  'dark content/tertiary on fill/selected over surface/elevated': 4.36,
-  'dark content/tertiary on fill/selected over surface/overlay': 4.36,
+
+  /* content/secondary INHERITED three of tertiary's failures, at the same numbers, because H3
+   * moved secondary onto neutral/90 — the value tertiary used to hold. Nothing new is broken;
+   * the same pairing is now reached through a different token name.
+   *
+   * These stay in KNOWN rather than BY_DESIGN because secondary is still a body-text role and
+   * these ARE defects. The consumer is the listbox option description on a selected row; the fix
+   * is content/primary there, at the cost of the label/description hierarchy, which is why it is
+   * recorded rather than done in the same commit as a ramp change. */
+  'light content/secondary on fill/selected over surface/tertiary': 4.16,
+  'dark content/secondary on fill/selected over surface/elevated': 4.36,
+  'dark content/secondary on fill/selected over surface/overlay': 4.36,
 
   /* THE ONLY ENTRY THAT IS NOT DARK-ONLY, and it deserves the attention that makes it.
    *
@@ -244,7 +254,6 @@ const KNOWN: Record<string, number> = {
    * accents one step in dark" does nothing here: this is neither an accent nor dark. A
    * selected row with a description on it needs `content/secondary` in both modes, which is
    * what listbox.recipe.ts already binds — for the dark reason, before this was known. */
-  'light content/tertiary on fill/selected over surface/tertiary': 4.16,
 };
 
 /* Four entries were in the first draft of KNOWN and are not here, and both kinds of mistake
@@ -258,6 +267,42 @@ const KNOWN: Record<string, number> = {
  *     a pairing nobody measures is the worst of the two: it reads as coverage.
  *
  * Both are why the self-cleaning half of this gate is not decoration. */
+
+/**
+ * Tokens that are deliberately below the floor, keyed by `mode content/token`.
+ *
+ * Keyed by the DECISION rather than by the pairing, and that is the important part. The first
+ * version of this listed 18 individual pairings with their measured ratios, and it was wrong
+ * twice over: it missed every translucent-fill composite the same tokens appear in (35 of them),
+ * and it would have needed re-typing on every ramp tweak, which is how a list stops being read.
+ *
+ * A decision is about a TOKEN, not about one of the grounds it happens to land on. So each entry
+ * names the token and the reason, and every pairing that token creates in that mode inherits it.
+ *
+ * Kept separate from `KNOWN` because the two mean opposite things. `KNOWN` is a ratchet — every
+ * entry is a defect somebody intends to fix, and the gate fails when one is fixed-but-listed so
+ * the list cannot rot. These will read as failures forever. Filing them in `KNOWN` would make
+ * that list permanently un-emptiable and quietly redefine it from "outstanding" to "whatever we
+ * have".
+ *
+ * WHAT THIS STILL CATCHES, which is why it is not a hole: a token NOT listed here that drops
+ * below the floor is a hard failure. The gate stops policing three tokens whose values were
+ * chosen deliberately, and keeps policing the other eleven.
+ */
+const BY_DESIGN: Record<string, string> = {
+  /* H2 — content/brand is brand/60, #FF3D01, the actual brand. 3.55:1 on the page, gated on
+   * APCA instead at Lc 61.3. Its -hover step inherits the same shape one rung down. */
+  'light content/brand': 'H2 — brand/60 is the brand; gated on APCA (Lc 61.3), not WCAG',
+  'light content/brand-hover': 'H2 — one rung below brand/60, same argument',
+  /* H3 — content/tertiary is neutral/80 so three content rungs read as three rungs. A
+   * large-text and non-essential role now, gated at 3.0 in spec.mjs. Anything essential uses
+   * content/secondary, which is neutral/90 — the value tertiary used to hold. */
+  'light content/tertiary': 'H3 — large-text/non-essential role, gated at 3.0',
+  'dark content/tertiary': 'H3 — same, dark',
+};
+
+/** The decision covering a finding, or undefined. */
+const designReason = (f: { mode: string; fg: string }) => BY_DESIGN[`${f.mode} ${f.fg}`];
 
 const findings: Finding[] = [];
 const unresolved: string[] = [];
@@ -336,6 +381,9 @@ const FAIL: string[] = [];
 const below = findings.filter((f) => !f.pass);
 
 for (const f of below) {
+  /* By-design first: these are decisions, not defects. */
+  if (designReason(f)) continue;
+
   const known = KNOWN[f.key];
   if (known === undefined) {
     FAIL.push(
@@ -351,6 +399,22 @@ for (const f of below) {
         `A known-bad pairing is allowed to stay bad; it is not allowed to get worse.`,
     );
   }
+}
+
+/* A BY_DESIGN token that no longer fails anywhere means the decision was reverted and the entry
+ * is stale — the same self-cleaning rule KNOWN carries. */
+for (const [key, reason] of Object.entries(BY_DESIGN)) {
+  const [mode, fg] = [key.slice(0, key.indexOf(' ')), key.slice(key.indexOf(' ') + 1)];
+  const any = findings.some((f) => f.mode === mode && f.fg === fg);
+  if (!any) {
+    FAIL.push(`BY_DESIGN lists '${key}' (${reason}) but nothing measures that token any more`);
+    continue;
+  }
+  if (!findings.some((f) => f.mode === mode && f.fg === fg && !f.pass))
+    FAIL.push(
+      `BY_DESIGN '${key}' (${reason}) now clears the floor everywhere — the decision must have ` +
+        `been reverted, so delete the entry.`
+    );
 }
 
 /* A KNOWN entry that now passes is a fixed bug, and leaving it listed turns the list into
@@ -369,6 +433,7 @@ for (const key of Object.keys(KNOWN)) {
 
 if (ENFORCING) {
   for (const f of below) {
+    if (designReason(f)) continue;
     if (KNOWN[f.key] !== undefined) {
       FAIL.push(`${f.key} = ${f.ratio.toFixed(2)}:1, floor ${FLOOR} (ENFORCING)`);
     }

@@ -2962,28 +2962,6 @@
         "$value": {
           "colorSpace": "srgb",
           "components": [
-            0.761238,
-            0.752831,
-            0.748409
-          ],
-          "alpha": 1,
-          "hex": "#C2C0BF"
-        },
-        "$extensions": {
-          "com.figma.codeSyntax": {
-            "WEB": "var(--oz-color-content-secondary)"
-          },
-          "com.figma.aliasData": {
-            "targetVariableName": "solid/neutral/50",
-            "targetVariableSetName": "_Colors Primitives"
-          }
-        }
-      },
-      "tertiary": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "srgb",
-          "components": [
             0.663728,
             0.655087,
             0.650541
@@ -2993,10 +2971,32 @@
         },
         "$extensions": {
           "com.figma.codeSyntax": {
-            "WEB": "var(--oz-color-content-tertiary)"
+            "WEB": "var(--oz-color-content-secondary)"
           },
           "com.figma.aliasData": {
             "targetVariableName": "solid/neutral/60",
+            "targetVariableSetName": "_Colors Primitives"
+          }
+        }
+      },
+      "tertiary": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.579581,
+            0.57077,
+            0.566133
+          ],
+          "alpha": 1,
+          "hex": "#949290"
+        },
+        "$extensions": {
+          "com.figma.codeSyntax": {
+            "WEB": "var(--oz-color-content-tertiary)"
+          },
+          "com.figma.aliasData": {
+            "targetVariableName": "solid/neutral/70",
             "targetVariableSetName": "_Colors Primitives"
           }
         }

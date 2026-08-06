@@ -167,7 +167,7 @@ class ButtonRecipe extends ComponentRecipe<ButtonVariant, ButtonSize, ButtonShap
     tonal: {
       intent:
         'Brand weight without brand volume. A second brand-coloured action beside a primary, or a primary on a surface that already carries the accent.',
-      base: { bg: 'fill-brand-secondary', fg: 'content-brand' },
+      base: { bg: 'fill-brand-secondary', fg: 'content-brand-active' },
       hover: { bg: 'fill-brand-secondary-hover' },
       /* fg moves with the fill, and it has to.
        *
@@ -182,13 +182,13 @@ class ButtonRecipe extends ComponentRecipe<ButtonVariant, ButtonSize, ButtonShap
        * whichever direction the fill moved. The name says hover and the state is
        * active, which reads oddly; the alternative was a new content step, and the
        * existing ramp already had the value. */
-      active: { bg: 'fill-brand-secondary-active', fg: 'content-brand-hover' },
+      active: { bg: 'fill-brand-secondary-active', fg: 'content-brand-active' },
       disabled: { bg: 'fill-secondary-disabled', fg: 'content-primary-disabled' },
       focus: 'outline',
     },
     'brand-ghost': {
       intent: 'A brand-coloured tertiary action. Reads as a link that happens to be a button.',
-      base: { bg: 'transparent', fg: 'content-brand' },
+      base: { bg: 'transparent', fg: 'content-brand-active' },
       hover: { bg: 'fill-brand-secondary' },
       active: { bg: 'fill-brand-secondary-hover' },
       disabled: { bg: 'fill-secondary-disabled', fg: 'content-primary-disabled' },

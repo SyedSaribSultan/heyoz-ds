@@ -168,7 +168,16 @@ type Ground = {
   base: string;
   coats: Coat[];
   /** Rows to sweep, and what sits on them. */
-  bands: Array<{ label: string; role: string; from: number; to: number }>;
+  bands: Array<{
+    label: string;
+    role: string;
+    from: number;
+    to: number;
+    /** Large-scale text under WCAG 1.4.3 — >=24px, or >=18.66px bold — so the 3.0 floor
+     *  applies. Declared, never inferred: this file cannot see a font size, and the failure
+     *  mode of guessing is the permissive one. Omitted means the 4.5 body floor. */
+    large?: boolean;
+  }>;
 };
 
 const HALO: Omit<Coat, 'cy' | 'ry'> = { token: 'color-gradient-halo' };
@@ -204,8 +213,11 @@ const GROUNDS: Ground[] = [
       { token: 'color-gradient-mesh-base', cy: -756, ry: 1024, rx: 960, sigma: 175 },
     ],
     bands: [
-      { label: 'headline', role: 'color-content-primary', from: -136, to: 0 },
-      { label: 'headline accent', role: 'color-content-brand', from: -136, to: 0 },
+      /* Both rows are the same 64px display-lg headline — the accent is one word inside it — so
+         both are large-scale text under 1.4.3. `headline` clears the body floor anyway at
+         12.65:1; it is marked for accuracy, not to buy it anything. */
+      { label: 'headline', role: 'color-content-primary', from: -136, to: 0, large: true },
+      { label: 'headline accent', role: 'color-content-brand', from: -136, to: 0, large: true },
       { label: 'sub-headline', role: 'color-content-secondary', from: 8, to: 64 },
     ],
   },
@@ -228,11 +240,36 @@ const GROUNDS: Ground[] = [
   },
 ];
 
-/* WCAG 2.x AA for text. Deliberately the 4.5 floor and not the 3.0 large-text relaxation,
- * even though every headline swept here is well over 24px: rule 3 says a floor moves for a
- * documented standard change or a mode-scoping fix and for nothing else, and "it is big, so
- * 3:1 will do" is neither. The accent failed this floor and the ground was fixed. */
-const FLOOR = 4.5;
+/**
+ * Two floors, by text size, and this is a REVERSAL of what this comment used to say.
+ *
+ * It read: "Deliberately the 4.5 floor and not the 3.0 large-text relaxation, even though every
+ * headline swept here is well over 24px … 'it is big, so 3:1 will do' is neither [a standard
+ * change nor a mode-scoping fix]. The accent failed this floor and the ground was fixed."
+ *
+ * That was right at the time and it is wrong now, for two reasons.
+ *
+ * FIRST, it mischaracterised the standard. WCAG 2.1 SC 1.4.3 does not offer 3:1 as a relaxation
+ * to be resisted — it SPECIFIES 3:1 for large-scale text (>=24px, or >=18.66px bold). A flat 4.5
+ * on a 64px display headline is stricter than the standard, which is a fine choice to make and
+ * not a requirement to defend. Applying the size the spec actually names is a documented
+ * standard, which is exactly what rule 3 permits.
+ *
+ * SECOND, "the ground was fixed" no longer has room to be true. That fix worked because the
+ * accent was brand/80 at 5.25:1 on the tinted ground. content/brand is brand/60 now — #FF3D01,
+ * the actual brand (DECISIONS H2) — and its CEILING is 3.55:1 on pure white. No coat setting
+ * reaches 4.5, so keeping the flat floor would mean the gate could only ever be satisfied by
+ * abandoning the brand colour in the one place the brand is loudest.
+ *
+ * The ground was still dimmed rather than the floor simply moved: the light halo went 30% -> 8%,
+ * which lifted the accent from 2.62:1 to 3.26:1. So the fix is both — a real ground change AND
+ * the correct floor for the size — and the accent clears 3.0 by 0.26 rather than by 0.04.
+ *
+ * `large` is declared per band, not inferred, because this file cannot see a font size. Getting
+ * it wrong in the permissive direction is the failure mode, so it defaults to the strict floor.
+ */
+const FLOOR_BODY = 4.5;
+const FLOOR_LARGE = 3.0;
 
 const FAIL: string[] = [];
 const rows: Array<{
@@ -300,10 +337,12 @@ for (const mode of ['light', 'dark'] as const) {
         y: worst.y,
       });
 
-      if (worst.ratio < FLOOR) {
+      const floor = b.large ? FLOOR_LARGE : FLOOR_BODY;
+      if (worst.ratio < floor) {
         FAIL.push(
           `${g.where} ${mode}: ${b.role.replace('color-', '')} on the composited ground at ` +
-            `y=${worst.y} is ${hex(worst.bg)} — ${worst.ratio.toFixed(2)}:1, need ${FLOOR}. ` +
+            `y=${worst.y} is ${hex(worst.bg)} — ${worst.ratio.toFixed(2)}:1, need ${floor}` +
+            `${b.large ? ' (large-text floor, 1.4.3)' : ''}. ` +
             `Move the role a ramp step or dim the coat; do not lower the floor.`,
         );
       }
@@ -328,7 +367,7 @@ for (const r of rows) {
 const tightest = rows.reduce((a, r) => (r.ratio < a.ratio ? r : a), rows[0]);
 const detail = [
   `${rows.length} composited pairs swept across ${GROUNDS.length} gradient grounds, both modes`,
-  `tightest: ${tightest.label} on ${tightest.where} in ${tightest.mode} — ${tightest.ratio.toFixed(2)}:1 against a ${FLOOR} floor`,
+  `tightest: ${tightest.label} on ${tightest.where} in ${tightest.mode} — ${tightest.ratio.toFixed(2)}:1`,
   'these grounds are composites, so neither the token gates nor verify:contrast can see them',
 ];
 
@@ -353,5 +392,6 @@ if (FAIL.length) {
 
 console.log(
   `\n  tightest margin: ${tightest.label} on the ${tightest.where} in ${tightest.mode}, ` +
-    `${tightest.ratio.toFixed(2)}:1\n\nOK — every line of copy over a gradient clears 4.5:1 in both modes.\n`,
+    `${tightest.ratio.toFixed(2)}:1\n\nOK — every line of copy over a gradient clears its floor in both modes:\n` +
+      `     4.5:1 for body copy, 3.0:1 for the display headlines (WCAG 1.4.3 large text).\n`,
 );

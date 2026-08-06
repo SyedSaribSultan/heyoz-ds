@@ -46,7 +46,7 @@ class StepperRecipe extends ComponentRecipe<StepperVariant, StepperSize> {
       /* The boundary is the marker — with no border an upcoming step is an unpainted gap in
        * the sequence, indistinguishable from a missing step. */
       intent: 'Not reached. The boundary is what says a step exists here at all.',
-      base: { bg: 'transparent', fg: 'content-tertiary', border: 'border-secondary' },
+      base: { bg: 'transparent', fg: 'content-secondary', border: 'border-secondary' },
       focus: 'none',
     },
     current: {
@@ -55,7 +55,7 @@ class StepperRecipe extends ComponentRecipe<StepperVariant, StepperSize> {
        * not the affordance — every marker is a circle either way — it is what says THIS is
        * where you are, which is precisely what `state` means. */
       intent: 'Where the user is now. The border is the state, not the affordance.',
-      base: { bg: 'fill-brand-secondary', fg: 'content-brand-hover', border: 'border-brand' },
+      base: { bg: 'fill-brand-secondary', fg: 'content-brand-active', border: 'border-brand' },
       focus: 'none',
     },
     complete: {

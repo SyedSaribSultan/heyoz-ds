@@ -154,7 +154,7 @@ class BadgeRecipe extends ComponentRecipe<BadgeVariant, BadgeSize> {
     },
     'brand-subtle': {
       intent: 'The same claim inside a list, where a solid orange pill would shout.',
-      base: { bg: 'fill-brand-secondary', fg: 'content-brand' },
+      base: { bg: 'fill-brand-secondary', fg: 'content-brand-active' },
       disabled: { bg: 'fill-brand-secondary-disabled', fg: 'content-brand-disabled' },
       focus: 'none',
     },

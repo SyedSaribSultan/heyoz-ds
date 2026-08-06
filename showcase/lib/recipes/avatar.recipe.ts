@@ -57,7 +57,7 @@ class AvatarRecipe extends ComponentRecipe<AvatarTone, AvatarSize> {
   protected readonly bindings: Record<AvatarTone, VariantBinding> = {
     brand: {
       intent: 'One of five. Assigned by hash, never chosen.',
-      base: { bg: 'fill-brand-secondary', fg: 'content-brand-hover' },
+      base: { bg: 'fill-brand-secondary', fg: 'content-brand-active' },
       focus: 'none',
     },
     success: {

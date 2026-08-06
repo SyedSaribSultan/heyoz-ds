@@ -57,7 +57,7 @@ class EmptyStateRecipe extends ComponentRecipe<EmptyStateVariant, EmptyStateSize
     },
     'no-results': {
       intent: 'Has plenty; this filter matched none. The copy must offer a way back.',
-      base: { bg: 'transparent', fg: 'content-tertiary' },
+      base: { bg: 'transparent', fg: 'content-secondary' },
       focus: 'none',
     },
     error: {

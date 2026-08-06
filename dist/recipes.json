@@ -1,7 +1,7 @@
 {
   "$generated": "by showcase/scripts/emit-recipes.ts — do not edit",
   "$description": "The HeyOz component contract. One entry per component: variants, states, the token each state binds per role, and the value that token resolves to in each mode. Generated from the same recipe objects the components compile from, so this cannot describe a component that does not exist.",
-  "generatedAt": "2026-08-05T12:58:37.249Z",
+  "generatedAt": "2026-08-06T11:13:28.109Z",
   "components": [
     {
       "id": "button",
@@ -208,8 +208,8 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-brand",
-                  "path": "color/content/brand",
+                  "token": "content-brand-active",
+                  "path": "color/content/brand-active",
                   "values": {
                     "light": {
                       "value": "#A92500",
@@ -217,8 +217,8 @@
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FC6645",
-                      "primitive": "solid/brand/50",
+                      "value": "#FFB3A0",
+                      "primitive": "solid/brand/30",
                       "alpha": 1
                     }
                   },
@@ -249,8 +249,8 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-brand",
-                  "path": "color/content/brand",
+                  "token": "content-brand-active",
+                  "path": "color/content/brand-active",
                   "values": {
                     "light": {
                       "value": "#A92500",
@@ -258,8 +258,8 @@
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FC6645",
-                      "primitive": "solid/brand/50",
+                      "value": "#FFB3A0",
+                      "primitive": "solid/brand/30",
                       "alpha": 1
                     }
                   },
@@ -290,17 +290,17 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-brand-hover",
-                  "path": "color/content/brand-hover",
+                  "token": "content-brand-active",
+                  "path": "color/content/brand-active",
                   "values": {
                     "light": {
-                      "value": "#7F1900",
-                      "primitive": "solid/brand/90",
+                      "value": "#A92500",
+                      "primitive": "solid/brand/80",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FF8A6F",
-                      "primitive": "solid/brand/40",
+                      "value": "#FFB3A0",
+                      "primitive": "solid/brand/30",
                       "alpha": 1
                     }
                   },
@@ -379,8 +379,8 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-brand",
-                  "path": "color/content/brand",
+                  "token": "content-brand-active",
+                  "path": "color/content/brand-active",
                   "values": {
                     "light": {
                       "value": "#A92500",
@@ -388,8 +388,8 @@
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FC6645",
-                      "primitive": "solid/brand/50",
+                      "value": "#FFB3A0",
+                      "primitive": "solid/brand/30",
                       "alpha": 1
                     }
                   },
@@ -420,8 +420,8 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-brand",
-                  "path": "color/content/brand",
+                  "token": "content-brand-active",
+                  "path": "color/content/brand-active",
                   "values": {
                     "light": {
                       "value": "#A92500",
@@ -429,8 +429,8 @@
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FC6645",
-                      "primitive": "solid/brand/50",
+                      "value": "#FFB3A0",
+                      "primitive": "solid/brand/30",
                       "alpha": 1
                     }
                   },
@@ -461,8 +461,8 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-brand",
-                  "path": "color/content/brand",
+                  "token": "content-brand-active",
+                  "path": "color/content/brand-active",
                   "values": {
                     "light": {
                       "value": "#A92500",
@@ -470,8 +470,8 @@
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FC6645",
-                      "primitive": "solid/brand/50",
+                      "value": "#FFB3A0",
+                      "primitive": "solid/brand/30",
                       "alpha": 1
                     }
                   },
@@ -1982,8 +1982,7 @@
         "border-secondary",
         "border-secondary-disabled",
         "border-secondary-hover",
-        "content-brand",
-        "content-brand-hover",
+        "content-brand-active",
         "content-inverse-primary",
         "content-on-brand",
         "content-on-critical",
@@ -3275,8 +3274,8 @@
                   "path": "color/content/brand",
                   "values": {
                     "light": {
-                      "value": "#A92500",
-                      "primitive": "solid/brand/80",
+                      "value": "#FF3D01",
+                      "primitive": "solid/brand/60",
                       "alpha": 1
                     },
                     "dark": {
@@ -3298,8 +3297,8 @@
                   "path": "color/content/brand-hover",
                   "values": {
                     "light": {
-                      "value": "#7F1900",
-                      "primitive": "solid/brand/90",
+                      "value": "#D53100",
+                      "primitive": "solid/brand/70",
                       "alpha": 1
                     },
                     "dark": {
@@ -3321,8 +3320,8 @@
                   "path": "color/content/brand-active",
                   "values": {
                     "light": {
-                      "value": "#571002",
-                      "primitive": "solid/brand/100",
+                      "value": "#A92500",
+                      "primitive": "solid/brand/80",
                       "alpha": 1
                     },
                     "dark": {
@@ -3397,8 +3396,8 @@
                   "path": "color/content/brand",
                   "values": {
                     "light": {
-                      "value": "#A92500",
-                      "primitive": "solid/brand/80",
+                      "value": "#FF3D01",
+                      "primitive": "solid/brand/60",
                       "alpha": 1
                     },
                     "dark": {
@@ -3420,8 +3419,8 @@
                   "path": "color/content/brand-active",
                   "values": {
                     "light": {
-                      "value": "#571002",
-                      "primitive": "solid/brand/100",
+                      "value": "#A92500",
+                      "primitive": "solid/brand/80",
                       "alpha": 1
                     },
                     "dark": {
@@ -3473,13 +3472,13 @@
                   "path": "color/content/tertiary",
                   "values": {
                     "light": {
-                      "value": "#5F5D5C",
-                      "primitive": "solid/neutral/90",
+                      "value": "#7C7A78",
+                      "primitive": "solid/neutral/80",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#A9A7A6",
-                      "primitive": "solid/neutral/60",
+                      "value": "#949290",
+                      "primitive": "solid/neutral/70",
                       "alpha": 1
                     }
                   },
@@ -3616,13 +3615,13 @@
                   "path": "color/content/secondary",
                   "values": {
                     "light": {
-                      "value": "#2E2C2B",
-                      "primitive": "solid/neutral/110",
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#C2C0BF",
-                      "primitive": "solid/neutral/50",
+                      "value": "#A9A7A6",
+                      "primitive": "solid/neutral/60",
                       "alpha": 1
                     }
                   },
@@ -3705,13 +3704,13 @@
                   "path": "color/content/secondary",
                   "values": {
                     "light": {
-                      "value": "#2E2C2B",
-                      "primitive": "solid/neutral/110",
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#C2C0BF",
-                      "primitive": "solid/neutral/50",
+                      "value": "#A9A7A6",
+                      "primitive": "solid/neutral/60",
                       "alpha": 1
                     }
                   },
@@ -4057,8 +4056,8 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-brand",
-                  "path": "color/content/brand",
+                  "token": "content-brand-active",
+                  "path": "color/content/brand-active",
                   "values": {
                     "light": {
                       "value": "#A92500",
@@ -4066,8 +4065,8 @@
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FC6645",
-                      "primitive": "solid/brand/50",
+                      "value": "#FFB3A0",
+                      "primitive": "solid/brand/30",
                       "alpha": 1
                     }
                   },
@@ -4102,8 +4101,8 @@
                   "path": "color/content/brand-disabled",
                   "values": {
                     "light": {
-                      "value": "#A9250080",
-                      "primitive": "opacity-50/brand/80",
+                      "value": "#FF3D0180",
+                      "primitive": "opacity-50/brand/60",
                       "alpha": 0.5
                     },
                     "dark": {
@@ -4841,7 +4840,7 @@
         "intent": "No pointer states at all — a badge is not interactive — so the transition only matters when a variant changes underneath it, which is exactly when a status updates from Rendering to Ready. effects-default rather than effects-fast because that colour change is information the user should notice, and 120ms is below the threshold where a change registers as having happened."
       },
       "tokensUsed": [
-        "content-brand",
+        "content-brand-active",
         "content-brand-disabled",
         "content-critical",
         "content-critical-disabled",
@@ -4913,13 +4912,13 @@
                   "path": "color/content/secondary",
                   "values": {
                     "light": {
-                      "value": "#2E2C2B",
-                      "primitive": "solid/neutral/110",
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#C2C0BF",
-                      "primitive": "solid/neutral/50",
+                      "value": "#A9A7A6",
+                      "primitive": "solid/neutral/60",
                       "alpha": 1
                     }
                   },
@@ -4936,13 +4935,13 @@
                   "path": "color/content/tertiary",
                   "values": {
                     "light": {
-                      "value": "#5F5D5C",
-                      "primitive": "solid/neutral/90",
+                      "value": "#7C7A78",
+                      "primitive": "solid/neutral/80",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#A9A7A6",
-                      "primitive": "solid/neutral/60",
+                      "value": "#949290",
+                      "primitive": "solid/neutral/70",
                       "alpha": 1
                     }
                   },
@@ -4966,13 +4965,13 @@
                   "path": "color/content/tertiary",
                   "values": {
                     "light": {
-                      "value": "#5F5D5C",
-                      "primitive": "solid/neutral/90",
+                      "value": "#7C7A78",
+                      "primitive": "solid/neutral/80",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#A9A7A6",
-                      "primitive": "solid/neutral/60",
+                      "value": "#949290",
+                      "primitive": "solid/neutral/70",
                       "alpha": 1
                     }
                   },
@@ -4989,13 +4988,13 @@
                   "path": "color/content/tertiary",
                   "values": {
                     "light": {
-                      "value": "#5F5D5C",
-                      "primitive": "solid/neutral/90",
+                      "value": "#7C7A78",
+                      "primitive": "solid/neutral/80",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#A9A7A6",
-                      "primitive": "solid/neutral/60",
+                      "value": "#949290",
+                      "primitive": "solid/neutral/70",
                       "alpha": 1
                     }
                   },
@@ -5042,13 +5041,13 @@
                   "path": "color/content/tertiary",
                   "values": {
                     "light": {
-                      "value": "#5F5D5C",
-                      "primitive": "solid/neutral/90",
+                      "value": "#7C7A78",
+                      "primitive": "solid/neutral/80",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#A9A7A6",
-                      "primitive": "solid/neutral/60",
+                      "value": "#949290",
+                      "primitive": "solid/neutral/70",
                       "alpha": 1
                     }
                   },
@@ -5558,13 +5557,13 @@
                   "path": "color/content/secondary",
                   "values": {
                     "light": {
-                      "value": "#2E2C2B",
-                      "primitive": "solid/neutral/110",
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#C2C0BF",
-                      "primitive": "solid/neutral/50",
+                      "value": "#A9A7A6",
+                      "primitive": "solid/neutral/60",
                       "alpha": 1
                     }
                   },
@@ -5617,13 +5616,13 @@
                   "path": "color/content/secondary",
                   "values": {
                     "light": {
-                      "value": "#2E2C2B",
-                      "primitive": "solid/neutral/110",
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#C2C0BF",
-                      "primitive": "solid/neutral/50",
+                      "value": "#A9A7A6",
+                      "primitive": "solid/neutral/60",
                       "alpha": 1
                     }
                   },
@@ -5738,17 +5737,17 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-brand-hover",
-                  "path": "color/content/brand-hover",
+                  "token": "content-brand-active",
+                  "path": "color/content/brand-active",
                   "values": {
                     "light": {
-                      "value": "#7F1900",
-                      "primitive": "solid/brand/90",
+                      "value": "#A92500",
+                      "primitive": "solid/brand/80",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FF8A6F",
-                      "primitive": "solid/brand/40",
+                      "value": "#FFB3A0",
+                      "primitive": "solid/brand/30",
                       "alpha": 1
                     }
                   },
@@ -5867,13 +5866,13 @@
                   "path": "color/content/secondary",
                   "values": {
                     "light": {
-                      "value": "#2E2C2B",
-                      "primitive": "solid/neutral/110",
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#C2C0BF",
-                      "primitive": "solid/neutral/50",
+                      "value": "#A9A7A6",
+                      "primitive": "solid/neutral/60",
                       "alpha": 1
                     }
                   },
@@ -5926,13 +5925,13 @@
                   "path": "color/content/secondary",
                   "values": {
                     "light": {
-                      "value": "#2E2C2B",
-                      "primitive": "solid/neutral/110",
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#C2C0BF",
-                      "primitive": "solid/neutral/50",
+                      "value": "#A9A7A6",
+                      "primitive": "solid/neutral/60",
                       "alpha": 1
                     }
                   },
@@ -5978,7 +5977,7 @@
         "border-primary-disabled",
         "border-secondary",
         "border-secondary-hover",
-        "content-brand-hover",
+        "content-brand-active",
         "content-primary",
         "content-primary-disabled",
         "content-secondary",
@@ -6934,17 +6933,17 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-brand-hover",
-                  "path": "color/content/brand-hover",
+                  "token": "content-brand-active",
+                  "path": "color/content/brand-active",
                   "values": {
                     "light": {
-                      "value": "#7F1900",
-                      "primitive": "solid/brand/90",
+                      "value": "#A92500",
+                      "primitive": "solid/brand/80",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FF8A6F",
-                      "primitive": "solid/brand/40",
+                      "value": "#FFB3A0",
+                      "primitive": "solid/brand/30",
                       "alpha": 1
                     }
                   },
@@ -7161,7 +7160,7 @@
         "intent": "Colour only, and in practice almost nothing animates — an avatar has no interaction states of its own. The transition exists for the case where an avatar sits inside something that does have them, a menu row or a table row, so its tint moves with the row rather than a beat behind it. No entrance: a grid of twelve avatars fading in one at a time is a loading state pretending to be a flourish."
       },
       "tokensUsed": [
-        "content-brand-hover",
+        "content-brand-active",
         "content-critical-hover",
         "content-info-hover",
         "content-success-hover",
@@ -7875,17 +7874,17 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-brand-hover",
-                  "path": "color/content/brand-hover",
+                  "token": "content-brand-active",
+                  "path": "color/content/brand-active",
                   "values": {
                     "light": {
-                      "value": "#7F1900",
-                      "primitive": "solid/brand/90",
+                      "value": "#A92500",
+                      "primitive": "solid/brand/80",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FF8A6F",
-                      "primitive": "solid/brand/40",
+                      "value": "#FFB3A0",
+                      "primitive": "solid/brand/30",
                       "alpha": 1
                     }
                   },
@@ -7934,17 +7933,17 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-brand-hover",
-                  "path": "color/content/brand-hover",
+                  "token": "content-brand-active",
+                  "path": "color/content/brand-active",
                   "values": {
                     "light": {
-                      "value": "#7F1900",
-                      "primitive": "solid/brand/90",
+                      "value": "#A92500",
+                      "primitive": "solid/brand/80",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FF8A6F",
-                      "primitive": "solid/brand/40",
+                      "value": "#FFB3A0",
+                      "primitive": "solid/brand/30",
                       "alpha": 1
                     }
                   },
@@ -7993,17 +7992,17 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-brand-hover",
-                  "path": "color/content/brand-hover",
+                  "token": "content-brand-active",
+                  "path": "color/content/brand-active",
                   "values": {
                     "light": {
-                      "value": "#7F1900",
-                      "primitive": "solid/brand/90",
+                      "value": "#A92500",
+                      "primitive": "solid/brand/80",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FF8A6F",
-                      "primitive": "solid/brand/40",
+                      "value": "#FFB3A0",
+                      "primitive": "solid/brand/30",
                       "alpha": 1
                     }
                   },
@@ -8109,7 +8108,7 @@
         "border-primary-disabled",
         "border-secondary",
         "border-secondary-hover",
-        "content-brand-hover",
+        "content-brand-active",
         "content-primary",
         "content-primary-disabled",
         "fill-brand-secondary",
@@ -8163,13 +8162,13 @@
                   "path": "color/content/secondary",
                   "values": {
                     "light": {
-                      "value": "#2E2C2B",
-                      "primitive": "solid/neutral/110",
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#C2C0BF",
-                      "primitive": "solid/neutral/50",
+                      "value": "#A9A7A6",
+                      "primitive": "solid/neutral/60",
                       "alpha": 1
                     }
                   },
@@ -8822,13 +8821,13 @@
                   "path": "color/content/secondary",
                   "values": {
                     "light": {
-                      "value": "#2E2C2B",
-                      "primitive": "solid/neutral/110",
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#C2C0BF",
-                      "primitive": "solid/neutral/50",
+                      "value": "#A9A7A6",
+                      "primitive": "solid/neutral/60",
                       "alpha": 1
                     }
                   },
@@ -9022,8 +9021,8 @@
                   "path": "color/content/brand-hover",
                   "values": {
                     "light": {
-                      "value": "#7F1900",
-                      "primitive": "solid/brand/90",
+                      "value": "#D53100",
+                      "primitive": "solid/brand/70",
                       "alpha": 1
                     },
                     "dark": {
@@ -9066,8 +9065,8 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-tertiary",
-                  "path": "color/content/tertiary",
+                  "token": "content-secondary",
+                  "path": "color/content/secondary",
                   "values": {
                     "light": {
                       "value": "#5F5D5C",
@@ -9196,8 +9195,8 @@
       "tokensUsed": [
         "content-brand-hover",
         "content-critical-hover",
+        "content-secondary",
         "content-success-hover",
-        "content-tertiary",
         "transparent"
       ]
     },
@@ -9235,8 +9234,8 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-tertiary",
-                  "path": "color/content/tertiary",
+                  "token": "content-secondary",
+                  "path": "color/content/secondary",
                   "values": {
                     "light": {
                       "value": "#5F5D5C",
@@ -9301,17 +9300,17 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-brand-hover",
-                  "path": "color/content/brand-hover",
+                  "token": "content-brand-active",
+                  "path": "color/content/brand-active",
                   "values": {
                     "light": {
-                      "value": "#7F1900",
-                      "primitive": "solid/brand/90",
+                      "value": "#A92500",
+                      "primitive": "solid/brand/80",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#FF8A6F",
-                      "primitive": "solid/brand/40",
+                      "value": "#FFB3A0",
+                      "primitive": "solid/brand/30",
                       "alpha": 1
                     }
                   },
@@ -9485,10 +9484,10 @@
         "border-brand",
         "border-critical",
         "border-secondary",
-        "content-brand-hover",
+        "content-brand-active",
         "content-on-brand",
         "content-on-critical",
-        "content-tertiary",
+        "content-secondary",
         "fill-brand",
         "fill-brand-secondary",
         "fill-critical",
@@ -12201,13 +12200,13 @@
                   "path": "color/content/secondary",
                   "values": {
                     "light": {
-                      "value": "#2E2C2B",
-                      "primitive": "solid/neutral/110",
+                      "value": "#5F5D5C",
+                      "primitive": "solid/neutral/90",
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#C2C0BF",
-                      "primitive": "solid/neutral/50",
+                      "value": "#A9A7A6",
+                      "primitive": "solid/neutral/60",
                       "alpha": 1
                     }
                   },
@@ -12327,8 +12326,8 @@
                 },
                 {
                   "role": "fg",
-                  "token": "content-tertiary",
-                  "path": "color/content/tertiary",
+                  "token": "content-secondary",
+                  "path": "color/content/secondary",
                   "values": {
                     "light": {
                       "value": "#5F5D5C",
@@ -12360,7 +12359,6 @@
       "tokensUsed": [
         "content-primary",
         "content-secondary",
-        "content-tertiary",
         "fill-primary-hover",
         "fill-selected",
         "surface-secondary",

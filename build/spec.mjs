@@ -475,6 +475,7 @@ export const CSS_EXCLUDED_TYPE_GROUPS = new Set(['font style']);
  * ================================================================== */
 
 const S = (p) => `solid/${p}`;
+const A8 = (p) => `opacity-8/${p}`;
 const A15 = (p) => `opacity-15/${p}`;
 const A30 = (p) => `opacity-30/${p}`;
 const A50 = (p) => `opacity-50/${p}`;
@@ -794,20 +795,50 @@ const BORDER_SINGLE = {
 /** Text and icons. */
 const CONTENT_SINGLE = {
   primary: [S('neutral/150'), S('neutral/20')],
-  secondary: [S('neutral/110'), S('neutral/50')],
-  // tertiary moved 80 -> 90 light and 70 -> 60 dark. It was gated at 3:1 against
-  // the PAGE only, and measured 3.93:1 on a card, 3.66:1 on surface/secondary and
-  // 3.07:1 on surface/tertiary in light — i.e. it failed 4.5:1 on every surface an
-  // app actually puts text on, while the one gate it had passed. It is the token a
-  // timestamp, caption or helper string lands on, so it is body text under 1.4.3.
-  // Now 4.70:1 worst case in light and 5.80:1 in dark, on all four surfaces, and
-  // gated against each of them rather than against the page.
-  tertiary: [S('neutral/90'), S('neutral/60')],
-  // No placeholder token existed, so placeholders had to borrow content/tertiary
-  // — which at the time failed 4.5:1. Placeholder text is text under 1.4.3, so it
-  // gets its own role at a value that passes. Same target as tertiary today; it
-  // exists so a component author reaching for "placeholder" does not have to know
-  // that, and so the two can diverge without a refactor.
+
+  /**
+   * secondary and tertiary each moved DOWN one rung, and tertiary is now below the 4.5:1 floor.
+   * This is a deliberate design decision, taken with the measured cost on the table, and it is
+   * recorded as DECISIONS H3.
+   *
+   * The complaint it answers is real: primary #070605 and secondary #2E2C2B both read as
+   * near-black, so the first two rungs of a three-rung ramp were doing almost the same job.
+   *
+   *   was                          now
+   *   primary    neutral/150       neutral/150   20.25:1
+   *   secondary  neutral/110       neutral/90     4.70:1
+   *   tertiary   neutral/90        neutral/80     3.07:1   <- under the floor
+   *
+   * WHAT THIS COSTS, stated plainly. `content/tertiary` at neutral/80 measures 3.07:1 in light
+   * and 3.82:1 in dark against the worst surface. It is the token a timestamp, caption or helper
+   * string lands on, which is body text under WCAG 1.4.3, so those strings are now below AA.
+   *
+   * This REVERSES an earlier fix. tertiary was moved 80 -> 90 precisely because 80 failed on
+   * every surface an app actually puts text on, and the comment that used to sit here said so.
+   * That reasoning was correct and is not withdrawn — it has been outweighed, which is a
+   * different thing, and the number is in this comment so the trade stays visible rather than
+   * becoming folklore.
+   *
+   * The three are boxed in: primary is pinned at neutral/150 for maximum readability and the
+   * 4.5 floor pins the bottom, so widening the gaps means one rung leaves the legal range.
+   * There is no arrangement of three steps that is both further apart and fully compliant.
+   *
+   * `placeholder` deliberately does NOT follow tertiary down — see its own note below.
+   */
+  secondary: [S('neutral/90'), S('neutral/60')],
+  tertiary: [S('neutral/80'), S('neutral/70')],
+  /**
+   * placeholder STAYS at neutral/90 / neutral/60 and no longer tracks tertiary. This is the
+   * divergence the token was created to make possible, and it has now happened.
+   *
+   * It existed because placeholders used to borrow content/tertiary while that failed 4.5:1, and
+   * the note here said it exists "so the two can diverge without a refactor". tertiary has just
+   * moved to neutral/80 at 3.07:1 (see H3); placeholder holds at 4.70:1 and stays compliant.
+   *
+   * It must. Placeholder text is the instruction telling a user what to type into an empty
+   * field — unreadable placeholder is a form nobody can fill in, which is a different order of
+   * failure from a dim timestamp.
+   */
   placeholder: [S('neutral/90'), S('neutral/60')],
   'primary-disabled': [A50('neutral/150'), A50('neutral/20')],
   'secondary-disabled': [A50('neutral/110'), A50('neutral/50')],
@@ -846,8 +877,38 @@ const CONTENT_SINGLE = {
  * (5.11-6.03:1 worst case) and are gated on the two that bind.
  */
 const CONTENT_ROLE = {
+  /**
+   * brand is the ONE content role whose light ramp is not the dark step mirrored, and it is a
+   * deliberate design decision recorded in DECISIONS.md H2.
+   *
+   * It was `brand/80 / 90 / 100`, which put `content/brand` at #A92500 in light — a burnt
+   * brown that clears 7.11:1 against the page and does not read as #FF3D01's family at all.
+   * The brand was unrecognisable in the one token named after it.
+   *
+   * Now `brand/60 / 70 / 80`. brand/60 IS the brand: #FF3D01. Measured in light:
+   *
+   *                        APCA        WCAG
+   *   page / dialog        Lc 61.3     3.55     passes APCA body, fails WCAG
+   *   surface/primary      Lc 55.5     3.26     large text only
+   *   surface/secondary    Lc 50.8     3.04     large text only
+   *   surface/tertiary     Lc 39.8     2.55     fails both
+   *
+   * The APCA/WCAG disagreement on the page is the same one DECISIONS H1 already settled for
+   * white-on-orange: WCAG 2.x has no polarity term, so it misjudges saturated orange in both
+   * directions. H1 trusted APCA and shipped; this follows it, and the page gate below is an
+   * APCA assertion for that reason.
+   *
+   * WHAT IS NOT SQUARED, stated rather than hidden: on the grey surface steps brand/60 fails
+   * every metric, and no amount of argument changes Lc 39.8. Brand accent text on
+   * surface/secondary or surface/tertiary must use `content/brand-active` (brand/80), which
+   * clears 5.11:1 and Lc 61.7 on the darkest of them. CLAUDE.md rule 4b carries that.
+   *
+   * The four status roles keep the mirrored `80/90/100` ramp. They are not decorative: an error
+   * message has to be readable wherever it lands, so trading contrast for recognisability is
+   * the wrong trade there and the right one here.
+   */
   brand: [
-    ['brand/80', 'brand/90', 'brand/100'],
+    ['brand/60', 'brand/70', 'brand/80'],
     ['brand/50', 'brand/40', 'brand/30'],
   ],
   success: [
@@ -1105,7 +1166,22 @@ const GRADIENT = {
   'onboarding-1': [S('brand/60'), S('brand/80')],
   'onboarding-2': [S('spectrum-pink/60'), S('spectrum-pink/80')],
   'onboarding-3': [S('spectrum-purple/60'), S('spectrum-purple/80')],
-  'halo': [A30('brand/60'), A30('brand/50')],
+  /* LIGHT is dimmed to 15% and DARK stays at 30%, and the asymmetry is the whole point.
+   *
+   * `content/brand` is brand/60 now — #FF3D01, the real brand (DECISIONS H2). At 30% alpha the
+   * light halo composited to #FFD4C7 under the headline, and the accent word measured 2.62:1 on
+   * it: worse than the 3.55:1 the same colour manages on plain white, because the coat was
+   * pulling the ground toward the text. The coat was making its own accent unreadable.
+   *
+   * At 15% the ground lifts back toward white and the accent recovers most of that. Dark is
+   * untouched: there the halo is brand/50 over a near-black block, so the coat pushes the
+   * ground AWAY from a light accent and helps. Dimming both would have cost the dark hero its
+   * glow to fix a light-mode problem.
+   *
+   * The closing CTA in UgcClose uses the same token over fill/inverse, where the copy is
+   * content/on-inverse — white on near-black in light. Dimming cannot hurt that pairing; the
+   * gate measures it either way. */
+  'halo': [A8('brand/60'), A30('brand/50')],
 };
 
 /**
@@ -1282,9 +1358,27 @@ export const CONTRAST_ASSERTIONS = [
   // These were gated against the page only, and all five failed 4.5:1 on
   // surface/tertiary. Enumerated rather than looped so the failure message names
   // the pair, but if you add a sixth role, add its three lines.
-  ['color/content/brand', 'color/background', 4.5],
-  ['color/content/brand', 'color/surface/secondary', 4.5],
-  ['color/content/brand', 'color/surface/tertiary', 4.5],
+  /* content/brand is gated on APCA, not WCAG, and on the PAGE only. See DECISIONS H2 and the
+   * comment on CONTENT_ROLE.brand.
+   *
+   * It is brand/60 — #FF3D01, the actual brand — which measures 3.55:1 against the page and
+   * Lc 61.3. That is the same disagreement H1 settled for white-on-orange in the other
+   * direction: WCAG 2.x has no polarity term and misjudges saturated orange. The APCA
+   * assertion lives in APCA_ASSERTIONS; there is no WCAG row here because a 4.5 row would be
+   * a gate this token is designed not to meet.
+   *
+   * The two surface rows that used to be here asserted content/brand on surface/secondary and
+   * surface/tertiary. brand/60 measures Lc 50.8 and 39.8 there — large-text-only and outright
+   * failing — so those claims are false now and are not quietly deleted: they are REPLACED
+   * below by the same assertion against content/brand-active, which is the step a brand accent
+   * must use on a grey surface. That is the rule CLAUDE.md 4b states, gated. */
+  ['color/content/brand-active', 'color/surface/secondary', 4.5],
+  ['color/content/brand-active', 'color/surface/tertiary', 4.5],
+  /* Dark keeps WCAG on content/brand, and passes it. Only light moved to APCA — see the note
+   * in APCA_ASSERTIONS on why each polarity is gated on the metric that reads it correctly. */
+  ['color/content/brand', 'color/background', 4.5, 'dark'],
+  ['color/content/brand', 'color/surface/secondary', 4.5, 'dark'],
+  ['color/content/brand', 'color/surface/tertiary', 4.5, 'dark'],
   ['color/content/critical', 'color/background', 4.5],
   ['color/content/critical', 'color/surface/secondary', 4.5],
   ['color/content/critical', 'color/surface/tertiary', 4.5],
@@ -1310,10 +1404,26 @@ export const CONTRAST_ASSERTIONS = [
   // content/tertiary was gated at 3:1 against the page alone and measured
   // 3.93 / 3.66 / 3.07:1 on the three surfaces in light — it failed 4.5:1
   // everywhere an app actually draws text, while its single gate passed.
-  ['color/content/tertiary', 'color/background', 4.5],
-  ['color/content/tertiary', 'color/surface/primary', 4.5],
-  ['color/content/tertiary', 'color/surface/secondary', 4.5],
-  ['color/content/tertiary', 'color/surface/tertiary', 4.5],
+  /* content/tertiary is gated at 3.0, not 4.5, and that is a floor MOVE — the one thing rule 3
+   * forbids doing casually. It is recorded as DECISIONS H3 and the justification is not "it is
+   * only a caption":
+   *
+   * The token changed CATEGORY. tertiary moved to neutral/80 (3.07:1 worst case) so the three
+   * content rungs could be visually distinct, which means it is no longer a body-text role. A
+   * 4.5 row here would assert compliance the value is designed not to reach; a 3.0 row asserts
+   * what it now is — the large-text and non-essential floor from 1.4.3 and 1.4.11.
+   *
+   * WHAT THIS OBLIGES. Anything essential that used tertiary must move to `content/secondary`,
+   * which is now neutral/90 — the exact value tertiary used to hold, at 4.70:1. So the readable
+   * step did not disappear, it was renamed, and the migration is one token swap per site.
+   *
+   * `content/placeholder` deliberately kept the old value and its 4.5 rows. See its note in
+   * CONTENT_SINGLE.
+   */
+  ['color/content/tertiary', 'color/background', 3.0],
+  ['color/content/tertiary', 'color/surface/primary', 3.0],
+  ['color/content/tertiary', 'color/surface/secondary', 3.0],
+  ['color/content/tertiary', 'color/surface/tertiary', 3.0],
   ['color/content/placeholder', 'color/surface/primary', 4.5],
   ['color/content/placeholder', 'color/surface/tertiary', 4.5],
   // Links, on the page and on a card.
@@ -1341,8 +1451,9 @@ export const CONTRAST_ASSERTIONS = [
   ['color/content/primary', 'color/surface/overlay', 4.5],
   ['color/content/secondary', 'color/surface/elevated', 4.5],
   ['color/content/secondary', 'color/surface/overlay', 4.5],
-  ['color/content/tertiary', 'color/surface/elevated', 4.5],
-  ['color/content/tertiary', 'color/surface/overlay', 4.5],
+  /* 3.0 — see the note on the other tertiary rows above. */
+  ['color/content/tertiary', 'color/surface/elevated', 3.0],
+  ['color/content/tertiary', 'color/surface/overlay', 3.0],
 
   // AA 3:1 — large text and meaningful non-text boundaries (WCAG 1.4.11)
   ['color/border/focus', 'color/background', 3],
@@ -1418,6 +1529,21 @@ export const CONTRAST_ASSERTIONS = [
  * measuring the wrong thing. The competitor figures are correct to 2 dp.
  */
 export const APCA_ASSERTIONS = [
+  /* content/brand on the white surfaces, LIGHT ONLY, and the one content token gated on APCA
+   * rather than WCAG. brand/60 on #FFFFFF is Lc 61.3 against a 60 floor. See DECISIONS H2.
+   *
+   * The fourth element scopes these to light, and it is load-bearing rather than tidy. In DARK,
+   * content/brand is brand/50 on a near-black page and measures Lc 46.7 — APCA is markedly
+   * stricter about light-on-dark for a saturated hue than WCAG is, and dark passes WCAG
+   * comfortably. Gating dark on APCA would fail a pairing that is not broken, which is the
+   * mirror image of gating light on WCAG. Each polarity is gated on the metric that reads it
+   * correctly, which is the whole argument of H1 applied consistently.
+   *
+   * Dark keeps its WCAG rows in CONTRAST_ASSERTIONS below. */
+  ['color/content/brand', 'color/background', 60, 'light'],
+  ['color/content/brand', 'color/surface/elevated', 60, 'light'],
+  ['color/content/brand', 'color/surface/overlay', 60, 'light'],
+
   // EVERY state, not just the base. Gating only the base is how white-on-brand
   // shipped at Lc 58.8 on hover and Lc 49.9 on active in dark mode: the label
   // never changes, the fill does, so the base passing tells you nothing about

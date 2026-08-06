@@ -81,7 +81,7 @@ class ChipRecipe extends ComponentRecipe<ChipVariant, ChipSize> {
       intent: 'A chip that is itself the brand accent — a plan name, an active model.',
       base: {
         bg: 'fill-brand-secondary',
-        fg: 'content-brand-hover',
+        fg: 'content-brand-active',
         border: 'border-brand-secondary',
       },
       hover: { bg: 'fill-brand-secondary-hover' },
