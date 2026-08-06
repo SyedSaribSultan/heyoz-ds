@@ -53,6 +53,16 @@ module.exports = {
       variants: ['hover', 'active', 'disabled', 'focus-visible', 'aria-selected'],
     },
     { pattern: /^outline-border-/, variants: ['focus-visible'] },
+
+    /* Dropzone's dashed edge is an SVG rect, not a CSS border — a 1px `border-dashed`
+     * is drawn by the UA at roughly 2/2 and the Figma dash is 10/10, which no property
+     * changes. Its colour is derived from the same binding the zone compiles and
+     * remapped `border-*` → `stroke-*` by dropzoneRecipe.frameClasses, so the scanner
+     * never sees the literal — same situation as the colour bindings above. */
+    {
+      pattern: /^stroke-(border|content|fill)-/,
+      variants: ['hover', 'group-hover', 'disabled'],
+    },
     {
       pattern: /^shadow-(x-small|small|medium|large)$/,
       variants: ['hover', 'active', 'aria-selected'],

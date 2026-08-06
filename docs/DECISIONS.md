@@ -738,6 +738,41 @@ layout width at exactly 15px.
   been rendering every page at 1440 while every real user with a scrollbar sees 1425.
   The gutter reservation reclaims that 15px, which is what a real browser always did.
 
+### I15 — Dropzone was refitted against the Figma frames, and four of the differences were defects
+
+Not found by a gate. The eleven state and context frames were read back against the
+built component, geometry first. Most of the gap was cosmetic, but four items were
+bugs that no suite could have reported, because every one of them is a claim about a
+drawing rather than about a token.
+
+| | Problem |
+|---|---|
+| a | **The disabled state never rendered.** `compile()` emits the disabled binding behind Tailwind's `disabled:` variant, and the zone is a `<div>` — a div is never `:disabled`, so `disabled:bg-fill-primary-variant-disabled` and its siblings matched nothing. `<Dropzone disabled>` drew its idle colours, and the only cell in the system that showed the disabled appearance was the forced grid, which merges the binding unprefixed and therefore looked right. |
+| b | **The drag copy could not be reached from the state grid.** `copyFor` keyed off a live `over` flag that only the pointer sets, while the colours keyed off `variant`. `forceVariant="active"` therefore drew accent colours under resting copy — a combination that cannot occur in use, published as the specimen for the state it misrepresents. Both now read `variant === 'active'`, which is what the binding's own `intent` already said it meant. |
+| c | **The radius was 10px, with a comment sourcing it to the Figma.** It is 16 on every frame in the set (`M0 16C0 7.16 7.16 0 16 0`, and the same on the 158-wide Start/End Frame pair); 10 is the `Select` button *inside* the zone. The wrong number had arrived attached to a claim of provenance, which is the failure mode §I9 is about, so the correction is recorded rather than quietly applied. |
+| d | **The resting zone was two rungs too dark.** It sat on `surface/secondary` with a `fill/secondary-hover` step. The frames are white at rest and `#F7F7F7` on hover, which is `fill/primary-variant` and `fill/primary-variant-hover` exactly, in both modes — the pairing was available the whole time. |
+
+**The one thing that could not be built out of utilities.** The Figma dash is 10 on /
+10 off at 1px. A CSS `border-dashed` at 1px is drawn by the UA at roughly 2/2 and no
+property changes it, and at that scale the difference is most of what makes the zone
+read as a place to put something. The edge is now an SVG `<rect>` with
+`stroke-dasharray="10 10"` and `stroke-width="2"` half-clipped by the viewport, which
+lands on exactly 1px without any `calc(100% - 1px)` in a geometry attribute.
+
+That introduces a second place a border colour could be written, which is the drift
+§I11 is entirely about — so it is not written twice. `dropzoneRecipe.frameClasses()`
+reads the same `bindings` object the root compiles and remaps `border-*` → `stroke-*`,
+mirroring `classes()`'s forced and live modes. The root still declares the border
+token, so `verify:borders` still counts the binding it is meant to police, and a
+change to the binding moves the drawn edge with it.
+
+**Measured after.** Zone 328×136 against the frame's 328×136.14; badge 60.6×16 at the
+same 8px inset against 59×16; Select 55×24 against 53×24; chip ink 31.6 against 32.8.
+Every element sits within ~2.3px of the frame, uniformly high, because the frame's own
+content is not quite centred in it (19.6 above, 16 below) and this box centres. Pinning
+asymmetric padding to reproduce that would be fitting the artifact rather than the
+design — the height is a floor here, not a fixed frame.
+
 ### What this section is really for
 
 Every finding here is the same shape, including the ones in I11. The values were

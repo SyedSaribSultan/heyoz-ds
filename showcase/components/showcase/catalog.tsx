@@ -1,7 +1,7 @@
 'use client';
 
 import { registry } from '@/lib/core/Registry';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   alertRecipe,
   badgeRecipe,
@@ -1227,6 +1227,46 @@ registry.register({
 
 /* -- Dropzone -------------------------------------------------------------- */
 
+/** The dock, seeded. `File` does not exist during the prerender, so the fixtures are
+ *  built on mount rather than in an initialiser — which is also why this is its own
+ *  component and not three lines inside the Live block. Two settled cards and one
+ *  still in flight, which is the Uploaded and the Uploading frame in one row. */
+function DropzoneDock() {
+  const [files, setFiles] = useState<File[]>([]);
+  const [pending, setPending] = useState<File[]>([]);
+
+  useEffect(() => {
+    /* SVG rather than a stub PNG: an object URL for a one-byte .png renders as a
+       broken image, and a broken image in a specimen about thumbnails is a specimen
+       about nothing. */
+    const swatch = (stop: string) =>
+      new File(
+        [
+          `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect width="48" height="48" fill="${stop}"/></svg>`,
+        ],
+        `frame-${stop.slice(1)}.svg`,
+        { type: 'image/svg+xml' },
+      );
+    setFiles([swatch('#c9c4bf'), swatch('#a8a29c')]);
+    setPending([swatch('#8c8781')]);
+  }, []);
+
+  return (
+    <Dropzone
+      label="Storyboard frames (lg)"
+      hint="Two settled, one still in flight. `pending` is told to the zone — it uploads nothing itself."
+      accept="image/png,image/jpeg,image/svg+xml"
+      multiple
+      maxFiles={5}
+      size="lg"
+      files={files}
+      onChange={setFiles}
+      pending={pending}
+      icons={[<Glyph key="a" />, <Glyph key="b" />]}
+    />
+  );
+}
+
 registry.register({
   recipe: dropzoneRecipe,
   Preview: function DropzonePreview() {
@@ -1249,45 +1289,50 @@ registry.register({
           maxSize={5_000_000}
           required
         />
-        {/* The `lg` size, which the forced-state grid below cannot show — those are all md.
-            Dropped its own hint: with the 136px floor now on md and 180px on lg, this specimen
-            reached 1390px against the suite's 1200px ceiling, and the guard is worth more than
-            a second sentence. */}
-        <Dropzone
-          label="Reference clips (lg)"
-          accept="video/mp4,video/quicktime"
-          multiple
-          maxFiles={3}
-          maxSize={50_000_000}
-          size="lg"
-        />
+
+        {/* The chip axis, at its two ends. The Figma set runs one to four; the fan is the
+            whole mechanic and four is where it is legible, so a one and a four say it and
+            the two intermediate frames would only cost a row. The alternation belongs to
+            the ROW, not the glyph — chip two leans the other way whatever is in it. */}
+        <div className="grid gap-space-4 md:grid-cols-2">
+          <Dropzone optional title="One kind" icons={[<Glyph key="a" />]} />
+          <Dropzone
+            optional
+            title="Four kinds"
+            icons={[<Glyph key="a" />, <Glyph key="b" />, <Glyph key="c" />, <Glyph key="d" />]}
+          />
+        </div>
+
         {/* All six states from the Figma set, forced, so the two drag states can be read
             without a file in hand. Three-up rather than stacked: six full-width dropzones put
             this specimen at 1354px against the suite's 1200px ceiling, and that ceiling is what
             catches a specimen that has quietly become the whole page. */}
         <div className="grid gap-space-4 md:grid-cols-3">
-          <Dropzone forceVariant="idle" title="Default" />
-          <Dropzone forceVariant="idle" forceState="hover" title="Hover" />
-          <Dropzone disabled title="Disabled" />
-          <Dropzone forceVariant="invalid" title="Error" maxSize={50_000_000} />
-          <Dropzone forceVariant="active" title="Dragging" />
+          <Dropzone optional forceVariant="idle" accept=".jpg,.png,.webp" maxSize={50_000_000} />
+          <Dropzone
+            optional
+            forceVariant="idle"
+            forceState="hover"
+            accept=".jpg,.png,.webp"
+            maxSize={50_000_000}
+          />
+          <Dropzone optional disabled accept=".jpg,.png,.webp" maxSize={50_000_000} />
+          <Dropzone optional forceVariant="invalid" accept=".jpg,.png,.webp" maxSize={50_000_000} />
+          {/* The two drag cells render the REAL mid-drag frame — one arrow chip, one line
+              of copy, no badge and no Select — because the copy keys off the variant now
+              rather than off a live flag the grid cannot set. */}
+          <Dropzone forceVariant="active" />
           {/* Hover on Dragging — the 30% wash, where the label leaves the accent behind
               because content/brand-hover measures 3.87:1 on it. */}
-          <Dropzone forceVariant="active" forceState="hover" title="Hover on Dragging" />
+          <Dropzone forceVariant="active" forceState="hover" />
         </div>
 
-        {/* Multiple, with the thumbnail strip, the + tile and two accept-kind glyphs. Drop a
-            couple of images in to see the strip — it replaces the filename rows the first
-            version used. `disabled` is in the forced grid above, so it is not repeated here. */}
-        <Dropzone
-          label="Reference images"
-          hint="Drop a couple in — they render as thumbnails with a + tile."
-          accept="image/png,image/jpeg,image/webp"
-          multiple
-          maxFiles={4}
-          maxSize={5_000_000}
-          icons={[<Glyph key="a" />, <Glyph key="b" />]}
-        />
+        {/* The dock in both of its states at once — settled cards, one still in flight, and
+            the dashed + tile — and the `lg` size, which the forced grid above cannot show
+            because those are all md. Two specimens folded into one on purpose: separately
+            they put this Live block at 1640px against the 1200px ceiling, and neither the
+            size axis nor the dock needs a zone of its own to be read. */}
+        <DropzoneDock />
       </div>
     );
   },
