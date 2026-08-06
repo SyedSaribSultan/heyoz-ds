@@ -311,6 +311,55 @@ as failures forever, and filing them in `KNOWN` would make it permanently un-emp
 tertiary's old `KNOWN` rows transferred to `content/secondary`, at the same numbers, because
 secondary inherited the value.
 
+### H4 — A `-variant` steps in light and does nothing in dark. It is derived, not typed.
+
+Reported from the showcase: in dark, `surface/secondary-variant` was a different colour from
+`surface/secondary`, when a variant is meant to match its base there.
+
+True of all six. Light was correct throughout. Dark was the light rule **mirrored** — one rung
+darker instead of identical — so every variant in dark sat one rung off the thing it exists to
+match.
+
+| | dark was | dark now | |
+|---|---|---|---|
+| `surface/primary-variant` | `neutral/140` | `neutral/130` | `== surface/primary` |
+| `surface/secondary-variant` | `neutral/130` | `neutral/120` | `== surface/secondary` |
+| `surface/tertiary-variant` | `neutral/120` | `neutral/110` | `== surface/tertiary` |
+
+**The rule.** A variant takes the value of the role **one level up** in light, and is identical to
+its base in dark.
+
+"One level up", not "one ramp step" — the two are not the same. `surface/tertiary` is `neutral/35`
+and its variant is `neutral/20`, three ramp steps away; what makes that correct is that
+`neutral/20` **is** `surface/secondary`. The variant of a role is the role above it, and for
+primary — which has nothing above it — the top of the ramp.
+
+**Why dark does nothing.** In light, moving up the stack means closer to white, so a nested panel
+lifts off the surface under it. In dark the ladder already runs that way, because elevation *is*
+lightness there (see the surface-ladder note in `CLAUDE.md`). A dark variant that stepped again
+would lift a panel the ladder has already lifted. It double-counts, and the two rungs drift apart —
+which is what was happening.
+
+**Derived, not retyped, and that is the load-bearing part.** Copying six dark values by hand would
+have fixed today and left the rule as folklore; the next person adding `quaternary-variant` would
+mirror the light column again, exactly as this did. A loop over `SURFACE` and `FILL` in `spec.mjs`
+assigns each variant its base's dark value, so a variant **cannot** diverge in dark and a new one
+inherits the rule by being named `<base>-variant`. It throws when a variant has no base, so a typo
+is a build error rather than a silently half-applied rule. The array is copied rather than shared —
+`FILL` entries are `[base, hover, active]` and a shared reference would make an edit to one
+silently edit the other.
+
+All 24 variant tokens follow it: 6 bases and 18 states. The `-disabled` steps come out right for
+free, being derived from the base entry the loop replaced.
+
+**Consequence, intended:** in dark every `-variant` is byte-identical to its base. That is not
+redundancy to collapse. The token exists so a component can say "lift me off my surface" once and
+get the right answer in both modes — and in dark the right answer is "do nothing."
+
+No visual baseline moved, in either mode. No specimen renders a variant against its base in dark,
+which is why 75 visual tests and nine suites never saw this and a designer opening the showcase
+did.
+
 ## I. The 2026-07-31 audit
 
 The repo was audited end to end: the build re-run, every claim in these docs
