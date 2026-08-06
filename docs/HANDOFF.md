@@ -71,15 +71,23 @@ path works from the same files", which was wrong — see `docs/FIGMA-GUIDE.md`.
 | **Tokens Studio** plugin | recommended | `tokens-studio/` |
 | Figma **native** Variables import | no plugin needed | `tokens/` |
 
-`tokens-studio/` carries `$metadata.json` and `$themes.json`, so the sets, their resolution
-order and the Light/Dark themes are all wired up on import — you do not rebuild them by hand.
-It also expresses every alias as a real reference (`{solid.brand.60}`), so changing a primitive
-flows through everything that depends on it. 1045 tokens, 450 references.
+`tokens-studio/` is **one file**, `heyoz.tokens.json`, with the six sets as top-level keys and
+`$themes` / `$metadata` inline — so the sets, their resolution order and the Light/Dark themes are
+wired up on paste and you do not rebuild them by hand. The plugin cannot open a folder, which is
+why this is a bundle rather than a directory. It expresses every alias as a real reference
+(`{solid.brand.60}`), so changing a primitive flows through everything downstream.
+**1228 tokens, 450 references.**
 
 `tokens/` is DTCG-2024, where a colour's value is an object. Figma's native importer reads that;
 Tokens Studio does not.
 
-Full instructions in **`docs/FIGMA-GUIDE.md`**.
+**Read `tokens-studio/README.md` before touching Figma.** Two things silently ruin the import — a
+theme not being active, and exporting a semantic set before its primitives — and both look like
+success. That file is written from an import that went wrong four times; it has the six export
+passes, five verification checks, the four Effect Styles with exact geometry, and why scoping and
+hide-from-publishing are not the same control.
+
+Background and rationale in **`docs/FIGMA-GUIDE.md`**.
 
 ---
 

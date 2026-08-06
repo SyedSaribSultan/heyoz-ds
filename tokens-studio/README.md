@@ -4,25 +4,42 @@ Everything in one file: **`heyoz.tokens.json`**.
 
 **GENERATED — DO NOT EDIT.** Re-run `node build/build.mjs` and re-import.
 
+This walkthrough is written from an actual free-tier import that went wrong four times. Every
+warning below is a mistake somebody already made, not a hypothetical.
+
+---
+
+## The one thing that breaks everything
+
+**A theme must be ACTIVE when you hit Export.**
+
+If the Themes dropdown reads **`Theme: None`**, Tokens Studio exports each token set as **its own
+collection** — you get six collections, `HeyOz Light` and `HeyOz Dark` as two *separate*
+collections instead of two modes of one, and nothing is mode-switchable. The import looks like it
+worked. It is wrong in the one way that matters.
+
+The `group` field in `$themes` is what merges sets into a collection, and it is only read when a
+theme is active. **Check the dropdown before every single export pass.**
+
 ---
 
 ## Import it
 
-**1. Open the plugin**
+### 1. Open the plugin
 
 Figma → **Plugins → Tokens Studio for Figma**
 
-**2. Load the file**
+### 2. Load the file
 
-Top-right **JSON toggle** (`{ }`) → select all → paste the entire contents of
+Top-right **JSON toggle** (`{ }`) → select all in the editor → paste the **entire** contents of
 `heyoz.tokens.json` → **Save**.
 
 You should now see **6 token sets** in the left panel and **6 themes** under the Themes tab.
 
-> If pasting only loads one set, the file was truncated — paste the whole thing, including the
-> `$themes` and `$metadata` blocks at the bottom.
+> Only one set appeared? The paste was truncated. The file must include the `$themes` and
+> `$metadata` blocks at the very bottom — those are what create the themes.
 
-**3. Set the export options**
+### 3. Set the export options
 
 Hit **Export** and match this exactly:
 
@@ -30,24 +47,49 @@ Hit **Export** and match this exactly:
 |---|---|
 | **Variables** | Color ✓ · Number ✓ · String ✓ · Boolean — doesn't matter |
 | **Styles** | **all unticked** — Typography ✗ · Color ✗ · Effects ✗ · Gradients ✗ |
-| **Toggles** | *Update existing style and variable names* → **ON**. Everything else **OFF**. |
+| *Update existing style and variable names* | **ON** |
+| *Remove unconnected variables* | **OFF** |
+| everything else | **OFF** |
 
-**Styles stay off.** This system binds **variables** to text layers, not text styles — so there
-are no composite typography tokens in the file and nothing for that box to build. Ticking it
-would create nothing while implying styles exist.
+**Why Styles stays off.** This system binds **variables** to text layers, not text styles. There
+are no composite typography tokens in the file, so that checkbox would build nothing while
+implying styles exist. See *Styling text*.
 
-Leave *Remove unconnected variables* **OFF** unless this file is the only thing in your Figma
-file.
+**Why *Remove unconnected variables* stays off.** It deletes any variable in the file that this
+export doesn't touch. On a 6-pass export, pass 2 would delete everything pass 1 just made.
 
-**4. Export**
+### 4. Export — six passes, in this order
 
-**Themes** tab → **Select All** (all 6) → **Export to Figma**.
+**Free tier has no *Select All*.** That is a Pro feature. You export **one theme at a time, six
+times.** This is normal and takes about a minute.
+
+Work **top to bottom** down the Themes list. The order is not cosmetic — a colour in
+`Colors & Elevations` aliases a primitive, and Figma can only create that alias if the primitive
+collection **already exists**. Export a semantic set before its primitives and you get raw hexes
+with no alias, silently.
+
+| # | Theme | Collection it lands in |
+|---|---|---|
+| 1 | `_Colors Primitives` | `_Colors Primitives` |
+| 2 | `_Number Primitives` | `_Number Primitives` |
+| 3 | `Numbers Tokens` | `Numbers Tokens` |
+| 4 | `Typography Tokens` | `Typography Tokens` |
+| 5 | `HeyOz Light` | `Colors & Elevations Tokens` — mode 1 |
+| 6 | `HeyOz Dark` | `Colors & Elevations Tokens` — mode 2 |
+
+For each pass: **select the theme so it is active** → **Export to Figma**. Re-check the dropdown
+every time; it can reset between passes.
+
+Passes 5 and 6 both carry `group: "Colors & Elevations Tokens"`, which is what makes them two
+modes of one collection rather than two collections.
 
 ---
 
-## What you should end up with
+## Verify it — five checks
 
-**5 collections:**
+Do these in the Variables editor. If any fails, the fix is below it.
+
+**1. Exactly 5 collections, not 6.**
 
 | Collection | Modes | Tokens |
 |---|---|---|
@@ -57,15 +99,33 @@ file.
 | `Typography Tokens` | Mode 1 | 64 |
 | `Colors & Elevations Tokens` | **HeyOz Light**, **HeyOz Dark** | 208 each |
 
-**No text styles** — by design. See *Styling text* below.
+*Got 6, with Light and Dark separate?* A theme wasn't active. Delete both, re-do passes 5 and 6
+with the theme selected.
 
-### Check three things
+**2. `Colors & Elevations Tokens` has two modes — and no third one called `Mode 1`.**
 
-1. A colour in `Colors & Elevations Tokens` shows an **alias** — `fill/brand → solid/brand/60`
-   — not a raw hex. Same for `Numbers Tokens` → `_Number Primitives`.
-2. `Colors & Elevations Tokens` has **two modes**, not two collections.
-3. `Typography Tokens → font-size → display-lg` reads **64** — a number, not a `clamp()` string.
-   And `line-height → display-lg` reads **68**, not 1.0625.
+A stray `Mode 1` in that collection is the fossil of an export that ran with no theme active.
+**Delete `Mode 1`, keep `HeyOz Light` and `HeyOz Dark`.** Tell them apart by clicking each: the
+real ones have 208 values, the fossil is empty or partial. If Figma warns that layers are bound to
+the mode you're deleting, you deleted the wrong one — cancel and check again.
+
+**3. Semantics show aliases, not hexes.**
+
+Click `fill/brand` — it should read **`solid/brand/60`**, not `#FF3D01`. Same for
+`Numbers Tokens` → `_Number Primitives`.
+
+*Reads a raw hex?* The primitives didn't exist yet at export time. Re-run passes 5 and 6.
+
+**4. Type is numbers, not strings.**
+
+`Typography Tokens → font-size → display-lg` = **64**. `line-height → display-lg` = **68**.
+
+*Reads `clamp(40px, …, 64px)` or `1.0625`?* You're on a stale file — rebuild and re-paste.
+
+**5. Shadows kept their transparency.**
+
+`elevation/drop-shadow/large` in **HeyOz Dark** should be near-black at **90% alpha**, not 100%.
+These four are deliberately raw hex rather than aliases — see *The one exception* below.
 
 ---
 
@@ -94,43 +154,96 @@ to. Same five weights, two representations, because neither end can use the othe
 
 ## Two manual steps
 
-These can't come from the file. Both take a couple of minutes.
+Neither can come from the file.
 
-### Shadows → Effect Styles
+### A. Shadows → four Effect Styles
 
-Figma effect styles can't hold modes, so instead of baking them you bind their colour to the
-mode-aware shadow variable. For each of `shadow/small`, `shadow/medium`, `shadow/large`: create
-an Effect Style with **two Drop Shadow** layers, X = 0, Spread = 0, and bind **each layer's
-colour** to the matching variable in `Colors & Elevations Tokens → elevation/drop-shadow/*`.
+Figma effect styles can't hold modes — but an effect's **colour can bind to a variable**, and the
+shadow variables are mode-aware. So **one style per tier covers both light and dark.** That is the
+entire reason those four tokens exist as variables.
 
-The Y and Blur values are in `dist/tokens.css` — search `--oz-shadow-`.
+**Four styles, seven layers.** Not three, and the spreads are mostly **negative** — a
+spread of 0 throughout gives you a uniform blur that reads as fog instead of lift.
 
-### Hide the primitives
+| Effect Style | Layer | X | Y | Blur | Spread | Bind colour to |
+|---|---|---|---|---|---|---|
+| `Elevation/x-small` | 1 of 1 | 0 | 1 | 2 | **0** | `elevation/drop-shadow/x-small` |
+| `Elevation/small` | 1 of 2 | 0 | 1 | 3 | **0** | `elevation/drop-shadow/small` |
+| | 2 of 2 | 0 | 1 | 2 | **−1** | `elevation/drop-shadow/small` |
+| `Elevation/medium` | 1 of 2 | 0 | 4 | 6 | **−1** | `elevation/drop-shadow/medium` |
+| | 2 of 2 | 0 | 2 | 4 | **−2** | `elevation/drop-shadow/medium` |
+| `Elevation/large` | 1 of 2 | 0 | 10 | 15 | **−3** | `elevation/drop-shadow/large` |
+| | 2 of 2 | 0 | 4 | 6 | **−4** | `elevation/drop-shadow/large` |
 
-So nobody binds a raw ramp value by accident:
+All values px. Every layer is a **Drop Shadow**. Both layers of a tier bind to the **same**
+variable — the two layers differ in geometry, never in colour.
 
-Variables editor → open **`_Colors Primitives`** → select all → right-click → **Hide from
-publishing**. Repeat for **`_Number Primitives`**. Re-publish the library.
+To bind: create the effect → click the colour swatch → the **variable icon** (four dots) →
+`Colors & Elevations Tokens` → `elevation/drop-shadow/…`. Do not type the hex; a typed hex won't
+follow the mode.
 
-Aliases still resolve — the primitives just stop appearing in the picker.
+Ground truth is `dist/tokens.css` — search `--oz-elevation-` for the composed CSS these mirror.
+
+**Also there: the modal scrim.** `elevation/overlay/dimness` is the scrim fill and
+`elevation/overlay/blur` is **4** (background blur). Not an effect style — apply to the overlay
+layer directly.
+
+### B. Get the primitives out of the pickers
+
+684 primitives — 655 colours + 29 numbers — will otherwise clutter every picker and invite
+somebody to bind a raw ramp value.
+
+**Two different controls, and they do different things. You need scoping, not publishing.**
+
+| Control | What it actually does |
+|---|---|
+| **Hide from publishing** | Stops the variable reaching *other* files through the library. **Still fully visible in this file.** |
+| **Scoping** | Stops the variable appearing in a *property picker*. This is the one you want. |
+
+This is why the primitives were still showing after the first attempt: only publishing had been
+turned off.
+
+**To scope them off:** Variables editor → `_Colors Primitives` → click the first row → scroll to
+the last → **Shift-click** to select all 655 → right-click → **Scoping** (or the scope column) →
+uncheck **Show in all supported properties** and leave every individual scope unchecked. Repeat
+for `_Number Primitives`.
+
+Then also **Hide from publishing** on both, so consuming files don't see them either. Both, not
+either.
+
+Aliases keep resolving — a scoped-out variable still feeds every semantic token that references
+it. It just stops being pickable.
 
 **Bind to `Colors & Elevations Tokens`, never to `_Colors Primitives` directly.**
 
 ---
 
-## Honest caveats
+## Re-importing after a rebuild
 
-**Re-exporting reverts the two manual steps.** *Hide from publishing* and the Effect Styles live
-only in Figma, not in this file. After a future re-export, redo them.
+Token *values* change without token *names* changing — that is the normal case, and it is easy.
 
-**Five things are deliberately not here.** Four because Figma cannot hold them, and one because you do not want it:
+With **Update existing style and variable names ON**, a re-export matches by name and updates
+values in place. **Every existing binding survives.** You do not rebind anything.
+
+1. Rebuild: `node build/build.mjs`
+2. Re-paste the whole file into the JSON editor → Save
+3. Run all six passes again, in order, theme active each time
+
+**What a re-export does NOT restore:** the two manual steps. Scoping and the Effect Styles live
+only in Figma. Check them after every re-export.
+
+---
+
+## Deliberately not here
+
+Five things. Four because Figma cannot hold them, one because you do not want it.
 
 | | Why |
 |---|---|
-| **Motion** — durations, easings, springs | Figma variables are Color / Number / String / Boolean. There is no duration type and no easing type. They'd import as meaningless strings. Values are in `dist/tokens.css`. |
+| **Motion** — durations, easings, springs | Figma variables are Color / Number / String / Boolean. No duration type, no easing type. They'd import as meaningless strings. Values are in `dist/tokens.css`. |
 | **Fluid type** | A variable is one number. Display and heading ship their **desktop ceiling** in px — `display-lg` is 64, not `clamp(40px … 64px)`. Small-frame mockups need manual down-scaling. |
 | **`container/measure`** (`65ch`) | `ch` has no Figma equivalent. Code only. |
-| **Text Styles** | Not a limitation — a choice. This system binds variables to text layers, so there are no composite `typography` tokens and Styles → Typography stays unticked on export. A style would bake five properties into one object and stop step and weight being independent, which is exactly what `spec.mjs` refuses to do. |
+| **Text Styles** | Not a limitation — a choice. This system binds variables to text layers, so there are no composite `typography` tokens and Styles → Typography stays unticked. A style bakes five properties into one object and stops step and weight being independent, which is exactly what `spec.mjs` refuses to do. |
 | **Unitless line height** | The code authors leading as a ratio so it survives the fluid clamp; a Figma variable bound to a line-height field needs px. Converted here — `display-lg` is 68px, which is 1.0625 × 64. |
 
 ---
@@ -158,6 +271,8 @@ dangling one is silent: the plugin just never creates that variable.
 
 ## The one exception to the alias chain
 
-Ten elevation tokens are literal 8-digit hex, not references, on purpose. Figma discards a
-variable's local value once it's bound to an alias, and these carry alpha 0.08–0.90 — so a
-reference would import them **opaque**, turning the modal scrim into a solid black rectangle.
+Ten elevation tokens — five per mode — are literal 8-digit hex rather than references, on purpose.
+Figma discards a variable's local value once it's bound to an alias, and these carry alpha
+**0.08–0.90**, so a reference would import them **opaque**: every shadow a solid slab and the
+modal scrim a black rectangle. The build asserts an alias is only ever emitted when the alpha
+matches too, so this cannot be reintroduced.

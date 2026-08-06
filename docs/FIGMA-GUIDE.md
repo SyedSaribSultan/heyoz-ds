@@ -39,12 +39,25 @@ Full step-by-step — the export checkboxes, what to verify, and the two manual 
 ```
 Plugins → Tokens Studio → JSON toggle { } → paste the whole file → Save
 Export  → Variables: Color ✓ Number ✓ String ✓ · Styles: ALL UNTICKED
-Themes  → Select All (6) → Export to Figma
+          Update existing names ON · Remove unconnected variables OFF
+Themes  → one theme at a time, TOP TO BOTTOM, six passes
 ```
+
+**Two things that silently ruin the import, both learned the hard way:**
+
+1. **A theme must be ACTIVE on every pass.** If the dropdown reads `Theme: None`, each set exports
+   as its own collection — Light and Dark land as two *collections* instead of two modes, and
+   nothing switches. The `group` field that merges sets is only read when a theme is active.
+2. **Export order matters.** *Select All* is Pro-only, so free tier does six single passes, and a
+   semantic set exported before its primitives gets raw hexes with no alias. Go top to bottom:
+   primitives, numbers, type, then Light and Dark.
 
 You get **5 collections**, with `Colors & Elevations Tokens` carrying **HeyOz Light** and
 **HeyOz Dark** as two modes of one collection. **No text styles** — this system binds variables
 to text layers, so Styles stays off. See *Type* below.
+
+The full walkthrough — six passes, five verification checks, the four Effect Styles with their
+geometry, and scoping-vs-publishing — is in **`tokens-studio/README.md`**.
 
 ### One file, not a folder — and that is deliberate
 
