@@ -96,11 +96,17 @@ Do these in the Variables editor. If any fails, the fix is below it.
 | `_Colors Primitives` | Mode 1 | 655 |
 | `_Number Primitives` | Mode 1 | 29 |
 | `Numbers Tokens` | Mode 1 | 64 |
-| `Typography Tokens` | Mode 1 | 64 |
+| `Typography Tokens` | Mode 1 | **60** (64 in the file — see below) |
 | `Colors & Elevations Tokens` | **HeyOz Light**, **HeyOz Dark** | 208 each |
 
 *Got 6, with Light and Dark separate?* A theme wasn't active. Delete both, re-do passes 5 and 6
 with the theme selected.
+
+**`Typography Tokens` reads 60, not 64 — that is correct and not a failed import.** Four tokens
+in that set are `default-weight/{display|heading|body|label}`, which Tokens Studio types as
+`other`. Figma has no variable type for `other`, so the plugin skips them. They were only ever a
+note recording the suggested step→weight pairing; nothing references them and no component binds
+one. The 10 real weights in `fontWeights` all import. **60 is a pass.**
 
 **2. `Colors & Elevations Tokens` has two modes — and no third one called `Mode 1`.**
 

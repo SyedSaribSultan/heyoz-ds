@@ -82,7 +82,10 @@ Four things, each converted or deliberately dropped rather than shipped broken:
 
 ### What is guaranteed
 
-- Every set matches its DTCG source **token for token**: 655 / 29 / 64 / 64 / 208 / 208.
+- Every set matches its DTCG source **token for token**: 655 / 29 / 64 / 64 / 208 / 208. Figma
+  lands 60 of the 64 typography tokens — the four `default-weight/*` are Tokens Studio type
+  `other`, which has no Figma variable equivalent, so the plugin skips them. They are a note about
+  suggested pairings, referenced by nothing; 60 is a pass.
 - All **450 references** resolve. The build fails if one does not — a dangling reference is
   otherwise silent, because the plugin simply never creates that variable while `dist/` stays
   correct.
