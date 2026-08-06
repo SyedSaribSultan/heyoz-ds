@@ -656,6 +656,56 @@ const FILL = {
   ],
 };
 
+/**
+ * `-variant` is a LIGHT-ONLY device, and this loop is what makes that true rather than hoped for.
+ *
+ * THE RULE, in one line: a variant takes the value of the role ONE LEVEL UP in light, and is
+ * IDENTICAL to its base in dark.
+ *
+ * "One level up", not "one ramp step" — the two are not the same and the distinction matters.
+ * `surface/tertiary` is `neutral/35` and its variant is `neutral/20`, which is three ramp steps
+ * away; what makes it correct is that `neutral/20` is exactly `surface/secondary`. The variant
+ * of a role is the role above it:
+ *
+ *   surface/tertiary-variant   == surface/secondary   (neutral/20)
+ *   surface/secondary-variant  == surface/primary     (neutral/10)
+ *   surface/primary-variant    == the top of the ramp (neutral/white) — nothing above primary
+ *
+ * The reason is the direction of the two ladders. In light, moving up the stack means closer to
+ * white — a nested panel lifts away from the surface under it, which is what a variant is for.
+ * In dark the
+ * ladder already runs the other way, because elevation IS lightness there (see the surface
+ * ladder note in CLAUDE.md). A dark variant that stepped again would be lifting a panel that the
+ * ladder has already lifted, so it double-counts and the two rungs drift apart.
+ *
+ * It was double-counting. Every dark variant was the light rule mirrored — one step DARKER than
+ * its base — so `surface/secondary-variant` was `neutral/130` where `surface/secondary` is
+ * `neutral/120`, and a variant surface in dark was a different colour from the thing it is
+ * supposed to match. Light was correct throughout; only dark was wrong.
+ *
+ * DERIVED, NOT RETYPED. Copying six dark values by hand would have fixed today and left the rule
+ * as folklore — the next person adding `quaternary-variant` would mirror the light column again,
+ * exactly as this did. Assigning the base's dark array means a variant CANNOT diverge in dark,
+ * and a new variant gets the rule for free by being named `<base>-variant`.
+ *
+ * The dark array is copied rather than shared by reference: FILL entries are `[base, hover,
+ * active]` and a shared array would make an edit to one silently edit the other.
+ *
+ * CONSEQUENCE, and it is intended: in dark, every `-variant` token is byte-identical to its
+ * base. That is not redundancy to clean up — it is the whole point. The token exists so a
+ * component can say "lift me off my surface" once and get the right answer in both modes, which
+ * in dark is "do nothing".
+ */
+for (const map of [SURFACE, FILL]) {
+  for (const key of Object.keys(map)) {
+    if (!key.endsWith('-variant')) continue;
+    const base = key.slice(0, -'-variant'.length);
+    if (!map[base]) throw new Error(`spec: ${key} has no base token '${base}' to derive dark from`);
+    const dark = map[base][1];
+    map[key][1] = Array.isArray(dark) ? [...dark] : dark;
+  }
+}
+
 /** Translucent "soft" fills — replaces the shipped -soft tokens with a
  *  consistent alpha ladder instead of four one-off pastel hexes. */
 const FILL_SOFT = {

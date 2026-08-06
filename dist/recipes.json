@@ -1,7 +1,7 @@
 {
   "$generated": "by showcase/scripts/emit-recipes.ts — do not edit",
   "$description": "The HeyOz component contract. One entry per component: variants, states, the token each state binds per role, and the value that token resolves to in each mode. Generated from the same recipe objects the components compile from, so this cannot describe a component that does not exist.",
-  "generatedAt": "2026-08-06T11:13:28.109Z",
+  "generatedAt": "2026-08-06T11:30:39.487Z",
   "components": [
     {
       "id": "button",
@@ -5100,8 +5100,8 @@
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#0E0C0B",
-                      "primitive": "solid/neutral/140",
+                      "value": "#151312",
+                      "primitive": "solid/neutral/130",
                       "alpha": 1
                     }
                   },
@@ -5141,8 +5141,8 @@
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#0E0C0B",
-                      "primitive": "solid/neutral/140",
+                      "value": "#151312",
+                      "primitive": "solid/neutral/130",
                       "alpha": 1
                     }
                   },
@@ -12679,8 +12679,8 @@
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#0E0C0B",
-                      "primitive": "solid/neutral/140",
+                      "value": "#151312",
+                      "primitive": "solid/neutral/130",
                       "alpha": 1
                     }
                   },
@@ -12720,8 +12720,8 @@
                       "alpha": 1
                     },
                     "dark": {
-                      "value": "#0E0C0B",
-                      "primitive": "solid/neutral/140",
+                      "value": "#151312",
+                      "primitive": "solid/neutral/130",
                       "alpha": 1
                     }
                   },

@@ -1,11 +1,11 @@
 {
   "$generated": "GENERATED FILE — DO NOT EDIT. Overwritten by `node build/build.mjs`. Change build/spec.mjs or build/palette.mjs and rebuild. See CLAUDE.md.",
-  "generatedAt": "2026-08-06T11:22:13.127Z",
+  "generatedAt": "2026-08-06T11:25:59.955Z",
   "sources": {
     "build/palette.mjs": 1785930559895.844,
     "build/motion.mjs": 1785509597309.4634,
     "build/layout.mjs": 1785739856175.4363,
-    "build/spec.mjs": 1786014215743.4558,
+    "build/spec.mjs": 1786015559833.3152,
     "build/build.mjs": 1785945160730.952
   },
   "namespace": "oz",
@@ -14,7 +14,7 @@
     "numberPrimitives": 29,
     "semanticPerMode": 202,
     "typeSteps": 15,
-    "unusedPrimitives": 505
+    "unusedPrimitives": 506
   },
   "contrast": [
     {
@@ -3485,9 +3485,9 @@
       "target": "solid/neutral/130"
     },
     "color/surface/primary-variant": {
-      "hex": "#0E0C0B",
+      "hex": "#151312",
       "alpha": 1,
-      "target": "solid/neutral/140"
+      "target": "solid/neutral/130"
     },
     "color/surface/secondary": {
       "hex": "#211F1D",
@@ -3495,9 +3495,9 @@
       "target": "solid/neutral/120"
     },
     "color/surface/secondary-variant": {
-      "hex": "#151312",
+      "hex": "#211F1D",
       "alpha": 1,
-      "target": "solid/neutral/130"
+      "target": "solid/neutral/120"
     },
     "color/surface/tertiary": {
       "hex": "#2E2C2B",
@@ -3505,9 +3505,9 @@
       "target": "solid/neutral/110"
     },
     "color/surface/tertiary-variant": {
-      "hex": "#211F1D",
+      "hex": "#2E2C2B",
       "alpha": 1,
-      "target": "solid/neutral/120"
+      "target": "solid/neutral/110"
     },
     "color/surface/elevated": {
       "hex": "#393735",
@@ -3600,24 +3600,24 @@
       "target": "opacity-50/neutral/130"
     },
     "color/fill/primary-variant": {
-      "hex": "#0E0C0B",
-      "alpha": 1,
-      "target": "solid/neutral/140"
-    },
-    "color/fill/primary-variant-hover": {
       "hex": "#151312",
       "alpha": 1,
       "target": "solid/neutral/130"
     },
-    "color/fill/primary-variant-active": {
+    "color/fill/primary-variant-hover": {
       "hex": "#211F1D",
       "alpha": 1,
       "target": "solid/neutral/120"
     },
+    "color/fill/primary-variant-active": {
+      "hex": "#2E2C2B",
+      "alpha": 1,
+      "target": "solid/neutral/110"
+    },
     "color/fill/primary-variant-disabled": {
-      "hex": "#0E0C0B",
+      "hex": "#151312",
       "alpha": 0.5,
-      "target": "opacity-50/neutral/140"
+      "target": "opacity-50/neutral/130"
     },
     "color/fill/secondary": {
       "hex": "#211F1D",
@@ -3640,24 +3640,24 @@
       "target": "opacity-50/neutral/120"
     },
     "color/fill/secondary-variant": {
-      "hex": "#151312",
-      "alpha": 1,
-      "target": "solid/neutral/130"
-    },
-    "color/fill/secondary-variant-hover": {
       "hex": "#211F1D",
       "alpha": 1,
       "target": "solid/neutral/120"
     },
-    "color/fill/secondary-variant-active": {
+    "color/fill/secondary-variant-hover": {
       "hex": "#2E2C2B",
       "alpha": 1,
       "target": "solid/neutral/110"
     },
+    "color/fill/secondary-variant-active": {
+      "hex": "#444241",
+      "alpha": 1,
+      "target": "solid/neutral/100"
+    },
     "color/fill/secondary-variant-disabled": {
-      "hex": "#151312",
+      "hex": "#211F1D",
       "alpha": 0.5,
-      "target": "opacity-50/neutral/130"
+      "target": "opacity-50/neutral/120"
     },
     "color/fill/tertiary": {
       "hex": "#2E2C2B",
@@ -3680,24 +3680,24 @@
       "target": "opacity-50/neutral/110"
     },
     "color/fill/tertiary-variant": {
-      "hex": "#211F1D",
-      "alpha": 1,
-      "target": "solid/neutral/120"
-    },
-    "color/fill/tertiary-variant-hover": {
       "hex": "#2E2C2B",
       "alpha": 1,
       "target": "solid/neutral/110"
     },
-    "color/fill/tertiary-variant-active": {
+    "color/fill/tertiary-variant-hover": {
       "hex": "#444241",
       "alpha": 1,
       "target": "solid/neutral/100"
     },
+    "color/fill/tertiary-variant-active": {
+      "hex": "#5F5D5C",
+      "alpha": 1,
+      "target": "solid/neutral/90"
+    },
     "color/fill/tertiary-variant-disabled": {
-      "hex": "#211F1D",
+      "hex": "#2E2C2B",
       "alpha": 0.5,
-      "target": "opacity-50/neutral/120"
+      "target": "opacity-50/neutral/110"
     },
     "color/fill/elevated": {
       "hex": "#211F1D",
