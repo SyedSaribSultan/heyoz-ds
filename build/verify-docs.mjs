@@ -209,6 +209,41 @@ const CLAIMS = [
     re: /\| \d+ of (\d+) primitives unused \|/,
     want: truth.colorPrimitives,
   },
+  /* The DEV-GUIDE "Regenerating" paragraph. This one read "188 gates across five
+   * families — contrast 118, APCA 30, visibility 12" long after motion, ladder and
+   * layout had landed, and it is the paragraph a developer wiring CI reads. Every
+   * family is asserted individually: a total alone would stay green while two families
+   * moved in opposite directions. */
+  {
+    file: 'docs/DEV-GUIDE.md',
+    what: 'CI paragraph — gate total',
+    re: /(\d+) gates across \w+ families/,
+    want: truth.gates,
+  },
+  /* Anchored to the one sentence, with every family in a single regex. Eight separate
+   * `contrast (\d+)`-style patterns would each match the first coincidence anywhere in
+   * the file, which is a gate that looks specific and is not. */
+  ...['contrast', 'apca', 'visibility', 'elevation', 'greyscale', 'ladder', 'motion', 'layout'].map(
+    (kind, i) => ({
+      file: 'docs/DEV-GUIDE.md',
+      what: `CI paragraph — ${kind} family`,
+      re: new RegExp(
+        'gates across \\w+ families — ' +
+          'contrast (\\d+), APCA (\\d+), visibility (\\d+), elevation (\\d+),\\s+' +
+          'greyscale (\\d+), surface ladder (\\d+), motion (\\d+), layout (\\d+)',
+      ),
+      group: i + 1,
+      want: audit.contrast.filter((r) => r.kind === kind).length,
+    }),
+  ),
+  {
+    file: 'docs/DEV-GUIDE.md',
+    what: 'install note — bridge variable count',
+    /* \s+ not a space: the sentence wraps, and a doc gate that depends on where a line
+     * happens to break is a gate that fails on a reflow. */
+    re: /`--muted` and the other (\d+)\s+variables/,
+    want: Object.keys(audit.bridge).length - 3,
+  },
 ];
 
 /* -- run -------------------------------------------------------------------- */
@@ -230,8 +265,9 @@ for (const c of CLAIMS) {
     );
     continue;
   }
-  if (Number(m[1]) !== c.want) {
-    FAIL.push(`${c.file} — ${c.what}: reads ${m[1]}, build says ${c.want}`);
+  const got = m[c.group ?? 1];
+  if (Number(got) !== c.want) {
+    FAIL.push(`${c.file} — ${c.what}: reads ${got}, build says ${c.want}`);
   }
 }
 

@@ -223,9 +223,15 @@ CI-friendly: exits non-zero on any gate regression, unresolvable alias, token
 collision, or literal above tier 1. Worth wiring into the pipeline so a colour
 change cannot ship a contrast failure.
 
-188 gates across five families — contrast 118, APCA 30, visibility 12, elevation 8,
-greyscale 20. `reports/audit.json` carries every individual result with its
-computed value, so CI can diff them rather than just checking the exit code.
+256 gates across eight families — contrast 129, APCA 33, visibility 16, elevation 8,
+greyscale 20, surface ladder 4, motion 22, layout 24. `reports/audit.json` carries
+every individual result with its computed value, so CI can diff them rather than just
+checking the exit code.
+
+Add `node build/verify-docs.mjs` beside it in CI. It checks the figures quoted in these
+docs against that audit, including the paragraph you are reading — this one said "188
+gates across five families" for months after the motion, ladder and layout families
+landed.
 
 The one thing the build cannot check is whether a role that *should* have a gate
 has one. Every bug found in the 2026-07-31 audit was of that shape: the gates that
