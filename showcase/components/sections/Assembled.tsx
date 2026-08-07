@@ -313,6 +313,32 @@ export function Assembled({ index }: { index: string }) {
           </div>
         </div>
       </Stage>
+
+      {/* The two full-bleed routes.
+       *
+       * They existed for weeks reachable only by typing the URL: nothing linked them and
+       * `app/sitemap.ts` did not list them, so the only two screens that answer "can this
+       * system lay out a whole product" were the two screens nobody found. They are not in
+       * the header toggle because that control picks a VIEW of the system — reference or
+       * audit — and these are specimens, which is what this section is for. */}
+      <p className="mt-space-6 text-body-sm text-content-secondary">
+        This screen is a dashboard inside a Stage, on a page whose own chrome competes with
+        it. Two routes drop that frame:{' '}
+        <a
+          href="/studio"
+          className="rounded-2 font-medium text-content-link underline decoration-from-font underline-offset-2 hover:text-content-link-hover focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
+        >
+          /studio
+        </a>{' '}
+        is the product at rest, and{' '}
+        <a
+          href="/static-ads"
+          className="rounded-2 font-medium text-content-link underline decoration-from-font underline-offset-2 hover:text-content-link-hover focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
+        >
+          /static-ads
+        </a>{' '}
+        is the product being used — nine nested controls on a saturated gradient ground.
+      </p>
     </Section>
   );
 }

@@ -13,53 +13,79 @@ Expect `OK — no errors.` If anything fails it prints the exact token and the
 exact ratio. Fix it in `build/spec.mjs` and re-run. Never edit `tokens/` or
 `dist/` — they get overwritten.
 
-## Step 2 — open the rig
+## Step 2 — run the component checks, then the showcase
 
-Open `test/index.html` by double-clicking it. Twelve sections, a light/dark
-toggle, and two stress switches. It renders the real generated CSS, so what you
-see is what ships.
+The build in step 1 gates the *tokens*. Seven more checks gate the layer above it —
+the recipes that actually bind those tokens to components — and the build cannot
+see any of them:
 
-**It needs the network for the fonts, and only for the fonts.** Bricolage Grotesque
-and Geist come from Google Fonts; everything else — every colour, every gate
-result, the whole audit payload — is inlined and works offline. If the fonts fail
-to load the rig now says so in a red banner at the top, because otherwise you would
-be reviewing the fallback stack and would have no way to know. That matters
-specifically for section 06 and for the "does Bricolage hold at 18px" question
-below: colour and spacing stay trustworthy offline, type does not.
+```bash
+cd showcase
+npm install
+npm run verify
+```
 
-The two stress toggles are the ones that find real problems:
+That runs typecheck, `verify:primitives`, `:contrast`, `:composite`, `:motion`,
+`:borders`, `:coverage`, a production `next build`, and `:classes`, in that order,
+stopping at the first failure. Expect every one to print `OK`. It takes a few
+minutes, and the `next build` in the middle is not optional — `verify:classes`
+reads the compiled stylesheet and the prerendered HTML.
 
-- **No borders** strips every border and shadow. If the layout falls apart, the
-  design is border-dependent rather than fill-dependent. That was the core
-  finding on the current dark theme — page, sidebar and card sat within 4.4 L*
-  of each other and a single 1px line was carrying the whole layout.
-- **Greyscale** removes hue. Any two chart series that become indistinguishable
-  are inaccessible to a chunk of your users. This is now also a build gate — a
-  ΔL floor of 0.05 between every pair of series, in both modes, 20 pairs. It used
-  to be a warning conditioned on `ΔL < 0.03 AND contrast < 1.08`, two thresholds
-  ANDed so tightly that the pairs which were genuinely too close could not trip
-  it. Trust the toggle, but the build should catch it first now.
+Then look at it:
 
-## Step 3 — the four sections that decide it
+```bash
+npm start          # the build you just made, on :3000
+```
 
-**05 Text on coloured fill.** The one change your CTO will notice — or rather, the
-one they will be told about by a scanner. Shipped white on the left, `content/on-*`
-on the right, at 14px on the real fill. Both are white; the change is that these
-pairs are now gated on APCA Lc 60 rather than WCAG 4.5:1, and that all fifteen
-fill states are gated rather than just the five bases. Read H1 in DECISIONS.md
-before this meeting, because the question you will be asked is "why does axe flag
-our buttons" and the answer is a paragraph, not a number.
+There is no standalone HTML rig any more. `test/index.html` used to open by
+double-click with no server and no npm, which was genuinely useful and is the one
+thing lost here; it is archived in `archive/` with instructions to restore it. It
+went because it could only ever render the *token* gates, and by the end that was
+under half the story.
 
-**02 What actually changes in production.** Every shadcn variable, shipped hex
-next to generated hex, with OKLab ΔE. Anything under ~2.0 is invisible to the
-eye. This is the table that answers "how risky is this."
+Four routes, and each answers a different question:
 
-**03 Surface ladder.** Perceptual lightness of every stacked surface and the step
-between them. Steps under 1.5 L* are flagged — that is the flatness problem.
+| Route | What it is for |
+|---|---|
+| `/` | the reference — every primitive, every component, every state |
+| `/verify` | the audit — every gate result, rendered from `reports/audit.json` |
+| `/studio` | the product at rest, full-bleed, no showcase chrome |
+| `/static-ads` | the product being used — nine nested controls on a gradient |
 
-**11 Assembled product.** A real slice of HeyOz — sidebar, cards, prompt box,
-alerts, table, skeleton, empty state. Screenshot this in both modes. It is the
-single most persuasive artifact for a design review.
+Every page has a light/dark/system control in the header, and the header warns you
+if the build it is rendering is older than the sources it came from.
+
+## Step 3 — the five things that decide it
+
+**`/verify` → APCA.** The one change a scanner will complain about. `content/on-*`
+on the real fill, gated on APCA Lc 60 rather than WCAG 4.5:1, across all fifteen
+fill states rather than just the five bases. Read H1 in DECISIONS.md before the
+meeting, because the question you will be asked is "why does axe flag our buttons"
+and the answer is a paragraph, not a number.
+
+**`/verify` → Surface ladder.** Perceptual lightness of every stacked surface and
+the step between them. In dark mode this ladder *is* the elevation signal, so a
+flat rung is the flatness problem made measurable.
+
+**`/verify` → Component-layer checks.** The seven suites from step 2, with their
+counts and their exemptions, beside the token gates. This is the section that shows
+the checks are not marking their own homework: `composite` records eighteen known-bad
+pairings it does *not* enforce, and says so.
+
+**`/` → Charts & gradients.** The five series in colour, and immediately below, the
+same five desaturated. If two are indistinguishable in the second row they are
+inaccessible to a chunk of your users. This is also a build gate now — a ΔL floor
+between every pair, both modes — but the rendered version is the one that convinces
+a room.
+
+**`/studio` and `/static-ads`.** Screenshot both, in both modes. A dashboard in a
+bordered box on a page with competing chrome can only argue so much; these are
+full-bleed and they are the most persuasive artifact you have.
+
+For the risk question — "how much actually changes in production" — the answer is
+not a screenshot. `build/shipped.mjs` holds the pre-migration values and
+`dist/shadcn-bridge.css` holds what replaces them, variable for variable. Three of
+those changes are silent bug fixes and the bridge header names them.
 
 ## Step 4 — check the palette against reality
 
@@ -98,9 +124,13 @@ primary buttons, and hovered rows stop matching muted surfaces.
 
 ## Step 6 — what to bring to the review
 
-- `test/index.html` (it is self-contained — email it)
-- screenshots of section 11, light and dark
-- section 02, for the risk question
+- a deployed URL for the showcase, or `npm run build && npm start` on a laptop you
+  can turn round. It is a static Next export with no backend — `showcase/vercel.json`
+  already runs the token build before `next build`, so a deploy cannot serve a page
+  that disagrees with the tokens under it
+- screenshots of `/studio` and `/static-ads`, light and dark
+- `/verify`, open, for the "is any of this actually checked" question
+- `build/shipped.mjs` beside `dist/shadcn-bridge.css`, for the risk question
 - `docs/DECISIONS.md`, for "why is this different from what we have"
 
 ## Known trade-offs, stated up front
@@ -114,7 +144,7 @@ Better to raise these yourself than have them raised at you.
 | Disabled status buttons are grey, not faded orange | Fading fill and label independently left the label at 1.43:1. DECISIONS.md I5 |
 | `warning` and `info` shift | CSS and Figma disagreed; the Figma set was chosen because all three status hues sit at one lightness |
 | Dark borders get noticeably lighter | They were invisible — `--border` and `--card` were the same value |
-| 504 of 655 primitives unused | The alpha grid is generated, not curated. Costs nothing and means every future token already has a target |
+| 511 of 665 primitives unused | The alpha grid is generated, not curated. Costs nothing and means every future token already has a target |
 | Dark shadows are much stronger than before | They moved the page by ΔL 0.009–0.024 where light moved it 0.027–0.066, so the dark `large` shadow was weaker than the light `x-small` |
 | `content/tertiary` is darker | It was gated against the page only, and failed 4.5:1 on all three card surfaces — 3.07:1 at worst |
 | Ordinal spacing (`space-5` = 16px) | Matches both reference systems; the `--oz-` namespace prevents any Tailwind collision |

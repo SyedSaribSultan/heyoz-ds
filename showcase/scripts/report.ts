@@ -17,6 +17,32 @@ import { dirname } from 'node:path';
 
 const PATH = 'reports/showcase-verify.json';
 
+/**
+ * The suites that exist. A row for anything else is deleted on the next write.
+ *
+ * WHY THIS LIST EXISTS: `report()` replaces by name and never used to prune, so a
+ * RETIRED script's row survived forever. `glow` was retired when `/ai-ugc` was deleted
+ * and its last run sat in this file for weeks afterwards, `ok: true`, rendered by
+ * /verify as a seventh live suite with a blurb describing a route that no longer
+ * exists. A reviewer counting green checks was counting one that could not have run.
+ *
+ * The file is gitignored, so a fresh clone never saw it — which is exactly why it went
+ * unnoticed. Only a machine that had run verify before the retirement carried the ghost.
+ *
+ * Adding a suite means adding it here, which is the same one-line tax `ComponentGroup`
+ * and `borderJob` charge, and for the same reason: the alternative is a set that grows
+ * silently and never shrinks.
+ */
+const LIVE_SUITES = new Set([
+  'borders',
+  'classes',
+  'composite',
+  'contrast',
+  'coverage',
+  'motion',
+  'primitives',
+]);
+
 export type SuiteResult = {
   suite: string;
   /** What it measures, in one line, for the page. */
@@ -39,6 +65,12 @@ type File = { suites: SuiteResult[] };
  * so the file accumulates all six across one pass.
  */
 export function report(r: Omit<SuiteResult, 'at'>): void {
+  if (!LIVE_SUITES.has(r.suite)) {
+    throw new Error(
+      `report(): '${r.suite}' is not in LIVE_SUITES. Add it there when you add a suite, ` +
+        `so the pruning below cannot silently drop it.`,
+    );
+  }
   mkdirSync(dirname(PATH), { recursive: true });
 
   let file: File = { suites: [] };
@@ -53,7 +85,7 @@ export function report(r: Omit<SuiteResult, 'at'>): void {
   }
 
   file.suites = [
-    ...file.suites.filter((s) => s.suite !== r.suite),
+    ...file.suites.filter((s) => s.suite !== r.suite && LIVE_SUITES.has(s.suite)),
     { ...r, at: new Date().toISOString() },
   ].sort((a, b) => a.suite.localeCompare(b.suite));
 

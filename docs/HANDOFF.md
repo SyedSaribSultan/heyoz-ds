@@ -93,10 +93,10 @@ Background and rationale in **`docs/FIGMA-GUIDE.md`**.
 
 ## What is finished
 
-**The token layer.** 655 colour primitives, 202 semantic tokens per mode, both modes from one
+**The token layer.** 665 colour primitives, 202 semantic tokens per mode, both modes from one
 declaration so they cannot drift. Colours authored in OKLCH and computed — no hex is ever
 hand-typed above tier 1. Springs authored as `{ settle, bounce }` and computed into CSS
-`linear()` curves. 246 gates.
+`linear()` curves. 256 gates.
 
 **The component layer.** 34 components in seven families:
 

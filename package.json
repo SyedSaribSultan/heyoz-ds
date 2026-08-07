@@ -8,10 +8,12 @@
   "engines": {
     "node": ">=18"
   },
+  "//verify:docs": "Figures written in prose, checked against the build that produced them. CLAUDE.md rule 5 said 'verify numbers, do not restate them' and nothing enforced it; a single sweep found six wrong figures across four docs, including the Figma token table that had already been wrong twice and carried a note saying so. A note is not a gate. Kept OUT of build.mjs on purpose: the docs it reads are written against the build's OUTPUT, so it has to run after, and 'the one command' stays the token build.",
   "scripts": {
     "build": "node build/build.mjs",
-    "test": "node build/build.mjs",
-    "verify": "node build/build.mjs"
+    "test": "node build/build.mjs && node build/verify-docs.mjs",
+    "verify": "node build/build.mjs && node build/verify-docs.mjs",
+    "verify:docs": "node build/verify-docs.mjs"
   },
   "files": [
     "build",

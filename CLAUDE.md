@@ -20,13 +20,19 @@ tokens-studio/ GENERATED  the same map in Tokens Studio's format — the PLUGIN 
 dist/          GENERATED  CSS + Tailwind preset + layout.css
 reports/       GENERATED  audit data, rendered by showcase /verify
 archive/  retired, wired to nothing — read archive/README.md first
-showcase/ the living reference. Two routes: / and /verify
+showcase/ the living reference. Four fixed routes, plus one page per recipe
 ```
+
+The four are `/` (the reference), `/verify` (the audit), `/studio` (the product at
+rest) and `/static-ads` (the product being used); `/c/<component>` is generated from
+`allRecipes`, so its count is never written down — `app/sitemap.ts` derives the URL
+set from the same list that creates the pages. Each route's own header comment says
+why it exists and what it tests that the others cannot.
 
 `test/index.html` is gone. It rendered the same `reports/audit.json` the `/verify`
 route now renders, and it could only ever show the *token* gates — the seven checks
-that live at the component layer (`verify:primitives`, `:contrast`, `:motion`,
-`:borders`, `:coverage`, `:glow`, `:classes`) were invisible to it. The last copy and its
+that live at the component layer (`verify:primitives`, `:contrast`, `:composite`,
+`:motion`, `:borders`, `:coverage`, `:classes`) were invisible to it. The last copy and its
 template are in `archive/`, with the full argument and the instructions to restore
 it.
 
@@ -77,11 +83,14 @@ row). `separation` and `elevation` are build errors — separation is a surface 
 space, elevation is shadow in light and surface lightness in dark. Declare
 `borderJob` on the variant; `verify:borders` sweeps every recipe and fails on an
 undeclared border, an illegal job, and a stale declaration on a variant that no
-longer binds one. This is why the count fell from 34 bindings to 21: almost all of
-them were separation, and separation had a cheaper answer the whole time. Do not
-restate the live count here — run `verify:borders`, which prints it. This sentence
-read "to 19" for months; 19 was a figure `docs/DECISIONS.md` B20 had already
-retracted, and the retraction never made it across.
+longer binds one. Introducing it cut the bindings by roughly a third at a stroke:
+almost all of them were separation, and separation had a cheaper answer the whole
+time. **Do not write the count here.** Run `verify:borders` — it prints the live
+variant and binding totals and the affordance/state split. This sentence has now
+carried a wrong numeral twice: it read "to 19" for months, which `docs/DECISIONS.md`
+B20 had already retracted, and it then read "to 21" well after the real figure had
+grown past it. A count in this file is a fact with an expiry date and nothing in the
+build checks it.
 
 **2. Never hand-type a colour above tier 1.** Every semantic token names a
 primitive path like `solid/brand/60` or `opacity-15/neutral/20`. The build fails on
@@ -125,10 +134,21 @@ is 6.08:1 over the page and 3.55:1 over a dialog.
 
 `verify:contrast` **cannot see any of this** — it measures a foreground token against a
 background *token*, skips any binding with no `bg`, and flattens alpha over the page.
-`verify:composite` is the gate that does, across 276 pairings; the 18 that fail today are
-recorded in it with their measured values and argued in `docs/DECISIONS.md` §G. Do not add
+`verify:composite` is the gate that does — run it for the live pairing count and the
+current `KNOWN` total, both of which it prints. The outstanding failures are recorded in
+it with their measured values and argued in `docs/DECISIONS.md` §G. Do not add
 a new one to `KNOWN` to make the build pass — that list is a ratchet, and it fails on a new
 failure, on a regression, and on an entry that has been fixed but left listed.
+
+`KNOWN` has a sibling, `BY_DESIGN`, and they mean opposite things. `KNOWN` is the
+ratchet: every entry is a defect somebody intends to fix, and the gate fails when one is
+fixed-but-listed so the list cannot rot. `BY_DESIGN` is for tokens whose sub-floor value
+*is* the decision — `content/brand` is the brand hex and is gated on APCA per H1;
+`content/tertiary` is a large-text role gated at 3.0 — and those will read as failures
+forever. Filing them in `KNOWN` would make it permanently un-emptiable and quietly
+redefine it from "outstanding" to "whatever we have". `BY_DESIGN` self-cleans too: it
+fails on an entry whose token no longer fails anywhere, because that means the decision
+was reverted.
 
 **5. Verify numbers, do not restate them.** If you write a ratio in a comment or a
 doc, compute it first. Several previously-shipped figures were wrong, including one
@@ -228,8 +248,11 @@ treated as load-bearing rather than decorative. `docs/DECISIONS.md` keeps the or
 finding — `content/brand` at 4.39:1 over the old hero glow, with all eight suites green
 — because that is why the accent roles are where they are.
 
-**492+ of the colour primitives are unused.** The alpha grid is generated, not
-curated. Decision D7.
+**Most of the colour primitives are unused.** The alpha grid is generated, not
+curated, so roughly three quarters of it has no consumer and that costs nothing —
+every future token already has a target. `reports/audit.json` carries the exact
+`colorPrimitives` and `unusedPrimitives` counts; read them there rather than from a
+numeral in this file. Decision D7.
 
 **`dist/tokens.css` emits the light block twice.** Once in `:root`, once in
 `.light` for scoped light islands. Both come from one map in one pass, so they

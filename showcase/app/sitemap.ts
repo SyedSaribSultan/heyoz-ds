@@ -9,8 +9,8 @@ import { baseUrl } from '@/lib/core/site';
 /* ---------------------------------------------------------------------------
  * Every route, listed once, derived from the same list that creates them.
  *
- * There are two fixed routes and one per recipe, and the count is not written down
- * here for the reason ComponentPage.tsx gives at length: a numeral in a comment about
+ * There are four fixed routes and one per recipe, and the recipe count is not written
+ * down here for the reason ComponentPage.tsx gives at length: a numeral in a comment about
  * a generated list is a fact with an expiry date and nothing in the build checks it.
  * `allRecipes` is what app/c/[component]/page.tsx passes to `generateStaticParams`, so
  * the set of URLs below and the set of pages that exist are the same set by
@@ -46,6 +46,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: `${baseUrl}/`, lastModified },
     { url: `${baseUrl}/verify`, lastModified },
+    /* /studio and /static-ads were missing here until the routes had already shipped, so
+     * the two screens that make the strongest case for the system were the two absent
+     * from the index — and the header comment above claimed every route was listed once
+     * while it was untrue. There is no generated list to derive the fixed routes from the
+     * way `allRecipes` derives the component pages, so this is the one place they are
+     * enumerated by hand; `scripts/verify-routes.mjs` diffs it against app/ and fails on a
+     * route that exists but is not listed. */
+    { url: `${baseUrl}/studio`, lastModified },
+    { url: `${baseUrl}/static-ads`, lastModified },
     ...allRecipes.map((recipe) => ({
       url: `${baseUrl}/c/${recipe.meta.id}`,
       lastModified,

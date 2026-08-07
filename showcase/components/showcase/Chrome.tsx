@@ -17,12 +17,24 @@ import { useTheme, type ThemePreference } from './ThemeProvider';
  *  component page it lists sibling pages. */
 export type NavItem = { id: string; label: string; href?: string };
 
-/** The two routes, and the one control that switches between them.
+/** The two VIEWS of the system, and the one control that switches between them.
  *
  *  Real links rather than a client-side toggle, so each is addressable, opens in a
  *  new tab, and can be sent to somebody. That is also the fix for a gap this page
  *  had from the start: nothing about its state was linkable, so "this looks wrong"
- *  could never be a URL. */
+ *  could never be a URL.
+ *
+ *  WHY /studio AND /static-ads ARE NOT HERE. There are four fixed routes, not two, and
+ *  this control deliberately carries two of them. It answers "which view of the system
+ *  am I looking at" — the reference or the audit — and those two are the same content
+ *  seen two ways. The other two are specimens: whole product screens that the system is
+ *  used to build. Putting all four in one pill row would conflate the question with its
+ *  answer, and would crowd a header that already holds three colour-mode buttons and a
+ *  stale-build warning at 320px.
+ *
+ *  They are linked from the Assembled section instead, which is where the argument they
+ *  continue is made, and `scripts/verify-routes.mjs` fails if that link disappears —
+ *  they spent their first weeks reachable only by typing the URL. */
 const ROUTES = [
   { href: '/', key: 'design', label: 'Design system' },
   { href: '/verify', key: 'verify', label: 'Verification' },

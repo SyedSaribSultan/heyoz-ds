@@ -452,14 +452,28 @@ console.log(
   `\n${findings.length} composited pairings measured · ${passed} clear ${FLOOR}:1 · ${below.length} below\n`,
 );
 
+/* The status column must agree with the verdict at the bottom. It did not: it consulted
+ * KNOWN only, so every BY_DESIGN row printed as 'NEW' — the same word the hard-fail path
+ * uses — and the run ended 'OK' underneath fifty of them. Anyone reading the output saw
+ * fifty new failures being waved through. BY_DESIGN is checked FIRST here for the same
+ * reason the ratchet checks it first. */
+const status = (f: Finding) => {
+  const reason = designReason(f);
+  if (reason) return `by design — ${reason.slice(0, 2)}`;
+  return KNOWN[f.key] === undefined ? 'NEW' : 'known — DECISIONS §G';
+};
+
 if (below.length) {
+  const byDesign = below.filter((f) => designReason(f)).length;
+  const known = below.filter((f) => !designReason(f) && KNOWN[f.key] !== undefined).length;
+  console.log(
+    `  of the ${below.length} below the floor: ${byDesign} by design (H2/H3), ` +
+      `${known} known (DECISIONS §G), ${below.length - byDesign - known} unaccounted for\n`,
+  );
   console.log(`  ${w('pairing', 62)}${w('ground', 10)}${w('ratio', 8)}status`);
   for (const f of below.sort((a, b) => a.ratio - b.ratio)) {
-    const known = KNOWN[f.key];
     console.log(
-      `  ${w(f.key, 62)}${w(f.resolvedGround, 10)}${w(f.ratio.toFixed(2), 8)}${
-        known === undefined ? 'NEW' : 'known — DECISIONS §G'
-      }`,
+      `  ${w(f.key, 62)}${w(f.resolvedGround, 10)}${w(f.ratio.toFixed(2), 8)}${status(f)}`,
     );
   }
 }

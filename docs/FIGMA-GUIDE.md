@@ -82,7 +82,7 @@ Four things, each converted or deliberately dropped rather than shipped broken:
 
 ### What is guaranteed
 
-- Every set matches its DTCG source **token for token**: 655 / 29 / 64 / 64 / 208 / 208. Figma
+- Every set matches its DTCG source **token for token**: 665 / 29 / 64 / 64 / 208 / 208. Figma
   lands 60 of the 64 typography tokens — the four `default-weight/*` are Tokens Studio type
   `other`, which has no Figma variable equivalent, so the plugin skips them. They are a note about
   suggested pairings, referenced by nothing; 60 is a pass.
@@ -118,17 +118,19 @@ second mode — do not create a second collection.
 
 | Collection | Modes | Tokens |
 |---|---|---|
-| _Colors Primitives | Value | 655 |
+| _Colors Primitives | Value | 665 |
 | _Number Primitives | Value | 29 |
 | Foundations | Value | 64 |
 | Motion | Value | 25 |
 | Typography | Value | 64 |
 | HeyOz Semantic | Light, Dark | 208 each |
 
-Counted from the emitted files, not from intent. This table has been wrong twice: it once
-read 468 / 66 / 69 / 195, and then carried `Motion 10` and `Semantic 216` after the spring
-tokens and the sidebar deletion had both moved the real figures. Recount rather than trust
-it — `node build/build.mjs` prints the live numbers.
+Counted from the emitted files, not from intent. This table has now been wrong three times:
+it once read 468 / 66 / 69 / 195, then carried `Motion 10` and `Semantic 216` after the spring
+tokens and the sidebar deletion had both moved the real figures, and then held `Colors 655`
+after ten ramp half-steps were added. Recount rather than trust it — `node build/build.mjs`
+prints the live numbers, and `npm run verify:docs` now fails if this table drifts from them
+again.
 
 `HeyOz Semantic` is 202 colour tokens plus 6 elevation tokens. There is **no `sidebar`
 group** — it was eight tokens, four of them byte-identical aliases of existing roles, and it
