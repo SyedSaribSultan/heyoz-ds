@@ -134,7 +134,8 @@ export function Showcase({ staleSources = [] }: { staleSources?: string[] }) {
   const navGroups: NavGroup[] = [
     { label: 'foundations', items: FOUNDATION_SECTIONS },
     ...registry.byGroup.map(({ group, entries: inGroup }) => ({
-      label: `${group.label} · ${inGroup.length}`,
+      label: group.label,
+      count: inGroup.length,
       items: inGroup.map((e) => ({
         id: e.recipe.id,
         label: e.recipe.meta.title,

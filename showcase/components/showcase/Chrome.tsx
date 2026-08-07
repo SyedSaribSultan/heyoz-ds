@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { auditSummary } from '@/lib/core/audit';
+import { Input } from '../ui/Input';
 import { useTheme, type ThemePreference } from './ThemeProvider';
 
 /* Header and nav rail.
@@ -301,7 +302,20 @@ export function Header({
   );
 }
 
-export type NavGroup = { label: string; items: NavItem[] };
+/**
+ * A family of rail entries.
+ *
+ * `count` is separate from `label` rather than baked into it, and that is a fix. Both
+ * call sites used to build `"Identity & status · 3"` as one string; at 188px the
+ * longest of those wrapped, and a wrapped flex item in a row with a caret centres its
+ * second line, so the widest group in the rail rendered as a two-line ragged blob. The
+ * count now has its own right-aligned slot, the label gets the rest and truncates, and
+ * neither call site formats anything.
+ *
+ * It stays optional because the foundations group on `/` is a list of page sections
+ * rather than a family with a size worth quoting.
+ */
+export type NavGroup = { label: string; items: NavItem[]; count?: number };
 
 /** Height of the sticky header in px, measured live.
  *
@@ -408,6 +422,32 @@ function useActiveSection(ids: string[]) {
   return active;
 }
 
+/** Where `/` already means something, so the filter shortcut must not steal it. Same
+ *  shape and the same argument as ARROWS_ALREADY_TAKEN in ComponentPage.tsx: a global
+ *  single-key listener that fires while somebody is typing is a listener that breaks
+ *  the components this page exists to demonstrate. */
+const SLASH_ALREADY_TAKEN = 'input, textarea, select, [contenteditable]';
+
+/** A chevron that points down when its group is open. Orientation, not travel — which
+ *  is why `rotate` is the one transform verify-motion.ts deliberately does not police
+ *  (see the note on TRANSFORM_UTILITY). */
+function Caret({ open }: { open: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 12 12"
+      aria-hidden="true"
+      className={`size-space-4 shrink-0 transition-transform duration-effects-fast ease-effects-fast ${
+        open ? 'rotate-90' : ''
+      }`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    >
+      <path d="M4.5 2.5 8 6l-3.5 3.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function NavRail({
   groups,
   /** Set on a route that IS one thing — a component page — where "current" is a
@@ -425,6 +465,108 @@ export function NavRail({
   );
   const spied = useActiveSection(ids);
   const active = activeId ?? spied;
+
+  /* ---- is this rail long enough to need managing? -----------------------------
+   *
+   * Two rails call this component and they are not the same problem. `/verify` lists
+   * nine in-page sections in two families; `/` and every component page list
+   * thirty-nine destinations in eight. The filter and the disclosures are the answer to
+   * the second and are pure machinery on the first — worse than machinery, actually:
+   * that rail is one page's table of contents, so collapsing it hides the page's own
+   * structure, and "filter" is a strange verb for eight headings you can already see.
+   *
+   * A count rather than a prop, so neither call site has to know it is the long one,
+   * and so a rail that grows past the line gets managed without anybody noticing it
+   * needed to be. Fifteen is where the unmanaged list stops fitting the shortest laptop
+   * viewport under the header — below it the column was never the problem. */
+  const total = groups.reduce((n, g) => n + g.items.length, 0);
+  const dense = total > 15;
+
+  /* ---- the filter ------------------------------------------------------------
+   *
+   * Thirty-one components in six families, plus the foundations, is forty-odd rows —
+   * a column nobody reads, they scan it for a word they already know. So the rail
+   * takes the word.
+   *
+   * ComponentPage.tsx predicted this in as many words: "worth revisiting if the
+   * catalogue ever grows past a couple of dozen, at which point a reader wants a
+   * filter rather than a chain". It is at thirty-one.
+   *
+   * Titles only, and that is a deliberate difference from the index filter, which also
+   * reads each component's definition. This is navigation: a rail that surfaces Slider
+   * because the word "track" appears in Progress's definition has answered a question
+   * nobody asked of it, and the index — one click away, and searching properly — is
+   * where that search belongs. */
+  const [query, setQuery] = useState('');
+  const needle = query.trim().toLowerCase();
+  const filterRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.defaultPrevented) return;
+      const target = e.target instanceof Element ? e.target : null;
+      if (target?.closest(SLASH_ALREADY_TAKEN)) return;
+      /* Only when the filter is actually on screen. Below lg it is display:none, and
+       * focusing a hidden input scrolls nothing, focuses nothing, and silently eats a
+       * character the reader meant for the page. */
+      const box = filterRef.current;
+      /* Also covers the short rail, where the filter is not rendered at all. */
+      if (!box || box.offsetParent === null) return;
+      e.preventDefault();
+      box.focus();
+      box.select();
+    }
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  /* ---- collapsed groups ------------------------------------------------------
+   *
+   * Open the one that holds the current page and leave the rest shut. On /c/button
+   * that is seven headings and three links instead of forty-three rows, and the
+   * headings keep their counts — `FORMS · 11` is the line that tells a first-time
+   * reader the shape of the system, and it does that better without eleven names
+   * under it.
+   *
+   * It also sharpens the argument ComponentPage.tsx makes for grouping at all: a
+   * reader who lands on Slider should see that Switch is a sibling. Open, that family
+   * is the only expanded thing on screen rather than one eleventh of a list.
+   *
+   * Keyed by label because the label is already this list's React key, so the two
+   * cannot disagree about what a group is. */
+  const activeGroup = useMemo(
+    () => groups.find((g) => g.items.some((i) => i.id === active))?.label ?? null,
+    [groups, active],
+  );
+
+  const [opened, setOpened] = useState<ReadonlySet<string>>(() => new Set<string>());
+
+  /* Follows the spy as well as the route. On `/` the current item moves as the reader
+   * scrolls, and a highlight inside a collapsed group is a highlight nobody can see. */
+  useEffect(() => {
+    if (!activeGroup) return;
+    setOpened((prev) => (prev.has(activeGroup) ? prev : new Set(prev).add(activeGroup)));
+  }, [activeGroup]);
+
+  const toggle = (label: string) =>
+    setOpened((prev) => {
+      const next = new Set(prev);
+      if (!next.delete(label)) next.add(label);
+      return next;
+    });
+
+  /* Under a filter, a group with no surviving match is dropped rather than rendered
+   * empty — the same rule ComponentIndex applies to its grid, and for the same reason:
+   * an empty heading reads as a family with nothing in it. */
+  const shown = useMemo(() => {
+    if (!needle) return groups;
+    return groups
+      .map((g) => ({ ...g, items: g.items.filter((i) => i.label.toLowerCase().includes(needle)) }))
+      .filter((g) => g.items.length > 0);
+  }, [groups, needle]);
+
+  const matches = shown.reduce((n, g) => n + g.items.length, 0);
 
   /* Below lg the rail is a horizontal scroller, and it was a horizontal scroller with
    * neither of the two things one needs: it never followed the spy, so on a phone the
@@ -516,26 +658,108 @@ export function NavRail({
   const { overflow, atStart, atEnd } = clipped;
 
   return (
+    /* THE COLUMN IS CAPPED AND SCROLLS ITSELF, and that is a bug fix rather than a
+     * refinement. `position: sticky` only sticks while the box fits: an element taller
+     * than the viewport pins its TOP to `top` and then has nowhere left to go, so the
+     * rest of it can only be reached by scrolling the page far enough to drag it up —
+     * which is exactly the reported symptom, "I have to scroll to the bottom of the
+     * page before the left panel scrolls".
+     *
+     * `max-height` to the space under the header, `overflow-y: auto` on the list, and
+     * the filter outside that box so it does not scroll away from the thing it filters.
+     * svh rather than vh: on a phone `100vh` is the address-bar-hidden height, which is
+     * taller than the viewport actually is, and the cap would be wrong by that much —
+     * it does nothing below lg today, but a cap that is only correct at one breakpoint
+     * is a trap for whoever changes the breakpoint. */
     <nav
       aria-label="Sections"
-      className="lg:sticky lg:top-[var(--showcase-header)] lg:self-start lg:pt-space-9"
+      className="lg:sticky lg:top-[var(--showcase-header)] lg:flex lg:max-h-[calc(100svh-var(--showcase-header))] lg:flex-col lg:self-start lg:pt-space-9"
     >
+      {dense && (
+        <RailFilter
+          ref={filterRef}
+          value={query}
+          onChange={setQuery}
+          matches={matches}
+          total={total}
+        />
+      )}
+
       {/* Horizontal and scrollable below lg, vertical above. Not hidden behind a
           hamburger — on a reference page the section list is the main affordance. */}
-      <div className="relative">
+      {/* `flex-1 min-h-0` TWICE, down two levels, and every part of it is load-bearing.
+          Both were measured wrong before they were measured right.
+
+          Without `flex-1` on this box it sizes to its content and overflows the capped
+          nav: the nav stopped at 539px while the list inside reported clientHeight 1666,
+          so `overflow-y: auto` had nothing to scroll and the rail was exactly as stuck as
+          the bug being fixed. Without `min-h-0` a flex item refuses to shrink below its
+          content and produces the same number by the other route.
+
+          And the scroller cannot be `h-full`. A percentage height resolves against the
+          parent's `height`, which here is still `auto` — the 451px is a flex USED size,
+          not a computed one — so `height: 100%` measured 1666 again. Making this box a
+          flex column and the scroller its `flex-1 min-h-0` child avoids percentage
+          resolution entirely, which is why the pattern repeats rather than shortens. */}
+      <div className="relative lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
         <div
           ref={scrollerRef}
-          className="flex gap-space-5 overflow-x-auto pb-space-3 lg:flex-col lg:gap-space-4 lg:overflow-visible lg:pb-0"
+          className="flex gap-space-5 overflow-x-auto pb-space-3 lg:min-h-0 lg:flex-1 lg:flex-col lg:gap-space-4 lg:overflow-y-auto lg:pb-space-9 lg:pr-space-2"
         >
-          {groups.map((group) => (
+          {/* A filter that matches nothing has to say so. Otherwise it is indistinguishable
+              from a rail that failed to render — the same argument ComponentIndex makes
+              about its own empty result. */}
+          {needle && matches === 0 && (
+            <p className="hidden px-space-3 py-space-2 text-body-sm text-content-tertiary lg:block">
+              Nothing matches “{query.trim()}”.
+            </p>
+          )}
+
+          {shown.map((group) => {
+            /* Everything opens under a filter. A reader who has typed three letters is
+               asking to see the matches, not to be told which family they are in and
+               made to click. */
+            const open = !dense || Boolean(needle) || opened.has(group.label);
+            return (
             <div key={group.label} className="shrink-0">
               {/* Uppercase mono survives here. These are one- and two-word group
                   eyebrows over a list, which is what that treatment is for — unlike the
-                  five-word section labels it was also being used on. */}
-              <p className="hidden px-space-3 pb-space-3 font-mono text-label-sm uppercase text-content-tertiary lg:block">
-                {group.label}
-              </p>
-              <ul className="flex gap-space-2 lg:flex-col lg:gap-[2px]">
+                  five-word section labels it was also being used on.
+
+                  A button at lg and nothing at all below it, because below lg the strip
+                  shows every item and there is no disclosure to announce — an
+                  `aria-expanded` that is false while all eleven children are visible is
+                  worse than no control. Same reason the label itself was already
+                  `hidden lg:block`. */}
+              {dense ? (
+                <button
+                  type="button"
+                  onClick={() => toggle(group.label)}
+                  aria-expanded={open}
+                  disabled={Boolean(needle)}
+                  className="mb-space-1 hidden w-full items-center gap-space-2 rounded-4 px-space-3 py-space-1 font-mono text-label-sm uppercase text-content-tertiary transition-colors duration-fast ease-standard hover:text-content-primary focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus disabled:cursor-default disabled:hover:text-content-tertiary lg:flex"
+                >
+                  <Caret open={open} />
+                  <span className="min-w-0 flex-1 truncate text-left">{group.label}</span>
+                  {group.count !== undefined && (
+                    <span className="tabular-nums text-content-tertiary">{group.count}</span>
+                  )}
+                </button>
+              ) : (
+                /* A heading, not a control. A disclosure whose children are always
+                   visible is a lie told with aria-expanded. */
+                <p className="hidden items-center gap-space-2 px-space-3 pb-space-3 font-mono text-label-sm uppercase text-content-tertiary lg:flex">
+                  <span className="min-w-0 flex-1 truncate">{group.label}</span>
+                  {group.count !== undefined && (
+                    <span className="tabular-nums">{group.count}</span>
+                  )}
+                </p>
+              )}
+              <ul
+                className={`flex gap-space-2 lg:flex-col lg:gap-[2px] ${
+                  open ? '' : 'lg:hidden'
+                }`}
+              >
                 {group.items.map((item) => {
                   const on = active === item.id;
                   return (
@@ -575,7 +799,8 @@ export function NavRail({
                 })}
               </ul>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* The affordance. Present only on the side that has content off screen, so it
@@ -590,6 +815,92 @@ export function NavRail({
     </nav>
   );
 }
+
+/**
+ * The rail's filter.
+ *
+ * The system's own Input, for the reason ComponentIndex gives about its filter: this
+ * site is the reference for that component, and a hand-rolled `<input className="border
+ * …">` in its chrome is the page contradicting itself. `labelHidden` rather than
+ * `aria-label` for the same reason Input's own prop docs give — it keeps
+ * click-to-focus.
+ *
+ * lg only. Below it the rail is a horizontal strip of every item, which is already
+ * short to swipe and was argued for as-is; a text field stacked above a chip strip is
+ * a different component, not a smaller one.
+ *
+ * The count under the field is the whole feedback loop for a filter that lives beside
+ * collapsed groups: without it, three letters that match nothing look identical to
+ * three letters that match one thing inside a family you cannot see.
+ */
+const RailFilter = forwardRef<
+  HTMLInputElement,
+  { value: string; onChange: (v: string) => void; matches: number; total: number }
+>(function RailFilter({ value, onChange, matches, total }, ref) {
+  const typing = value.trim().length > 0;
+  return (
+    <div className="hidden shrink-0 pb-space-4 lg:block">
+      <Input
+        ref={ref}
+        size="md"
+        label="Filter"
+        labelHidden
+        /* NOT type="search". Chrome and Safari draw their own clear affordance inside a
+           search field — a blue ✕ that answers to no token in this system and sat next
+           to the accent focus ring looking like a bug. The slot below is the one this
+           system ships for the job, and Input's own prop docs name "a clear button" as
+           what it is for. */
+        type="text"
+        value={value}
+        placeholder="Filter"
+        onChange={(e) => onChange(e.target.value)}
+        /* Escape clears, then a second Escape hands focus back to the page. The order
+           matters: a single Escape that both cleared and blurred would make correcting
+           a typo impossible without reaching for the mouse. */
+        onKeyDown={(e) => {
+          if (e.key !== 'Escape') return;
+          e.stopPropagation();
+          if (typing) onChange('');
+          else e.currentTarget.blur();
+        }}
+        /* Two things share the slot because they are never both true: the shortcut hint
+           while the field is empty, and the way out of the filter once it is not.
+           Written down, in the one place either is discoverable — the same argument
+           ComponentPage.tsx makes for printing ← → under the prev/next links. */
+        trailing={
+          typing ? (
+            <button
+              type="button"
+              aria-label="Clear filter"
+              onClick={() => {
+                onChange('');
+                /* Focus back to the field, not to the page. Clearing is a step inside
+                   the filter, and losing focus after it means the next keystroke goes
+                   somewhere else. */
+                if (ref && typeof ref === 'object') ref.current?.focus();
+              }}
+              className="grid size-space-6 place-items-center rounded-full text-content-tertiary transition-colors duration-effects-fast ease-effects-fast hover:bg-fill-tertiary-hover hover:text-content-primary focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-ring focus-visible:outline-border-focus"
+            >
+              <svg viewBox="0 0 16 16" aria-hidden="true" className="size-space-4" fill="none" stroke="currentColor" strokeWidth="1.75">
+                <path d="M4 4l8 8M12 4l-8 8" strokeLinecap="round" />
+              </svg>
+            </button>
+          ) : (
+            <kbd className="rounded-2 bg-surface-secondary px-space-2 font-mono text-label-xs text-content-tertiary">
+              /
+            </kbd>
+          )
+        }
+        trailingInteractive={typing}
+      />
+      {typing && (
+        <p aria-live="polite" className="px-space-3 pt-space-2 font-mono text-label-xs text-content-tertiary">
+          {matches} of {total}
+        </p>
+      )}
+    </div>
+  );
+});
 
 /** An edge fade over the rail. Same construction as ScrollRegion's: an absolutely
  *  positioned, pointer-events-none overlay rather than a `mask-image` on the scroller,

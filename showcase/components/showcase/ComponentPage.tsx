@@ -124,7 +124,8 @@ export function ComponentPage({ id, staleSources = [] }: { id: string; staleSour
    * the two are siblings without reading thirty-four names to find out. */
   const navGroups: NavGroup[] = [
     ...registry.byGroup.map(({ group, entries: inGroup }) => ({
-      label: `${group.label} · ${inGroup.length}`,
+      label: group.label,
+      count: inGroup.length,
       items: inGroup.map((e) => ({
         id: e.recipe.id,
         label: e.recipe.meta.title,
