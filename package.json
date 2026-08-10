@@ -13,7 +13,8 @@
     "build": "node build/build.mjs",
     "test": "node build/build.mjs && node build/verify-docs.mjs",
     "verify": "node build/build.mjs && node build/verify-docs.mjs",
-    "verify:docs": "node build/verify-docs.mjs"
+    "verify:docs": "node build/verify-docs.mjs",
+    "pack": "node build/pack-tokens.mjs"
   },
   "files": [
     "build",
@@ -34,5 +35,6 @@
   },
   "sideEffects": [
     "dist/*.css"
-  ]
+  ],
+  "//pack": "The tokens-only dev handoff: four files and a generated README, ~90 kB, no components. npm pack ships 31 files and 1.7 MB — the Figma DTCG sets, the Tokens Studio mirror, the build engine and recipes.json — which is right for the repo and wrong for a developer told \"here are the tokens\". The README is generated because it quotes gate and token counts, and a hand-written one is stale on the second send."
 }
