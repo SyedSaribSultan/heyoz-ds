@@ -93,7 +93,7 @@ Do these in the Variables editor. If any fails, the fix is below it.
 
 | Collection | Modes | Tokens |
 |---|---|---|
-| `_Colors Primitives` | Mode 1 | 655 |
+| `_Colors Primitives` | Mode 1 | 680 |
 | `_Number Primitives` | Mode 1 | 29 |
 | `Numbers Tokens` | Mode 1 | 64 |
 | `Typography Tokens` | Mode 1 | **60** (64 in the file — see below) |
@@ -196,7 +196,7 @@ layer directly.
 
 ### B. Get the primitives out of the pickers
 
-684 primitives — 655 colours + 29 numbers — will otherwise clutter every picker and invite
+709 primitives — 680 colours + 29 numbers — will otherwise clutter every picker and invite
 somebody to bind a raw ramp value.
 
 **Two different controls, and they do different things. You need scoping, not publishing.**
@@ -210,7 +210,7 @@ This is why the primitives were still showing after the first attempt: only publ
 turned off.
 
 **To scope them off:** Variables editor → `_Colors Primitives` → click the first row → scroll to
-the last → **Shift-click** to select all 655 → right-click → **Scoping** (or the scope column) →
+the last → **Shift-click** to select all 680 → right-click → **Scoping** (or the scope column) →
 uncheck **Show in all supported properties** and leave every individual scope unchecked. Repeat
 for `_Number Primitives`.
 

@@ -76,7 +76,7 @@ path works from the same files", which was wrong — see `docs/FIGMA-GUIDE.md`.
 wired up on paste and you do not rebuild them by hand. The plugin cannot open a folder, which is
 why this is a bundle rather than a directory. It expresses every alias as a real reference
 (`{solid.brand.60}`), so changing a primitive flows through everything downstream.
-**1228 tokens, 450 references.**
+**1253 tokens, 450 references.**
 
 `tokens/` is DTCG-2024, where a colour's value is an object. Figma's native importer reads that;
 Tokens Studio does not.

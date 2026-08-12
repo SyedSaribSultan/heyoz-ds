@@ -68,7 +68,11 @@ const byPrefix = (p) => {
   return hit[1];
 };
 
+/** The Tokens Studio bundle, counted the same way — it is a separate emitted document. */
+const studioTokens = countTokens(JSON.parse(read('tokens-studio/heyoz.tokens.json')));
+
 const truth = {
+  studioTokens,
   colorPrimitives: audit.counts.colorPrimitives,
   numberPrimitives: audit.counts.numberPrimitives,
   semanticPerMode: audit.counts.semanticPerMode,
@@ -236,6 +240,54 @@ const CLAIMS = [
       want: audit.contrast.filter((r) => r.kind === kind).length,
     }),
   ),
+  /* The Figma-side docs. These sat outside the gate for its first two commits and drifted
+   * on the very next change: H6 added three ramp steps and every one of these figures went
+   * wrong at once, silently, in the two files a DESIGNER follows. tokens-studio/README.md
+   * is the file the whole Figma import is driven from, so a wrong count there is a wrong
+   * verification step — "Shift-click to select all 655" when there are 680 means the
+   * designer scopes 25 primitives short and cannot tell. */
+  {
+    file: 'tokens-studio/README.md',
+    what: 'collection table — _Colors Primitives',
+    re: /\|\s*`_Colors Primitives`\s*\|\s*Mode 1\s*\|\s*(\d+)\s*\|/,
+    want: truth.colorPrimitives,
+  },
+  {
+    file: 'tokens-studio/README.md',
+    what: 'scoping note — total primitives to select',
+    re: /(\d+) primitives — \d+ colours \+ \d+ numbers/,
+    want: truth.colorPrimitives + truth.numberPrimitives,
+  },
+  {
+    file: 'tokens-studio/README.md',
+    what: 'scoping note — colour primitives',
+    re: /\d+ primitives — (\d+) colours \+ \d+ numbers/,
+    want: truth.colorPrimitives,
+  },
+  {
+    file: 'tokens-studio/README.md',
+    what: 'scoping note — number primitives',
+    re: /\d+ primitives — \d+ colours \+ (\d+) numbers/,
+    want: truth.numberPrimitives,
+  },
+  {
+    file: 'tokens-studio/README.md',
+    what: 'scoping step — Shift-click select-all count',
+    re: /\*\*Shift-click\*\* to select all (\d+)/,
+    want: truth.colorPrimitives,
+  },
+  {
+    file: 'showcase/README.md',
+    what: 'roving-tabindex rationale — swatch count',
+    re: /Enter inspects\. (\d+) individually focusable swatches/,
+    want: truth.colorPrimitives,
+  },
+  {
+    file: 'docs/HANDOFF.md',
+    what: 'designer section — Tokens Studio bundle total',
+    re: /\*\*(\d+) tokens, \d+ references\.\*\*/,
+    want: truth.studioTokens,
+  },
   {
     file: 'docs/DEV-GUIDE.md',
     what: 'install note — bridge variable count',

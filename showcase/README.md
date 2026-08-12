@@ -256,7 +256,7 @@ precisely what differs between the modes.
 
 **A primitive ramp is one tab stop, not 24.** Each hue family is a single composite grid
 widget with a roving `tabIndex` — arrows move within it, left/right along the ramp and
-up/down across the alpha tiers, Enter inspects. 655 individually focusable swatches
+up/down across the alpha tiers, Enter inspects. 680 individually focusable swatches
 would be technically accessible and practically unusable.
 
 ## The two contracts
