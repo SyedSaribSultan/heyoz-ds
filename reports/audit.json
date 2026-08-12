@@ -1,20 +1,20 @@
 {
   "$generated": "GENERATED FILE — DO NOT EDIT. Overwritten by `node build/build.mjs`. Change build/spec.mjs or build/palette.mjs and rebuild. See CLAUDE.md.",
-  "generatedAt": "2026-08-10T00:28:32.432Z",
+  "generatedAt": "2026-08-12T11:34:16.372Z",
   "sources": {
-    "build/palette.mjs": 1786023628728.7793,
+    "build/palette.mjs": 1786533316893.5454,
     "build/motion.mjs": 1785509597309.4634,
     "build/layout.mjs": 1785739856175.4363,
-    "build/spec.mjs": 1786023628728.2793,
+    "build/spec.mjs": 1786533324558.066,
     "build/build.mjs": 1785945160730.952
   },
   "namespace": "oz",
   "counts": {
-    "colorPrimitives": 665,
+    "colorPrimitives": 680,
     "numberPrimitives": 29,
     "semanticPerMode": 202,
     "typeSteps": 15,
-    "unusedPrimitives": 511
+    "unusedPrimitives": 524
   },
   "contrast": [
     {
@@ -1393,7 +1393,7 @@
       "mode": "dark",
       "fg": "color/border/primary",
       "bg": "color/surface/primary",
-      "ratio": 1.56,
+      "ratio": 1.17,
       "min": 1.1,
       "pass": true
     },
@@ -1403,7 +1403,7 @@
       "mode": "dark",
       "fg": "color/border/primary",
       "bg": "color/background",
-      "ratio": 1.71,
+      "ratio": 1.28,
       "min": 1.1,
       "pass": true
     },
@@ -1413,7 +1413,7 @@
       "mode": "dark",
       "fg": "color/border/secondary",
       "bg": "color/surface/primary",
-      "ratio": 1.74,
+      "ratio": 1.44,
       "min": 1.2,
       "pass": true
     },
@@ -1423,7 +1423,7 @@
       "mode": "dark",
       "fg": "color/border/tertiary",
       "bg": "color/surface/primary",
-      "ratio": 2.27,
+      "ratio": 1.64,
       "min": 1.45,
       "pass": true
     },
@@ -1443,7 +1443,7 @@
       "mode": "dark",
       "fg": "color/border/secondary",
       "bg": "color/surface/secondary",
-      "ratio": 1.54,
+      "ratio": 1.27,
       "min": 1.1,
       "pass": true
     },
@@ -1453,7 +1453,7 @@
       "mode": "dark",
       "fg": "color/border/tertiary",
       "bg": "color/surface/tertiary",
-      "ratio": 1.71,
+      "ratio": 1.23,
       "min": 1.1,
       "pass": true
     },
@@ -4030,49 +4030,49 @@
       "target": "opacity-50/neutral/white"
     },
     "color/border/primary": {
-      "hex": "#393735",
+      "hex": "#242221",
       "alpha": 1,
-      "target": "solid/neutral/105"
+      "target": "solid/neutral/117"
     },
     "color/border/primary-hover": {
-      "hex": "#403E3C",
+      "hex": "#2E2C2B",
       "alpha": 1,
-      "target": "solid/neutral/102"
+      "target": "solid/neutral/110"
     },
     "color/border/primary-disabled": {
-      "hex": "#393735",
+      "hex": "#242221",
       "alpha": 0.5,
-      "target": "opacity-50/neutral/105"
+      "target": "opacity-50/neutral/117"
     },
     "color/border/secondary": {
+      "hex": "#343130",
+      "alpha": 1,
+      "target": "solid/neutral/107"
+    },
+    "color/border/secondary-hover": {
       "hex": "#403E3C",
       "alpha": 1,
       "target": "solid/neutral/102"
     },
-    "color/border/secondary-hover": {
-      "hex": "#514F4E",
-      "alpha": 1,
-      "target": "solid/neutral/95"
-    },
     "color/border/secondary-disabled": {
-      "hex": "#403E3C",
+      "hex": "#343130",
       "alpha": 0.5,
-      "target": "opacity-50/neutral/102"
+      "target": "opacity-50/neutral/107"
     },
     "color/border/tertiary": {
-      "hex": "#514F4E",
+      "hex": "#3C3A39",
       "alpha": 1,
-      "target": "solid/neutral/95"
+      "target": "solid/neutral/103"
     },
     "color/border/tertiary-hover": {
-      "hex": "#5F5D5C",
+      "hex": "#444241",
       "alpha": 1,
-      "target": "solid/neutral/90"
+      "target": "solid/neutral/100"
     },
     "color/border/tertiary-disabled": {
-      "hex": "#514F4E",
+      "hex": "#3C3A39",
       "alpha": 0.5,
-      "target": "opacity-50/neutral/95"
+      "target": "opacity-50/neutral/103"
     },
     "color/border/elevated": {
       "hex": "#444241",

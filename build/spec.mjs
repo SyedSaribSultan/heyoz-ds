@@ -789,15 +789,15 @@ const BORDER = {
   // draws, and it is the reason lowering these is legal at all.
   primary: [
     ['neutral/25', 'neutral/30'],
-    ['neutral/105', 'neutral/102'],
+    ['neutral/117', 'neutral/110'],
   ],
   secondary: [
     ['neutral/32', 'neutral/45'],
-    ['neutral/102', 'neutral/95'],
+    ['neutral/107', 'neutral/102'],
   ],
   tertiary: [
     ['neutral/45', 'neutral/50'],
-    ['neutral/95', 'neutral/90'],
+    ['neutral/103', 'neutral/100'],
   ],
   elevated: [
     ['neutral/30', 'neutral/40'],

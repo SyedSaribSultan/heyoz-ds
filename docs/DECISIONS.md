@@ -453,6 +453,113 @@ matched APCA-W3 0.1.9 constant for constant.
 Seventeen findings. What they had in common is the thing worth remembering: **the
 gates that existed all passed. Every bug was in a pair nobody had named.**
 
+### H6 — The dark ladder borders came down a second time, to roughly light mode's *perceived* weight.
+
+Reported from dark mode: `border/primary` read as much brighter than `surface/primary`, so cards
+looked outlined rather than edged. The request was to match light mode's contrast.
+
+**H5 had already halved these once** — from ΔL 24–29 to ΔL 12–15 — which is the strongest evidence
+that the first correction stopped too early rather than that the value was settled. Measured before
+this change:
+
+| | dark ΔL | light ΔL | dark ratio |
+|---|---|---|---|
+| `border/primary` | 14.9 | 4.2 | 1.56 |
+| `border/secondary` | 12.4 | 4.9 | 1.54 |
+| `border/tertiary` | 13.4 | 5.2 | 1.71 |
+
+Dark was carrying about **three times** light's weight.
+
+#### Matching light mode's ΔL exactly is not possible, and the arithmetic says why
+
+The ask was literally "use the same contrast difference as light mode". Computed, every
+light-parity dark border lands on a step that is already a surface:
+
+| token | light-parity ΔL wants | nearest step | and that step is |
+|---|---|---|---|
+| `border/primary` | 4.2 | `neutral/120` | **`surface/secondary`** |
+| `border/secondary` | 4.9 | `neutral/110` | **`surface/tertiary`** |
+| `border/tertiary` | 5.2 | `neutral/105` | `border/primary` + `--input` |
+
+That is not bad luck. The dark surface rungs are **5.2 / 5.4 / 4.3 ΔL** apart and light's borders
+sit at **4.2–5.2 ΔL** — the same magnitude. So a light-parity border in dark *is* one surface step
+by construction, and a card would be outlined in precisely the colour of the panel behind it. Where
+those two meet the edge disappears, which is the A1 "invisible card edges" defect this system was
+built to remove.
+
+**Equal ΔL is not equal perceived subtlety.** Light surfaces are compressed too, but around
+L\* 88–97, near white, where the eye resolves small lightness differences far better than it does
+at L\* 19–30. The asymmetry is physical. The correct target is equal *perception*, which lands at
+roughly ΔL 7 in dark — and that is what H5's comment was groping at when it said dark borders land
+heavier; it had the direction right and the magnitude wrong twice.
+
+#### What shipped
+
+| | surface | border was | border now | ΔL | ratio |
+|---|---|---|---|---|---|
+| dark primary | `neutral/130` | `neutral/105` | **`neutral/117`** | 6.5 | 1.17 |
+| dark secondary | `neutral/120` | `neutral/102` | **`neutral/107`** | 7.5 | 1.27 |
+| dark tertiary | `neutral/110` | `neutral/95` | **`neutral/103`** | 5.5 | 1.23 |
+
+Ratios are now 1.17–1.27 against light's 1.13–1.18. Light mode is untouched.
+
+**Three new ramp steps, and the gates forced every one.** Same pattern as H5's 102 and 32 — each
+alternative is explicitly illegal, not merely worse:
+
+- dark `primary` wanted ΔL ~7 off `neutral/130`, which is between `120` (`surface/secondary`) and
+  `115` (`fill/*-disabled`, which `CLAUDE.md` records as having collided **five** times and whose
+  comment argues at length for staying darker than every surface). → **`neutral/117`**, midpoint of
+  115 and 120.
+- dark `secondary` sits on `neutral/120`; the target falls between `110` (`surface/tertiary`, gated)
+  and `105` (`border/primary` **and** `--input`, a `BRIDGE_COLLISIONS` pair). → **`neutral/107`**,
+  midpoint of 105 and 110.
+- dark `tertiary` sits on `neutral/110`; `105` is taken as above, `102` was the old
+  `border/secondary`, `100` is `fill/tertiary-hover` / `--accent`. Everything between 100 and 105
+  was spoken for. → **`neutral/103`**, midpoint of 102 and 105.
+
+Each L is the midpoint of its neighbours, so the ramp stays perceptually even and **no existing step
+moves**. Colour primitives 665 → 680.
+
+#### What was deliberately not touched
+
+**Affordance borders.** Where the stroke *is* the control — an input, an unchecked box, a secondary
+button — 1.4.11's 3:1 applies and those tokens are unchanged. Rule 1c's affordance/state split is
+what makes lowering the ladder borders legal at all, and softening an affordance stroke would be
+relaxing an accessibility floor for appearance, which rule 3 forbids. This was offered and declined.
+
+**Light mode.** Unchanged, as reported working.
+
+**The visibility floors.** All eight still pass unmoved — unlike H5, this change needed no ratchet
+adjustment. The tightest is now dark `border/primary` on `surface/primary` at **1.17 against a 1.10
+floor**, which is a thin margin and the thing to watch: one more step down and it trips.
+
+#### The honest risk
+
+At ΔL 5.5, dark `border/tertiary` is close to the 4.3 ΔL rung above it. It measures 1.23:1 and
+clears its own-surface floor, but it is the border most likely to read as faint on a low-quality
+panel or at low brightness. If a third report arrives it will be about that token, and the answer
+is `neutral/104` rather than moving the whole ladder again.
+
+#### The blast radius is far smaller than expected, and rule 1c is why
+
+I assumed every dark specimen would move and regenerated all 74 visual baselines expecting a wide
+diff. **Three changed:** `table-dark`, `index-dark` and `index-light`.
+
+The reason is rule 1c. Since `separation` became a build error, almost nothing binds a
+surface-ladder border — only three recipes reference `border/primary|secondary|tertiary` at all
+(`dropzone`, `radio`, `slider`), and each does so as an **affordance** on a control rather than as a
+panel edge. The ladder borders are drawn mostly by the showcase's own chrome and by `table`. So the
+tokens that read as "everywhere" in a token file are nearly unused at the component layer, and the
+reported defect was mostly visible in *page chrome and tables*, not in components.
+
+Both `index` baselines moved for a different and expected reason: the primitives section renders the
+neutral ramp, and the ramp gained three steps. That is also why `index-light` changed despite light
+mode being untouched — no light value moved, the swatch grid simply got longer.
+
+Worth recording because it inverts the intuition: a change to three heavily-named tokens repainted
+three screenshots, and the reason is a rule adopted for an unrelated purpose.
+
+
 ### I1 — The build did not run
 
 `build.mjs` imported `./harness.mjs` and `./shipped.mjs`; neither existed.

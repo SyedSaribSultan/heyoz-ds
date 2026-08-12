@@ -239,9 +239,24 @@ const NEUTRAL_STEPS = [
   // 110 is surface/tertiary, also gated. The ladder ran out of room between 100 and
   // 105, which is the same reason 25/35/45/95/105/115/135 exist.
   ['102', 0.3640], // -> #403E3C NEW half-step - dark --input, clears --accent
+  // NEW half-step - dark border/tertiary. H6 halved the dark ladder borders from
+  // dL 12-15 to dL ~7, and tertiary's surface is neutral/110: 105 is border/primary
+  // AND --input, 102 is the old border/secondary, 100 is fill/tertiary-hover /
+  // --accent. Every rung between 100 and 105 was spoken for, so the ladder ran out
+  // of room in exactly the way 102 above ran out of room. Midpoint of 102 and 105.
+  ['103', 0.3508], // -> #3D3B39 NEW half-step - dark border/tertiary (H6)
   ['105', 0.3375], // -> #393735 NEW half-step - dark disabled fill, see below
+  // NEW half-step - dark border/secondary. Surface is neutral/120; the target dL ~7
+  // lands between 110 (surface/tertiary, gated) and 105 (border/primary + --input,
+  // a BRIDGE_COLLISIONS pair). Midpoint of 105 and 110.
+  ['107', 0.3162], // -> #353331 NEW half-step - dark border/secondary (H6)
   ['110', 0.2949], // -> #2E2C2B (shipped: light --muted-fg, dark --muted)
   ['115', 0.2673], // -> #272524 NEW half-step - dark --popover, clears --secondary
+  // NEW half-step - dark border/primary. Surface is neutral/130; 120 is
+  // surface/secondary (a border must not be painted in the colour of the panel it
+  // sits inside) and 115 is fill/*-disabled, which CLAUDE.md records as having
+  // collided five times. Midpoint of 115 and 120.
+  ['117', 0.2535], // -> #242220 NEW half-step - dark border/primary (H6)
   ['120', 0.2396], // -> #211F1D (shipped #201F1D: dark --popover / --secondary)
   ['130', 0.1887], // -> #151312 (shipped: dark --card)
   ['135', 0.1717], // -> #121110 NEW half-step - dark sidebar item hover

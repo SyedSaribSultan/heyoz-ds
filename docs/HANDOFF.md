@@ -11,7 +11,7 @@ If two documents ever disagree, `docs/DECISIONS.md` is the tie-breaker.
 ## Run it
 
 ```bash
-node build/build.mjs                    # the token build. 246 gates. This is the test suite.
+node build/build.mjs                    # the token build. 256 gates. This is the test suite.
 cd showcase && npm install
 cd showcase && npm run verify           # the component layer. 9 suites.
 cd showcase && npm run visual           # 75 visual tests. Needs a built server — see below.
@@ -93,7 +93,7 @@ Background and rationale in **`docs/FIGMA-GUIDE.md`**.
 
 ## What is finished
 
-**The token layer.** 665 colour primitives, 202 semantic tokens per mode, both modes from one
+**The token layer.** 680 colour primitives, 202 semantic tokens per mode, both modes from one
 declaration so they cannot drift. Colours authored in OKLCH and computed — no hex is ever
 hand-typed above tier 1. Springs authored as `{ settle, bounce }` and computed into CSS
 `linear()` curves. 256 gates.

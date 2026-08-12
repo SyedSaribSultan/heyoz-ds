@@ -66,8 +66,16 @@
           "value": "#403E3C",
           "type": "color"
         },
+        "103": {
+          "value": "#3C3A39",
+          "type": "color"
+        },
         "105": {
           "value": "#393735",
+          "type": "color"
+        },
+        "107": {
+          "value": "#343130",
           "type": "color"
         },
         "110": {
@@ -76,6 +84,10 @@
         },
         "115": {
           "value": "#272524",
+          "type": "color"
+        },
+        "117": {
+          "value": "#242221",
           "type": "color"
         },
         "120": {
@@ -622,8 +634,16 @@
           "value": "#403E3C14",
           "type": "color"
         },
+        "103": {
+          "value": "#3C3A3914",
+          "type": "color"
+        },
         "105": {
           "value": "#39373514",
+          "type": "color"
+        },
+        "107": {
+          "value": "#34313014",
           "type": "color"
         },
         "110": {
@@ -632,6 +652,10 @@
         },
         "115": {
           "value": "#27252414",
+          "type": "color"
+        },
+        "117": {
+          "value": "#24222114",
           "type": "color"
         },
         "120": {
@@ -1178,8 +1202,16 @@
           "value": "#403E3C26",
           "type": "color"
         },
+        "103": {
+          "value": "#3C3A3926",
+          "type": "color"
+        },
         "105": {
           "value": "#39373526",
+          "type": "color"
+        },
+        "107": {
+          "value": "#34313026",
           "type": "color"
         },
         "110": {
@@ -1188,6 +1220,10 @@
         },
         "115": {
           "value": "#27252426",
+          "type": "color"
+        },
+        "117": {
+          "value": "#24222126",
           "type": "color"
         },
         "120": {
@@ -1734,8 +1770,16 @@
           "value": "#403E3C4D",
           "type": "color"
         },
+        "103": {
+          "value": "#3C3A394D",
+          "type": "color"
+        },
         "105": {
           "value": "#3937354D",
+          "type": "color"
+        },
+        "107": {
+          "value": "#3431304D",
           "type": "color"
         },
         "110": {
@@ -1744,6 +1788,10 @@
         },
         "115": {
           "value": "#2725244D",
+          "type": "color"
+        },
+        "117": {
+          "value": "#2422214D",
           "type": "color"
         },
         "120": {
@@ -2290,8 +2338,16 @@
           "value": "#403E3C80",
           "type": "color"
         },
+        "103": {
+          "value": "#3C3A3980",
+          "type": "color"
+        },
         "105": {
           "value": "#39373580",
+          "type": "color"
+        },
+        "107": {
+          "value": "#34313080",
           "type": "color"
         },
         "110": {
@@ -2300,6 +2356,10 @@
         },
         "115": {
           "value": "#27252480",
+          "type": "color"
+        },
+        "117": {
+          "value": "#24222180",
           "type": "color"
         },
         "120": {
@@ -4705,39 +4765,39 @@
       },
       "border": {
         "primary": {
-          "value": "{solid.neutral.105}",
+          "value": "{solid.neutral.117}",
           "type": "color"
         },
         "primary-hover": {
-          "value": "{solid.neutral.102}",
+          "value": "{solid.neutral.110}",
           "type": "color"
         },
         "primary-disabled": {
-          "value": "{opacity-50.neutral.105}",
+          "value": "{opacity-50.neutral.117}",
           "type": "color"
         },
         "secondary": {
-          "value": "{solid.neutral.102}",
+          "value": "{solid.neutral.107}",
           "type": "color"
         },
         "secondary-hover": {
-          "value": "{solid.neutral.95}",
+          "value": "{solid.neutral.102}",
           "type": "color"
         },
         "secondary-disabled": {
-          "value": "{opacity-50.neutral.102}",
+          "value": "{opacity-50.neutral.107}",
           "type": "color"
         },
         "tertiary": {
-          "value": "{solid.neutral.95}",
+          "value": "{solid.neutral.103}",
           "type": "color"
         },
         "tertiary-hover": {
-          "value": "{solid.neutral.90}",
+          "value": "{solid.neutral.100}",
           "type": "color"
         },
         "tertiary-disabled": {
-          "value": "{opacity-50.neutral.95}",
+          "value": "{opacity-50.neutral.103}",
           "type": "color"
         },
         "elevated": {

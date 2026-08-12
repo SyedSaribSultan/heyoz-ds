@@ -143,8 +143,8 @@ Better to raise these yourself than have them raised at you.
 | Chart palette replaced entirely, and the light series are darker than you might expect | Shipped charts were identical in both modes and clustered in one lightness band. The light series then had to come down the ramp again because a series is a graphical object under 1.4.11 and two of them measured 2.0–2.5:1 on white |
 | Disabled status buttons are grey, not faded orange | Fading fill and label independently left the label at 1.43:1. DECISIONS.md I5 |
 | `warning` and `info` shift | CSS and Figma disagreed; the Figma set was chosen because all three status hues sit at one lightness |
-| Dark borders get noticeably lighter | They were invisible — `--border` and `--card` were the same value |
-| 511 of 665 primitives unused | The alpha grid is generated, not curated. Costs nothing and means every future token already has a target |
+| Dark borders are subtle — ΔL 5.5–7.5 off their surface | They were once invisible (`--border` === `--card`), then over-corrected to ΔL 12–15 and read as outlined boxes. H6 brought them to roughly light mode’s perceived weight. Equal ΔL across modes is NOT the goal — at dark’s lightness a light-parity border lands on a surface step. DECISIONS.md H6 |
+| 524 of 680 primitives unused | The alpha grid is generated, not curated. Costs nothing and means every future token already has a target |
 | Dark shadows are much stronger than before | They moved the page by ΔL 0.009–0.024 where light moved it 0.027–0.066, so the dark `large` shadow was weaker than the light `x-small` |
 | `content/tertiary` is darker | It was gated against the page only, and failed 4.5:1 on all three card surfaces — 3.07:1 at worst |
 | Ordinal spacing (`space-5` = 16px) | Matches both reference systems; the `--oz-` namespace prevents any Tailwind collision |
