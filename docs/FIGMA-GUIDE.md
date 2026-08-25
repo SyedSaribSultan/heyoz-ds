@@ -40,7 +40,8 @@ Full step-by-step — the export checkboxes, what to verify, and the two manual 
 ```
 Plugins → Tokens Studio → JSON toggle { } → paste the whole file → Save
 Export  → Variables: Color ✓ Number ✓ String ✓ · Styles: Typography (see README) · rest ✗
-          Update existing names ON · Remove unconnected variables OFF
+          Create styles with variable references ON · Update existing names ON
+          Remove styles/variables without connection to a token OFF
 Themes  → one theme at a time, TOP TO BOTTOM, six passes
 ```
 

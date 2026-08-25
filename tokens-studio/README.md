@@ -43,13 +43,18 @@ You should now see **6 token sets** in the left panel and **6 themes** under the
 
 Hit **Export** and match this exactly:
 
+Every toggle on that screen is listed. There is no "everything else" row, because two of
+these have to be ON and a catch-all row is how one of them got missed.
+
 | | |
 |---|---|
 | **Variables** | Color ✓ · Number ✓ · String ✓ · Boolean — doesn't matter |
 | **Styles** | Typography — see below · Color ✗ · Effects ✗ · Gradients ✗ |
+| *Ignore first part of token name for styles* | **OFF** |
+| *Prefix styles with active theme name* | **OFF** |
+| *Create styles with variable references* | **ON** |
 | *Update existing style and variable names* | **ON** |
-| *Remove unconnected variables* | **OFF** |
-| everything else | **OFF** |
+| *Remove styles and variables without connection to a token* | **OFF** |
 
 **Styles → Typography: tick it if your Text styles panel comes up empty, otherwise leave it.**
 The bundle carries 75 `typography` composite tokens under `text/*` — 15 steps × 5 weights — and
@@ -73,8 +78,49 @@ shortcut to the variables rather than a duplicate of them, and retuning `font si
 moves all five body-md styles with it. Both the styles and the variables are usable — apply a
 style for the common pairings, bind the five variables for anything the grid does not cover.
 
-**Why *Remove unconnected variables* stays off.** It deletes any variable in the file that this
-export doesn't touch. On a 6-pass export, pass 2 would delete everything pass 1 just made.
+**Why *Create styles with variable references* is ON.** It is what makes the 75 text styles
+worth having. Each composite's five fields are references — `fontSize: {font-size.body-md}` —
+and with this OFF Figma bakes the resolved number into the style, so `16` is copied in and the
+link is gone. A style that has stopped tracking its token is the value-duplicating version the
+whole composite argument was written to avoid; the toggle is what keeps it a shortcut to the
+variables rather than a snapshot of them.
+
+**Why *Prefix styles with active theme name* is OFF.** Six passes with six theme names would
+give six copies of every style, prefixed. The type styles come from one set and want one name.
+
+**Why *Ignore first part of token name for styles* is OFF.** It would strip the `text` segment,
+so `text/body-md/semibold` lands as `body-md/semibold` — losing the grouping that keeps 75
+styles navigable in the picker.
+
+**Why *Remove styles and variables without connection to a token* stays off.** This is the one
+that silently destroys an import, and it is worth being precise about what it means.
+
+"Without connection to a token" means *not connected to a token in the set being exported right
+now* — NOT "unused by a layer on the canvas". So an empty scratch file gives no protection: the
+question is never what your frames reference, it is what the current pass covers.
+
+Each of the six themes enables exactly one set and marks the other four or five `disabled` or
+`source`. So with this ON:
+
+```
+pass 1  Colors Primitives   creates 680 colour variables
+pass 2  Number Primitives   Colors is disabled -> those 680 are unconnected -> DELETED
+pass 3  Numbers Tokens      deletes pass 2
+pass 4  Typography Tokens   deletes pass 3, and later passes delete the text styles
+pass 5  HeyOz Light         deletes pass 4
+pass 6  HeyOz Dark          deletes pass 5
+```
+
+You finish with the last pass only, and it reads as "the import half-worked" rather than as a
+wrong setting — which is what makes it expensive.
+
+`source` is the part that catches people who reason it through and still get bitten: exporting
+`HeyOz Light` marks `_Colors Primitives` as `source`, which means "resolve references against
+this, do not create variables for it". The primitives every semantic token depends on are
+therefore not connected during that pass either, so they are swept as well.
+
+The toggle is for cleanup after a rename, on an established file. The safe way to use it then is
+ONE pass with every set enabled — never the six-pass sequence.
 
 ### 4. Export — six passes, in this order
 
