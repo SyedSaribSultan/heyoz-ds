@@ -25,7 +25,8 @@ mistake the old wording invited.
 **Path A also gives you two things Path B cannot:** usable numeric font sizes instead of
 `clamp()` strings, and Light/Dark as two modes of one collection without importing twice.
 
-Neither path ships text styles — see *Type*.
+**Path A ships 75 text styles** — 15 type steps × 5 weights. Path B cannot: Figma's native
+Variables importer creates variables only, and a text style is not a variable. See *Type*.
 
 ---
 
@@ -38,7 +39,7 @@ Full step-by-step — the export checkboxes, what to verify, and the two manual 
 
 ```
 Plugins → Tokens Studio → JSON toggle { } → paste the whole file → Save
-Export  → Variables: Color ✓ Number ✓ String ✓ · Styles: ALL UNTICKED
+Export  → Variables: Color ✓ Number ✓ String ✓ · Styles: Typography ✓ (rest unticked)
           Update existing names ON · Remove unconnected variables OFF
 Themes  → one theme at a time, TOP TO BOTTOM, six passes
 ```
@@ -53,8 +54,8 @@ Themes  → one theme at a time, TOP TO BOTTOM, six passes
    primitives, numbers, type, then Light and Dark.
 
 You get **5 collections**, with `Colors & Elevations Tokens` carrying **HeyOz Light** and
-**HeyOz Dark** as two modes of one collection. **No text styles** — this system binds variables
-to text layers, so Styles stays off. See *Type* below.
+**HeyOz Dark** as two modes of one collection, plus **75 text styles** from the `text/*` composite
+tokens. See *Type* below.
 
 The full walkthrough — six passes, five verification checks, the four Effect Styles with their
 geometry, and scoping-vs-publishing — is in **`tokens-studio/README.md`**.
@@ -78,15 +79,17 @@ Four things, each converted or deliberately dropped rather than shipped broken:
 | **Fluid type** | A variable is one number, so `clamp(40px … 64px)` would import as a String and could not be applied to a text layer. Every fluid step ships its **desktop ceiling** — `display-lg` = 64. |
 | **Unitless line height** | Authored as a ratio so it survives the clamp; Figma text styles need px. Converted: `display-lg` = 68, which is 1.0625 × 64. Letter spacing likewise em → px. |
 | **Motion** | There is no duration or easing variable type in Figma. All 25 motion tokens are **absent** rather than shipped as meaningless strings. They live in `dist/tokens.css`. |
-| **Composite styles** | Not shipped, and that is a choice rather than a limitation — see *Type*. A style bakes five properties into one object and stops step and weight being independent, which is what `spec.mjs` declines to do when it refuses to bake a weight into a type step. |
+| **Composite styles** | **Shipped** — 75 of them, 15 steps x 5 weights. Every field is a *reference* to an atomic token rather than a copy, so retuning `font size/body-md` still moves all five body-md styles. That is what keeps them from being the value-duplicating version this emitter once refused. |
 
 ### What is guaranteed
 
-- Every set matches its DTCG source **token for token**: 680 / 29 / 64 / 64 / 208 / 208. Figma
-  lands 60 of the 64 typography tokens — the four `default-weight/*` are Tokens Studio type
-  `other`, which has no Figma variable equivalent, so the plugin skips them. They are a note about
-  suggested pairings, referenced by nothing; 60 is a pass.
-- All **450 references** resolve. The build fails if one does not — a dangling reference is
+- Every colour and number set matches its DTCG source **token for token**: 680 / 29 / 64 / 208 / 208.
+  Typography is the one set that does NOT match by count — 139 here against 64 in `tokens/05` —
+  because the 75 `text/*` composites exist only on this path. Of the 64 atomic tokens Figma lands
+  60: the four `default-weight/*` are Tokens Studio type `other`, which has no Figma variable
+  equivalent, so the plugin skips them. They are a note about suggested pairings, referenced by
+  nothing; 60 is a pass.
+- All **825 references** resolve — 450 aliases plus the 375 the composites add (5 fields × 75). The build fails if one does not — a dangling reference is
   otherwise silent, because the plugin simply never creates that variable while `dist/` stays
   correct.
 - Ten elevation tokens stay **literal** rather than aliased. Figma discards a variable's local
@@ -163,18 +166,33 @@ Interactive → `fill`, and then `-hover` / `-active` / `-disabled` exist.
 
 ## Type
 
-**Variables, not text styles — on both paths.** Weight is bound as its own variable, so all five
-weights are available on all fifteen steps without 75 styles to maintain.
+**Styles and variables, both — on Path A.** The bundle carries 75 `typography` composites under
+`text/<step>/<weight>`, so **tick Styles → Typography** on the export screen. Path B has the
+atomic variables only, because Figma's native importer cannot create a style.
 
-A style would bake family, weight, size, leading and tracking into one object, which makes step
-and weight stop being independent: `text/body-md/medium` and `text/body-md/bold` would share
-nothing retunable in one place. That is the same reason `spec.mjs` refuses to bake a weight into
-a type step — CLAUDE.md: "Weight is deliberately NOT baked in — every step accepts every weight."
+**Why both rather than one.** The independence argument is real: a style bakes family, weight,
+size, leading and tracking into one object, and `spec.mjs` refuses to bake a weight into a type
+step for exactly that reason — CLAUDE.md: "Weight is deliberately NOT baked in — every step
+accepts every weight." This emitter dropped the 75 styles once on that basis.
 
-So **Styles → Typography stays unticked** on the export screen, and there are no composite
-`typography` tokens in the bundle for it to build.
+It ships them again because **every field is a reference, not a copy**:
 
-Bind five variables per text layer:
+```
+text/body-md/semibold  →  { fontFamily:    {font-family.body}
+                             fontWeight:    {font-style.semibold}
+                             fontSize:      {font-size.body-md}
+                             lineHeight:    {line-height.body-md}
+                             letterSpacing: {letter-spacing.body-md} }
+```
+
+Retune `font size/body-md` and all five body-md styles follow. That is the property the
+independence argument was protecting, and it survives — what would not have survived is
+duplicating the values into 75 places. The cost the argument missed is on the other side:
+applying a style is one click and binding five variables is five, several hundred times per
+file.
+
+Use a style for the common pairings. Bind the five variables directly for anything the 15 × 5
+grid does not cover:
 
 ```
 font family      →  Typography / font-family / {display|heading|body|label|mono}

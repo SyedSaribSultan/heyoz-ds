@@ -51,9 +51,15 @@ Hit **Export** and match this exactly:
 | *Remove unconnected variables* | **OFF** |
 | everything else | **OFF** |
 
-**Why Styles stays off.** This system binds **variables** to text layers, not text styles. There
-are no composite typography tokens in the file, so that checkbox would build nothing while
-implying styles exist. See *Styling text*.
+**Tick Styles → Typography.** The bundle carries 75 `typography` composite tokens under
+`text/*` — 15 steps x 5 weights — and that checkbox is what turns them into Figma Text Styles.
+Leave every other Styles checkbox off: there are no composite colour, shadow or border tokens,
+so those would build nothing.
+
+Each style's five fields are **references** to the atomic tokens, not copies. So a style is a
+shortcut to the variables rather than a duplicate of them, and retuning `font size/body-md`
+moves all five body-md styles with it. Both the styles and the variables are usable — apply a
+style for the common pairings, bind the five variables for anything the grid does not cover.
 
 **Why *Remove unconnected variables* stays off.** It deletes any variable in the file that this
 export doesn't touch. On a 6-pass export, pass 2 would delete everything pass 1 just made.

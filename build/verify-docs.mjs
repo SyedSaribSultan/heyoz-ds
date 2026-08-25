@@ -71,8 +71,20 @@ const byPrefix = (p) => {
 /** The Tokens Studio bundle, counted the same way — it is a separate emitted document. */
 const studioTokens = countTokens(JSON.parse(read('tokens-studio/heyoz.tokens.json')));
 
+/* The composite text styles and the whole Tokens Studio typography set, counted off the
+ * emitted bundle. Both are Path-A-only: `tokens/` has the atomic tokens and no composites,
+ * because Figma's native importer cannot create a text style. */
+const studio = JSON.parse(read('tokens-studio/heyoz.tokens.json'));
+const studioType = studio['Typography Tokens'];
+const textStyles = Object.values(studioType.text ?? {}).reduce(
+  (n, step) => n + Object.keys(step).length,
+  0,
+);
+
 const truth = {
   studioTokens,
+  textStyles,
+  studioTypography: countTokens(studioType),
   colorPrimitives: audit.counts.colorPrimitives,
   numberPrimitives: audit.counts.numberPrimitives,
   semanticPerMode: audit.counts.semanticPerMode,
@@ -108,37 +120,31 @@ const CLAIMS = [
   {
     file: 'docs/FIGMA-GUIDE.md',
     what: 'guaranteed token-for-token list, colour primitives',
-    re: /token for token\*\*: (\d+) \/ \d+ \/ \d+ \/ \d+ \/ \d+ \/ \d+/,
+    re: /token for token\*\*: (\d+) \/ \d+ \/ \d+ \/ \d+ \/ \d+/,
     want: truth.colorPrimitives,
   },
   {
     file: 'docs/FIGMA-GUIDE.md',
     what: 'guaranteed token-for-token list, number primitives',
-    re: /token for token\*\*: \d+ \/ (\d+) \/ \d+ \/ \d+ \/ \d+ \/ \d+/,
+    re: /token for token\*\*: \d+ \/ (\d+) \/ \d+ \/ \d+ \/ \d+/,
     want: truth.numberPrimitives,
   },
   {
     file: 'docs/FIGMA-GUIDE.md',
     what: 'guaranteed token-for-token list, foundations',
-    re: /token for token\*\*: \d+ \/ \d+ \/ (\d+) \/ \d+ \/ \d+ \/ \d+/,
+    re: /token for token\*\*: \d+ \/ \d+ \/ (\d+) \/ \d+ \/ \d+/,
     want: truth.foundations,
   },
   {
     file: 'docs/FIGMA-GUIDE.md',
-    what: 'guaranteed token-for-token list, typography',
-    re: /token for token\*\*: \d+ \/ \d+ \/ \d+ \/ (\d+) \/ \d+ \/ \d+/,
-    want: truth.typography,
-  },
-  {
-    file: 'docs/FIGMA-GUIDE.md',
     what: 'guaranteed token-for-token list, semantic light',
-    re: /token for token\*\*: \d+ \/ \d+ \/ \d+ \/ \d+ \/ (\d+) \/ \d+/,
+    re: /token for token\*\*: \d+ \/ \d+ \/ \d+ \/ (\d+) \/ \d+/,
     want: truth.semanticFile,
   },
   {
     file: 'docs/FIGMA-GUIDE.md',
     what: 'guaranteed token-for-token list, semantic dark',
-    re: /token for token\*\*: \d+ \/ \d+ \/ \d+ \/ \d+ \/ \d+ \/ (\d+)/,
+    re: /token for token\*\*: \d+ \/ \d+ \/ \d+ \/ \d+ \/ (\d+)/,
     want: truth.semanticFile,
   },
   {
@@ -246,6 +252,40 @@ const CLAIMS = [
    * is the file the whole Figma import is driven from, so a wrong count there is a wrong
    * verification step — "Shift-click to select all 655" when there are 680 means the
    * designer scopes 25 primitives short and cannot tell. */
+  /* The 75 text styles. Restored on the design owner's call after being removed once, so the
+   * count is asserted from the emitted bundle rather than trusted: the failure mode is a step
+   * or a weight silently dropping out of the grid, which nothing else would notice — Figma
+   * would just build fewer styles. */
+  {
+    file: 'docs/FIGMA-GUIDE.md',
+    what: 'Path A text-style count',
+    re: /\*\*Path A ships (\d+) text styles\*\*/,
+    want: truth.textStyles,
+  },
+  {
+    file: 'docs/FIGMA-GUIDE.md',
+    what: 'composite styles row — style count',
+    re: /\*\*Shipped\*\* — (\d+) of them/,
+    want: truth.textStyles,
+  },
+  {
+    file: 'docs/FIGMA-GUIDE.md',
+    what: 'guaranteed list — Tokens Studio typography set total',
+    re: /(\d+) here against \d+ in `tokens\/05`/,
+    want: truth.studioTypography,
+  },
+  {
+    file: 'docs/FIGMA-GUIDE.md',
+    what: 'guaranteed list — DTCG typography total',
+    re: /\d+ here against (\d+) in `tokens\/05`/,
+    want: truth.typography,
+  },
+  {
+    file: 'tokens-studio/README.md',
+    what: 'export note — composite token count',
+    re: /carries (\d+) `typography` composite tokens/,
+    want: truth.textStyles,
+  },
   {
     file: 'tokens-studio/README.md',
     what: 'collection table — _Colors Primitives',

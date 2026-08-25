@@ -184,31 +184,60 @@ export function buildFigmaBundle({ PRIM, NUMBERS, numberName, resolved, FOUNDATI
     put(T, `default weight/${key}`, 'other', val);
   }
 
-  /* -- 5. NO COMPOSITE TEXT STYLES, deliberately ---------------------------------- *
+  /* -- 5. Composite text styles: 15 steps x 5 weights ---------------------------- *
    *
-   * An earlier version of this emitter produced 75 `typography` tokens — 15 steps × 5 weights —
-   * which Tokens Studio turns into 75 Figma Text Styles. They are gone, because this system
-   * binds VARIABLES to text layers rather than applying styles.
+   * These produce 75 Figma Text Styles when **Styles -> Typography is TICKED** on the export
+   * screen. They were removed once and are back on the design owner's call, so both sides of
+   * the argument belong here rather than in a commit nobody re-reads.
    *
-   * That is a real decision and not a shortcut. A text style bakes five properties into one
-   * object, so a step and a weight stop being independent: `text/body-md/medium` is a different
-   * style from `text/body-md/bold`, and the two share nothing a designer can retune in one
-   * place. Binding the five variables keeps them independent, which is the same reason
-   * `spec.mjs` refuses to bake weight into a type step — CLAUDE.md: "Weight is deliberately NOT
-   * baked in — every step accepts every weight."
+   * THE CASE AGAINST, which is why they were dropped: a style bakes five properties into one
+   * object, so a step and a weight stop being independent. `text/body-md/medium` and
+   * `text/body-md/bold` are two different styles that share nothing a designer can retune in
+   * one place. That is the same reason `spec.mjs` refuses to bake a weight into a type step —
+   * CLAUDE.md: "Weight is deliberately NOT baked in — every step accepts every weight."
    *
-   * The consequence for the export screen is the part worth knowing: **Styles → Typography must
-   * be UNTICKED.** With no composite tokens there is nothing for it to build, and ticking it
-   * would create nothing while implying styles exist. The atomic tokens below are the whole
-   * type system, and they export as Number and String variables.
+   * THE CASE FOR, which won: applying a style is one click, binding five variables is five, and
+   * a designer laying out a real file does that hundreds of times. The independence argument is
+   * about how the SYSTEM is authored; the click count is about how the file is USED, and the
+   * atomic tokens below are still there for any pairing the grid does not cover.
    *
-   * The px conversions above still matter and are not affected by this. A line height bound as
-   * a variable still has to be a number in px — 1.0625 would bind as 1.0625px — and a font size
-   * still cannot be a clamp() string. Those two fixes were never about text styles.
+   * WHAT MAKES BOTH TRUE AT ONCE: every field is a REFERENCE to the atomic token, never a
+   * literal. So a style is a shortcut to the variables rather than a copy of them — retune
+   * `font size/body-md` and all five body-md styles follow, which is the property the
+   * independence argument was actually protecting. Duplicating the values here would have been
+   * the version worth refusing.
    *
-   * If styles are ever wanted, this is ~12 lines: put a `typography` token per step × weight
-   * whose five fields reference the atomic tokens, and tick the box.
+   * The px conversions above are load-bearing for this and were never about styles: a line
+   * height must be px because 1.0625 would bind as 1.0625px, and a font size cannot be a
+   * clamp() string.
    * ------------------------------------------------------------------------------- */
+  const weights = Object.keys(TYPOGRAPHY['font weight']);
+  const familyFor = (step) => {
+    const group = step.split(/\s+/)[0];
+    /* The step's own group is the family, except `label`, which rides on the body face — there
+     * is no `font family/label`-only face in the ramp. Guarded rather than assumed: a new group
+     * with no matching family would otherwise emit a reference that resolves to nothing, and a
+     * dangling reference is silent in Figma while dist/ stays correct. */
+    if (TYPOGRAPHY['font family'][group]) return group;
+    throw new Error(
+      `figma-bundle: type step '${step}' has no matching font family '${group}'. ` +
+        `Add the family to TYPOGRAPHY['font family'] or map the step explicitly.`,
+    );
+  };
+
+  for (const step of Object.keys(TYPOGRAPHY['font size'])) {
+    for (const w of weights) {
+      put(T, `text/${step}/${w}`, 'typography', {
+        fontFamily: ref(`font family/${familyFor(step)}`),
+        /* font STYLE, not font weight: Figma binds a text layer's weight to the style name.
+         * The numeric `font weight/*` tokens stay for CSS, which cannot use "SemiBold". */
+        fontWeight: ref(`font style/${w}`),
+        fontSize: ref(`font size/${step}`),
+        lineHeight: ref(`line height/${step}`),
+        letterSpacing: ref(`letter spacing/${step}`),
+      });
+    }
+  }
 
   /* -- 6. Semantic, one set per mode ---------------------------------------------- */
   for (const [mode, setName] of [['light', SET.light], ['dark', SET.dark]]) {
