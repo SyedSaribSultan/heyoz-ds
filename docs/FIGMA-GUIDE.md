@@ -39,7 +39,7 @@ Full step-by-step — the export checkboxes, what to verify, and the two manual 
 
 ```
 Plugins → Tokens Studio → JSON toggle { } → paste the whole file → Save
-Export  → Variables: Color ✓ Number ✓ String ✓ · Styles: Typography ✓ (rest unticked)
+Export  → Variables: Color ✓ Number ✓ String ✓ · Styles: Typography (see README) · rest ✗
           Update existing names ON · Remove unconnected variables OFF
 Themes  → one theme at a time, TOP TO BOTTOM, six passes
 ```
@@ -167,8 +167,10 @@ Interactive → `fill`, and then `-hover` / `-active` / `-disabled` exist.
 ## Type
 
 **Styles and variables, both — on Path A.** The bundle carries 75 `typography` composites under
-`text/<step>/<weight>`, so **tick Styles → Typography** on the export screen. Path B has the
-atomic variables only, because Figma's native importer cannot create a style.
+`text/<step>/<weight>`, and those are what Tokens Studio turns into Figma Text Styles. If the
+Text styles panel comes up empty after an import, tick **Styles → Typography** on the export
+screen; whether that box is actually required is unverified — see `tokens-studio/README.md`.
+Path B has the atomic variables only, because Figma's native importer cannot create a style.
 
 **Why both rather than one.** The independence argument is real: a style bakes family, weight,
 size, leading and tracking into one object, and `spec.mjs` refuses to bake a weight into a type

@@ -46,14 +46,26 @@ Hit **Export** and match this exactly:
 | | |
 |---|---|
 | **Variables** | Color ✓ · Number ✓ · String ✓ · Boolean — doesn't matter |
-| **Styles** | **all unticked** — Typography ✗ · Color ✗ · Effects ✗ · Gradients ✗ |
+| **Styles** | Typography — see below · Color ✗ · Effects ✗ · Gradients ✗ |
 | *Update existing style and variable names* | **ON** |
 | *Remove unconnected variables* | **OFF** |
 | everything else | **OFF** |
 
-**Tick Styles → Typography.** The bundle carries 75 `typography` composite tokens under
-`text/*` — 15 steps x 5 weights — and that checkbox is what turns them into Figma Text Styles.
-Leave every other Styles checkbox off: there are no composite colour, shadow or border tokens,
+**Styles → Typography: tick it if your Text styles panel comes up empty, otherwise leave it.**
+The bundle carries 75 `typography` composite tokens under `text/*` — 15 steps × 5 weights — and
+those are what become Figma Text Styles.
+
+Whether the checkbox is *required* is not settled. This repo's own note used to state that it is,
+and that was written when there were no composites to test it with. Reported experience on a file
+that did carry composites is that the styles landed **without** ticking anything — plausible,
+since some plugin versions create a style whenever a `typography` token exists, treating the box
+as opt-out rather than opt-in. Neither claim has been verified against a specific plugin version,
+so the instruction is written as a fallback rather than a step.
+
+What IS settled: **no composites, no styles, whatever the checkbox says.** That was the actual
+cause of the empty panel.
+
+Leave every other Styles checkbox off — there are no composite colour, shadow or border tokens,
 so those would build nothing.
 
 Each style's five fields are **references** to the atomic tokens, not copies. So a style is a
@@ -255,7 +267,7 @@ Five things. Four because Figma cannot hold them, one because you do not want it
 | **Motion** — durations, easings, springs | Figma variables are Color / Number / String / Boolean. No duration type, no easing type. They'd import as meaningless strings. Values are in `dist/tokens.css`. |
 | **Fluid type** | A variable is one number. Display and heading ship their **desktop ceiling** in px — `display-lg` is 64, not `clamp(40px … 64px)`. Small-frame mockups need manual down-scaling. |
 | **`container/measure`** (`65ch`) | `ch` has no Figma equivalent. Code only. |
-| **Text Styles** | Not a limitation — a choice. This system binds variables to text layers, so there are no composite `typography` tokens and Styles → Typography stays unticked. A style bakes five properties into one object and stops step and weight being independent, which is exactly what `spec.mjs` refuses to do. |
+| **Text Styles** | **Shipped** — 75 of them, 15 steps × 5 weights. They were absent for a while on the argument that a style bakes five properties into one object and stops step and weight being independent, which is what `spec.mjs` refuses to do. They are back because every field is a *reference* to an atomic token rather than a copy, so retuning one size still moves all five of its styles — the independence that argument was protecting survives. Both styles and variables are usable. |
 | **Unitless line height** | The code authors leading as a ratio so it survives the fluid clamp; a Figma variable bound to a line-height field needs px. Converted here — `display-lg` is 68px, which is 1.0625 × 64. |
 
 ---
