@@ -19,9 +19,17 @@ means either of the two places a file can legitimately bind from:
   zero local variables).
 
 A local match beats a library match. Bindings that already point somewhere
-reachable are left alone, so running it twice is harmless. Names from the
-pre-rename era (`content/primary` for today's `color/content/primary`) are
-matched through the `color/` prefix automatically.
+reachable are left alone, so running it twice is harmless.
+
+Names from the old design system are translated by an explicit rename map in
+`renameCandidateNames` — the `color/` prefix (`content/primary`), renamed
+groups (`spacing/5` → `spacing/spacing-5`, `stroke width/…` and its shipped
+typo `sroke width/…` → `stroke-width/…`), and split roles (`content/fixed` →
+`fixed-primary` OR `fixed-inverse`). A one-to-many split is settled by
+comparing the variables' actual resolved values per binding, never by name
+similarity — a fuzzy matcher would happily flip white text to black. Add new
+renames to that table as they surface; an old name not in the map is
+reported, not guessed.
 
 ## Install (one time, per person)
 

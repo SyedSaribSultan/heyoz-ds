@@ -138,6 +138,77 @@ async function run(allPages) {
     return null;
   }
 
+  // --- Renames: the old design system's names for today's tokens. Where an
+  // old single role was split into several (content/fixed became
+  // fixed-primary AND fixed-inverse), every candidate is listed and the
+  // winner is picked by comparing actual resolved values — never by
+  // spelling distance.
+  function renameCandidateNames(name) {
+    const table = {
+      "content/fixed": ["color/content/fixed-primary", "color/content/fixed-inverse"],
+      "content/inverse": ["color/content/inverse-primary", "color/content/inverse-secondary"],
+      "content/disabled": ["color/content/primary-disabled", "color/content/secondary-disabled"],
+    };
+    const out = table[name] ? table[name].slice() : [];
+    const spacing = name.match(/^spacing\/(\d+)$/);
+    if (spacing) out.push("spacing/spacing-" + spacing[1]);
+    const radius = name.match(/^(?:radius|roundness)\/(\d+|full)$/);
+    if (radius) out.push("roundness/radius-" + radius[1]);
+    // "sroke width" is a typo that shipped in the old file's group name.
+    if (/^(sroke|stroke)[ -]width\//.test(name)) {
+      out.push(name.replace(/^(sroke|stroke)[ -]width\//, "stroke-width/"));
+    }
+    return out;
+  }
+
+  // Every value a variable takes across its modes, aliases resolved, as
+  // comparable strings. Used to pick between rename candidates.
+  async function resolveValue(v, depth) {
+    if (v == null || depth > 10) return null;
+    if (typeof v === "object" && v.type === "VARIABLE_ALIAS") {
+      const target = await getVariable(v.id);
+      if (!target) return null;
+      const modes = Object.keys(target.valuesByMode);
+      const results = [];
+      for (const m of modes) results.push(await resolveValue(target.valuesByMode[m], depth + 1));
+      return results.filter((r) => r != null).join("|");
+    }
+    if (typeof v === "object" && "r" in v) {
+      const a = v.a === undefined ? 1 : v.a;
+      return [v.r, v.g, v.b].map((c) => Math.round(c * 255)).join(",") + "/" + a.toFixed(3);
+    }
+    return String(v);
+  }
+  async function valueSet(variable) {
+    const out = new Set();
+    for (const modeId of Object.keys(variable.valuesByMode)) {
+      const parts = String((await resolveValue(variable.valuesByMode[modeId], 0)) || "").split("|");
+      for (const p of parts) if (p) out.add(p);
+    }
+    return out;
+  }
+
+  async function chooseByValue(entries, oldVar) {
+    let oldValues;
+    try {
+      oldValues = await valueSet(oldVar);
+    } catch (e) {
+      return null;
+    }
+    if (oldValues.size === 0) return null;
+    const hits = [];
+    for (const entry of entries) {
+      try {
+        const candidate = await materialize(entry);
+        const values = await valueSet(candidate);
+        if ([...oldValues].some((v) => values.has(v))) hits.push(entry);
+      } catch (e) {
+        /* an uninspectable candidate simply doesn't win */
+      }
+    }
+    return hits.length === 1 ? hits[0] : null;
+  }
+
   // Returns the variable to rebind to, or a string tag when there is
   // nothing safe to do: "connected" (already fine), "dangling",
   // "unmatched", "ambiguous", "failed".
@@ -164,11 +235,25 @@ async function run(allPages) {
       candidates = byName.get("color/" + oldVar.name + " " + oldVar.resolvedType) || [];
       renamed = candidates.length > 0;
     }
-    if (candidates.length === 0) {
-      stats.unmatched.set(oldVar.name, (stats.unmatched.get(oldVar.name) || 0) + 1);
-      return "unmatched";
+    let entry = null;
+    if (candidates.length > 0) {
+      entry = await choose(candidates, oldVar);
+    } else {
+      // The old design system's names, mapped explicitly. A one-to-many
+      // rename (content/fixed → fixed-primary or fixed-inverse) is settled
+      // by comparing resolved values, so a wrong-but-plausible name can
+      // never win.
+      const renameEntries = [];
+      for (const newName of renameCandidateNames(oldVar.name)) {
+        renameEntries.push(...(byName.get(newName + " " + oldVar.resolvedType) || []));
+      }
+      if (renameEntries.length === 0) {
+        stats.unmatched.set(oldVar.name, (stats.unmatched.get(oldVar.name) || 0) + 1);
+        return "unmatched";
+      }
+      entry = renameEntries.length === 1 ? renameEntries[0] : await chooseByValue(renameEntries, oldVar);
+      renamed = entry != null;
     }
-    const entry = await choose(candidates, oldVar);
     if (!entry) {
       stats.ambiguous.set(oldVar.name, (stats.ambiguous.get(oldVar.name) || 0) + 1);
       return "ambiguous";

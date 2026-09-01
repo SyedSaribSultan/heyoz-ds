@@ -133,7 +133,7 @@
 
     $("renamedLine").style.display = msg.renamed ? "block" : "none";
     $("renamedLine").textContent =
-      msg.renamed + " of the rebound matched through the old→new rename (missing color/ prefix).";
+      msg.renamed + " of the rebound matched through an old→new rename (prefixes, renamed groups, split roles).";
 
     const noVars = msg.localVariableCount + msg.libraryVariableCount === 0;
     $("libraryWarn").style.display = (noVars || msg.libraryError) ? "block" : "none";
