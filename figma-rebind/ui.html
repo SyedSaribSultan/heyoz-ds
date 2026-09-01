@@ -61,11 +61,13 @@
 
 <div id="results">
   <div class="grid">
-    <div class="stat good"><b id="rebound">0</b>rebound to local</div>
-    <div class="stat"><b id="alreadyLocal">0</b>already local</div>
+    <div class="stat good"><b id="rebound">0</b>rebound</div>
+    <div class="stat"><b id="alreadyConnected">0</b>already connected</div>
     <div class="stat"><b id="checked">0</b>bindings checked</div>
     <div class="stat"><b id="nodes">0</b>layers scanned</div>
   </div>
+  <p class="hint" id="renamedLine" style="display:none"></p>
+  <p class="hint" id="libraryWarn" style="display:none; color:#c22f1e"></p>
 
   <div id="unmatchedWrap">
     <h2>No local variable with this name</h2>
@@ -121,12 +123,23 @@
       msg.scope === "page" ? "Ran on the current page. " :
       "Ran on " + msg.scope + ". ";
     $("scopeline").textContent =
-      scopeText + msg.localVariableCount + " local variables available to match against.";
+      scopeText + "Matching against " + msg.localVariableCount + " local + " +
+      msg.libraryVariableCount + " library variables.";
 
     $("rebound").textContent = msg.rebound;
-    $("alreadyLocal").textContent = msg.alreadyLocal;
+    $("alreadyConnected").textContent = msg.alreadyConnected;
     $("checked").textContent = msg.checked;
     $("nodes").textContent = msg.nodesScanned;
+
+    $("renamedLine").style.display = msg.renamed ? "block" : "none";
+    $("renamedLine").textContent =
+      msg.renamed + " of the rebound matched through the old→new rename (missing color/ prefix).";
+
+    const noVars = msg.localVariableCount + msg.libraryVariableCount === 0;
+    $("libraryWarn").style.display = (noVars || msg.libraryError) ? "block" : "none";
+    $("libraryWarn").textContent = msg.libraryError
+      ? "Could not read team libraries: " + msg.libraryError
+      : "No variables reachable — this file has no local variables and no enabled library. Enable the design-system library in Assets → Libraries, or import the tokens, then run again.";
 
     fillList("unmatched", "unmatchedWrap", msg.unmatched);
     fillList("ambiguous", "ambiguousWrap", msg.ambiguous);

@@ -8,10 +8,20 @@ The destination file holds identically-named variables from the same
 connects — the layers show correct values that silently stopped tracking any
 token.
 
-This plugin walks the page (or the current selection), finds every binding
-that points at a variable **not local to the open file**, and repoints it at
-the local variable with the same name and type. Bindings that are already
-local are left alone, so running it twice is harmless.
+This plugin walks the page (or the current selection, or every page), finds
+every binding that points at a variable the open file **cannot reach**, and
+repoints it at the reachable variable with the same name and type. Reachable
+means either of the two places a file can legitimately bind from:
+
+- the file's own **local variables** (a file that imported the tokens itself), or
+- variables from an **enabled team library** (a workspace/final file that
+  consumes the design-system file as a library — such a file correctly has
+  zero local variables).
+
+A local match beats a library match. Bindings that already point somewhere
+reachable are left alone, so running it twice is harmless. Names from the
+pre-rename era (`content/primary` for today's `color/content/primary`) are
+matched through the `color/` prefix automatically.
 
 ## Install (one time, per person)
 
@@ -25,10 +35,11 @@ file you open.
 
 ## Use
 
-1. Open the file whose pasted screens are disconnected (workspace or final —
-   the file that ALREADY HAS the tokens imported; the plugin matches against
-   the open file's local variables, so an un-imported file has nothing to
-   match against).
+1. Open the file whose pasted screens are disconnected. It must be able to
+   reach the tokens one way or the other: either the tokens are imported into
+   the file itself, or the design-system library is enabled for it
+   (**Assets → Libraries** — the book icon). A file with neither shows
+   "0 local + 0 library variables" and rebinds nothing.
 2. Select the pasted frames — or select nothing to sweep the whole page — or
    hit **Run on ALL pages** to sweep the entire file in one pass (every page
    is loaded first, so a large file takes a moment).
