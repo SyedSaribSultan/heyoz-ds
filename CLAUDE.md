@@ -21,6 +21,9 @@ dist/          GENERATED  CSS + Tailwind preset + layout.css
 reports/       GENERATED  audit data, rendered by showcase /verify
 archive/  retired, wired to nothing — read archive/README.md first
 showcase/ the living reference. Four fixed routes, plus one page per recipe
+figma-rebind/ a dev-mode Figma plugin: repoints pasted layers' variable
+          bindings at the open file's local variables, matched by name.
+          Fixes cross-file paste; see its README. Not part of the build.
 ```
 
 The four are `/` (the reference), `/verify` (the audit), `/studio` (the product at

@@ -1,0 +1,151 @@
+<style>
+  body {
+    margin: 0;
+    padding: 16px;
+    font: 11px/1.5 Inter, system-ui, sans-serif;
+    color: #1a1a1a;
+    background: #ffffff;
+  }
+  h1 { font-size: 13px; margin: 0 0 4px; }
+  p.sub { margin: 0 0 12px; color: #6b6b6b; }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .stat {
+    border: 1px solid #e3e3e3;
+    border-radius: 6px;
+    padding: 8px 10px;
+  }
+  .stat b { display: block; font-size: 16px; }
+  .stat.good b { color: #0a7d33; }
+  .stat.bad b { color: #c22f1e; }
+  h2 { font-size: 11px; margin: 14px 0 4px; }
+  ul { margin: 0; padding: 0 0 0 4px; list-style: none; max-height: 140px; overflow-y: auto; }
+  li {
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 10px;
+    padding: 2px 0;
+    border-bottom: 1px solid #f0f0f0;
+    word-break: break-all;
+  }
+  li span { color: #9a9a9a; }
+  .hint { color: #6b6b6b; margin: 4px 0 0; }
+  button {
+    width: 100%;
+    margin-top: 14px;
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    background: #1a1a1a;
+    color: #fff;
+    font: 600 11px Inter, system-ui, sans-serif;
+    cursor: pointer;
+  }
+  #results { display: none; }
+  #running { color: #6b6b6b; }
+</style>
+
+<h1>HeyOz Token Rebind</h1>
+<p class="sub" id="scopeline">Repoints pasted layers at this file's variables, matched by name.</p>
+
+<p id="running">Scanning…</p>
+
+<div id="results">
+  <div class="grid">
+    <div class="stat good"><b id="rebound">0</b>rebound to local</div>
+    <div class="stat"><b id="alreadyLocal">0</b>already local</div>
+    <div class="stat"><b id="checked">0</b>bindings checked</div>
+    <div class="stat"><b id="nodes">0</b>layers scanned</div>
+  </div>
+
+  <div id="unmatchedWrap">
+    <h2>No local variable with this name</h2>
+    <ul id="unmatched"></ul>
+    <p class="hint">These names exist on the pasted layers but not in this file's
+    variables. Usually the destination file is on an older import — rebuild,
+    re-import, run again.</p>
+  </div>
+
+  <div id="ambiguousWrap">
+    <h2>Ambiguous — same name in several collections</h2>
+    <ul id="ambiguous"></ul>
+    <p class="hint">Left untouched rather than guessed. This usually means a
+    duplicate collection from an earlier bad import — delete the stray
+    collection, run again.</p>
+  </div>
+
+  <div id="danglingWrap">
+    <h2 id="danglingHead"></h2>
+    <p class="hint">Bindings whose source variable no longer exists anywhere —
+    the layer shows a stale literal value. These need manual re-binding.</p>
+  </div>
+
+  <div id="failedWrap">
+    <h2>Could not rebind</h2>
+    <ul id="failed"></ul>
+  </div>
+</div>
+
+<button id="rerun">Run again</button>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  document.getElementById("rerun").onclick = () => {
+    $("results").style.display = "none";
+    $("running").style.display = "block";
+    parent.postMessage({ pluginMessage: { type: "run" } }, "*");
+  };
+
+  onmessage = (event) => {
+    const msg = event.data.pluginMessage;
+    if (!msg || msg.type !== "result") return;
+
+    $("running").style.display = "none";
+    $("results").style.display = "block";
+    $("scopeline").textContent =
+      (msg.scope === "selection" ? "Ran on the current selection. " : "Ran on the whole page. ") +
+      msg.localVariableCount + " local variables available to match against.";
+
+    $("rebound").textContent = msg.rebound;
+    $("alreadyLocal").textContent = msg.alreadyLocal;
+    $("checked").textContent = msg.checked;
+    $("nodes").textContent = msg.nodesScanned;
+
+    fillList("unmatched", "unmatchedWrap", msg.unmatched);
+    fillList("ambiguous", "ambiguousWrap", msg.ambiguous);
+
+    $("danglingWrap").style.display = msg.dangling ? "block" : "none";
+    $("danglingHead").textContent = msg.dangling + " dangling binding(s)";
+
+    $("failedWrap").style.display = msg.failed.length ? "block" : "none";
+    $("failed").innerHTML = "";
+    for (const f of msg.failed) {
+      const li = document.createElement("li");
+      li.textContent = f;
+      $("failed").appendChild(li);
+    }
+    if (msg.failedTotal > msg.failed.length) {
+      const li = document.createElement("li");
+      li.textContent = "…and " + (msg.failedTotal - msg.failed.length) + " more";
+      $("failed").appendChild(li);
+    }
+  };
+
+  function fillList(listId, wrapId, entries) {
+    $(wrapId).style.display = entries.length ? "block" : "none";
+    const ul = $(listId);
+    ul.innerHTML = "";
+    for (const [name, count] of entries) {
+      const li = document.createElement("li");
+      li.textContent = name + " ";
+      const span = document.createElement("span");
+      span.textContent = "×" + count;
+      li.appendChild(span);
+      ul.appendChild(li);
+    }
+  }
+</script>
