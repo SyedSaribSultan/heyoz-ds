@@ -29,8 +29,9 @@ async function run(allPages) {
   const localCollectionName = new Map(localCollections.map((c) => [c.id, c.name]));
   const localById = new Set(localVars.map((v) => v.id));
 
-  const byName = new Map(); // "name TYPE" -> [{kind, variable|key, collectionName}]
+  const byName = new Map(); // "name TYPE" -> [{kind, name, variable|key, collectionName}]
   function addCandidate(name, type, entry) {
+    entry.name = name;
     const k = name + " " + type;
     if (!byName.has(k)) byName.set(k, []);
     byName.get(k).push(entry);
@@ -138,8 +139,23 @@ async function run(allPages) {
     return null;
   }
 
-  // --- Renames: the old design system's names for today's tokens. Where an
-  // old single role was split into several (content/fixed became
+  // --- Renames. Old vintages differ from today's names in case
+  // (Spacing/Spacing-2), plurality (colors/), group names (Corner/Radius-4,
+  // the shipped typo "sroke width"), and numbering shorthand (spacing/5).
+  // normalizeName carries all of those to the current canonical spelling.
+  function normalizeName(name) {
+    let n = name.toLowerCase().trim();
+    n = n.replace(/^colors\//, "color/");
+    n = n.replace(/^(sroke|stroke)[ -]width\//, "stroke-width/");
+    n = n.replace(/^corner\/radius-/, "roundness/radius-");
+    const sp = n.match(/^spacing\/(?:spacing-)?(\d+)$/);
+    if (sp) n = "spacing/spacing-" + sp[1];
+    const rad = n.match(/^(?:radius|roundness)\/(?:radius-)?(\d+|full|circle)$/);
+    if (rad) n = "roundness/radius-" + (rad[1] === "circle" ? "full" : rad[1]);
+    return n;
+  }
+
+  // Where an old single role was split into several (content/fixed became
   // fixed-primary AND fixed-inverse), every candidate is listed and the
   // winner is picked by comparing actual resolved values — never by
   // spelling distance.
@@ -149,16 +165,7 @@ async function run(allPages) {
       "content/inverse": ["color/content/inverse-primary", "color/content/inverse-secondary"],
       "content/disabled": ["color/content/primary-disabled", "color/content/secondary-disabled"],
     };
-    const out = table[name] ? table[name].slice() : [];
-    const spacing = name.match(/^spacing\/(\d+)$/);
-    if (spacing) out.push("spacing/spacing-" + spacing[1]);
-    const radius = name.match(/^(?:radius|roundness)\/(\d+|full)$/);
-    if (radius) out.push("roundness/radius-" + radius[1]);
-    // "sroke width" is a typo that shipped in the old file's group name.
-    if (/^(sroke|stroke)[ -]width\//.test(name)) {
-      out.push(name.replace(/^(sroke|stroke)[ -]width\//, "stroke-width/"));
-    }
-    return out;
+    return table[name] ? table[name].slice() : [];
   }
 
   // Every value a variable takes across its modes, aliases resolved, as
@@ -188,7 +195,43 @@ async function run(allPages) {
     return out;
   }
 
+  // The same variable can be reachable twice — as a local and through the
+  // file's own published library. Keep one entry per name, local preferred,
+  // so a variable can never tie with itself.
+  function dedupeByName(entries) {
+    const seen = new Map();
+    for (const e of entries) {
+      const cur = seen.get(e.name);
+      if (!cur || (cur.kind !== "local" && e.kind === "local")) seen.set(e.name, e);
+    }
+    return [...seen.values()];
+  }
+
+  function parseVal(s) {
+    const m = String(s).match(/^(\d+),(\d+),(\d+)\/([\d.]+)$/);
+    if (m) return { kind: "color", v: [+m[1], +m[2], +m[3], +m[4] * 255] };
+    const f = Number(s);
+    if (!Number.isNaN(f) && String(s).trim() !== "") return { kind: "num", v: f };
+    return { kind: "str", v: String(s) };
+  }
+  function valDistance(a, b) {
+    const pa = parseVal(a);
+    const pb = parseVal(b);
+    if (pa.kind === "color" && pb.kind === "color") {
+      let d = 0;
+      for (let i = 0; i < 4; i++) d += (pa.v[i] - pb.v[i]) * (pa.v[i] - pb.v[i]);
+      return Math.sqrt(d);
+    }
+    if (pa.kind === "num" && pb.kind === "num") return Math.abs(pa.v - pb.v);
+    return pa.v === pb.v ? 0 : Infinity;
+  }
+
+  // Prefer an exact value match; failing that, the strictly nearest value
+  // (the palette itself drifted between generations, so "same role" often
+  // means "close, not identical"). A tie is reported, never guessed.
   async function chooseByValue(entries, oldVar) {
+    entries = dedupeByName(entries);
+    if (entries.length === 1) return entries[0];
     let oldValues;
     try {
       oldValues = await valueSet(oldVar);
@@ -196,17 +239,24 @@ async function run(allPages) {
       return null;
     }
     if (oldValues.size === 0) return null;
-    const hits = [];
+    const scored = [];
     for (const entry of entries) {
       try {
         const candidate = await materialize(entry);
         const values = await valueSet(candidate);
-        if ([...oldValues].some((v) => values.has(v))) hits.push(entry);
+        let best = Infinity;
+        for (const o of oldValues) {
+          for (const c of values) best = Math.min(best, valDistance(o, c));
+        }
+        scored.push([best, entry]);
       } catch (e) {
         /* an uninspectable candidate simply doesn't win */
       }
     }
-    return hits.length === 1 ? hits[0] : null;
+    scored.sort((a, b) => a[0] - b[0]);
+    if (scored.length === 0 || scored[0][0] === Infinity) return null;
+    if (scored.length > 1 && scored[1][0] - scored[0][0] < 1e-6) return null; // tie
+    return scored[0][1];
   }
 
   // Returns the variable to rebind to, or a string tag when there is
@@ -239,19 +289,25 @@ async function run(allPages) {
     if (candidates.length > 0) {
       entry = await choose(candidates, oldVar);
     } else {
-      // The old design system's names, mapped explicitly. A one-to-many
-      // rename (content/fixed → fixed-primary or fixed-inverse) is settled
-      // by comparing resolved values, so a wrong-but-plausible name can
-      // never win.
-      const renameEntries = [];
-      for (const newName of renameCandidateNames(oldVar.name)) {
-        renameEntries.push(...(byName.get(newName + " " + oldVar.resolvedType) || []));
+      // The old design systems' names, translated. Case, plurality, and
+      // renamed groups go through normalizeName; a one-to-many rename
+      // (content/fixed → fixed-primary or fixed-inverse) lists every
+      // candidate and is settled by comparing resolved values, so a
+      // wrong-but-plausible name can never win.
+      const norm = normalizeName(oldVar.name);
+      const alternates = new Set([norm, "color/" + oldVar.name]);
+      if (!norm.startsWith("color/")) alternates.add("color/" + norm);
+      for (const n of renameCandidateNames(norm)) alternates.add(n);
+      alternates.delete(oldVar.name);
+      const pool = [];
+      for (const a of alternates) {
+        pool.push(...(byName.get(a + " " + oldVar.resolvedType) || []));
       }
-      if (renameEntries.length === 0) {
+      if (pool.length === 0) {
         stats.unmatched.set(oldVar.name, (stats.unmatched.get(oldVar.name) || 0) + 1);
         return "unmatched";
       }
-      entry = renameEntries.length === 1 ? renameEntries[0] : await chooseByValue(renameEntries, oldVar);
+      entry = await chooseByValue(pool, oldVar);
       renamed = entry != null;
     }
     if (!entry) {
