@@ -29,7 +29,9 @@ file you open.
    the file that ALREADY HAS the tokens imported; the plugin matches against
    the open file's local variables, so an un-imported file has nothing to
    match against).
-2. Select the pasted frames — or select nothing to sweep the whole page.
+2. Select the pasted frames — or select nothing to sweep the whole page — or
+   hit **Run on ALL pages** to sweep the entire file in one pass (every page
+   is loaded first, so a large file takes a moment).
 3. Run the plugin. It reports what it rebound and lists anything it could not.
 
 ## What it covers

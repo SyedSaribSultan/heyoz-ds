@@ -44,6 +44,12 @@
     font: 600 11px Inter, system-ui, sans-serif;
     cursor: pointer;
   }
+  button.secondary {
+    margin-top: 6px;
+    background: #fff;
+    color: #1a1a1a;
+    border: 1px solid #d0d0d0;
+  }
   #results { display: none; }
   #running { color: #6b6b6b; }
 </style>
@@ -89,16 +95,20 @@
   </div>
 </div>
 
-<button id="rerun">Run again</button>
+<button id="rerun">Run again (selection / current page)</button>
+<button id="runall" class="secondary">Run on ALL pages</button>
 
 <script>
   const $ = (id) => document.getElementById(id);
 
-  document.getElementById("rerun").onclick = () => {
+  function launch(allPages) {
     $("results").style.display = "none";
     $("running").style.display = "block";
-    parent.postMessage({ pluginMessage: { type: "run" } }, "*");
-  };
+    $("running").textContent = allPages ? "Scanning every page — large files take a moment…" : "Scanning…";
+    parent.postMessage({ pluginMessage: { type: "run", allPages } }, "*");
+  }
+  $("rerun").onclick = () => launch(false);
+  $("runall").onclick = () => launch(true);
 
   onmessage = (event) => {
     const msg = event.data.pluginMessage;
@@ -106,9 +116,12 @@
 
     $("running").style.display = "none";
     $("results").style.display = "block";
+    const scopeText =
+      msg.scope === "selection" ? "Ran on the current selection. " :
+      msg.scope === "page" ? "Ran on the current page. " :
+      "Ran on " + msg.scope + ". ";
     $("scopeline").textContent =
-      (msg.scope === "selection" ? "Ran on the current selection. " : "Ran on the whole page. ") +
-      msg.localVariableCount + " local variables available to match against.";
+      scopeText + msg.localVariableCount + " local variables available to match against.";
 
     $("rebound").textContent = msg.rebound;
     $("alreadyLocal").textContent = msg.alreadyLocal;
