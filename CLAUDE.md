@@ -291,3 +291,5 @@ nothing needs renaming.
 
 `build/shipped.mjs` and `dist/shadcn-bridge.css` are migration scaffolding and get
 deleted once the app stops reading the old variables. Both say so in their headers.
+
+Communication rules: follow `~/.claude/CLAUDE.md` (global). It loads alongside this file.
