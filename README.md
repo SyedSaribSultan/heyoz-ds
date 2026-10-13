@@ -143,3 +143,7 @@ instrument that can see the thing being measured.
 `dist/` on 2026-07-31, because the assertion lists were shorter than the claims.
 If you add a bridge mapping or a semantic role, add its constraint in the same
 commit.
+
+## Author
+
+Built by [Syed Sarib Sultan](https://syedsarib.com), senior product design engineer. More work and guides at [syedsarib.com](https://syedsarib.com).
